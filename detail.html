@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>详情</title>
+<style>
+/* ========== Reset & Variables ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a14;
+  --card-bg: rgba(255,255,255,0.035);
+  --card-border: rgba(255,255,255,0.07);
+  --card-hover-bg: rgba(255,255,255,0.055);
+  --card-hover-border: rgba(255,255,255,0.14);
+  --card-shadow: rgba(0,0,0,0.25);
+  --text: #e4e4ec;
+  --text-secondary: #9494a8;
+  --text-tertiary: #6b6b80;
+  --search-bg: rgba(255,255,255,0.06);
+  --search-border: rgba(255,255,255,0.1);
+  --radius: 18px;
+  --link-color: #8fa8ff;
+  --link-hover: #b8c8ff;
+  --link-item-hover: rgba(255,255,255,0.05);
+  --accent-1: rgba(120,140,255,0.28);
+}
+
+[data-theme="light"] {
+  --bg: #f3eff3;
+  --card-bg: rgba(255,255,255,0.62);
+  --card-border: rgba(0,0,0,0.06);
+  --card-hover-bg: rgba(255,255,255,0.82);
+  --card-hover-border: rgba(251,114,153,0.22);
+  --card-shadow: rgba(0,0,0,0.06);
+  --text: #18181e;
+  --text-secondary: #6b6b80;
+  --text-tertiary: #999;
+  --search-bg: rgba(0,0,0,0.03);
+  --search-border: rgba(0,0,0,0.08);
+  --link-color: #d44070;
+  --link-hover: #fb7299;
+  --link-item-hover: rgba(0,0,0,0.04);
+  --accent-1: rgba(251,114,153,0.22);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23b8c8ff'/%3E%3Cstop offset='100%25' stop-color='%238c96ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 27 C16 27 4 19 4 11 C4 5 8 3 12 7.5 C14 10 15 12 16 14 C17 12 18 10 20 7.5 C24 3 28 5 28 11 C28 19 16 27 16 27 Z' fill='url(%23g)' stroke='%23fff' stroke-width='2' stroke-linejoin='round' transform='rotate(145 16 16)'/%3E%3C/svg%3E") 19 6, auto;
+}
+a, button, .link-item, [role="button"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='32' viewBox='0 0 40 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23b8c8ff'/%3E%3Cstop offset='100%25' stop-color='%238c96ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1.5' y='4' width='4' height='9' rx='2' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='7' y='1.5' width='4.5' height='12.5' rx='2.25' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='13' y='0.5' width='5' height='15' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='19.5' y='2.5' width='5' height='12' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1.5' y='13' width='25' height='15' rx='6' fill='url(%23g)' stroke='%23fff' stroke-width='1.5'/%3E%3Crect x='0.5' y='18' width='5.5' height='8' rx='2.75' fill='url(%23g)' stroke='%23fff' stroke-width='1.2'/%3E%3C/svg%3E") 16 1, pointer;
+}
+
+/* ========== Firework ========== */
+.firework-particle {
+  position: fixed; pointer-events: none; z-index: 9998;
+  width: 6px; height: 6px; border-radius: 50%;
+  animation: firework 0.7s ease-out forwards;
+}
+.firework-particle.star {
+  width: 8px; height: 3px; border-radius: 1px;
+  animation: firework 0.8s ease-out forwards;
+}
+@keyframes firework {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+/* ========== Background Decor ========== */
+.bg-decor { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.blob {
+  position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.45; transition: opacity 0.5s;
+}
+.blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(80,100,220,0.5), transparent); top: -200px; left: -150px; }
+.blob-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(140,80,200,0.4), transparent); top: 50%; right: -200px; transform: translateY(-50%); }
+.blob-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(60,180,160,0.35), transparent); bottom: -150px; left: 30%; }
+[data-theme="light"] .blob-1 { background: radial-gradient(circle, rgba(251,130,160,0.42), transparent); }
+[data-theme="light"] .blob-2 { background: radial-gradient(circle, rgba(220,150,200,0.36), transparent); }
+[data-theme="light"] .blob-3 { background: radial-gradient(circle, rgba(255,180,140,0.32), transparent); }
+[data-theme="light"] .blob { opacity: 0.35; }
+
+/* ========== Theme Toggle ========== */
+.theme-toggle {
+  position: fixed; top: 20px; right: 24px; z-index: 10;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  color: var(--text); font-size: 1.1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s;
+}
+.theme-toggle:hover { background: var(--card-hover-bg); border-color: var(--card-hover-border); }
+
+/* ========== Layout ========== */
+.app { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 40px 24px 60px; }
+
+/* ========== Back Link ========== */
+.back-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--text-tertiary); text-decoration: none;
+  font-size: 0.82rem;
+  transition: color 0.2s; flex-shrink: 0;
+}
+.back-link:hover { color: var(--link-color); }
+
+/* ========== Detail Top Row ========== */
+.detail-top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-bottom: 20px;
+}
+.detail-search {
+  position: relative; width: 260px; flex-shrink: 0;
+}
+.detail-search input {
+  width: 100%; padding: 8px 32px 8px 12px;
+  background: var(--search-bg); border: 1px solid var(--search-border);
+  border-radius: 10px; color: var(--text); font-size: 0.8rem;
+  outline: none; transition: all 0.2s;
+}
+.detail-search input::placeholder { color: var(--text-tertiary); }
+.detail-search input:focus { border-color: rgba(140,150,255,0.35); background: rgba(255,255,255,0.08); }
+.detail-search .search-icon {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--text-tertiary); font-size: 0.8rem; pointer-events: none;
+}
+.link-item.hidden { display: none; }
+
+/* ========== Page Header ========== */
+.page-header {
+  margin-bottom: 28px;
+}
+.page-title {
+  font-size: 1.5rem; font-weight: 700; color: var(--text);
+  letter-spacing: -0.02em; margin-bottom: 4px;
+}
+.page-title .breadcrumb {
+  font-weight: 400; color: var(--text-tertiary); font-size: 0.8em;
+}
+.page-meta {
+  font-size: 0.8rem; color: var(--text-tertiary);
+}
+
+/* ========== Link List Card ========== */
+.link-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 4px 24px var(--card-shadow);
+}
+.link-card .card-inner { position: relative; z-index: 1; }
+
+.link-item {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  text-decoration: none; color: var(--text);
+  transition: all 0.15s;
+  margin: 0 -8px;
+}
+.link-item:hover { background: var(--link-item-hover); }
+.link-num {
+  font-size: 0.68rem; color: var(--text-tertiary); min-width: 18px;
+  flex-shrink: 0;
+}
+.link-title {
+  font-size: 0.9rem; font-weight: 500; color: var(--link-color);
+  white-space: nowrap; flex-shrink: 0;
+  transition: color 0.15s;
+}
+.link-item:hover .link-title { color: var(--link-hover); }
+.link-desc {
+  font-size: 0.8rem; color: var(--text-secondary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.link-arrow {
+  margin-left: auto; font-size: 0.72rem; color: var(--text-tertiary);
+  flex-shrink: 0; transition: transform 0.2s;
+}
+.link-item:hover .link-arrow { transform: translateX(3px); color: var(--link-hover); }
+
+/* ========== Footer ========== */
+.footer { text-align: center; margin-top: 48px; }
+.footer span { font-size: 0.72rem; color: var(--text-tertiary); opacity: 0.6; }
+
+/* ========== Responsive ========== */
+@media (max-width: 600px) {
+  .app { padding: 24px 14px 40px; }
+  .link-item { flex-wrap: wrap; gap: 4px; }
+  .link-desc { width: 100%; margin-left: 28px; }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+<div class="bg-decor"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+
+<div class="app">
+  <div class="detail-top">
+    <a class="back-link" href="index.html">← 返回导航</a>
+    <div class="detail-search">
+      <input type="text" id="detailSearch" placeholder="搜索...">
+      <span class="search-icon">🔍</span>
+    </div>
+  </div>
+  <div class="page-header">
+    <div class="page-title" id="pageTitle"></div>
+    <div class="page-meta" id="pageMeta"></div>
+  </div>
+  <div class="link-card">
+    <div class="card-inner" id="linkList"></div>
+  </div>
+  <footer class="footer"><span>🌱 持续更新中</span></footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function() {
+  // ========== Find category ==========
+  var page = new URLSearchParams(window.location.search).get('page');
+  var subcat = null;
+  var parentName = '';
+  SITE_DATA.blocks.forEach(function(b) {
+    if (b.subcategories) {
+      b.subcategories.forEach(function(s) {
+        if (s.page === page) { subcat = s; parentName = b.name; }
+      });
+    }
+  });
+
+  function esc(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  if (!subcat) {
+    document.getElementById('pageTitle').textContent = '未找到';
+    document.getElementById('pageMeta').textContent = '请从导航页进入';
+  } else {
+    document.title = parentName + ' / ' + subcat.name + ' - My Nav';
+    document.getElementById('pageTitle').innerHTML = '<span class="breadcrumb">' + esc(parentName) + ' / </span>' + esc(subcat.name);
+    document.getElementById('pageMeta').textContent = '共 ' + subcat.links.length + ' 篇';
+    var html = '';
+    subcat.links.forEach(function(link, i) {
+      html += '<a href="' + esc(link.url) + '" class="link-item" target="_blank" rel="noopener">' +
+        '<span class="link-num">' + (i + 1).toString().padStart(2, '0') + '</span>' +
+        '<span class="link-title">' + esc(link.title) + '</span>' +
+        (link.desc ? '<span class="link-desc">' + esc(link.desc) + '</span>' : '') +
+        '<span class="link-arrow">→</span></a>';
+    });
+    document.getElementById('linkList').innerHTML = html;
+  }
+
+  // ========== Search ==========
+  var searchInput = document.getElementById('detailSearch');
+  searchInput.addEventListener('input', function() {
+    var q = searchInput.value.trim().toLowerCase();
+    var items = document.querySelectorAll('#linkList .link-item');
+    items.forEach(function(item) {
+      if (!q || item.textContent.toLowerCase().indexOf(q) !== -1) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+  });
+
+  // ========== Theme ==========
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var LIGHT = 'light';
+  var DARK = 'dark';
+
+  function getTheme() {
+    var saved = localStorage.getItem('theme');
+    if (saved) return saved;
+    if (window.matchMedia('(prefers-color-scheme: light)').matches) return LIGHT;
+    return DARK;
+  }
+
+  function applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    toggle.textContent = t === LIGHT ? '☀️' : '🌙';
+    localStorage.setItem('theme', t);
+  }
+
+  toggle.addEventListener('click', function() {
+    applyTheme(html.getAttribute('data-theme') === LIGHT ? DARK : LIGHT);
+  });
+  applyTheme(getTheme());
+
+  // ========== Firework ==========
+  var HUES_PINK = [340, 350, 355, 0, 10, 20, 330, 345, 5, 15, 335, 25];
+  var HUES_COOL = [220, 235, 250, 260, 270, 280, 240, 255, 265, 275, 245, 260];
+
+  document.addEventListener('click', function(e) {
+    var count = 24;
+    var isDark = html.getAttribute('data-theme') === DARK;
+    var hues = isDark ? HUES_COOL : HUES_PINK;
+    for (var i = 0; i < count; i++) {
+      var p = document.createElement('div');
+      var angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+      var dist = 30 + Math.random() * 85;
+      var hue = hues[Math.floor(Math.random() * hues.length)];
+      var isStar = Math.random() < 0.2;
+      p.className = 'firework-particle' + (isStar ? ' star' : '');
+      p.style.cssText =
+        '--tx:' + Math.cos(angle) * dist + 'px;' +
+        '--ty:' + Math.sin(angle) * dist + 'px;' +
+        'background:hsl(' + hue + ',85%,' + (60 + Math.random() * 20) + '%);' +
+        'left:' + e.clientX + 'px;top:' + e.clientY + 'px;';
+      document.body.appendChild(p);
+      setTimeout(function() { p.remove(); }, 800);
+    }
+  });
+})();
+</script>
+</body>
+</html>

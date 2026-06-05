@@ -25,6 +25,7 @@ const SITE_DATA = {
       "subcategories": [
         {
           "name": "酒馆区",
+          "page": "jiuguan",
           "links": [
             { "title": "SillyTavern 酒馆入门指南", "url": "#", "desc": "从零搭建你的 AI 角色扮演前端" },
             { "title": "角色卡制作完全教程", "url": "#", "desc": "写好一张角色卡的所有技巧" },
@@ -35,6 +36,7 @@ const SITE_DATA = {
         },
         {
           "name": "ComfyUI 区",
+          "page": "comfyui",
           "links": [
             { "title": "ComfyUI 安装与环境配置", "url": "#", "desc": "Windows / Linux 一站式安装教程" },
             { "title": "工作流合集推荐", "url": "#", "desc": "精选文生图、图生图工作流打包" },
@@ -44,6 +46,7 @@ const SITE_DATA = {
         },
         {
           "name": "Obsidian 区",
+          "page": "obsidian",
           "links": [
             { "title": "Obsidian 入门配置指南", "url": "#", "desc": "从安装到写出第一篇笔记" },
             { "title": "必装插件清单", "url": "#", "desc": "提升效率的社区插件推荐与配置" },
@@ -73,10 +76,9 @@ const SITE_DATA = {
       "cols": 2,
       "rows": 1,
       "links": [
-        { "title": "MDN Web Docs", "url": "#", "desc": "最权威的前端技术文档" },
-        { "title": "GitHub", "url": "#", "desc": "全球最大的代码托管平台" },
-        { "title": "Can I Use", "url": "#", "desc": "浏览器兼容性速查" },
-        { "title": "CSS-Tricks", "url": "#", "desc": "CSS 技巧与前端教程" }
+        { "title": "【影视】硬核指南", "url": "https://yinghezhinan.com/", "desc": "影视资源与深度解析" },
+        { "title": "【影视】剧OK", "url": "https://juok3.top/", "desc": "在线追剧平台" },
+        { "title": "在线工具箱", "url": "http://tool.myop.cn/", "desc": "实用在线工具集合" }
       ]
     }
   ]
