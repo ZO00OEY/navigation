@@ -11,9 +11,9 @@ const SITE_DATA = {
       "username": "ZO.oEY",
       "bio": "如果能帮到你很开心 (๑˃̵ᴗ˂̵)و",
       "socials": [
-        { "name": "B站", "url": "#" },
-        { "name": "小红书", "url": "#" },
-        { "name": "GitHub", "url": "#" }
+        { "name": "B站", "url": "https://space.bilibili.com/18637872" },
+        { "name": "小红书", "url": "https://xhslink.com/m/4mCKNKRlZXc" },
+        { "name": "GitHub", "url": "https://github.com/ZO00OEY" }
       ]
     },
     {
