@@ -32,32 +32,27 @@ const SITE_DATA = {
             { "title": "酒馆搭建教程——PC电脑", "url": "guides/pc-setup.html", "desc": "图文教程，从零在电脑上安装酒馆" },
             { "title": "酒馆搭建教程——安卓手机", "url": "guides/android-setup.html", "desc": "Termux + 一键脚本，手机随身玩" },
             { "title": "酒馆搭建教程——VPS云服务器", "url": "guides/vps-setup.html", "desc": "腾讯云 + 1panel 面板，从零搭建云端酒馆" },
-            { "title": "酒馆使用指南", "url": "guides/jiuguan-usage.html", "desc": "常用插件、推荐配置与使用技巧" },
-            { "title": "角色卡制作完全教程", "url": "#", "desc": "写好一张角色卡的所有技巧" },
-            { "title": "正则表达式速查手册", "url": "#", "desc": "酒馆常用正则脚本大全" },
-            { "title": "世界书编写进阶", "url": "#", "desc": "Lorebook 结构与触发条件详解" },
-            { "title": "API 对接与模型选择", "url": "#", "desc": "各模型 API 在酒馆中的配置方法" }
+            { "title": "酒馆使用指南", "url": "guides/jiuguan-usage.html", "desc": "常用插件、推荐配置与使用技巧" }
           ]
+        },
+        {
+          "name": "云服务器VPS区",
+          "links": []
         },
         {
           "name": "ComfyUI 区",
-          "links": [
-            { "title": "ComfyUI 安装与环境配置", "url": "#", "desc": "Windows / Linux 一站式安装教程" },
-            { "title": "工作流合集推荐", "url": "#", "desc": "精选文生图、图生图工作流打包" },
-            { "title": "节点详解系列", "url": "#", "desc": "常用节点参数与使用场景说明" },
-            { "title": "模型推荐与对比", "url": "#", "desc": "Checkpoint / LoRA / VAE 模型评测" }
-          ]
+          "links": []
         },
         {
           "name": "Obsidian 区",
-          "links": [
-            { "title": "Obsidian 入门配置指南", "url": "#", "desc": "从安装到写出第一篇笔记" },
-            { "title": "必装插件清单", "url": "#", "desc": "提升效率的社区插件推荐与配置" },
-            { "title": "主题美化推荐", "url": "#", "desc": "高颜值 CSS 主题与自定义片段" },
-            { "title": "知识管理方法论", "url": "#", "desc": "PARA / Zettelkasten 在 Obsidian 中的实践" }
-          ]
+          "links": []
         }
-      ]
+      ],
+      "cardFooter": {
+        "title": "飞书云文档",
+        "url": "https://ycnguyrbg2mq.feishu.cn/wiki/NYiHwNqzNi0cG9k9kH6cxWYZn98?fromScene=spaceOverview",
+        "desc": "更多教程尚未搬运，暂存飞书云文档"
+      }
     },
     {
       "type": "nav-links",
@@ -65,12 +60,7 @@ const SITE_DATA = {
       "icon": "🛠️",
       "cols": 2,
       "rows": 1,
-      "links": [
-        { "title": "JSON 格式化", "url": "#", "desc": "在线美化与校验 JSON 数据" },
-        { "title": "Base64 编解码", "url": "#", "desc": "文本与 Base64 互转" },
-        { "title": "正则表达式测试", "url": "#", "desc": "可视化正则匹配与调试" },
-        { "title": "时间戳转换", "url": "#", "desc": "Unix 时间戳与日期互转" }
-      ]
+      "links": []
     },
     {
       "type": "nav-links",

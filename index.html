@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Nav</title>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="guides/shared.css">
 <style>
 /* ========== Reset & Variables ========== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
   --bg: #0a0a14;
@@ -71,54 +71,11 @@
   --avatar-color: #b04060;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23b8c8ff'/%3E%3Cstop offset='100%25' stop-color='%238c96ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 27 C16 27 4 19 4 11 C4 5 8 3 12 7.5 C14 10 15 12 16 14 C17 12 18 10 20 7.5 C24 3 28 5 28 11 C28 19 16 27 16 27 Z' fill='url(%23g)' stroke='%23fff' stroke-width='2' stroke-linejoin='round' transform='rotate(145 16 16)'/%3E%3C/svg%3E") 19 6, auto;
-}
-input, textarea, [contenteditable] {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='30' viewBox='0 0 14 30'%3E%3Crect x='4' y='4' width='6' height='22' rx='3' fill='%238c96ff' stroke='%23fff' stroke-width='1.3'/%3E%3Crect x='1' y='1' width='12' height='5' rx='2.5' fill='%238c96ff' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1' y='24' width='12' height='5' rx='2.5' fill='%238c96ff' stroke='%23fff' stroke-width='1'/%3E%3C/svg%3E") 7 15, text;
-}
-a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-header {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='32' viewBox='0 0 40 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23b8c8ff'/%3E%3Cstop offset='100%25' stop-color='%238c96ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1.5' y='4' width='4' height='9' rx='2' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='7' y='1.5' width='4.5' height='12.5' rx='2.25' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='13' y='0.5' width='5' height='15' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='19.5' y='2.5' width='5' height='12' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1.5' y='13' width='25' height='15' rx='6' fill='url(%23g)' stroke='%23fff' stroke-width='1.5'/%3E%3Crect x='0.5' y='18' width='5.5' height='8' rx='2.75' fill='url(%23g)' stroke='%23fff' stroke-width='1.2'/%3E%3C/svg%3E") 16 1, pointer;
-}
+body { line-height: 1.5; overflow-x: hidden; }
 
-/* Light theme cursors */
-[data-theme="light"] body {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffb3c6'/%3E%3Cstop offset='100%25' stop-color='%23fb7299'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 27 C16 27 4 19 4 11 C4 5 8 3 12 7.5 C14 10 15 12 16 14 C17 12 18 10 20 7.5 C24 3 28 5 28 11 C28 19 16 27 16 27 Z' fill='url(%23g)' stroke='%23fff' stroke-width='2' stroke-linejoin='round' transform='rotate(145 16 16)'/%3E%3C/svg%3E") 19 6, auto;
-}
-[data-theme="light"] input, [data-theme="light"] textarea, [data-theme="light"] [contenteditable] {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='30' viewBox='0 0 14 30'%3E%3Crect x='4' y='4' width='6' height='22' rx='3' fill='%23fb7299' stroke='%23fff' stroke-width='1.3'/%3E%3Crect x='1' y='1' width='12' height='5' rx='2.5' fill='%23fb7299' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1' y='24' width='12' height='5' rx='2.5' fill='%23fb7299' stroke='%23fff' stroke-width='1'/%3E%3C/svg%3E") 7 15, text;
-}
-[data-theme="light"] a, [data-theme="light"] button, [data-theme="light"] .link-item, [data-theme="light"] [role="button"], [data-theme="light"] .subcat-name, [data-theme="light"] .is-collapsible > .card-header {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='32' viewBox='0 0 40 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffb3c6'/%3E%3Cstop offset='100%25' stop-color='%23fb7299'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1.5' y='4' width='4' height='9' rx='2' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='7' y='1.5' width='4.5' height='12.5' rx='2.25' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='13' y='0.5' width='5' height='15' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='19.5' y='2.5' width='5' height='12' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1.5' y='13' width='25' height='15' rx='6' fill='url(%23g)' stroke='%23fff' stroke-width='1.5'/%3E%3Crect x='0.5' y='18' width='5.5' height='8' rx='2.75' fill='url(%23g)' stroke='%23fff' stroke-width='1.2'/%3E%3C/svg%3E") 16 1, pointer;
-}
 
-/* ========== Firework Particles ========== */
-.firework-particle {
-  position: fixed; pointer-events: none; z-index: 9998;
-  width: 6px; height: 6px; border-radius: 50%;
-  animation: firework 0.7s ease-out forwards;
-}
-.firework-particle.star {
-  width: 8px; height: 3px; border-radius: 1px;
-  animation: firework 0.8s ease-out forwards;
-}
-@keyframes firework {
-  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
-  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-}
-
-/* ========== Background Decor ========== */
-.bg-decor { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-.blob {
-  position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.32; transition: opacity 0.5s;
-}
+/* ---- Blob size overrides ---- */
+.blob { filter: blur(120px); opacity: 0.32; }
 .blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(80,100,220,0.5), transparent); top: -200px; left: -150px; }
 .blob-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(140,80,200,0.4), transparent); top: 50%; right: -200px; transform: translateY(-50%); }
 .blob-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(60,180,160,0.35), transparent); bottom: -150px; left: 30%; }
@@ -127,19 +84,6 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
 [data-theme="light"] .blob-3 { background: radial-gradient(circle, rgba(255,180,140,0.32), transparent); }
 [data-theme="light"] .blob { opacity: 0.35; }
 
-/* ========== Theme Toggle ========== */
-.theme-toggle {
-  position: fixed; top: 20px; right: 24px; z-index: 10;
-  width: 38px; height: 38px; border-radius: 50%;
-  background: var(--card-bg); border: 2px solid rgba(255,255,255,0.22);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  color: var(--text); font-size: 1.1rem;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.3s;
-}
-.theme-toggle:hover { background: var(--card-hover-bg); border-color: rgba(255,255,255,0.4); }
-[data-theme="light"] .theme-toggle { border-color: rgba(251,114,153,0.45); }
-[data-theme="light"] .theme-toggle:hover { border-color: rgba(251,114,153,0.7); }
 
 /* ========== Layout ========== */
 .app { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 40px 24px 60px; }
@@ -183,7 +127,7 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
 .search-box input:focus { border-color: var(--search-focus); background: var(--search-focus-bg); box-shadow: 0 0 0 3px var(--search-focus-shadow); }
 .search-box .search-icon {
   position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-  color: var(--text-tertiary); font-size: 0.95rem; pointer-events: none;
+  color: var(--link-color); display: flex; align-items: center; pointer-events: none;
 }
 .search-clear {
   position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
@@ -227,7 +171,7 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
 }
 .card:hover::before { opacity: 1; }
 .card-header { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
-.card-header .card-icon { font-size: 1.25rem; line-height: 1; }
+.card-header .card-icon { display: flex; align-items: center; color: var(--link-color); }
 .card-header .card-title { font-size: 0.95rem; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
 .card-toggle-text {
   margin-left: auto; font-size: 0.7rem; color: var(--text-tertiary);
@@ -310,6 +254,28 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
 }
 .subcat.is-collapsed .subcat-body { max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; }
 .subcat:not(.is-expanded) .link-extra { display: none; }
+
+.card-footer-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 14px; margin-bottom: 10px; border-radius: 10px;
+  text-decoration: none; transition: all 0.2s;
+  background: var(--accent-1); border: 1px solid transparent;
+}
+.card-footer-link:hover { border-color: var(--link-color); transform: translateY(-1px); }
+.cfl-badge {
+  font-size: 0.7rem; font-weight: 600; color: var(--link-color);
+  background: var(--card-bg); padding: 2px 10px; border-radius: 6px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.cfl-desc {
+  font-size: 0.72rem; color: var(--text-secondary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.card-footer-link .link-arrow {
+  margin-left: auto; font-size: 0.7rem; color: var(--link-color);
+  flex-shrink: 0; transition: transform 0.2s;
+}
+.card-footer-link:hover .link-arrow { transform: translateX(3px); }
 
 /* ========== Flat Subs ========== */
 .flat-subs { display: flex; flex-direction: column; gap: 10px; }
@@ -463,7 +429,20 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
 </head>
 <body>
 
-<button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+<div class="float-wrapper" id="floatWrapper">
+  <div class="float-stack open" id="floatStack">
+    <div class="bookmark-strip">
+      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
+      <div class="bookmark-buttons">
+        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+        <a href="index.html" class="float-btn" title="返回导航">⌂</a>
+        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
+      </div>
+    </div>
+  </div>
+  <div class="float-w"></div>
+</div>
+<div class="toc-popup" id="tocPopup"></div>
 
 <div class="bg-decor">
   <div class="blob blob-1"></div>
@@ -476,8 +455,8 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
     <header class="header" id="siteHeader"></header>
     <div class="search-wrap">
       <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="搜索链接、分类..." autocomplete="off">
+        <span class="search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></span>
+        <input type="text" id="searchInput" placeholder="搜索..." autocomplete="off">
         <button class="search-clear" id="searchClear" title="清除">×</button>
       </div>
     </div>
@@ -492,6 +471,7 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
 </div>
 
 <script src="data.js"></script>
+<script src="guides/shared.js"></script>
 <script>
 (function() {
   const ACCENTS = ['accent-1','accent-2','accent-3','accent-4'];
@@ -514,6 +494,15 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
   function esc(str) {
     if (!str) return '';
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function getIconSvg(icon) {
+    var s = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">';
+    if (icon === '📚') s += '<path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>';
+    else if (icon === '🛠️') s += '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>';
+    else if (icon === '🌐') s += '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>';
+    else return icon;
+    return s + '</svg>';
   }
 
   // ========== Render header ==========
@@ -663,7 +652,7 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
     var canToggle = hasSubcats && layout === 'grid';
     var inner = '';
     inner += '<div class="card-header">';
-    if (block.icon) inner += '<span class="card-icon">' + esc(block.icon) + '</span>';
+    if (block.icon) inner += '<span class="card-icon">' + getIconSvg(block.icon) + '</span>';
     inner += '<span class="card-title">' + esc(block.name) + '</span>';
     if (canToggle) {
       var isAlt = effectiveLayout === 'tabs';
@@ -674,6 +663,12 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
     if (hasSubcats && !effectiveLayout) inner += '<span class="card-toggle-text"><span class="ct-expand">展开</span><span class="ct-collapse">收起</span></span>';
     if (hasSubcats && block.page) inner += '<a class="card-more" href="detail.html?page=' + esc(block.page) + '">更多</a>';
     inner += '</div>';
+    if (block.cardFooter) {
+      inner += '<a href="' + esc(block.cardFooter.url) + '" class="card-footer-link" target="_blank" rel="noopener" data-searchable>' +
+        '<span class="cfl-badge">' + esc(block.cardFooter.title) + '</span>' +
+        '<span class="cfl-desc">' + esc(block.cardFooter.desc) + '</span>' +
+        '<span class="link-arrow">→</span></a>';
+    }
     if (effectiveLayout === 'flat') inner += renderFlatSubs(block);
     else if (effectiveLayout === 'grid') inner += renderGridSubs(block);
     else if (effectiveLayout === 'tabs') inner += renderTabs(block);
@@ -762,56 +757,6 @@ a, button, .link-item, [role="button"], .subcat-name, .is-collapsible > .card-he
   }
 
   window.addEventListener('resize', clampSpans);
-
-  // ========== Theme ==========
-  const toggle = document.getElementById('themeToggle');
-  const html = document.documentElement;
-  const LIGHT = 'light';
-  const DARK = 'dark';
-
-  function getTheme() {
-    const saved = localStorage.getItem('theme');
-    if (saved) return saved;
-    if (window.matchMedia('(prefers-color-scheme: light)').matches) return LIGHT;
-    return DARK;
-  }
-
-  function applyTheme(t) {
-    html.setAttribute('data-theme', t);
-    toggle.textContent = t === LIGHT ? '☀️' : '🌙';
-    localStorage.setItem('theme', t);
-  }
-
-  toggle.addEventListener('click', function() {
-    applyTheme(html.getAttribute('data-theme') === LIGHT ? DARK : LIGHT);
-  });
-
-  applyTheme(getTheme());
-
-  // ========== Firework on Click ==========
-  const HUES_PINK = [340, 350, 355, 0, 10, 20, 330, 345, 5, 15, 335, 25];
-  const HUES_COOL = [220, 235, 250, 260, 270, 280, 240, 255, 265, 275, 245, 260];
-
-  document.addEventListener('click', function(e) {
-    const count = 24;
-    const isDark = html.getAttribute('data-theme') === DARK;
-    const hues = isDark ? HUES_COOL : HUES_PINK;
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement('div');
-      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
-      const dist = 30 + Math.random() * 85;
-      const hue = hues[Math.floor(Math.random() * hues.length)];
-      const isStar = Math.random() < 0.2;
-      p.className = 'firework-particle' + (isStar ? ' star' : '');
-      p.style.cssText =
-        '--tx:' + Math.cos(angle) * dist + 'px;' +
-        '--ty:' + Math.sin(angle) * dist + 'px;' +
-        'background:hsl(' + hue + ',85%,' + (60 + Math.random() * 20) + '%);' +
-        'left:' + e.clientX + 'px;top:' + e.clientY + 'px;';
-      document.body.appendChild(p);
-      setTimeout(function() { p.remove(); }, 800);
-    }
-  });
 
   // ========== Card & Subcategory Toggle ==========
   grid.addEventListener('click', function(e) {
