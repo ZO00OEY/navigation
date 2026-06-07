@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>酒馆使用指南 - My Nav</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a14;
+  --card-bg: rgba(255,255,255,0.035);
+  --card-border: rgba(255,255,255,0.07);
+  --card-hover-bg: rgba(255,255,255,0.055);
+  --card-hover-border: rgba(255,255,255,0.14);
+  --card-shadow: rgba(0,0,0,0.25);
+  --text: #e4e4ec;
+  --text-secondary: #9494a8;
+  --text-tertiary: #6b6b80;
+  --link-color: #8fa8ff;
+  --link-hover: #b8c8ff;
+  --radius: 18px;
+  --code-bg: rgba(0,0,0,0.3);
+  --code-border: rgba(255,255,255,0.08);
+}
+
+[data-theme="light"] {
+  --bg: #f3eff3;
+  --card-bg: rgba(255,255,255,0.62);
+  --card-border: rgba(0,0,0,0.06);
+  --card-hover-bg: rgba(255,255,255,0.82);
+  --card-hover-border: rgba(251,114,153,0.22);
+  --card-shadow: rgba(0,0,0,0.06);
+  --text: #18181e;
+  --text-secondary: #6b6b80;
+  --text-tertiary: #999;
+  --link-color: #d44070;
+  --link-hover: #fb7299;
+  --code-bg: rgba(0,0,0,0.04);
+  --code-border: rgba(0,0,0,0.08);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23b8c8ff'/%3E%3Cstop offset='100%25' stop-color='%238c96ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 27 C16 27 4 19 4 11 C4 5 8 3 12 7.5 C14 10 15 12 16 14 C17 12 18 10 20 7.5 C24 3 28 5 28 11 C28 19 16 27 16 27 Z' fill='url(%23g)' stroke='%23fff' stroke-width='2' stroke-linejoin='round' transform='rotate(145 16 16)'/%3E%3C/svg%3E") 19 6, auto;
+}
+a { color: var(--link-color); }
+.lightbox img, a, button { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='32' viewBox='0 0 40 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23b8c8ff'/%3E%3Cstop offset='100%25' stop-color='%238c96ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1.5' y='4' width='4' height='9' rx='2' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='7' y='1.5' width='4.5' height='12.5' rx='2.25' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='13' y='0.5' width='5' height='15' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='19.5' y='2.5' width='5' height='12' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1.5' y='13' width='25' height='15' rx='6' fill='url(%23g)' stroke='%23fff' stroke-width='1.5'/%3E%3Crect x='0.5' y='18' width='5.5' height='8' rx='2.75' fill='url(%23g)' stroke='%23fff' stroke-width='1.2'/%3E%3C/svg%3E") 16 1, pointer; }
+
+[data-theme="light"] body {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffb3c6'/%3E%3Cstop offset='100%25' stop-color='%23fb7299'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 27 C16 27 4 19 4 11 C4 5 8 3 12 7.5 C14 10 15 12 16 14 C17 12 18 10 20 7.5 C24 3 28 5 28 11 C28 19 16 27 16 27 Z' fill='url(%23g)' stroke='%23fff' stroke-width='2' stroke-linejoin='round' transform='rotate(145 16 16)'/%3E%3C/svg%3E") 19 6, auto;
+}
+[data-theme="light"] .lightbox img, [data-theme="light"] a, [data-theme="light"] button {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='32' viewBox='0 0 40 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffb3c6'/%3E%3Cstop offset='100%25' stop-color='%23fb7299'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1.5' y='4' width='4' height='9' rx='2' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='7' y='1.5' width='4.5' height='12.5' rx='2.25' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='13' y='0.5' width='5' height='15' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='19.5' y='2.5' width='5' height='12' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1.5' y='13' width='25' height='15' rx='6' fill='url(%23g)' stroke='%23fff' stroke-width='1.5'/%3E%3Crect x='0.5' y='18' width='5.5' height='8' rx='2.75' fill='url(%23g)' stroke='%23fff' stroke-width='1.2'/%3E%3C/svg%3E") 16 1, pointer;
+}
+
+/* ---- Blob ---- */
+.blob { position: fixed; width: 620px; height: 620px; border-radius: 50%; filter: blur(160px); opacity: 0.32; pointer-events: none; z-index: 0; }
+.blob-1 { top: -260px; left: -200px; background: radial-gradient(circle, rgba(180,140,255,0.7) 0%, transparent 70%); }
+.blob-2 { bottom: -240px; right: -180px; background: radial-gradient(circle, rgba(255,140,200,0.65) 0%, transparent 70%); }
+[data-theme="light"] .blob { opacity: 0.28; }
+
+/* ---- Layout ---- */
+.page-wrap { position: relative; z-index: 1; max-width: 1060px; margin: 0 auto; padding: 32px 24px 60px; display: flex; gap: 32px; align-items: flex-start; }
+
+/* ---- Floating toolbar (bookmark tab) ---- */
+.float-stack {
+  position: fixed; top: 0; right: 20px; z-index: 50;
+  overflow: hidden;
+  max-height: 32px;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 1px 8px rgba(0,0,0,0.18));
+}
+.float-stack.open { max-height: 360px; }
+
+.bookmark-strip {
+  width: 52px;
+  display: flex; flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-top: none;
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  padding: 0 0 28px 0;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 28px), 75% 100%, 50% calc(100% - 28px), 25% 100%, 0 calc(100% - 28px));
+}
+[data-theme="light"] .bookmark-strip {
+  border-color: rgba(251,114,153,0.18);
+  background: linear-gradient(180deg, rgba(251,114,153,0.12) 0%, rgba(255,255,255,0.55) 100%);
+}
+
+.bookmark-tab {
+  width: 100%; height: 32px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; user-select: none;
+  color: var(--text-tertiary);
+  font-size: 0.4rem;
+  transition: color 0.3s;
+  position: relative;
+}
+.bookmark-tab:hover { color: var(--text-secondary); }
+.bookmark-tab::after {
+  content: '';
+  width: 16px; height: 1.5px;
+  background: var(--text-tertiary); opacity: 0.35;
+  border-radius: 1px;
+}
+[data-theme="light"] .bookmark-tab::after { opacity: 0.4; }
+
+.bookmark-divider {
+  width: 22px; height: 1px; flex-shrink: 0;
+  background: rgba(255,255,255,0.08);
+  margin: 0 0 8px 0;
+}
+[data-theme="light"] .bookmark-divider {
+  background: rgba(251,114,153,0.12);
+}
+
+.bookmark-buttons {
+  display: flex; flex-direction: column; gap: 7px;
+  align-items: center;
+  padding: 0 0 4px 0;
+}
+
+.float-btn, .theme-toggle {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  color: var(--text); font-size: 0.95rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s; cursor: pointer; text-decoration: none;
+  line-height: 1;
+}
+.float-btn:hover, .theme-toggle:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.32);
+  transform: scale(1.08);
+}
+[data-theme="light"] .float-btn, [data-theme="light"] .theme-toggle {
+  border-color: rgba(251,114,153,0.25);
+  background: rgba(251,114,153,0.03);
+}
+[data-theme="light"] .float-btn:hover, [data-theme="light"] .theme-toggle:hover {
+  border-color: rgba(251,114,153,0.5);
+  background: rgba(251,114,153,0.1);
+}
+
+/* ---- TOC ---- */
+.toc { width: 180px; flex-shrink: 0; position: sticky; top: 40px; align-self: flex-start; }
+.back-link { display: block; color: var(--text-secondary); text-decoration: none; font-size: 0.75rem; margin-bottom: 14px; }
+.back-link:hover { color: var(--link-hover); }
+.toc-label   { font-size: 0.68rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+.toc-item    { display: flex; align-items: center; gap: 7px; padding: 5px 10px; margin: 1px 0; border-radius: 8px; font-size: 0.77rem; color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
+.toc-item:hover  { color: var(--text); background: var(--card-bg); }
+.toc-item.active { color: var(--link-color); background: rgba(200,130,160,0.12); }
+.toc-sub     { font-size: 0.7rem; padding: 3px 10px 3px 32px; }
+.toc-num     { font-weight: 700; font-size: 0.72rem; min-width: 22px; flex-shrink: 0; }
+.toc-part    { font-size: 0.65rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin: 12px 0 4px; padding: 0 10px; }
+
+/* ---- TOC toggle (mobile) ---- */
+.toc-toggle { display: none; }
+.toc-popup  { display: none; }
+
+/* ---- Main content ---- */
+.main-content { flex: 1; min-width: 0; }
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 1.5rem; font-weight: 700; }
+.page-header p { font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; }
+
+/* ---- Step cards ---- */
+.step { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 20px 22px; margin-bottom: 16px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.step-num { font-size: 0.78rem; font-weight: 700; min-width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(200,130,160,0.18); color: #d090b0; }
+[data-theme="light"] .step-num { color: #b05060; }
+.step-title { font-size: 1.05rem; font-weight: 700; }
+.step-body { font-size: 0.84rem; color: var(--text); line-height: 1.7; }
+.step-body p { margin-bottom: 8px; }
+.step-body ul, .step-body ol { margin: 8px 0 8px 20px; }
+.step-body li { margin-bottom: 4px; }
+
+/* ---- Sub steps ---- */
+.sub-step { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--card-border); }
+.sub-step:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.sub-step-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 8px; }
+.opt-label { font-size: 0.68rem; font-weight: 400; color: var(--text-tertiary); }
+
+/* ---- Images ---- */
+.step-img { max-width: 100%; height: auto; border-radius: 10px; margin: 8px 0; cursor: pointer; display: block; }
+.img-row { display: flex; gap: 10px; margin: 8px 0; }
+.img-row.cols-2 .step-img { flex: 1; min-width: 0; }
+.img-row.cols-3 .step-img { flex: 1; min-width: 0; }
+
+/* ---- Code ---- */
+.code-wrap { position: relative; margin: 8px 0; }
+.code-block { background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 10px; padding: 12px 14px; font-family: "Cascadia Code", "Fira Code", "JetBrains Mono", "Consolas", monospace; font-size: 0.78rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+.copy-btn { position: absolute; top: 6px; right: 6px; background: none; border: 1px solid var(--card-border); color: var(--text-tertiary); font-size: 0.72rem; cursor: pointer; padding: 2px 6px; border-radius: 6px; transition: all 0.2s; }
+.copy-btn:hover { background: var(--card-hover-bg); border-color: var(--card-hover-border); color: var(--text); }
+
+/* ---- Note ---- */
+.note { background: rgba(180,140,200,0.08); border: 1px solid rgba(180,140,200,0.14); border-radius: 10px; padding: 10px 14px; margin: 8px 0; font-size: 0.8rem; color: var(--text-secondary); }
+
+/* ---- Lightbox ---- */
+.lightbox {
+  display: none; position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+}
+.lightbox.open { display: flex; }
+.lightbox img {
+  cursor: pointer;
+  max-width: 92vw; max-height: 92vh; object-fit: contain;
+  border-radius: 12px;
+  animation: lbZoom 0.2s ease-out;
+}
+@keyframes lbZoom { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ---- Footer ---- */
+.page-footer { margin-top: 24px; }
+.page-footer a { font-size: 0.78rem; color: var(--link-color); text-decoration: none; }
+.page-footer a:hover { color: var(--link-hover); }
+
+@media (max-width: 768px) {
+  .page-wrap { flex-direction: column; padding: 16px 14px 40px; }
+  .toc { display: none; }
+  .toc-toggle { display: flex; }
+  .toc-popup {
+    position: fixed; top: 68px; right: 24px; z-index: 51;
+    background: var(--bg); border: 1px solid var(--card-border);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border-radius: 14px; padding: 12px; min-width: 200px;
+    max-height: calc(100vh - 96px); overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    opacity: 0; transform: translateY(-6px); pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .toc-popup.open { opacity: 1; transform: translateY(0); pointer-events: auto; display: block; }
+  .toc-popup .toc-item { font-size: 0.82rem; padding: 8px 12px; }
+  .toc-popup .toc-part { font-size: 0.68rem; }
+  .toc-popup::-webkit-scrollbar { width: 4px; }
+  .toc-popup::-webkit-scrollbar-track { background: transparent; }
+  .toc-popup::-webkit-scrollbar-thumb { background: rgba(200,130,160,0.3); border-radius: 4px; }
+  .toc-popup::-webkit-scrollbar-thumb:hover { background: rgba(200,130,160,0.55); }
+  .toc-popup { scrollbar-width: thin; scrollbar-color: rgba(200,130,160,0.3) transparent; }
+  .img-row { flex-direction: column; }
+}
+
+.toc::-webkit-scrollbar { width: 4px; }
+.toc::-webkit-scrollbar-track { background: transparent; }
+.toc::-webkit-scrollbar-thumb { background: rgba(200,130,160,0.3); border-radius: 4px; }
+.toc::-webkit-scrollbar-thumb:hover { background: rgba(200,130,160,0.5); }
+.toc { scrollbar-width: thin; scrollbar-color: rgba(200,130,160,0.3) transparent; }
+</style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div class="float-stack" id="floatStack">
+  <div class="bookmark-strip">
+    <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
+    <div class="bookmark-divider"></div>
+    <div class="bookmark-buttons">
+      <button class="toc-toggle float-btn" id="tocToggle" title="目录" aria-label="打开目录">☰</button>
+      <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+      <a href="../index.html" class="float-btn" title="返回导航">⌂</a>
+      <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
+    </div>
+  </div>
+</div>
+<div class="toc-popup" id="tocPopup">
+
+  <a href="#sec-01" class="toc-item active"><span class="toc-num">01</span> 欢迎来到酒馆</a>
+  <a href="#sec-02" class="toc-item"><span class="toc-num">02</span> 导入预设</a>
+  <a href="#sec-02-2" class="toc-item toc-sub">导入预设</a>
+  <a href="#sec-02-3" class="toc-item toc-sub">预设的正则</a>
+  <a href="#sec-02-4" class="toc-item toc-sub">预设的使用</a>
+  <a href="#sec-02-5" class="toc-item toc-sub">预设推荐</a>
+  <a href="#sec-03" class="toc-item"><span class="toc-num">03</span> API 连接</a>
+  <a href="#sec-03-1" class="toc-item toc-sub">获取 API</a>
+  <a href="#sec-03-2" class="toc-item toc-sub">填写 API</a>
+  <a href="#sec-03-3" class="toc-item toc-sub">API 对比</a>
+  <a href="#sec-04" class="toc-item"><span class="toc-num">04</span> 角色卡与游玩</a>
+  <a href="#sec-04-2" class="toc-item toc-sub">导入角色卡</a>
+  <a href="#sec-04-3" class="toc-item toc-sub">其他功能</a>
+  <a href="#sec-04-4" class="toc-item toc-sub">世界书/正则</a>
+  <a href="#sec-04-5" class="toc-item toc-sub">下载角色卡</a>
+  <a href="#sec-05" class="toc-item"><span class="toc-num">05</span> 用户设置/背景</a>
+  <a href="#sec-06" class="toc-item"><span class="toc-num">06</span> 插件基础</a>
+  <a href="#sec-06-1" class="toc-item toc-sub">正则</a>
+  <a href="#sec-06-2" class="toc-item toc-sub">快速回复</a>
+  <a href="#sec-06-3" class="toc-item toc-sub">登录 UI 美化</a>
+  <a href="#sec-07" class="toc-item"><span class="toc-num">07</span> 插件推荐</a>
+</div>
+
+<div class="page-wrap">
+  <nav class="toc">
+
+    <div class="toc-label">目录</div>
+    <a href="#sec-01" class="toc-item active"><span class="toc-num">01</span> 欢迎来到酒馆</a>
+      <a href="#sec-02" class="toc-item"><span class="toc-num">02</span> 导入预设</a>
+      <a href="#sec-02-2" class="toc-item toc-sub">导入预设</a>
+      <a href="#sec-02-3" class="toc-item toc-sub">预设的正则</a>
+      <a href="#sec-02-4" class="toc-item toc-sub">预设的使用</a>
+      <a href="#sec-02-5" class="toc-item toc-sub">预设推荐</a>
+      <a href="#sec-03" class="toc-item"><span class="toc-num">03</span> API 连接</a>
+      <a href="#sec-03-1" class="toc-item toc-sub">获取 API</a>
+      <a href="#sec-03-2" class="toc-item toc-sub">填写 API</a>
+      <a href="#sec-03-3" class="toc-item toc-sub">API 对比</a>
+      <a href="#sec-04" class="toc-item"><span class="toc-num">04</span> 角色卡与游玩</a>
+      <a href="#sec-04-2" class="toc-item toc-sub">导入角色卡</a>
+      <a href="#sec-04-3" class="toc-item toc-sub">其他功能</a>
+      <a href="#sec-04-4" class="toc-item toc-sub">世界书/正则</a>
+      <a href="#sec-04-5" class="toc-item toc-sub">下载角色卡</a>
+      <a href="#sec-05" class="toc-item"><span class="toc-num">05</span> 用户设置/背景</a>
+      <a href="#sec-06" class="toc-item"><span class="toc-num">06</span> 插件基础</a>
+      <a href="#sec-06-1" class="toc-item toc-sub">正则</a>
+      <a href="#sec-06-2" class="toc-item toc-sub">快速回复</a>
+      <a href="#sec-06-3" class="toc-item toc-sub">登录 UI 美化</a>
+      <a href="#sec-07" class="toc-item"><span class="toc-num">07</span> 插件推荐</a>
+  </nav>
+
+  <div class="main-content">
+    <div class="page-header">
+      <h1>酒馆使用指南</h1>
+      <p>常用插件、推荐配置与使用技巧</p>
+    </div>
+
+    <!-- ========== 01 欢迎来到酒馆 ========== -->
+    <div class="step" id="sec-01">
+      <div class="step-head">
+        <span class="step-num">01</span>
+        <span class="step-title">欢迎来到酒馆！</span>
+      </div>
+      <div class="step-body">
+        <div class="sub-step">
+          <div class="sub-step-title">1. 设置用户名</div>
+          <p>第一步设置用户名，填好就可以啦~</p>
+          <img class="step-img" src="../img/jiuguan-usage/image1.png" alt="设置用户名">
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">2. 熟悉上方工具栏</div>
+          <p>先对每一个功能区有一些了解：</p>
+          <img class="step-img" src="../img/jiuguan-usage/image2.png" alt="工具栏介绍1">
+          <img class="step-img" src="../img/jiuguan-usage/image3.png" alt="工具栏介绍2">
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 02 导入预设 ========== -->
+    <div class="step" id="sec-02">
+      <div class="step-head">
+        <span class="step-num">02</span>
+        <span class="step-title">导入预设</span>
+      </div>
+      <div class="step-body">
+        <div class="sub-step">
+          <div class="sub-step-title">1. 预设是做什么的</div>
+          <p>预设的功能很丰富，主要用来给 AI 洗脑，引导它的回复。破甲指破除 AI 的道德限制，更自由地展开剧情。</p>
+          <p>如果你的 AI 总是在重复，可以尝试换一个预设玩一会。</p>
+        </div>
+
+        <div class="sub-step" id="sec-02-2">
+          <div class="sub-step-title">2. 怎么正确导入预设</div>
+          <p>先要点击第二个【插头】图标，在 <strong>API 模式选择【聊天补全】</strong>！！！</p>
+          <p>再进入第一个图标在 <strong>【对话补全预设】</strong> 后方导入你下载的预设！！！</p>
+          <img class="step-img" src="../img/jiuguan-usage/image4.png" alt="导入预设步骤1">
+          <p>导入时会弹出一个框，可以拒绝。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image5.png" alt="导入预设步骤2">
+        </div>
+
+        <div class="sub-step" id="sec-02-3">
+          <div class="sub-step-title">3. 预设的正则</div>
+          <p>下载预设时还要注意这个预设有没有同步发布的正则（如何导入见 <a href="#sec-06-1">06 插件 — 正则部分</a>），比如下图：</p>
+          <img class="step-img" src="../img/jiuguan-usage/image6.png" alt="预设的正则">
+        </div>
+
+        <div class="sub-step" id="sec-02-4">
+          <div class="sub-step-title">4. 预设的使用</div>
+          <p>使用预设的时候，一定<strong>要仔细看楼主的介绍</strong>，如果使用不当可能会破甲失败。</p>
+          <p>预设中有很多具体的条目，可以在下拉菜单中自由<strong>打开和关闭</strong>你需要的选项（主要是增添文风参考）。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image7.png" alt="预设选项">
+        </div>
+
+        <div class="sub-step" id="sec-02-5">
+          <div class="sub-step-title">5. 我在使用的预设推荐</div>
+          <p>这个推荐其实非常有时效性，还是建议大家多去旅程/类脑预设区自己看看，模型和预设迭代都很快。</p>
+          <p>最近我爱用 Gemini 预设 <a href="https://discord.com/channels/1134557553011998840/1402584661208858635/0" target="_blank" rel="noopener">小猫之神</a>，Claude 很久没玩过了但鹿鹿的印象不错。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 03 API连接 ========== -->
+    <div class="step" id="sec-03">
+      <div class="step-head">
+        <span class="step-num">03</span>
+        <span class="step-title">API 连接</span>
+      </div>
+      <div class="step-body">
+        <div class="sub-step" id="sec-03-1">
+          <div class="sub-step-title">1. 获取 API</div>
+          <p>先用最简单的 DeepSeek 做示范（暂时搞角色扮演还是差点意思，但入手简单），开开胃，Claude / Gemini 可以作为进阶。</p>
+
+          <p style="margin-top:10px;"><strong>1. DeepSeek 官方（经典好获取，不用梯）</strong></p>
+          <p>夜间半价，新 API 用户好像有限时的免费额度，不高。</p>
+          <p>登录官网，进入【API 开放平台】，在左侧的【API keys】中【创建 API keys】，把 key 保存好，这就是你的 API 密钥。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image8.png" alt="DeepSeek API">
+
+          <p style="margin-top:10px;"><strong>2. Gemini（找公益站是免费）</strong></p>
+          <p>Gemini 现在的 3.1 我还是很满意的，一般自己搭建 glic 反代，或者蹭公益站。</p>
+          <p>纯新手找公益站吧，不用花钱，有免费源。虽然 260325 大砍额度，但万一呢。</p>
+
+          <p style="margin-top:10px;"><strong>3. Claude（很贵，但也能吃到）</strong></p>
+          <p>推荐 Claude Opus 系列模型，4.6 Sonnet 给我的感觉还不如 Gemini 3.0 Pro，但 4 Opus 就很聪明。</p>
+          <p>现在 PRO 账户想爽玩额度不够，量够的 MAX 一个月太贵了，不推荐。</p>
+          <p>但可以搞谷歌账号，小号申请加入 PRO 家庭组，申请反重力资格，配置反代，这样可以 Claude Opus，一个号通常活不到一天，但花销也仅限于此，号死了就用小号退家庭组。</p>
+        </div>
+
+        <div class="sub-step" id="sec-03-2">
+          <div class="sub-step-title">2. 填写 API</div>
+          <p>进入上方工具栏第二项的小插头：</p>
+          <img class="step-img" src="../img/jiuguan-usage/image9.png" alt="API设置入口">
+
+          <p style="margin-top:10px;"><strong>1. DeepSeek —— 官方</strong></p>
+          <p>【聊天补全】-【DeepSeek】来源 -【填写密钥】- 点击【连接】- 选取模型【deepSeek-chat】</p>
+          <p>左侧确认好预设，测试成功后，可以<strong>顺手保存</strong>。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image10.png" alt="DeepSeek连接">
+
+          <p style="margin-top:10px;">【聊天补全】-【OpenRouter】来源 -【填写密钥】- 点击【连接】- 选取模型【DeepSeek: DeepSeek V3 0324 (free)】，确认好预设后可以另存。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image11.png" alt="OpenRouter DeepSeek">
+
+          <p style="margin-top:10px;"><strong>2. Gemini</strong></p>
+          <p>这次没自己搭反代，用的公益站~</p>
+          <img class="step-img" src="../img/jiuguan-usage/image12.png" alt="Gemini公益站">
+
+          <p style="margin-top:10px;"><strong>3. Claude</strong></p>
+          <p>Claude 官方 API 太贵，官 PRO 玩不了口碑好的 Opus 系列模型，所以 ClwdR 反代也走不太通了。</p>
+          <p>现在可以试试谷歌账号申请反重力资格，然后反代。</p>
+        </div>
+
+        <div class="sub-step" id="sec-03-3">
+          <div class="sub-step-title">3. 当前这几种 API 使用体验的简单对比</div>
+          <p><strong>DeepSeek</strong> 的整体扮演能力弱，但赢在获取和使用简单，听说 V4 会很不错；</p>
+          <p><strong>Gemini 3.1 Pro</strong> 不绝望，情绪丰富，可以各种恨海情天搞 DRAMA 剧情，2.5 Flash 速度很快；</p>
+          <p><strong>Claude 4.6 Sonnet</strong> 不如 Gemini（个人感觉），但 4 Opus 着实很难吃到，搞反重力反代吧。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 04 角色卡与游玩 ========== -->
+    <div class="step" id="sec-04">
+      <div class="step-head">
+        <span class="step-num">04</span>
+        <span class="step-title">角色卡与游玩</span>
+      </div>
+      <div class="step-body">
+        <p>终于到重头戏了，角！色！卡！</p>
+
+        <div class="sub-step">
+          <div class="sub-step-title">1. 查看你的角色</div>
+          <p>此处可以查看你的全部角色，图示为默认角色。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image13.png" alt="角色列表">
+        </div>
+
+        <div class="sub-step" id="sec-04-2">
+          <div class="sub-step-title">2. 导入新角色卡与互动</div>
+          <p>选中角色就可以开始互动了，蓝框处可以导入新角色卡。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image14.png" alt="导入角色卡">
+        </div>
+
+        <div class="sub-step" id="sec-04-3">
+          <div class="sub-step-title">3. 其他功能</div>
+          <p>① 绿框中的地球为<strong>角色自带的【世界书】</strong>，如果误删了，点这里重导。地球后方，可以为当前角色<strong>再绑定一本【世界书】</strong>。骷髅头是<strong>删除角色</strong>。</p>
+          <p>② 点击角色头像，可以直接<strong>更换头像</strong>。</p>
+          <p>③ 可以给角色卡增添<strong>标签</strong>方便管理。</p>
+          <p>④ 角色描述可以<strong>自行删减，改点设定</strong>。</p>
+          <p>⑤ <strong>第一条消息会是引导故事的重要开局</strong>，你甚至可以把设定丢给 AI，让它写几版开场白加进来。在【其他开场/额外问候语】中可以添加不同开场，在对话窗中的箭头处即可切换。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image15.png" alt="角色卡功能">
+        </div>
+
+        <div class="sub-step" id="sec-04-4">
+          <div class="sub-step-title">4. 含有世界书/局部正则的角色卡</div>
+          <p>作为新手，我们不用太顾虑这些方面的问题。因为在我们下载的 PNG 格式的角色卡，在导入时自带这些内容。</p>
+          <p>当导入角色卡后，作者又更新了新世界书/局部正则，这时候也只要手动添加就行：</p>
+          <p>1. 在更多中选择替换更新能替换当前角色卡的本体（即作者的最近更新）。</p>
+          <p>2. 角色卡的正则放在局部正则中，更新时注意不要漏掉。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image16.png" alt="世界书和正则">
+        </div>
+
+        <div class="sub-step" id="sec-04-5">
+          <div class="sub-step-title">5. 角色卡怎么下载</div>
+          <p>下载时注意看介绍，看看角色卡是在一楼，还是需要主楼链接跳转，最近为了防止卡片贩子，很多是通过回复获取下载链接的，注意认真看主楼说明；</p>
+          <p>第一次下载时，不需要考虑替换【世界书】和【正则】，但要注意楼内有没有<strong>【快速回复】</strong>（也就是 <strong>QR</strong>）需要下载，【快速回复】暂时没法像正则和世界书一样绑定进角色卡，所以需要你手动下（如何导入见 <a href="#sec-06-2">06 插件 — 快速回复部分</a>）。</p>
+          <ul>
+            <li>如果是在类脑/旅程，注意角色卡正确的后缀是 png 或者 json，别认错<strong>卡</strong>和<strong>单纯的美图</strong>。</li>
+            <li>在网页浏览时直接点开图片放大右键保存的不是正确的角色卡！！！需要通过这个在浏览器中打开（新标签页），再来保存 png 格式的角色卡。</li>
+          </ul>
+          <img class="step-img" src="../img/jiuguan-usage/image17.png" alt="正确下载角色卡">
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 05 用户设置/背景 ========== -->
+    <div class="step" id="sec-05">
+      <div class="step-head">
+        <span class="step-num">05</span>
+        <span class="step-title">用户设置 / 背景 <span class="opt-label">可跳过</span></span>
+      </div>
+      <div class="step-body">
+        <p>这一部分主要是一些自定义的界面和使用设置。自己摸索也非常简单。不影响基础游玩，可以先跳了，有机会再看。我就介绍一下我常用的几个功能。</p>
+        <img class="step-img" src="../img/jiuguan-usage/image18.png" alt="用户设置">
+
+        <div class="sub-step">
+          <div class="sub-step-title">常用设置一览</div>
+          <p><strong>1. 导入和保存主题</strong></p>
+          <p><strong>2. 头像样式</strong>可以在方圆中选择（我喜欢矩形）</p>
+          <p><strong>3. 聊天风格</strong>也是一种界面设置，气泡会更类似聊天窗口</p>
+          <p><strong>4. 主题颜色</strong>可以点击色块修改</p>
+          <img class="step-img" src="../img/jiuguan-usage/image19.png" alt="主题设置">
+
+          <p><strong>5. 字体比例</strong>是倍率，按阅读习惯更改即可，0.9 是缩小，1.1 是放大</p>
+          <p><strong>6. 其他选项</strong>按需求勾选，如果页面太窄，就调节页面宽度</p>
+          <img class="step-img" src="../img/jiuguan-usage/image20.png" alt="字体和页面设置">
+
+          <p><strong>7. CSS</strong> 处是更高级的界面修改，但本质可以通过复制粘贴拼凑——小白也能实现修改字体/UI/代码框样式。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image21.png" alt="CSS设置">
+
+          <p><strong>8.</strong> 图示两项可以简单理解成，当你改自己的名字时，需不需要一键替换过往聊天记录里你的名字。勾选就是替换，不勾选就是不替换。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image22.png" alt="名字替换">
+
+          <p><strong>9. 背景</strong>可以自由导入图片，通过锁，可以将背景和当前的对话窗口绑定。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image23.png" alt="背景设置">
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 06 插件基础 ========== -->
+    <div class="step" id="sec-06">
+      <div class="step-head">
+        <span class="step-num">06</span>
+        <span class="step-title">插件基础</span>
+      </div>
+      <div class="step-body">
+        <p>插件可以给酒馆提供更丰富的功能。我就介绍几个基础又必备的。主要是有时候在酒馆会下到很多东西，你得知道你下的东西要放哪里用。</p>
+        <p><strong>在右上方可以安装新插件，输入下载地址后，直接 install for all。</strong></p>
+
+        <div class="sub-step" id="sec-06-1">
+          <div class="sub-step-title">正则</div>
+          <p>正则一般分为两种，一种是和预设绑定的，一种是和角色卡绑定的。</p>
+          <p>和预设绑定的，一般是为了整理格式、隐藏思维链，在<strong>全局模式</strong>下使用。</p>
+          <p>和角色绑定的正则，一般是为了在角色卡中增添一些功能，在<strong>局部模式</strong>中使用。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image24.png" alt="正则设置">
+        </div>
+
+        <div class="sub-step" id="sec-06-2">
+          <div class="sub-step-title">快速回复（QR）</div>
+          <p>Quick Reply，一般简称 QR，用于快速回复、推动剧情，或者召唤手机界面等情况都能使用。</p>
+          <p>可以直接导入 QR 组，也可以导入单条 QR。摸不准下载的是什么就两个位置都导一下，有一个会失败。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image25.png" alt="快速回复">
+        </div>
+
+        <div class="sub-step" id="sec-06-3">
+          <div class="sub-step-title">酒馆登录 UI 美化 <span class="opt-label">可跳过</span></div>
+          <p>去主题区下载就可以。按教程替换文件，自定义背景，注意背景图的格式。</p>
+          <p>流程上基本是，先在 config 打开这两个：</p>
+          <img class="step-img" src="../img/jiuguan-usage/image26.png" alt="config开启">
+
+          <p style="margin-top:10px;">重启酒馆后，在管理员面板设置管理员账号的密码，并新建账户，用户句柄就是登录时需要用的账户。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image27.png" alt="设置管理员">
+
+          <p style="margin-top:10px;">创建完了之后，回到 config，关闭白名单和基础验证（如下图），仅保留现在的这个用户账户验证（如上上上图）。</p>
+          <p>如下图右侧的登录界面，是可以在浏览器里保存密码的。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image28.png" alt="登录界面">
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 07 插件推荐 ========== -->
+    <div class="step" id="sec-07">
+      <div class="step-head">
+        <span class="step-num">07</span>
+        <span class="step-title">插件推荐（手动添加）</span>
+      </div>
+      <div class="step-body">
+        <p>给了 GitHub 地址的可以去给佬们点个赞，也多去原帖看看原版使用教程吧。</p>
+        <p>安装插件在【三个箱子】（拓展）区：</p>
+        <img class="step-img" src="../img/jiuguan-usage/image29.png" alt="插件安装入口">
+        <img class="step-img" src="../img/jiuguan-usage/image30.png" alt="插件安装界面">
+
+        <div class="sub-step">
+          <div class="sub-step-title">1. 酒馆助手 / 前端助手（必备）</div>
+          <p>玩酒馆必装的插件。基本会飘在类脑/旅程的【酒馆插件】区首页。楼主提供了有魔法和无魔法两个版本的 git url，按你的网络情况选用。安装好后，会出现在扩展列表中，不需要再管。</p>
+          <p>麻瓜源：<code>https://gitlab.com/novi028/JS-Slash-Runner</code></p>
+          <p>魔法源：<code>https://github.com/N0VI028/JS-Slash-Runner.git</code></p>
+          <img class="step-img" src="../img/jiuguan-usage/image31.png" alt="前端助手">
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">2. 酒馆助手 - 脚本库（重要）</div>
+          <p>现在酒馆助手添加了脚本库功能，导入时要添加为全局，内置库里有一部分脚本就挺好用，剩下的要去帖子里找。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image32.png" alt="脚本库">
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">3. 提示词模板（重要）</div>
+          <p><code>https://github.com/zonde306/ST-Prompt-Template</code></p>
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">4. 消息滚动至开头</div>
+          <p>地址在 <a href="https://stagedog.github.io/%E9%9D%92%E7%A9%BA%E8%8E%89/%E4%BD%9C%E5%93%81%E9%9B%86/#id16" target="_blank" rel="noopener">作品集 — 白化蓝染的酒馆</a>。其实在用户设置里关闭自动滚动也行。用这个主要是，AI 消息发完后，消息顶部对齐到页面顶部，更强迫症友好。</p>
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">5. 数据库（重要，二选一）</div>
+          <p>建议和记忆插件二选一，两个都开 token 反而会炸，用来管理记忆。</p>
+
+          <p><strong>1. 原贴地址：</strong><a href="https://discord.com/channels/1134557553011998840/1429151492362862683/0" target="_blank" rel="noopener">【黑科技】【革命性忆插件】【SQLite与原生双语法】【自定义美化】全自动总结 —— 让AI为你实时维护世界观与角色数据！</a></p>
+          <p>在原贴首楼，可以跳转资源导航及最新资源。我们需要的是<strong>【本体 + 前端 + 3 正则】</strong>，本体和正则直接通过<strong>直达快车</strong>下载，前端需要去<strong>内容导航处</strong>下载。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image33.png" alt="数据库插件">
+
+          <p><strong>2. 下载资源 - 前端：</strong>在 <a href="https://discord.com/channels/1134557553011998840/1429151492362862683/0" target="_blank" rel="noopener">原帖</a> 首楼跳转<strong>内容导航</strong>，在内容导航找到推荐区的<strong>前端帖</strong>，在前端贴首楼跳转<strong>最新版本前端</strong>并下载。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image34.png" alt="前端下载1">
+          <img class="step-img" src="../img/jiuguan-usage/image35.png" alt="前端下载2">
+          <img class="step-img" src="../img/jiuguan-usage/image36.png" alt="前端下载3">
+
+          <p><strong>3. 下载资源 - 本体 + 正则：</strong>在 <a href="https://discord.com/channels/1134557553011998840/1429151492362862683/0" target="_blank" rel="noopener">原帖</a> 首楼跳转直达快车，下载本体 + 正则。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image37.png" alt="本体正则下载1">
+          <img class="step-img" src="../img/jiuguan-usage/image38.png" alt="本体正则下载2">
+
+          <p><strong>4. 安装：</strong><strong>【本体】</strong>和<strong>【前端】</strong>导入（酒馆助手 - 脚本），【正则】导入（正则），并且都别忘了启用。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image39.png" alt="安装脚本">
+          <img class="step-img" src="../img/jiuguan-usage/image40.png" alt="安装正则">
+
+          <p><strong>5. 配置 API：</strong>这一部分看官方教程，<a href="https://docs.google.com/document/d/1C5S8nB1rMRqb2fx8pubH9boDtLoPP6AZgSAlw3UhT9A/edit?tab=t.z9wo1xdo9y5k#heading=h.qkyx7x40gkzh" target="_blank" rel="noopener">酒馆数据库新手教程（主要是第二步，部署 API（必须）这部分）</a>。</p>
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">6. 记忆表格（重要，二选一）</div>
+          <p>同样在类脑/旅程的【酒馆插件】区 <a href="https://discord.com/channels/1134557553011998840/1442043208501690368" target="_blank" rel="noopener">【记忆表格 V2.0.0】</a>，进贴后有麻瓜和魔法两版。具体使用可以看帖内的介绍。</p>
+          <p>GitHub（有梯）：<a href="https://github.com/gaigai315/ST-Memory-Context" target="_blank" rel="noopener">https://github.com/gaigai315/ST-Memory-Context</a></p>
+          <p>Gitee（无梯）：<a href="https://gitee.com/gaigai315/ST-Memory-Context" target="_blank" rel="noopener">https://gitee.com/gaigai315/ST-Memory-Context</a></p>
+          <p>佬的个人站 <a href="https://pcnsnlcapni4.feishu.cn/wiki/AfPuwMlCSieXbckthFUc5bQYnMe" target="_blank" rel="noopener">ST-Memory-Context</a> 可以看使用教程。</p>
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">7. 消息提醒（实用）</div>
+          <p><code>https://github.com/RaphllA/vertin-tips</code></p>
+          <img class="step-img" src="../img/jiuguan-usage/image41.png" alt="消息提醒">
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">8. QR 助手（实用）</div>
+          <p><code>https://github.com/uhhhh15/QR</code></p>
+          <p>用于优化输入界面，折叠快速回复。</p>
+          <p>顺便推荐一下剧情推进类的 QR，去原贴下载：<a href="https://discord.com/channels/1291925535324110879/1369331757400199228/1370060679834505276" target="_blank" rel="noopener">Discord 链接</a></p>
+          <img class="step-img" src="../img/jiuguan-usage/image42.png" alt="QR助手">
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">9. 转移工具（实用）</div>
+          <p><code>https://github.com/Lorenzzz-Elio/preset-transfer</code></p>
+          <p>安装后在插件列表选择开启模式，在聊天窗口左下魔法棒中选用，功能非常丰富实用：</p>
+          <p>1. 预设和世界书内条目的转移</p>
+          <p>2. 同一预设内，快速切换条目开启状态及世界书绑定</p>
+          <p>3. 正则分组</p>
+          <p>4. 世界书分组</p>
+          <img class="step-img" src="../img/jiuguan-usage/image43.png" alt="转移工具1">
+          <img class="step-img" src="../img/jiuguan-usage/image44.png" alt="转移工具2">
+          <img class="step-img" src="../img/jiuguan-usage/image45.png" alt="转移工具3">
+          <img class="step-img" src="../img/jiuguan-usage/image46.png" alt="转移工具4">
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">10. 加快酒馆加载（鸡尾酒）</div>
+          <p>如果感觉每次进入酒馆，加载都非常慢，那必须尝尝这个 <a href="https://discord.com/channels/1134557553011998840/1465798621474586939" target="_blank" rel="noopener">【鸡尾酒】让你的酒馆从此变得无比流畅丝滑，不再卡顿</a>。</p>
+          <p>插件安装链接：<code>https://github.com/Lianues/cocktail</code></p>
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">11. 后台保活（超实用）</div>
+          <p>有这个在，就不用担心切个界面就消息截断了：<a href="https://discord.com/channels/1134557553011998840/1485548556017471560" target="_blank" rel="noopener">IOS 安卓网页后台保活</a>。</p>
+          <p>具体看老师的教程，导入酒馆助手的脚本库就可以使用（这次不是通过链接安装了！），记得导入后要开启脚本。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image47.png" alt="后台保活1">
+          <img class="step-img" src="../img/jiuguan-usage/image48.png" alt="后台保活2">
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">12. 同层小手机（好玩）</div>
+          <p>这个一时间不知道该推荐哪位老师的，五花八门。能在界面中召唤出小手机，和角色的互动会更鲜活有生活气息，很多人都喜欢。</p>
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">13. 酒馆通用 AI 生图插件（好玩，图文并茂）</div>
+          <p>这个作者老师的教程挺详细，大体上先<strong>插件安装</strong>：<a href="https://gxcgf4l6b2y.feishu.cn/wiki/BB7QwPaZdiJj5DkGjDAc2DHenVh#part-FR80d0m1OoIN39xYMk9cZulDnEc" target="_blank" rel="noopener">我想看看插件怎么安装的</a></p>
+          <p>国内使用地址：<code>https://gitee.com/damoshen2/st-chatu8.git</code></p>
+          <p>GitHub 地址：<code>https://github.com/damoshen123/st-chatu8.git</code></p>
+          <p>拉个云/本地 ComfyUI：<a href="https://my.feishu.cn/wiki/UXtHw83pmiHnx1k4WpwcIn79nec#share-HyTUdYAZooaOE8xLxpNcRrTFnpe" target="_blank" rel="noopener">酒馆通用生图插件 8 教程导航</a>，并让酒馆连接到 ComfyUI。</p>
+          <p>接下来挂个自动生图的世界书到全局，文里就带插图了~ <a href="https://discord.com/channels/1134557553011998840/1299478642270666853/1299478642270666853" target="_blank" rel="noopener">聚焦单人世界书（效果好）+ 多人场景世界书（不太妙）</a></p>
+          <p>再进阶一点看一致性管理，让图按你设定的角色画；再进阶看改图重绘。</p>
+          <img class="step-img" src="../img/jiuguan-usage/image49.png" alt="生图插件1">
+          <img class="step-img" src="../img/jiuguan-usage/image50.png" alt="生图插件2">
+        </div>
+
+        <div class="sub-step">
+          <div class="sub-step-title">14. 酒馆声音插件（角色自主给你打电话）</div>
+          <p>具体使用参考原帖链接：<a href="http://discord.com/channels/1134557553011998840/1459177815080440022/0" target="_blank" rel="noopener">【情感语音引擎】主动电话、多人通话功能上线！</a></p>
+          <p>原帖教程：<a href="https://docs.google.com/document/d/13URWlQiBVM9bJJMg5YBzp61bkwKPt0G-KJ8mi87lbmQ/edit?tab=t.0" target="_blank" rel="noopener">插件教程</a></p>
+          <p>云酒馆使用起来略微麻烦，因为酒馆本体在云端，一般跑语音合成的模型又部署在本地，就需要虚拟组网来打通（原帖教程中包括这一部分）。如果本来就是本地酒馆应该很好用。</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox"><img src="" alt="预览"></div>
+
+<script>
+/* ---- Lightbox ---- */
+(function() {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('step-img')) {
+      lbImg.src = e.target.src;
+      lb.classList.add('open');
+    } else if (e.target === lb || e.target === lbImg) {
+      lb.classList.remove('open');
+    }
+  });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') lb.classList.remove('open'); });
+})();
+
+/* ---- Copy code ---- */
+function copyCode(btn) {
+  var code = btn.parentElement.querySelector('.code-block').textContent;
+  navigator.clipboard.writeText(code).then(function() {
+    btn.textContent = '✓'; setTimeout(function() { btn.textContent = '📋'; }, 1500);
+  });
+}
+
+/* ---- Float stack toggle ---- */
+(function() {
+  var handle = document.getElementById('floatHandle');
+  var stack = document.getElementById('floatStack');
+  if (!handle || !stack) return;
+  handle.addEventListener('click', function() { stack.classList.toggle('open'); });
+})();
+
+/* ---- TOC toggle ---- */
+(function() {
+  var btn = document.getElementById('tocToggle');
+  var popup = document.getElementById('tocPopup');
+  if (!btn || !popup) return;
+  btn.addEventListener('click', function(e) { e.stopPropagation(); popup.classList.toggle('open'); });
+  popup.addEventListener('click', function(e) {
+    if (e.target.closest('.toc-item')) popup.classList.remove('open');
+  });
+  document.addEventListener('click', function(e) {
+    if (!popup.contains(e.target) && e.target !== btn) popup.classList.remove('open');
+  });
+})();
+
+/* ---- Scroll spy ---- */
+(function() {
+  var items = document.querySelectorAll('.toc-item');
+  if (!items.length) return;
+  var targets = [];
+  items.forEach(function(item) {
+    var id = item.getAttribute('href').replace('#', '');
+    var el = document.getElementById(id);
+    if (el) targets.push({ id: id, el: el });
+  });
+  if (!targets.length) return;
+  window.addEventListener('scroll', function() {
+    var top = window.scrollY + 100;
+    var current = targets[0].id;
+    targets.forEach(function(t) { if (t.el.offsetTop <= top) current = t.id; });
+    document.querySelectorAll('.toc-item').forEach(function(item) {
+      item.classList.toggle('active', item.getAttribute('href') === '#' + current);
+    });
+  });
+})();
+
+/* ---- Theme ---- */
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var LIGHT = 'light', DARK = 'dark';
+  function getTheme() {
+    var t = localStorage.getItem('theme');
+    if (t) return t;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? LIGHT : DARK;
+  }
+  function applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    toggle.textContent = t === LIGHT ? '☀️' : '🌙';
+    localStorage.setItem('theme', t);
+  }
+  toggle.addEventListener('click', function() {
+    applyTheme(html.getAttribute('data-theme') === LIGHT ? DARK : LIGHT);
+  });
+  applyTheme(getTheme());
+
+  document.getElementById('backToTop').addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+</body>
+</html>

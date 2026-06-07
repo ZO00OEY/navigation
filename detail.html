@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>详情</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <style>
 /* ========== Reset & Variables ========== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -59,6 +60,21 @@ a, button, .link-item, [role="button"] {
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='32' viewBox='0 0 40 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23b8c8ff'/%3E%3Cstop offset='100%25' stop-color='%238c96ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1.5' y='4' width='4' height='9' rx='2' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='7' y='1.5' width='4.5' height='12.5' rx='2.25' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='13' y='0.5' width='5' height='15' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='19.5' y='2.5' width='5' height='12' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1.5' y='13' width='25' height='15' rx='6' fill='url(%23g)' stroke='%23fff' stroke-width='1.5'/%3E%3Crect x='0.5' y='18' width='5.5' height='8' rx='2.75' fill='url(%23g)' stroke='%23fff' stroke-width='1.2'/%3E%3C/svg%3E") 16 1, pointer;
 }
 
+input, textarea, [contenteditable] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='30' viewBox='0 0 14 30'%3E%3Crect x='4' y='4' width='6' height='22' rx='3' fill='%238c96ff' stroke='%23fff' stroke-width='1.3'/%3E%3Crect x='1' y='1' width='12' height='5' rx='2.5' fill='%238c96ff' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1' y='24' width='12' height='5' rx='2.5' fill='%238c96ff' stroke='%23fff' stroke-width='1'/%3E%3C/svg%3E") 7 15, text;
+}
+
+/* Light theme cursors */
+[data-theme="light"] body {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffb3c6'/%3E%3Cstop offset='100%25' stop-color='%23fb7299'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 27 C16 27 4 19 4 11 C4 5 8 3 12 7.5 C14 10 15 12 16 14 C17 12 18 10 20 7.5 C24 3 28 5 28 11 C28 19 16 27 16 27 Z' fill='url(%23g)' stroke='%23fff' stroke-width='2' stroke-linejoin='round' transform='rotate(145 16 16)'/%3E%3C/svg%3E") 19 6, auto;
+}
+[data-theme="light"] input, [data-theme="light"] textarea, [data-theme="light"] [contenteditable] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='30' viewBox='0 0 14 30'%3E%3Crect x='4' y='4' width='6' height='22' rx='3' fill='%23fb7299' stroke='%23fff' stroke-width='1.3'/%3E%3Crect x='1' y='1' width='12' height='5' rx='2.5' fill='%23fb7299' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1' y='24' width='12' height='5' rx='2.5' fill='%23fb7299' stroke='%23fff' stroke-width='1'/%3E%3C/svg%3E") 7 15, text;
+}
+[data-theme="light"] a, [data-theme="light"] button, [data-theme="light"] .link-item, [data-theme="light"] [role="button"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='32' viewBox='0 0 40 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffb3c6'/%3E%3Cstop offset='100%25' stop-color='%23fb7299'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1.5' y='4' width='4' height='9' rx='2' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='7' y='1.5' width='4.5' height='12.5' rx='2.25' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='13' y='0.5' width='5' height='15' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='19.5' y='2.5' width='5' height='12' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1.5' y='13' width='25' height='15' rx='6' fill='url(%23g)' stroke='%23fff' stroke-width='1.5'/%3E%3Crect x='0.5' y='18' width='5.5' height='8' rx='2.75' fill='url(%23g)' stroke='%23fff' stroke-width='1.2'/%3E%3C/svg%3E") 16 1, pointer;
+}
+
 /* ========== Firework ========== */
 .firework-particle {
   position: fixed; pointer-events: none; z-index: 9998;
@@ -93,7 +109,7 @@ a, button, .link-item, [role="button"] {
   width: 38px; height: 38px; border-radius: 50%;
   background: var(--card-bg); border: 1px solid var(--card-border);
   backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  color: var(--text); font-size: 1.1rem; cursor: pointer;
+  color: var(--text); font-size: 1.1rem;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.3s;
 }
@@ -131,7 +147,38 @@ a, button, .link-item, [role="button"] {
   position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
   color: var(--text-tertiary); font-size: 0.8rem; pointer-events: none;
 }
-.link-item.hidden { display: none; }
+.link-item.hidden, .detail-subcat-header.hidden { display: none; }
+
+.detail-subcat-header {
+  font-size: 0.78rem; font-weight: 600;
+  color: var(--text-secondary); letter-spacing: 0.04em;
+  padding: 16px 12px 6px; display: flex; align-items: center; gap: 6px;
+}
+.detail-subcat-header:first-child { padding-top: 4px; }
+.detail-subcat-count {
+  font-size: 0.62rem; font-weight: 500; color: var(--text-tertiary);
+  background: var(--search-bg); border-radius: 8px; padding: 1px 7px;
+}
+
+/* ========== Sidebar Layout ========== */
+.detail-layout { display: flex; gap: 16px; align-items: flex-start; }
+.detail-sidebar {
+  width: 120px; flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 2px;
+  padding-top: 4px; position: sticky; top: 20px;
+}
+.dt-tab {
+  display: block; width: 100%; padding: 7px 12px;
+  font-size: 0.72rem; color: var(--text-secondary);
+  background: none; border: none; border-radius: 8px;
+  text-align: left; font-family: inherit;
+  transition: all 0.15s;
+}
+.dt-tab:hover { background: var(--link-item-hover); color: var(--text); }
+.dt-tab.active { background: var(--accent-1); color: var(--text); font-weight: 600; }
+.detail-content { flex: 1; min-width: 0; }
+
+.link-item.filtered, .detail-subcat-header.filtered { display: none; }
 
 /* ========== Page Header ========== */
 .page-header {
@@ -197,6 +244,9 @@ a, button, .link-item, [role="button"] {
   .app { padding: 24px 14px 40px; }
   .link-item { flex-wrap: wrap; gap: 4px; }
   .link-desc { width: 100%; margin-left: 28px; }
+  .detail-layout { flex-direction: column; }
+  .detail-sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding-bottom: 4px; position: static; }
+  .dt-tab { white-space: nowrap; width: auto; flex-shrink: 0; }
 }
 </style>
 </head>
@@ -217,8 +267,13 @@ a, button, .link-item, [role="button"] {
     <div class="page-title" id="pageTitle"></div>
     <div class="page-meta" id="pageMeta"></div>
   </div>
-  <div class="link-card">
-    <div class="card-inner" id="linkList"></div>
+  <div class="detail-layout" id="detailLayout">
+    <div class="detail-sidebar" id="detailSidebar"></div>
+    <div class="detail-content">
+      <div class="link-card">
+        <div class="card-inner" id="linkList"></div>
+      </div>
+    </div>
   </div>
   <footer class="footer"><span>🌱 持续更新中</span></footer>
 </div>
@@ -227,13 +282,17 @@ a, button, .link-item, [role="button"] {
 <script>
 (function() {
   // ========== Find category ==========
-  var page = new URLSearchParams(window.location.search).get('page');
-  var subcat = null;
-  var parentName = '';
+  const page = new URLSearchParams(window.location.search).get('page');
+  let subcat = null;
+  let block = null;
+  let parentBlock = null;
+  let parentName = '';
+  let subcatIdx = -1;
   SITE_DATA.blocks.forEach(function(b) {
+    if (b.page === page) { block = b; parentBlock = b; }
     if (b.subcategories) {
-      b.subcategories.forEach(function(s) {
-        if (s.page === page) { subcat = s; parentName = b.name; }
+      b.subcategories.forEach(function(s, idx) {
+        if (s.page === page) { subcat = s; parentName = b.name; parentBlock = b; subcatIdx = idx; }
       });
     }
   });
@@ -243,29 +302,96 @@ a, button, .link-item, [role="button"] {
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  if (!subcat) {
-    document.getElementById('pageTitle').textContent = '未找到';
-    document.getElementById('pageMeta').textContent = '请从导航页进入';
-  } else {
+  function renderLinkItem(link, i, subIdx) {
+    return '<a href="' + esc(link.url) + '" class="link-item" target="_blank" rel="noopener" data-subcat="' + subIdx + '">' +
+      '<span class="link-num">' + (i + 1).toString().padStart(2, '0') + '</span>' +
+      '<span class="link-title">' + esc(link.title) + '</span>' +
+      (link.desc ? '<span class="link-desc">' + esc(link.desc) + '</span>' : '') +
+      '<span class="link-arrow">→</span></a>';
+  }
+
+  if (subcat) {
     document.title = parentName + ' / ' + subcat.name + ' - My Nav';
     document.getElementById('pageTitle').innerHTML = '<span class="breadcrumb">' + esc(parentName) + ' / </span>' + esc(subcat.name);
-    document.getElementById('pageMeta').textContent = '共 ' + subcat.links.length + ' 篇';
-    var html = '';
-    subcat.links.forEach(function(link, i) {
-      html += '<a href="' + esc(link.url) + '" class="link-item" target="_blank" rel="noopener">' +
-        '<span class="link-num">' + (i + 1).toString().padStart(2, '0') + '</span>' +
-        '<span class="link-title">' + esc(link.title) + '</span>' +
-        (link.desc ? '<span class="link-desc">' + esc(link.desc) + '</span>' : '') +
-        '<span class="link-arrow">→</span></a>';
+  } else if (block && block.subcategories) {
+    document.title = block.name + ' - My Nav';
+    document.getElementById('pageTitle').innerHTML = esc(block.name);
+  } else if (!block && !subcat) {
+    document.getElementById('pageTitle').textContent = '未找到';
+    document.getElementById('pageMeta').textContent = '请从导航页进入';
+  }
+
+  // Render all links from parentBlock if available
+  if (parentBlock && parentBlock.subcategories) {
+    let total = 0;
+    parentBlock.subcategories.forEach(function(s) { total += s.links.length; });
+    document.getElementById('pageMeta').textContent = parentBlock.subcategories.length + ' 个分类 · 共 ' + total + ' 篇';
+    let html = '';
+    parentBlock.subcategories.forEach(function(sub, si) {
+      html += '<div class="detail-subcat-header" data-subcat="' + si + '">' + esc(sub.name) + '<span class="detail-subcat-count">' + sub.links.length + '</span></div>';
+      sub.links.forEach(function(link, i) { html += renderLinkItem(link, i, si); });
     });
     document.getElementById('linkList').innerHTML = html;
   }
 
+  // ========== Sidebar ==========
+  const sidebar = document.getElementById('detailSidebar');
+  const layout = document.getElementById('detailLayout');
+  if (parentBlock && parentBlock.subcategories && parentBlock.subcategories.length > 0) {
+    layout.style.display = '';
+    let tabs = '<button class="dt-tab' + (subcat ? '' : ' active') + '" data-filter="all">全部</button>';
+    parentBlock.subcategories.forEach(function(s, i) {
+      tabs += '<button class="dt-tab' + (i === subcatIdx ? ' active' : '') + '" data-filter="' + i + '">' + esc(s.name) + '</button>';
+    });
+    sidebar.innerHTML = tabs;
+    if (subcat) filterBySubcat(subcatIdx);
+  } else {
+    layout.style.display = '';
+  }
+
+  function filterBySubcat(idx) {
+    const items = document.querySelectorAll('#linkList .link-item');
+    const headers = document.querySelectorAll('#linkList .detail-subcat-header');
+    items.forEach(function(item) {
+      if (item.getAttribute('data-subcat') === String(idx)) {
+        item.classList.remove('filtered');
+      } else {
+        item.classList.add('filtered');
+      }
+    });
+    headers.forEach(function(h) {
+      if (h.getAttribute('data-subcat') === String(idx)) {
+        h.classList.remove('filtered');
+      } else {
+        h.classList.add('filtered');
+      }
+    });
+  }
+
+  function showAll() {
+    document.querySelectorAll('#linkList .link-item, #linkList .detail-subcat-header').forEach(function(el) {
+      el.classList.remove('filtered');
+    });
+  }
+
+  sidebar.addEventListener('click', function(e) {
+    const tab = e.target.closest('.dt-tab');
+    if (!tab) return;
+    sidebar.querySelectorAll('.dt-tab').forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+    const filter = tab.getAttribute('data-filter');
+    if (filter === 'all') {
+      showAll();
+    } else {
+      filterBySubcat(parseInt(filter, 10));
+    }
+  });
+
   // ========== Search ==========
-  var searchInput = document.getElementById('detailSearch');
+  const searchInput = document.getElementById('detailSearch');
   searchInput.addEventListener('input', function() {
-    var q = searchInput.value.trim().toLowerCase();
-    var items = document.querySelectorAll('#linkList .link-item');
+    const q = searchInput.value.trim().toLowerCase();
+    const items = document.querySelectorAll('#linkList .link-item');
     items.forEach(function(item) {
       if (!q || item.textContent.toLowerCase().indexOf(q) !== -1) {
         item.classList.remove('hidden');
@@ -273,16 +399,26 @@ a, button, .link-item, [role="button"] {
         item.classList.add('hidden');
       }
     });
+    // Hide empty subcat headers
+    document.querySelectorAll('#linkList .detail-subcat-header').forEach(function(h) {
+      let vis = false;
+      let el = h.nextElementSibling;
+      while (el && !el.classList.contains('detail-subcat-header')) {
+        if (!el.classList.contains('hidden') && !el.classList.contains('filtered')) { vis = true; break; }
+        el = el.nextElementSibling;
+      }
+      h.classList.toggle('hidden', !vis && q);
+    });
   });
 
   // ========== Theme ==========
-  var toggle = document.getElementById('themeToggle');
-  var html = document.documentElement;
-  var LIGHT = 'light';
-  var DARK = 'dark';
+  const toggle = document.getElementById('themeToggle');
+  const html = document.documentElement;
+  const LIGHT = 'light';
+  const DARK = 'dark';
 
   function getTheme() {
-    var saved = localStorage.getItem('theme');
+    const saved = localStorage.getItem('theme');
     if (saved) return saved;
     if (window.matchMedia('(prefers-color-scheme: light)').matches) return LIGHT;
     return DARK;
@@ -300,19 +436,19 @@ a, button, .link-item, [role="button"] {
   applyTheme(getTheme());
 
   // ========== Firework ==========
-  var HUES_PINK = [340, 350, 355, 0, 10, 20, 330, 345, 5, 15, 335, 25];
-  var HUES_COOL = [220, 235, 250, 260, 270, 280, 240, 255, 265, 275, 245, 260];
+  const HUES_PINK = [340, 350, 355, 0, 10, 20, 330, 345, 5, 15, 335, 25];
+  const HUES_COOL = [220, 235, 250, 260, 270, 280, 240, 255, 265, 275, 245, 260];
 
   document.addEventListener('click', function(e) {
-    var count = 24;
-    var isDark = html.getAttribute('data-theme') === DARK;
-    var hues = isDark ? HUES_COOL : HUES_PINK;
-    for (var i = 0; i < count; i++) {
-      var p = document.createElement('div');
-      var angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
-      var dist = 30 + Math.random() * 85;
-      var hue = hues[Math.floor(Math.random() * hues.length)];
-      var isStar = Math.random() < 0.2;
+    const count = 24;
+    const isDark = html.getAttribute('data-theme') === DARK;
+    const hues = isDark ? HUES_COOL : HUES_PINK;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+      const dist = 30 + Math.random() * 85;
+      const hue = hues[Math.floor(Math.random() * hues.length)];
+      const isStar = Math.random() < 0.2;
       p.className = 'firework-particle' + (isStar ? ' star' : '');
       p.style.cssText =
         '--tx:' + Math.cos(angle) * dist + 'px;' +

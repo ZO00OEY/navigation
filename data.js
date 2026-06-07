@@ -22,12 +22,17 @@ const SITE_DATA = {
       "icon": "📚",
       "cols": 4,
       "rows": 2,
+      "layout": "flat",
+      "page": "jiaocheng",
       "subcategories": [
         {
           "name": "酒馆区",
-          "page": "jiuguan",
           "links": [
-            { "title": "SillyTavern 酒馆入门指南", "url": "#", "desc": "从零搭建你的 AI 角色扮演前端" },
+            { "title": "哪种搭建方式适合你？", "url": "guides/jiuguan-guide.html", "desc": "手机、电脑、云服务器…快速搞懂该选哪个" },
+            { "title": "酒馆搭建教程——PC电脑", "url": "guides/pc-setup.html", "desc": "图文教程，从零在电脑上安装酒馆" },
+            { "title": "酒馆搭建教程——安卓手机", "url": "guides/android-setup.html", "desc": "Termux + 一键脚本，手机随身玩" },
+            { "title": "酒馆搭建教程——VPS云服务器", "url": "guides/vps-setup.html", "desc": "腾讯云 + 1panel 面板，从零搭建云端酒馆" },
+            { "title": "酒馆使用指南", "url": "guides/jiuguan-usage.html", "desc": "常用插件、推荐配置与使用技巧" },
             { "title": "角色卡制作完全教程", "url": "#", "desc": "写好一张角色卡的所有技巧" },
             { "title": "正则表达式速查手册", "url": "#", "desc": "酒馆常用正则脚本大全" },
             { "title": "世界书编写进阶", "url": "#", "desc": "Lorebook 结构与触发条件详解" },
@@ -36,7 +41,6 @@ const SITE_DATA = {
         },
         {
           "name": "ComfyUI 区",
-          "page": "comfyui",
           "links": [
             { "title": "ComfyUI 安装与环境配置", "url": "#", "desc": "Windows / Linux 一站式安装教程" },
             { "title": "工作流合集推荐", "url": "#", "desc": "精选文生图、图生图工作流打包" },
@@ -46,7 +50,6 @@ const SITE_DATA = {
         },
         {
           "name": "Obsidian 区",
-          "page": "obsidian",
           "links": [
             { "title": "Obsidian 入门配置指南", "url": "#", "desc": "从安装到写出第一篇笔记" },
             { "title": "必装插件清单", "url": "#", "desc": "提升效率的社区插件推荐与配置" },
@@ -73,12 +76,59 @@ const SITE_DATA = {
       "type": "nav-links",
       "name": "好用站点",
       "icon": "🌐",
-      "cols": 2,
-      "rows": 1,
-      "links": [
-        { "title": "【影视】硬核指南", "url": "https://yinghezhinan.com/", "desc": "影视资源与深度解析" },
-        { "title": "【影视】剧OK", "url": "https://juok3.top/", "desc": "在线追剧平台" },
-        { "title": "在线工具箱", "url": "http://tool.myop.cn/", "desc": "实用在线工具集合" }
+      "cols": 4,
+      "rows": 3,
+      "layout": "tabs",
+      "page": "haoyong",
+      "subcategories": [
+        {
+          "name": "通用",
+          "links": [
+            { "title": "在线工具箱", "url": "http://tool.myop.cn/", "desc": "实用在线工具集合" },
+            { "title": "剧OK", "url": "https://juok3.top/", "desc": "在线追剧 高清下载" },
+            { "title": "硬核指南", "url": "https://yinghezhinan.com/", "desc": "影视资源大全" },
+            { "title": "EmojiAll", "url": "https://www.emojiall.com/zh-hans", "desc": "emoji 大全" },
+            { "title": "regex101", "url": "https://regex101.com/", "desc": "正则表达式测试与调试" }
+          ]
+        },
+        {
+          "name": "外设工具箱",
+          "links": [
+            { "title": "显卡天梯图", "url": "https://www.mydrivers.com/zhuanti/tianti/gpu/index.html", "desc": "显卡性能排行" },
+            { "title": "CPU天梯图", "url": "https://www.mydrivers.com/zhuanti/tianti/cpu/index.html", "desc": "CPU性能排行" },
+            { "title": "Gamepad Tester", "url": "https://gamepad-tester.com/", "desc": "手柄按键检测" },
+            { "title": "键盘测试", "url": "http://keyboard.cn/", "desc": "在线键盘按键检测" },
+            { "title": "VIA", "url": "https://usevia.app/", "desc": "在线改键位工具" }
+          ]
+        },
+        {
+          "name": "临时邮箱",
+          "links": [
+            { "title": "TempMail.cn", "url": "https://tempmail.cn/", "desc": "中文临时邮箱" },
+            { "title": "10-Minute Mail", "url": "https://10-minutemail.com/", "desc": "10分钟临时邮箱" },
+            { "title": "215.im", "url": "https://vip.215.im/", "desc": "临时邮箱服务" }
+          ]
+        },
+        {
+          "name": "临时网盘",
+          "links": [
+            { "title": "文叔叔", "url": "https://www.wenshushu.cn/", "desc": "在线传文件" },
+            { "title": "AirPortal", "url": "https://www.airportal.cn/", "desc": "空投文件传输" },
+            { "title": "TLink", "url": "https://www.ttttt.link/", "desc": "临时文件分享" },
+            { "title": "Send Anywhere", "url": "https://send-anywhere.com/", "desc": "跨平台文件传输" },
+            { "title": "Wormhole", "url": "https://wormhole.app/", "desc": "端到端加密文件分享" }
+          ]
+        },
+        {
+          "name": "在线图片处理",
+          "links": [
+            { "title": "改图宝", "url": "https://www.gaitubao.com/", "desc": "在线图片编辑" },
+            { "title": "做好图", "url": "http://www.zuohaotu.com/image-converter.aspx", "desc": "图片格式转换" },
+            { "title": "凡科快图", "url": "https://kt.fkw.com/tools.html", "desc": "在线图片处理工具" },
+            { "title": "Remove.bg", "url": "https://www.remove.bg/zh", "desc": "AI 背景去除" },
+            { "title": "TinyPNG", "url": "https://tinypng.com/", "desc": "智能图片压缩" }
+          ]
+        }
       ]
     }
   ]

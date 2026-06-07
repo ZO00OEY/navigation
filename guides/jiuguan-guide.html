@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>哪种搭建方式适合你？ - My Nav</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a14;
+  --card-bg: rgba(255,255,255,0.035);
+  --card-border: rgba(255,255,255,0.07);
+  --card-hover-bg: rgba(255,255,255,0.055);
+  --card-hover-border: rgba(255,255,255,0.14);
+  --card-shadow: rgba(0,0,0,0.25);
+  --text: #e4e4ec;
+  --text-secondary: #9494a8;
+  --text-tertiary: #6b6b80;
+  --link-color: #8fa8ff;
+  --link-hover: #b8c8ff;
+  --radius: 18px;
+  --accent-1: rgba(120,140,255,0.28);
+}
+
+[data-theme="light"] {
+  --bg: #f3eff3;
+  --card-bg: rgba(255,255,255,0.62);
+  --card-border: rgba(0,0,0,0.06);
+  --card-hover-bg: rgba(255,255,255,0.82);
+  --card-hover-border: rgba(251,114,153,0.22);
+  --card-shadow: rgba(0,0,0,0.06);
+  --text: #18181e;
+  --text-secondary: #6b6b80;
+  --text-tertiary: #999;
+  --link-color: #d44070;
+  --link-hover: #fb7299;
+  --accent-1: rgba(251,114,153,0.22);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23b8c8ff'/%3E%3Cstop offset='100%25' stop-color='%238c96ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 27 C16 27 4 19 4 11 C4 5 8 3 12 7.5 C14 10 15 12 16 14 C17 12 18 10 20 7.5 C24 3 28 5 28 11 C28 19 16 27 16 27 Z' fill='url(%23g)' stroke='%23fff' stroke-width='2' stroke-linejoin='round' transform='rotate(145 16 16)'/%3E%3C/svg%3E") 19 6, auto;
+}
+a, button, .choice-btn { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='32' viewBox='0 0 40 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23b8c8ff'/%3E%3Cstop offset='100%25' stop-color='%238c96ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1.5' y='4' width='4' height='9' rx='2' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='7' y='1.5' width='4.5' height='12.5' rx='2.25' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='13' y='0.5' width='5' height='15' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='19.5' y='2.5' width='5' height='12' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1.5' y='13' width='25' height='15' rx='6' fill='url(%23g)' stroke='%23fff' stroke-width='1.5'/%3E%3Crect x='0.5' y='18' width='5.5' height='8' rx='2.75' fill='url(%23g)' stroke='%23fff' stroke-width='1.2'/%3E%3C/svg%3E") 16 1, pointer; }
+
+[data-theme="light"] body {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffb3c6'/%3E%3Cstop offset='100%25' stop-color='%23fb7299'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 27 C16 27 4 19 4 11 C4 5 8 3 12 7.5 C14 10 15 12 16 14 C17 12 18 10 20 7.5 C24 3 28 5 28 11 C28 19 16 27 16 27 Z' fill='url(%23g)' stroke='%23fff' stroke-width='2' stroke-linejoin='round' transform='rotate(145 16 16)'/%3E%3C/svg%3E") 19 6, auto;
+}
+[data-theme="light"] a, [data-theme="light"] button, [data-theme="light"] .choice-btn {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='32' viewBox='0 0 40 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffb3c6'/%3E%3Cstop offset='100%25' stop-color='%23fb7299'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1.5' y='4' width='4' height='9' rx='2' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='7' y='1.5' width='4.5' height='12.5' rx='2.25' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='13' y='0.5' width='5' height='15' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='19.5' y='2.5' width='5' height='12' rx='2.5' fill='url(%23g)' stroke='%23fff' stroke-width='1'/%3E%3Crect x='1.5' y='13' width='25' height='15' rx='6' fill='url(%23g)' stroke='%23fff' stroke-width='1.5'/%3E%3Crect x='0.5' y='18' width='5.5' height='8' rx='2.75' fill='url(%23g)' stroke='%23fff' stroke-width='1.2'/%3E%3C/svg%3E") 16 1, pointer;
+}
+
+.firework-particle { position: fixed; pointer-events: none; z-index: 9998; width: 6px; height: 6px; border-radius: 50%; animation: firework 0.7s ease-out forwards; }
+.firework-particle.star { width: 8px; height: 3px; border-radius: 1px; animation: firework 0.8s ease-out forwards; }
+@keyframes firework {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+.bg-decor { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.blob { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.32; }
+.blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(80,100,220,0.5), transparent); top: -200px; left: -150px; }
+.blob-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(140,80,200,0.4), transparent); top: 50%; right: -200px; transform: translateY(-50%); }
+.blob-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(60,180,160,0.35), transparent); bottom: -150px; left: 30%; }
+[data-theme="light"] .blob-1 { background: radial-gradient(circle, rgba(251,130,160,0.42), transparent); }
+[data-theme="light"] .blob-2 { background: radial-gradient(circle, rgba(220,150,200,0.36), transparent); }
+[data-theme="light"] .blob-3 { background: radial-gradient(circle, rgba(255,180,140,0.32), transparent); }
+[data-theme="light"] .blob { opacity: 0.35; }
+
+/* ---- Floating toolbar (bookmark tab) ---- */
+.float-stack {
+  position: fixed; top: 0; right: 20px; z-index: 50;
+  overflow: hidden;
+  max-height: 32px;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 1px 8px rgba(0,0,0,0.18));
+}
+.float-stack.open { max-height: 360px; }
+
+.bookmark-strip {
+  width: 52px;
+  display: flex; flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-top: none;
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  padding: 0 0 28px 0;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 28px), 75% 100%, 50% calc(100% - 28px), 25% 100%, 0 calc(100% - 28px));
+}
+[data-theme="light"] .bookmark-strip {
+  border-color: rgba(251,114,153,0.18);
+  background: linear-gradient(180deg, rgba(251,114,153,0.12) 0%, rgba(255,255,255,0.55) 100%);
+}
+
+.bookmark-tab {
+  width: 100%; height: 32px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; user-select: none;
+  color: var(--text-tertiary);
+  font-size: 0.4rem;
+  transition: color 0.3s;
+  position: relative;
+}
+.bookmark-tab:hover { color: var(--text-secondary); }
+.bookmark-tab::after {
+  content: '';
+  width: 16px; height: 1.5px;
+  background: var(--text-tertiary); opacity: 0.35;
+  border-radius: 1px;
+}
+[data-theme="light"] .bookmark-tab::after { opacity: 0.4; }
+
+.bookmark-divider {
+  width: 22px; height: 1px; flex-shrink: 0;
+  background: rgba(255,255,255,0.08);
+  margin: 0 0 8px 0;
+}
+[data-theme="light"] .bookmark-divider {
+  background: rgba(251,114,153,0.12);
+}
+
+.bookmark-buttons {
+  display: flex; flex-direction: column; gap: 7px;
+  align-items: center;
+  padding: 0 0 4px 0;
+}
+
+.float-btn, .theme-toggle {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  color: var(--text); font-size: 0.95rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s; cursor: pointer; text-decoration: none;
+  line-height: 1;
+}
+.float-btn:hover, .theme-toggle:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.32);
+  transform: scale(1.08);
+}
+[data-theme="light"] .float-btn, [data-theme="light"] .theme-toggle {
+  border-color: rgba(251,114,153,0.25);
+  background: rgba(251,114,153,0.03);
+}
+[data-theme="light"] .float-btn:hover, [data-theme="light"] .theme-toggle:hover {
+  border-color: rgba(251,114,153,0.5);
+  background: rgba(251,114,153,0.1);
+}
+
+.app { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 40px 24px 60px; }
+
+.back-link { display: inline-block; color: var(--text-secondary); text-decoration: none; font-size: 0.82rem; margin-bottom: 28px; }
+.back-link:hover { color: var(--link-hover); }
+
+/* ---- Page header ---- */
+.page-header { text-align: center; margin-bottom: 28px; }
+.page-header h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; }
+.page-header p  { font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; }
+
+/* ---- Card (shared style) ---- */
+.card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 24px 26px;
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  margin-bottom: 16px; transition: all 0.3s;
+}
+.card:hover { background: var(--card-hover-bg); border-color: var(--card-hover-border); }
+
+/* ---- Tip row ---- */
+.tip-row { display: flex; align-items: flex-start; gap: 12px; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.65; }
+.tip-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+/* ---- Key insight ---- */
+.insight { font-size: 0.84rem; color: var(--text); line-height: 1.7; }
+.insight p + p { margin-top: 8px; }
+
+/* ---- Usage icons ---- */
+.usage-row { display: flex; gap: 16px; margin-top: 10px; }
+.usage-item {
+  flex: 1; display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 12px;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+}
+.usage-item .ui-icon { font-size: 1.3rem; flex-shrink: 0; }
+.usage-item .ui-text { font-size: 0.76rem; color: var(--text); line-height: 1.4; }
+
+/* ---- Section label ---- */
+.sec-label {
+  display: flex; align-items: center; gap: 0;
+  margin: 28px 0 14px; font-size: 0.88rem; font-weight: 700;
+  color: var(--text); letter-spacing: -0.01em;
+}
+.sec-label::before {
+  content: ''; width: 4px; height: 18px; border-radius: 2px;
+  background: var(--link-color); margin-right: 10px; flex-shrink: 0;
+}
+
+/* ---- Decision ---- */
+.step-num { font-size: 0.68rem; color: var(--text-tertiary); letter-spacing: 0.06em; margin-bottom: 8px; }
+.question { font-size: 1rem; font-weight: 600; margin-bottom: 16px; }
+.choices { display: flex; gap: 12px; }
+.choice-btn {
+  flex: 1; min-width: 0; padding: 14px 18px; border-radius: 12px;
+  border: 1.5px solid; background: none; font-family: inherit;
+  text-align: left; transition: all 0.2s;
+}
+.choice-btn .cb-label { font-size: 0.9rem; font-weight: 600; color: var(--text); display: block; margin-bottom: 2px; }
+.choice-btn .cb-hint  { font-size: 0.7rem; color: var(--text-secondary); }
+.choice-yes { background: rgba(200,130,160,0.12); border-color: rgba(200,130,160,0.25); }
+.choice-yes:hover { background: rgba(200,130,160,0.22); transform: translateY(-1px); }
+.choice-no  { background: rgba(210,170,100,0.12); border-color: rgba(210,170,100,0.25); }
+.choice-no:hover  { background: rgba(210,170,100,0.22); transform: translateY(-1px); }
+
+/* ---- Result ---- */
+.result { animation: fadeUp 0.35s ease-out; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.result .card { border-color: rgba(200,140,170,0.2); }
+.result-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.result-icon { font-size: 1.8rem; line-height: 1; }
+.result-title { font-size: 1.05rem; font-weight: 700; }
+.result-desc { font-size: 0.84rem; color: var(--text); line-height: 1.7; margin-bottom: 12px; }
+.result-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.result-tag {
+  font-size: 0.68rem; padding: 3px 10px; border-radius: 10px;
+  background: rgba(180,140,200,0.1); color: var(--link-color);
+}
+.result-pros-cons { display: flex; flex-direction: column; gap: 10px; }
+.result-pros, .result-cons {
+  border-radius: 10px; padding: 12px 14px;
+  font-size: 0.78rem; line-height: 1.6;
+}
+.result-pros { background: rgba(200,130,160,0.14); }
+.result-cons { background: rgba(210,170,100,0.14); }
+.result-pros .rp-label, .result-cons .rp-label { font-weight: 600; font-size: 0.7rem; margin-bottom: 4px; display: block; }
+.result-pros .rp-label { color: #c87098; }
+.result-cons .rp-label { color: #b89040; }
+.result-pros ol, .result-cons ol { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; }
+[data-theme="light"] .result-pros .rp-label { color: #a04058; }
+[data-theme="light"] .result-cons .rp-label { color: #8a6830; }
+
+.result-extra {
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid var(--card-border);
+  font-size: 0.78rem; color: var(--text-secondary); line-height: 1.7;
+}
+.extra-list {
+  margin: 8px 0 10px; padding-left: 14px;
+  border-left: 2px solid var(--card-border);
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.restart-btn {
+  display: block; margin: 16px auto 0; font-size: 0.78rem;
+  color: var(--text-secondary); background: none; border: none;
+  padding: 6px 16px; border-radius: 8px; font-family: inherit;
+  transition: all 0.2s;
+}
+.restart-btn:hover { color: var(--link-hover); background: var(--card-bg); }
+
+/* ---- Footer ---- */
+.page-footer { text-align: center; margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--card-border); }
+.page-footer span { font-size: 0.72rem; color: var(--text-tertiary); }
+.page-footer a  { font-size: 0.78rem; color: var(--link-color); text-decoration: none; margin: 0 6px; }
+.page-footer a:hover { color: var(--link-hover); }
+
+@media (max-width: 560px) {
+  .app { padding: 24px 14px 40px; }
+  .card { padding: 18px 16px; }
+  .choices { flex-direction: column; }
+  .result-pros-cons { flex-direction: column; }
+  .usage-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="float-stack" id="floatStack">
+  <div class="bookmark-strip">
+    <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
+    <div class="bookmark-divider"></div>
+    <div class="bookmark-buttons">
+      <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+      <a href="../index.html" class="float-btn" title="返回导航">⌂</a>
+      <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
+    </div>
+  </div>
+</div>
+
+<div class="bg-decor">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<div class="app">
+
+
+  <div class="page-header">
+    <h1>哪种搭建方式适合你？</h1>
+    <p>手机、电脑、云服务器…快速搞懂该选哪个</p>
+  </div>
+
+  <!-- 关键认知 + 使用场景 -->
+  <div class="card">
+    <div class="insight">
+      <p>搭建好一个酒馆后，电脑、手机、平板甚至墨水屏阅读器——只要有浏览器，都可以访问到同一个酒馆，<strong>不用担心数据不互通</strong>。换个设备打开，只是屏幕大小的区别。</p>
+      <div class="usage-row">
+        <div class="usage-item">
+          <span class="ui-icon">🖥️</span>
+          <span class="ui-text"><strong>电脑浏览器</strong><br>界面大，方便写卡改卡、管理后台</span>
+        </div>
+        <div class="usage-item">
+          <span class="ui-icon">📱</span>
+          <span class="ui-text"><strong>手机浏览器</strong><br>随时打开就能聊，碎片时间最方便</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-label">快速体验 · 怎么搭</div>
+
+  <div class="card" id="quickBox"></div>
+  <div id="quickResult"></div>
+
+  <!-- 决策树 -->
+  <div class="sec-label">日常长期使用 · 怎么搭</div>
+
+  <div class="card" id="decisionBox"></div>
+  <div id="resultArea"></div>
+
+  <div class="page-footer">
+    <span>搭建教程：</span>
+    <a href="pc-setup.html">PC 电脑本地酒馆</a>
+    <a href="android-setup.html">安卓本地酒馆</a>
+    <a href="vps-setup.html">VPS 云酒馆</a>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ========== Float stack toggle ==========
+  (function() {
+    var handle = document.getElementById('floatHandle');
+    var stack = document.getElementById('floatStack');
+    if (handle && stack) handle.addEventListener('click', function() { stack.classList.toggle('open'); });
+  })();
+
+  // ========== Theme ==========
+  var toggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var LIGHT = 'light', DARK = 'dark';
+  function getTheme() {
+    var t = localStorage.getItem('theme');
+    if (t) return t;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? LIGHT : DARK;
+  }
+  function applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    toggle.textContent = t === LIGHT ? '☀️' : '🌙';
+    localStorage.setItem('theme', t);
+  }
+  toggle.addEventListener('click', function() {
+    applyTheme(html.getAttribute('data-theme') === LIGHT ? DARK : LIGHT);
+  });
+  applyTheme(getTheme());
+
+  document.getElementById('backToTop').addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ========== Fireworks ==========
+  var HUES_PINK = [340,350,355,0,10,20,330,345,5,15,335,25];
+  var HUES_COOL = [220,235,250,260,270,280,240,255,265,275,245,260];
+  document.addEventListener('click', function(e) {
+    for (var i = 0; i < 24; i++) {
+      var p = document.createElement('div');
+      var angle = (Math.PI*2*i)/24 + (Math.random()-0.5)*0.5;
+      var dist = 30 + Math.random()*85;
+      var hue = (html.getAttribute('data-theme')===DARK ? HUES_COOL : HUES_PINK)[Math.floor(Math.random()*12)];
+      p.className = 'firework-particle' + (Math.random()<0.2 ? ' star' : '');
+      p.style.cssText = '--tx:'+Math.cos(angle)*dist+'px;--ty:'+Math.sin(angle)*dist+'px;'+
+        'background:hsl('+hue+',85%,'+(60+Math.random()*20)+'%);'+
+        'left:'+e.clientX+'px;top:'+e.clientY+'px;';
+      document.body.appendChild(p);
+      setTimeout(function() { p.remove(); }, 800);
+    }
+  });
+
+  // ========== Quick Start ==========
+  var quickBox = document.getElementById('quickBox');
+  var quickResult = document.getElementById('quickResult');
+
+  var quickResults = {
+    pc: {
+      icon: '🖥️', title: '在电脑上搭建',
+      desc: 'Windows / Mac 都支持，十分钟搞定。',
+      tags: ['零成本', '搭建最快', '界面大，写卡方便'],
+      pros: ['免费', '安装最简单', '大屏幕写卡改卡方便'],
+      consLabel: '劣势',
+      cons: ['需要长期保持电脑不关，不适合重度用户', '电脑在家、人出门在外时，可能会有严重的网络延迟'],
+      extra: '电脑搭建好后，手机浏览器也能访问同一个酒馆。具体分两种情况：' +
+        '<div class="extra-list">' +
+          '<div>手机和电脑连<strong>同一 WiFi</strong> → 局域网访问，速度快</div>' +
+          '<div>电脑在家、人不在 → 虚拟组网，<strong>网速可能很慢</strong></div>' +
+        '</div>' +
+        '重度用户建议考虑在手机上搭建，或租云服务器。'
+    },
+    android: {
+      icon: '📱', title: '在安卓手机上搭建',
+      desc: '安卓手机安装酒馆比较简单，安装时需要挂好魔法。搭建好后随身携带，随时启动就能玩。',
+      tags: ['免费', '搭建较快', '随身携带'],
+      pros: ['免费', '搭建快', '手机随时打开随时玩'],
+      consLabel: '劣势',
+      cons: ['部分手机杀后台严重，只能分屏挂小窗来维持后台运行', '小窗会遮挡游戏画面，实际游玩时视觉体验不太好']
+    }
+  };
+
+  function showQuickStep() {
+    quickBox.style.display = '';
+    quickBox.innerHTML =
+      '<div class="question">你想在哪台设备上快速体验？</div>' +
+      '<div class="choices">' +
+        '<button class="choice-btn choice-yes" id="btnQuickPC">' +
+          '<span class="cb-label">🖥️ 我有电脑</span>' +
+          '<span class="cb-hint">Windows / Mac 都可以<br>10分钟搞定</span>' +
+        '</button>' +
+        '<button class="choice-btn choice-no" id="btnQuickAndroid">' +
+          '<span class="cb-label">📱 我没有电脑，但有安卓手机</span>' +
+          '<span class="cb-hint">小米、OPPO、vivo、三星等<br>30分钟搞定，可能需要魔法</span>' +
+        '</button>' +
+      '</div>';
+    quickResult.innerHTML = '';
+
+    document.getElementById('btnQuickPC').addEventListener('click', function() { showQuickResult('pc'); });
+    document.getElementById('btnQuickAndroid').addEventListener('click', function() { showQuickResult('android'); });
+  }
+
+  function showQuickResult(key) {
+    quickBox.style.display = 'none';
+    var r = quickResults[key];
+    quickResult.innerHTML =
+      '<div class="result">' +
+        '<div class="card">' +
+          '<div class="result-head">' +
+            '<span class="result-icon">' + r.icon + '</span>' +
+            '<span class="result-title">' + r.title + '</span>' +
+          '</div>' +
+          '<div class="result-desc">' + r.desc + '</div>' +
+          '<div class="result-tags">' +
+            r.tags.map(function(t) { return '<span class="result-tag">' + t + '</span>'; }).join('') +
+          '</div>' +
+          '<div class="result-pros-cons">' +
+            '<div class="result-pros"><div class="rp-label">优势</div><ol>' +
+              r.pros.map(function(p) { return '<li>' + p + '</li>'; }).join('') +
+            '</ol></div>' +
+            '<div class="result-cons"><div class="rp-label">' + (r.consLabel || '注意') + '</div><ol>' +
+              r.cons.map(function(c) { return '<li>' + c + '</li>'; }).join('') +
+            '</ol></div>' +
+          '</div>' +
+          (r.extra ? '<div class="result-extra">' + r.extra + '</div>' : '') +
+        '</div>' +
+        '<button class="restart-btn" id="quickRestartBtn">↻ 重新选择</button>' +
+      '</div>';
+
+    document.getElementById('quickRestartBtn').addEventListener('click', showQuickStep);
+  }
+
+  // ========== Decision Tree (长期) ==========
+  var decisionBox = document.getElementById('decisionBox');
+  var resultArea = document.getElementById('resultArea');
+
+  var results = {
+    android: {
+      icon: '📱', title: '在安卓手机上搭建',
+      desc: '安卓手机安装酒馆比较简单，安装时需要挂好魔法。搭建好后随身携带，随时启动就能玩。',
+      tags: ['免费', '搭建较快', '随身携带'],
+      pros: ['免费', '搭建快', '手机随时打开随时玩'],
+      cons: ['部分手机杀后台严重，只能分屏挂小窗来维持后台运行', '小窗会遮挡游戏画面，实际游玩时视觉体验不太好']
+    },
+    cloud: {
+      icon: '☁️', title: '租云服务器搭建',
+      desc: '在腾讯云、阿里云、华为云租一台 VPS（羊毛价年租 38 元起），酒馆搭在云端。不需要自己设备开机，手机电脑随时随地访问，还能分享给朋友。',
+      tags: ['羊毛价年租 38 元起', '24h 在线', '所有设备可访问', '可分享给朋友'],
+      pros: ['不限设备、不限空间', '不用自己开机', '最稳定灵活', '可分享给朋友'],
+      cons: ['需要一定费用（羊毛价年租 38 元起）', '需要跟着教程操作服务器（一步一步来不难）', '如果自己搭建反代，可能还需要搭建网络代理（一步一步来不难）']
+    }
+  };
+
+  function showStep1() {
+    decisionBox.style.display = '';
+    decisionBox.innerHTML =
+      '<div class="question">你有安卓手机吗？</div>' +
+      '<div class="choices">' +
+        '<button class="choice-btn choice-yes" id="btnAndroid">' +
+          '<span class="cb-label">有安卓手机</span>' +
+          '<span class="cb-hint">小米、OPPO、vivo、三星等</span>' +
+        '</button>' +
+        '<button class="choice-btn choice-no" id="btnNoAndroid">' +
+          '<span class="cb-label">没有安卓手机</span>' +
+          '<span class="cb-hint">iPhone、鸿蒙系统等</span>' +
+        '</button>' +
+      '</div>';
+    resultArea.innerHTML = '';
+
+    document.getElementById('btnAndroid').addEventListener('click', function() { showResult('android'); });
+    document.getElementById('btnNoAndroid').addEventListener('click', function() { showStep2(); });
+  }
+
+  function showStep2() {
+    decisionBox.innerHTML =
+      '<div class="step-num">第 2 步</div>' +
+      '<div class="question">没有安卓手机，怎么办？</div>' +
+      '<div class="choices">' +
+        '<button class="choice-btn choice-yes" id="btnBuyAndroid">' +
+          '<span class="cb-label">买一台安卓备用机</span>' +
+          '<span class="cb-hint">二手市场百十块钱的就行，出门需要开热点</span>' +
+        '</button>' +
+        '<button class="choice-btn choice-no" id="btnCloud">' +
+          '<span class="cb-label">租云服务器</span>' +
+          '<span class="cb-hint">羊毛价年租 38 元起</span>' +
+        '</button>' +
+      '</div>';
+    resultArea.innerHTML = '';
+
+    document.getElementById('btnBuyAndroid').addEventListener('click', function() { showResult('android'); });
+    document.getElementById('btnCloud').addEventListener('click', function() { showResult('cloud'); });
+  }
+
+  function showResult(key) {
+    decisionBox.style.display = 'none';
+    var r = results[key];
+    resultArea.innerHTML =
+      '<div class="result">' +
+        '<div class="card">' +
+          '<div class="result-head">' +
+            '<span class="result-icon">' + r.icon + '</span>' +
+            '<span class="result-title">' + r.title + '</span>' +
+          '</div>' +
+          '<div class="result-desc">' + r.desc + '</div>' +
+          '<div class="result-tags">' +
+            r.tags.map(function(t) { return '<span class="result-tag">' + t + '</span>'; }).join('') +
+          '</div>' +
+          '<div class="result-pros-cons">' +
+            '<div class="result-pros"><div class="rp-label">优势</div><ol>' +
+              r.pros.map(function(p) { return '<li>' + p + '</li>'; }).join('') +
+            '</ol></div>' +
+            '<div class="result-cons"><div class="rp-label">劣势</div><ol>' +
+              r.cons.map(function(c) { return '<li>' + c + '</li>'; }).join('') +
+            '</ol></div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="restart-btn" id="restartBtn">↻ 重新选择</button>' +
+      '</div>';
+
+    document.getElementById('restartBtn').addEventListener('click', showStep1);
+  }
+
+  showQuickStep();
+  showStep1();
+})();
+</script>
+</body>
+</html>
