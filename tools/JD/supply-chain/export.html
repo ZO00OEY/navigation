@@ -5,7 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>数据导出 - 供应链小工具</title>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
-<link rel="stylesheet" href="_content.css">
+<link rel="stylesheet" href="../../../guides/shared.css">
+<link rel="stylesheet" href="../../../guides/tutorial.css">
+<style>
+.link-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 10px 0; }
+.link-table th, .link-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--card-border); }
+.link-table th { color: var(--text-tertiary); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.link-table td a { color: var(--link-color); text-decoration: none; }
+.link-table td a:hover { color: var(--link-hover); }
+.link-table td { color: var(--text-secondary); }
+.link-table tr:hover td { background: var(--link-item-hover); }
+.footer { text-align: center; margin-top: 36px; padding-top: 20px; }
+.footer span { font-size: 0.72rem; color: var(--text-tertiary); opacity: 0.6; }
+</style>
 </head>
 <body style="padding:32px 28px">
 
@@ -30,6 +42,14 @@
 
 <footer class="footer"><span>🌱 供应链小工具 · 数据导出</span></footer>
 
-<script src="_content.js"></script>
+<script>
+(function() {
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'set-theme') {
+      document.documentElement.setAttribute('data-theme', e.data.theme);
+    }
+  });
+})();
+</script>
 </body>
 </html>

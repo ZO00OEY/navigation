@@ -81,7 +81,7 @@
 /* ---- Sidebar Layout ---- */
 .detail-layout { display: flex; gap: 16px; align-items: flex-start; }
 .detail-sidebar {
-  width: 120px; flex-shrink: 0;
+  width: 178px; flex-shrink: 0;
   display: flex; flex-direction: column; gap: 2px;
   padding-top: 4px; position: sticky; top: 20px;
 }
@@ -119,8 +119,6 @@
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
   padding: 14px 20px;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   box-shadow: 0 4px 24px var(--card-shadow);
 }
 .link-card .card-inner { position: relative; z-index: 1; }
@@ -236,7 +234,7 @@
   }
 
   function renderLinkItem(link, i, subIdx) {
-    return '<a href="' + esc(link.url) + '" class="link-item" data-subcat="' + subIdx + '">' +
+    return '<a href="' + esc(link.url) + '" class="link-item"' + (link.target ? ' target="' + link.target + '" rel="noopener"' : '') + ' data-subcat="' + subIdx + '">' +
       '<span class="link-num">' + (i + 1).toString().padStart(2, '0') + '</span>' +
       '<span class="link-title">' + esc(link.title) + '</span>' +
       (link.desc ? '<span class="link-desc">' + esc(link.desc) + '</span>' : '') +
@@ -256,10 +254,12 @@
 
   if (parentBlock && parentBlock.subcategories) {
     let total = 0;
-    parentBlock.subcategories.forEach(function(s) { total += s.links.length; });
-    document.getElementById('pageMeta').textContent = parentBlock.subcategories.length + ' 个分类 · 共 ' + total + ' 篇';
+    parentBlock.subcategories.forEach(function(s) { if (s.links.length) total += s.links.length; });
+    var nonEmpty = parentBlock.subcategories.filter(function(s) { return s.links.length; });
+    document.getElementById('pageMeta').textContent = nonEmpty.length + ' 个分类 · 共 ' + total + ' 篇';
     let html = '';
     parentBlock.subcategories.forEach(function(sub, si) {
+      if (!sub.links.length) return;
       html += '<div class="detail-subcat-header" data-subcat="' + si + '">' + esc(sub.name) + '<span class="detail-subcat-count">' + sub.links.length + '</span></div>';
       sub.links.forEach(function(link, i) { html += renderLinkItem(link, i, si); });
     });
@@ -273,6 +273,7 @@
     layout.style.display = '';
     let tabs = '<button class="dt-tab' + (subcat ? '' : ' active') + '" data-filter="all">全部</button>';
     parentBlock.subcategories.forEach(function(s, i) {
+      if (!s.links.length) return;
       tabs += '<button class="dt-tab' + (i === subcatIdx ? ' active' : '') + '" data-filter="' + i + '">' + esc(s.name) + '</button>';
     });
     sidebar.innerHTML = tabs;

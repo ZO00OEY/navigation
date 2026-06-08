@@ -66,9 +66,9 @@ const SITE_DATA = {
         {
           "name": "京东自营店铺小工具",
           "links": [
-            { "title": "供应链小工具", "url": "tools/supply-chain/index.html", "desc": "SKU查询·库存·采购·物流追踪" },
-            { "title": "商品主图更换", "url": "tools/main-image.html", "desc": "批量替换主图·图片重命名" },
-            { "title": "数据分析小工具", "url": "tools/data-analysis.html", "desc": "销售·流量·转化数据分析" }
+            { "title": "供应链小工具", "url": "tools/JD/supply-chain/supply.html", "desc": "SKU查询·库存·采购·物流追踪" },
+            { "title": "商品主图更换", "url": "tools/JD/main-image.html", "desc": "批量替换主图·图片重命名" },
+            { "title": "数据分析小工具", "url": "tools/JD/data-analysis.html", "desc": "销售·流量·转化数据分析" }
           ]
         }
       ]
@@ -85,49 +85,49 @@ const SITE_DATA = {
         {
           "name": "通用",
           "links": [
-            { "title": "在线工具箱", "url": "http://tool.myop.cn/", "desc": "实用在线工具集合" },
-            { "title": "剧OK", "url": "https://juok3.top/", "desc": "在线追剧 高清下载" },
-            { "title": "硬核指南", "url": "https://yinghezhinan.com/", "desc": "影视资源大全" },
-            { "title": "EmojiAll", "url": "https://www.emojiall.com/zh-hans", "desc": "emoji 大全" },
-            { "title": "regex101", "url": "https://regex101.com/", "desc": "正则表达式测试与调试" }
+            { "title": "在线工具箱", "url": "http://tool.myop.cn/", "desc": "实用在线工具集合", "target": "_blank" },
+            { "title": "剧OK", "url": "https://juok3.top/", "desc": "在线追剧 高清下载", "target": "_blank" },
+            { "title": "硬核指南", "url": "https://yinghezhinan.com/", "desc": "影视资源大全", "target": "_blank" },
+            { "title": "EmojiAll", "url": "https://www.emojiall.com/zh-hans", "desc": "emoji 大全", "target": "_blank" },
+            { "title": "regex101", "url": "https://regex101.com/", "desc": "正则表达式测试与调试", "target": "_blank" }
           ]
         },
         {
           "name": "外设工具箱",
           "links": [
-            { "title": "显卡天梯图", "url": "https://www.mydrivers.com/zhuanti/tianti/gpu/index.html", "desc": "显卡性能排行" },
-            { "title": "CPU天梯图", "url": "https://www.mydrivers.com/zhuanti/tianti/cpu/index.html", "desc": "CPU性能排行" },
-            { "title": "Gamepad Tester", "url": "https://gamepad-tester.com/", "desc": "手柄按键检测" },
-            { "title": "键盘测试", "url": "http://keyboard.cn/", "desc": "在线键盘按键检测" },
-            { "title": "VIA", "url": "https://usevia.app/", "desc": "在线改键位工具" }
+            { "title": "显卡天梯图", "url": "https://www.mydrivers.com/zhuanti/tianti/gpu/index.html", "desc": "显卡性能排行", "target": "_blank" },
+            { "title": "CPU天梯图", "url": "https://www.mydrivers.com/zhuanti/tianti/cpu/index.html", "desc": "CPU性能排行", "target": "_blank" },
+            { "title": "Gamepad Tester", "url": "https://gamepad-tester.com/", "desc": "手柄按键检测", "target": "_blank" },
+            { "title": "键盘测试", "url": "http://keyboard.cn/", "desc": "在线键盘按键检测", "target": "_blank" },
+            { "title": "VIA", "url": "https://usevia.app/", "desc": "在线改键位工具", "target": "_blank" }
           ]
         },
         {
           "name": "临时邮箱",
           "links": [
-            { "title": "TempMail.cn", "url": "https://tempmail.cn/", "desc": "中文临时邮箱" },
-            { "title": "10-Minute Mail", "url": "https://10-minutemail.com/", "desc": "10分钟临时邮箱" },
-            { "title": "215.im", "url": "https://vip.215.im/", "desc": "临时邮箱服务" }
+            { "title": "TempMail.cn", "url": "https://tempmail.cn/", "desc": "中文临时邮箱", "target": "_blank" },
+            { "title": "10-Minute Mail", "url": "https://10-minutemail.com/", "desc": "10分钟临时邮箱", "target": "_blank" },
+            { "title": "215.im", "url": "https://vip.215.im/", "desc": "临时邮箱服务", "target": "_blank" }
           ]
         },
         {
           "name": "临时网盘",
           "links": [
-            { "title": "文叔叔", "url": "https://www.wenshushu.cn/", "desc": "在线传文件" },
-            { "title": "AirPortal", "url": "https://www.airportal.cn/", "desc": "空投文件传输" },
-            { "title": "TLink", "url": "https://www.ttttt.link/", "desc": "临时文件分享" },
-            { "title": "Send Anywhere", "url": "https://send-anywhere.com/", "desc": "跨平台文件传输" },
-            { "title": "Wormhole", "url": "https://wormhole.app/", "desc": "端到端加密文件分享" }
+            { "title": "文叔叔", "url": "https://www.wenshushu.cn/", "desc": "在线传文件", "target": "_blank" },
+            { "title": "AirPortal", "url": "https://www.airportal.cn/", "desc": "空投文件传输", "target": "_blank" },
+            { "title": "TLink", "url": "https://www.ttttt.link/", "desc": "临时文件分享", "target": "_blank" },
+            { "title": "Send Anywhere", "url": "https://send-anywhere.com/", "desc": "跨平台文件传输", "target": "_blank" },
+            { "title": "Wormhole", "url": "https://wormhole.app/", "desc": "端到端加密文件分享", "target": "_blank" }
           ]
         },
         {
           "name": "在线图片处理",
           "links": [
-            { "title": "改图宝", "url": "https://www.gaitubao.com/", "desc": "在线图片编辑" },
-            { "title": "做好图", "url": "http://www.zuohaotu.com/image-converter.aspx", "desc": "图片格式转换" },
-            { "title": "凡科快图", "url": "https://kt.fkw.com/tools.html", "desc": "在线图片处理工具" },
-            { "title": "Remove.bg", "url": "https://www.remove.bg/zh", "desc": "AI 背景去除" },
-            { "title": "TinyPNG", "url": "https://tinypng.com/", "desc": "智能图片压缩" }
+            { "title": "改图宝", "url": "https://www.gaitubao.com/", "desc": "在线图片编辑", "target": "_blank" },
+            { "title": "做好图", "url": "http://www.zuohaotu.com/image-converter.aspx", "desc": "图片格式转换", "target": "_blank" },
+            { "title": "凡科快图", "url": "https://kt.fkw.com/tools.html", "desc": "在线图片处理工具", "target": "_blank" },
+            { "title": "Remove.bg", "url": "https://www.remove.bg/zh", "desc": "AI 背景去除", "target": "_blank" },
+            { "title": "TinyPNG", "url": "https://tinypng.com/", "desc": "智能图片压缩", "target": "_blank" }
           ]
         }
       ]
