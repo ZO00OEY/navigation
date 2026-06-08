@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商品主图更换 - My Nav</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="../guides/shared.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<style>
+/* ---- Blob overrides ---- */
+.bg-decor { overflow: visible; }
+.blob { filter: blur(120px); opacity: 0.45; }
+.blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(80,100,220,0.5), transparent); top: -200px; left: -150px; }
+.blob-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(140,80,200,0.4), transparent); top: 50%; right: -200px; bottom: auto; transform: translateY(-50%); }
+.blob-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(60,180,160,0.35), transparent); bottom: -150px; left: 30%; top: auto; }
+[data-theme="light"] .blob { opacity: 0.35; }
+[data-theme="light"] .blob-1 { background: radial-gradient(circle, rgba(251,130,160,0.42), transparent); }
+[data-theme="light"] .blob-2 { background: radial-gradient(circle, rgba(220,150,200,0.36), transparent); }
+[data-theme="light"] .blob-3 { background: radial-gradient(circle, rgba(255,180,140,0.32), transparent); }
+
+/* ---- Layout ---- */
+.app { max-width: 1000px; }
+
+/* ---- Back Link ---- */
+.back-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--text-tertiary); text-decoration: none;
+  font-size: 0.82rem; transition: color 0.2s; margin-bottom: 20px;
+}
+.back-link:hover { color: var(--link-color); }
+
+/* ---- Tool Shell ---- */
+.tool-shell {
+  display: flex;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius); overflow: hidden;
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 4px 24px var(--card-shadow);
+  min-height: 580px;
+}
+
+/* ---- Sidebar ---- */
+.tool-sidebar {
+  width: 155px; flex-shrink: 0;
+  background: var(--card-bg);
+  border-right: 1px solid var(--card-border);
+  padding: 16px 0;
+}
+.tool-sidebar .tab-btn {
+  display: block; width: 100%;
+  padding: 13px 18px; border: none; background: none;
+  text-align: left; font-size: 0.8rem; color: var(--text-secondary);
+  cursor: pointer; font-family: inherit;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+}
+.tool-sidebar .tab-btn:hover { background: var(--link-item-hover); color: var(--text); }
+.tool-sidebar .tab-btn.active {
+  background: var(--link-item-hover); color: var(--link-color);
+  font-weight: 600; border-left-color: var(--link-color);
+}
+
+/* ---- Main Area ---- */
+.tool-main { flex: 1; padding: 32px 36px; overflow-y: auto; min-width: 0; }
+.tool-page { display: none; }
+.tool-page.active { display: block; }
+.tool-main h1 { font-size: 1.3rem; margin-bottom: 6px; color: var(--text); letter-spacing: -0.01em; }
+.tool-main .sub { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 24px; line-height: 1.6; }
+.tool-main .sub a { color: var(--link-color); text-decoration: none; }
+.tool-main .sub a:hover { color: var(--link-hover); }
+
+/* ---- Upload Zone ---- */
+.upload-zone {
+  border: 2px dashed var(--card-border);
+  border-radius: 10px; padding: 40px 20px;
+  text-align: center; cursor: pointer;
+  transition: all 0.2s; margin-bottom: 20px;
+}
+.upload-zone:hover, .upload-zone.dragover {
+  border-color: var(--link-color);
+  background: var(--link-item-hover);
+}
+.upload-zone .icon { font-size: 2.2rem; margin-bottom: 8px; }
+.upload-zone .hint { color: var(--text-secondary); font-size: 0.84rem; }
+.upload-zone .hint span { color: var(--link-color); text-decoration: underline; }
+
+/* ---- Settings ---- */
+.settings { margin-bottom: 20px; }
+.row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.row label { font-size: 0.82rem; white-space: nowrap; min-width: 100px; color: var(--text); }
+.row input, .row select {
+  flex: 1; padding: 8px 12px; border: 1px solid var(--card-border);
+  border-radius: 8px; font-size: 0.84rem; outline: none;
+  background: var(--search-bg); color: var(--text); font-family: inherit;
+}
+.row input:focus, .row select:focus { border-color: var(--link-color); }
+
+/* ---- File List ---- */
+.file-list { margin-bottom: 20px; }
+.file-list .head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px;
+}
+.file-list .head span { font-size: 0.84rem; color: var(--text); font-weight: 600; }
+.file-list .head .clear { font-size: 0.75rem; color: var(--text-tertiary); cursor: pointer; }
+.file-list .head .clear:hover { color: #e74c3c; }
+.file-list ul {
+  list-style: none; max-height: 240px; overflow-y: auto;
+  border: 1px solid var(--card-border); border-radius: 8px; padding: 6px;
+}
+.file-list li {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.8rem; padding: 7px 8px; border-radius: 6px; color: var(--text);
+}
+.file-list li:nth-child(odd) { background: var(--link-item-hover); }
+.file-list li .sku-name { font-family: monospace; }
+.file-list li .info { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.file-list li .dims { color: var(--text-tertiary); font-size: 0.75rem; }
+.file-list li .warn { color: #e67e22; font-size: 0.75rem; }
+.file-list li .err { color: #e74c3c; font-size: 0.75rem; }
+.file-list li:hover { background: var(--link-item-hover); }
+.empty { color: var(--text-tertiary); font-size: 0.82rem; text-align: center; padding: 20px; }
+
+/* ---- Summary Tags ---- */
+.summary { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.tag {
+  font-size: 0.72rem; padding: 4px 12px; border-radius: 14px; font-weight: 600;
+}
+.tag-11 { background: rgba(42,126,176,0.15); color: #4da6d9; }
+.tag-34 { background: rgba(184,122,43,0.15); color: #d4953b; }
+.tag-other { background: var(--search-bg); color: var(--text-tertiary); }
+[data-theme="light"] .tag-11 { background: #e8f4fd; color: #2a7eb0; }
+[data-theme="light"] .tag-34 { background: #fef3e4; color: #b87a2b; }
+
+/* ---- Buttons ---- */
+.btn {
+  width: 100%; padding: 12px; background: var(--link-color);
+  color: #fff; border: none; border-radius: 10px;
+  font-size: 0.9rem; cursor: pointer; font-family: inherit;
+  transition: all 0.2s; font-weight: 500;
+}
+.btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn:disabled { background: var(--card-border); color: var(--text-tertiary); cursor: not-allowed; transform: none; }
+
+.btn-sm {
+  padding: 7px 16px; background: var(--card-bg);
+  color: var(--link-color); border: 1px solid var(--card-border);
+  border-radius: 8px; font-size: 0.8rem; cursor: pointer;
+  font-family: inherit; transition: all 0.15s;
+}
+.btn-sm:hover { background: var(--link-item-hover); border-color: var(--link-color); }
+.btn-sm.primary { background: var(--link-color); color: #fff; border-color: var(--link-color); }
+.btn-sm.primary:hover { opacity: 0.88; }
+.btn-bar { display: flex; gap: 8px; margin-bottom: 14px; }
+
+/* ---- Msg ---- */
+.msg { margin-top: 10px; font-size: 0.8rem; text-align: center; min-height: 20px; }
+.msg.ok { color: #5cb878; }
+.msg.err { color: #e74c3c; }
+
+/* ---- Mapping Table ---- */
+.mapping-table {
+  width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 16px;
+}
+.mapping-table th, .mapping-table td {
+  padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--card-border);
+}
+.mapping-table th { background: var(--search-bg); color: var(--text-tertiary); font-weight: 600; }
+.mapping-table tbody { display: block; max-height: 200px; overflow-y: auto; }
+.mapping-table thead, .mapping-table tbody tr { display: table; width: 100%; table-layout: fixed; }
+.mapping-table .col-num { width: 44px; color: var(--text-tertiary); }
+.mapping-table .col-sku { font-family: monospace; }
+
+/* ---- Radio ---- */
+.radio-group { display: flex; gap: 20px; margin-bottom: 14px; }
+.radio-group label { font-size: 0.84rem; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--text); }
+
+/* ---- Rename List ---- */
+.rename-list { margin-bottom: 16px; }
+.rename-list ul {
+  list-style: none; max-height: 200px; overflow-y: auto;
+  border: 1px solid var(--card-border); border-radius: 8px; padding: 6px;
+}
+.rename-list li {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.8rem; padding: 7px 8px; border-radius: 6px;
+}
+.rename-list li:nth-child(odd) { background: var(--link-item-hover); }
+.rename-list li .arrow { color: var(--link-color); margin: 0 8px; font-weight: 600; }
+.rename-list li .from-name { color: var(--text-secondary); }
+.rename-list li .to-name { color: var(--text); font-family: monospace; }
+.rename-list li .not-found { color: #e74c3c; font-size: 0.78rem; }
+
+/* ---- Folder Tree ---- */
+.folder-tree {
+  background: var(--search-bg); border-radius: 8px;
+  padding: 12px 18px; font-family: monospace; font-size: 0.78rem;
+  color: var(--text-secondary); line-height: 1.8; margin-bottom: 4px;
+}
+.folder-tree .sku-hl { color: var(--link-color); }
+
+/* ---- Footer ---- */
+.footer { text-align: center; margin-top: 40px; }
+.footer span { font-size: 0.72rem; color: var(--text-tertiary); opacity: 0.6; }
+
+/* ---- Responsive ---- */
+@media (max-width: 700px) {
+  .tool-shell { flex-direction: column; }
+  .tool-sidebar { width: 100%; display: flex; padding: 0; border-right: none; border-bottom: 1px solid var(--card-border); }
+  .tool-sidebar .tab-btn { border-left: none; border-bottom: 2px solid transparent; white-space: nowrap; flex-shrink: 0; }
+  .tool-sidebar .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--link-color); }
+  .tool-main { padding: 22px 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="float-wrapper" id="floatWrapper">
+  <div class="float-stack open" id="floatStack">
+    <div class="bookmark-strip">
+      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
+      <div class="bookmark-buttons">
+        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+        <a href="../index.html" class="float-btn" title="返回导航">⌂</a>
+        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
+      </div>
+    </div>
+  </div>
+  <div class="float-w"></div>
+</div>
+
+<div class="bg-decor"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+
+<div class="app">
+  <a class="back-link" href="../index.html">← 返回导航</a>
+
+  <div class="tool-shell">
+    <!-- ===== Sidebar ===== -->
+    <nav class="tool-sidebar">
+      <button class="tab-btn active" data-page="page1">01 批量替换主图</button>
+      <button class="tab-btn" data-page="page2">02 图片批量重命名</button>
+    </nav>
+
+    <!-- ===== Main ===== -->
+    <div class="tool-main">
+      <!-- ===== Page 1: 批量替换主图 ===== -->
+      <div class="tool-page active" id="page1">
+        <h1>批量替换第N张主图</h1>
+        <div class="sub" style="margin-bottom:4px">
+          <a href="https://ware-material-jdm.jd.com/mainImageChange/changeRecord" target="_blank" rel="noopener">批量定时换主图 ↗</a>
+        </div>
+        <div class="sub">
+          <div style="margin-bottom:6px">导入以SKU命名的主图图片，自动检测图片比例，生成如下4层目录的压缩包：</div>
+          <div class="folder-tree">
+            📦 SKU主图.zip<br>
+            ├── 1：1主图/<br>
+            │&emsp;&emsp;└── <span class="sku-hl">100153993569</span>/<br>
+            │&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;└── 1.jpg<br>
+            └── 3：4主图/<br>
+            &emsp;&emsp;&emsp;└── <span class="sku-hl">100211646379</span>/<br>
+            &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;└── 1.jpg
+          </div>
+        </div>
+
+        <div class="upload-zone" id="dropZone">
+          <div class="icon">📁</div>
+          <p class="hint">拖拽图片到此处，或 <span>点击选择文件</span></p>
+        </div>
+        <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+
+        <div class="settings">
+          <div class="row">
+            <label>大小限制</label>
+            <input type="number" id="maxSize" value="3" min="0.1" step="0.1">
+            <span style="font-size:0.78rem;color:var(--text-tertiary);white-space:nowrap">MB（超出跳过）</span>
+          </div>
+          <div class="row">
+            <label>替换第N张主图</label>
+            <input type="text" id="outName" value="1">
+          </div>
+        </div>
+
+        <div class="file-list">
+          <div class="head">
+            <span>文件列表 (<em id="count">0</em>)</span>
+            <span class="clear" id="clearBtn">清空</span>
+          </div>
+          <div class="summary" id="summary"></div>
+          <ul id="fileList"><li class="empty">暂无文件</li></ul>
+        </div>
+
+        <button class="btn" id="genBtn" disabled>生成并下载压缩包</button>
+        <div class="msg" id="msg"></div>
+      </div>
+
+      <!-- ===== Page 2: 图片批量重命名 ===== -->
+      <div class="tool-page" id="page2">
+        <h1>图片批量重命名</h1>
+        <div class="sub">导入 SKU 与中文名称对照表，按映射关系批量重命名图片</div>
+
+        <div class="btn-bar">
+          <button class="btn-sm primary" id="p2DownloadTpl">下载空模版</button>
+          <button class="btn-sm" id="p2ImportExcel">导入 Excel</button>
+          <button class="btn-sm" id="p2ClearMapping" style="color:#e74c3c;border-color:var(--card-border)">清空</button>
+          <input type="file" id="p2ExcelInput" accept=".xlsx,.xls" style="display:none">
+        </div>
+
+        <table class="mapping-table" id="p2MappingTable">
+          <thead><tr><th class="col-num">#</th><th class="col-sku">SKU</th><th>中文名称</th></tr></thead>
+          <tbody id="p2MappingBody"><tr><td colspan="3" style="text-align:center;color:var(--text-tertiary);padding:20px">暂无映射数据，请导入 Excel 或下载模版填写后导入</td></tr></tbody>
+        </table>
+        <div style="font-size:0.75rem;color:var(--text-tertiary);margin-bottom:22px">共 <em id="p2MappingCount">0</em> 条映射</div>
+
+        <div class="upload-zone" id="p2DropZone">
+          <div class="icon">📁</div>
+          <p class="hint">拖拽需重命名的图片到此处，或 <span>点击选择文件</span></p>
+        </div>
+        <input type="file" id="p2FileInput" multiple accept="image/*" style="display:none">
+
+        <div class="radio-group">
+          <label><input type="radio" name="p2Direction" value="name2sku" checked> 中文名称 → SKU</label>
+          <label><input type="radio" name="p2Direction" value="sku2name"> SKU → 中文名称</label>
+        </div>
+
+        <div class="rename-list">
+          <div class="head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:0.84rem;color:var(--text);font-weight:600">重命名预览 (<em id="p2FileCount">0</em>)</span>
+            <span class="clear" id="p2ClearBtn" style="font-size:0.75rem;color:var(--text-tertiary);cursor:pointer">清空</span>
+          </div>
+          <ul id="p2RenameList"><li class="empty">暂无文件</li></ul>
+        </div>
+
+        <button class="btn" id="p2GenBtn" disabled>生成并下载重命名后的图片</button>
+        <button class="btn" id="p2PushBtn" disabled style="background:#27ae60;margin-top:8px">推送到 01 批量替换主图 →</button>
+        <div class="msg" id="p2Msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer"><span>🌱 商品主图更换小工具</span></footer>
+</div>
+
+<script src="../guides/shared.js"></script>
+<script>
+/* ===== Tab Switching ===== */
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tool-page').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById(btn.getAttribute('data-page')).classList.add('active');
+  });
+});
+
+/* ===== Page 1: 批量替换主图 ===== */
+var DROP_ZONE = document.getElementById('dropZone');
+var FILE_INPUT = document.getElementById('fileInput');
+var FILE_LIST = document.getElementById('fileList');
+var COUNT_EL = document.getElementById('count');
+var GEN_BTN = document.getElementById('genBtn');
+var MSG_EL = document.getElementById('msg');
+var CLEAR_BTN = document.getElementById('clearBtn');
+var SUMMARY = document.getElementById('summary');
+
+var files = [];
+
+DROP_ZONE.addEventListener('click', function() { FILE_INPUT.click(); });
+DROP_ZONE.addEventListener('dragover', function(e) { e.preventDefault(); DROP_ZONE.classList.add('dragover'); });
+DROP_ZONE.addEventListener('dragleave', function() { DROP_ZONE.classList.remove('dragover'); });
+DROP_ZONE.addEventListener('drop', function(e) {
+  e.preventDefault();
+  DROP_ZONE.classList.remove('dragover');
+  addFiles(Array.from(e.dataTransfer.files));
+});
+FILE_INPUT.addEventListener('change', function() {
+  addFiles(Array.from(FILE_INPUT.files));
+  FILE_INPUT.value = '';
+});
+CLEAR_BTN.addEventListener('click', function() {
+  files.forEach(function(f) { if (f.url) URL.revokeObjectURL(f.url); });
+  files = [];
+  renderList();
+});
+
+function getImageDims(file) {
+  return new Promise(function(resolve) {
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function() { resolve({ w: img.naturalWidth, h: img.naturalHeight, url: url }); };
+    img.onerror = function() { resolve(null); };
+    img.src = url;
+  });
+}
+
+function classifyRatio(w, h) {
+  var r = w / h;
+  var dist11 = Math.abs(r - 1.0);
+  var dist34 = Math.abs(r - 0.75);
+  return dist11 < dist34 ? '1:1' : '3:4';
+}
+
+function folderName(type) {
+  return type === '1:1' ? '1：1主图' : '3：4主图';
+}
+
+async function addFiles(newFiles) {
+  var imageExts = ['.jpg','.jpeg','.png','.webp','.gif','.bmp'];
+  var filtered = newFiles.filter(function(f) {
+    var ext = '.' + f.name.split('.').pop().toLowerCase();
+    return imageExts.indexOf(ext) !== -1;
+  });
+
+  for (var i = 0; i < filtered.length; i++) {
+    var f = filtered[i];
+    var dims = await getImageDims(f);
+    var ratio = dims ? classifyRatio(dims.w, dims.h) : '?';
+    files.push({
+      file: f, ratio: ratio, folder: folderName(ratio),
+      dims: dims ? dims.w + '×' + dims.h : '未知', url: dims ? dims.url : null
+    });
+  }
+  renderList();
+}
+
+function renderList() {
+  FILE_LIST.innerHTML = '';
+  COUNT_EL.textContent = files.length;
+  GEN_BTN.disabled = files.length === 0;
+
+  var maxSize = parseFloat(document.getElementById('maxSize').value) * 1024 * 1024;
+
+  var count11 = 0, count34 = 0, countOther = 0;
+  files.forEach(function(f) {
+    if (f.ratio === '1:1') count11++;
+    else if (f.ratio === '3:4') count34++;
+    else countOther++;
+  });
+  var summaryHTML = '';
+  if (count11) summaryHTML += '<span class="tag tag-11">1:1 主图 ' + count11 + ' 张</span>';
+  if (count34) summaryHTML += '<span class="tag tag-34">3:4 主图 ' + count34 + ' 张</span>';
+  if (countOther) summaryHTML += '<span class="tag tag-other">无法识别 ' + countOther + ' 张</span>';
+  SUMMARY.innerHTML = summaryHTML;
+
+  if (files.length === 0) {
+    FILE_LIST.innerHTML = '<li class="empty">暂无文件</li>';
+    return;
+  }
+
+  var ratioLabels = { '1:1': '1:1 → 1：1主图', '3:4': '3:4 → 3：4主图', '?': '识别失败' };
+
+  files.forEach(function(f) {
+    var li = document.createElement('li');
+    var sku = f.file.name.replace(/\.[^.]+$/, '');
+    var oversize = f.file.size > maxSize;
+    var info = [
+      '<span class="sku-name">' + sku + '</span>',
+      '<span class="dims">' + (ratioLabels[f.ratio] || f.ratio) + '</span>',
+      '<span class="dims">' + f.dims + '</span>',
+      '<span>' + (f.file.size / 1024).toFixed(0) + ' KB</span>',
+      oversize ? '<span class="warn">超限</span>' : ''
+    ].join(' ');
+    li.innerHTML = '<div class="info">' + info + '</div>';
+    FILE_LIST.appendChild(li);
+  });
+}
+
+document.getElementById('maxSize').addEventListener('change', renderList);
+
+GEN_BTN.addEventListener('click', function() {
+  if (files.length === 0) return;
+  GEN_BTN.disabled = true;
+  GEN_BTN.textContent = '打包中...';
+  MSG_EL.textContent = '';
+  MSG_EL.className = 'msg';
+
+  var maxSize = parseFloat(document.getElementById('maxSize').value) * 1024 * 1024;
+  var outName = document.getElementById('outName').value.trim() || '1';
+
+  var zip = new JSZip();
+  var folder11 = zip.folder('1：1主图');
+  var folder34 = zip.folder('3：4主图');
+  var skipped = 0;
+  var count11 = 0, count34 = 0;
+
+  files.forEach(function(entry) {
+    var f = entry.file;
+    if (f.size > maxSize) { skipped++; return; }
+    var sku = f.name.replace(/\.[^.]+$/, '');
+    var ext = f.name.split('.').pop().toLowerCase();
+    var targetFolder = entry.ratio === '1:1' ? folder11 : folder34;
+    var finalName = outName + '.' + ext;
+    targetFolder.folder(sku).file(finalName, f);
+    if (entry.ratio === '1:1') count11++; else count34++;
+  });
+
+  zip.generateAsync({ type: 'blob' }).then(function(zipBlob) {
+    var url = URL.createObjectURL(zipBlob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'SKU主图_' + new Date().toISOString().slice(0,10) + '.zip';
+    a.click();
+    URL.revokeObjectURL(url);
+    var parts = [];
+    if (count11) parts.push('1:1 ' + count11 + ' 张');
+    if (count34) parts.push('3:4 ' + count34 + ' 张');
+    MSG_EL.textContent = '完成！' + parts.join('，') + (skipped > 0 ? '，' + skipped + ' 张超限跳过' : '');
+    MSG_EL.className = 'msg ok';
+  }).catch(function(e) {
+    MSG_EL.textContent = '打包失败: ' + e.message;
+    MSG_EL.className = 'msg err';
+  }).finally(function() {
+    GEN_BTN.disabled = files.length === 0;
+    GEN_BTN.textContent = '生成并下载压缩包';
+  });
+});
+
+/* ===== Page 2: 图片批量重命名 ===== */
+var p2Mapping = [];
+var p2Files = [];
+
+var P2 = {
+  mappingTable: document.getElementById('p2MappingTable'),
+  mappingBody: document.getElementById('p2MappingBody'),
+  mappingCount: document.getElementById('p2MappingCount'),
+  dropZone: document.getElementById('p2DropZone'),
+  fileInput: document.getElementById('p2FileInput'),
+  fileCount: document.getElementById('p2FileCount'),
+  renameList: document.getElementById('p2RenameList'),
+  genBtn: document.getElementById('p2GenBtn'),
+  msg: document.getElementById('p2Msg'),
+  clearBtn: document.getElementById('p2ClearBtn')
+};
+
+document.getElementById('p2ClearMapping').addEventListener('click', function() {
+  p2Mapping = [];
+  localStorage.removeItem('p2Mapping');
+  renderP2Mapping();
+  renderP2RenameList();
+  P2.msg.textContent = '映射已清空';
+  P2.msg.className = 'msg ok';
+});
+
+// 恢复本地缓存映射
+try {
+  var cached = localStorage.getItem('p2Mapping');
+  if (cached) { p2Mapping = JSON.parse(cached); renderP2Mapping(); }
+} catch(e) {}
+
+// 下载 Excel 模版
+document.getElementById('p2DownloadTpl').addEventListener('click', function() {
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet([['SKU', '中文名称']]);
+  ws['!cols'] = [{ wch: 20 }, { wch: 40 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'SKU映射表');
+  XLSX.writeFile(wb, 'SKU映射模版.xlsx');
+});
+
+// 导入 Excel
+document.getElementById('p2ImportExcel').addEventListener('click', function() {
+  document.getElementById('p2ExcelInput').click();
+});
+
+document.getElementById('p2ExcelInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function() {
+    var wb = XLSX.read(reader.result, { type: 'array' });
+    var ws = wb.Sheets[wb.SheetNames[0]];
+    var rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+    var start = rows.length > 0 && String(rows[0][0]).indexOf('SKU') !== -1 ? 1 : 0;
+    p2Mapping = [];
+    for (var i = start; i < rows.length; i++) {
+      var sku = String(rows[i][0] || '').trim();
+      var name = String(rows[i][1] || '').trim();
+      if (sku && name) p2Mapping.push({ sku: sku, name: name });
+    }
+    localStorage.setItem('p2Mapping', JSON.stringify(p2Mapping));
+    renderP2Mapping();
+    renderP2RenameList();
+    P2.msg.textContent = '已导入 ' + p2Mapping.length + ' 条映射';
+    P2.msg.className = 'msg ok';
+  };
+  reader.readAsArrayBuffer(file);
+  e.target.value = '';
+});
+
+function renderP2Mapping() {
+  P2.mappingCount.textContent = p2Mapping.length;
+  if (p2Mapping.length === 0) {
+    P2.mappingBody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-tertiary);padding:20px">暂无映射数据，请导入 Excel 或下载模版填写后导入</td></tr>';
+    return;
+  }
+  P2.mappingBody.innerHTML = p2Mapping.map(function(m, i) {
+    return '<tr><td class="col-num">' + (i + 1) + '</td><td class="col-sku">' + m.sku + '</td><td>' + m.name + '</td></tr>';
+  }).join('');
+}
+
+// 图片上传
+P2.dropZone.addEventListener('click', function() { P2.fileInput.click(); });
+P2.dropZone.addEventListener('dragover', function(e) { e.preventDefault(); P2.dropZone.classList.add('dragover'); });
+P2.dropZone.addEventListener('dragleave', function() { P2.dropZone.classList.remove('dragover'); });
+P2.dropZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  P2.dropZone.classList.remove('dragover');
+  addP2Files(Array.from(e.dataTransfer.files));
+});
+P2.fileInput.addEventListener('change', function() {
+  addP2Files(Array.from(P2.fileInput.files));
+  P2.fileInput.value = '';
+});
+P2.clearBtn.addEventListener('click', function() { p2Files = []; renderP2RenameList(); });
+
+function addP2Files(newFiles) {
+  var exts = ['.jpg','.jpeg','.png','.webp','.gif','.bmp'];
+  p2Files = p2Files.concat(newFiles.filter(function(f) {
+    return exts.indexOf('.' + f.name.split('.').pop().toLowerCase()) !== -1;
+  }));
+  renderP2RenameList();
+}
+
+function getP2Direction() {
+  var checked = document.querySelector('input[name="p2Direction"]:checked');
+  return checked ? checked.value : 'name2sku';
+}
+
+function lookupP2(key, direction) {
+  if (direction === 'sku2name') {
+    var m = p2Mapping.find(function(r) { return r.sku === key; });
+    return m ? m.name : null;
+  } else {
+    var m = p2Mapping.find(function(r) { return r.name === key; });
+    return m ? m.sku : null;
+  }
+}
+
+function renderP2RenameList() {
+  P2.fileCount.textContent = p2Files.length;
+  P2.genBtn.disabled = p2Files.length === 0 || p2Mapping.length === 0;
+  document.getElementById('p2PushBtn').disabled = p2Files.length === 0 || p2Mapping.length === 0;
+
+  if (p2Files.length === 0) {
+    P2.renameList.innerHTML = '<li class="empty">暂无文件</li>';
+    return;
+  }
+
+  var dir = getP2Direction();
+  var targetCount = {};
+  var results = p2Files.map(function(f) {
+    var key = f.name.replace(/\.[^.]+$/, '');
+    var ext = f.name.split('.').pop();
+    var target = lookupP2(key, dir);
+    return { f: f, key: key, ext: ext, target: target };
+  });
+
+  var finalNames = results.map(function(r) {
+    if (!r.target) return null;
+    var base = r.target;
+    targetCount[base] = (targetCount[base] || 0) + 1;
+    if (targetCount[base] > 1 || results.filter(function(x) { return x.target === base; }).length > 1) {
+      return base + '_' + targetCount[base];
+    }
+    return base;
+  });
+
+  var items = results.map(function(r, i) {
+    if (!r.target) {
+      return '<li><span class="from-name">' + r.f.name + '</span><span class="not-found">未在映射表中找到，跳过</span></li>';
+    }
+    return '<li><span class="from-name">' + r.f.name + '</span><span class="arrow">→</span><span class="to-name">' + finalNames[i] + '.' + r.ext + '</span></li>';
+  });
+
+  P2.renameList.innerHTML = items.join('');
+}
+
+document.querySelectorAll('input[name="p2Direction"]').forEach(function(r) {
+  r.addEventListener('change', renderP2RenameList);
+});
+
+// 生成重命名压缩包
+P2.genBtn.addEventListener('click', function() {
+  if (p2Files.length === 0 || p2Mapping.length === 0) return;
+  P2.genBtn.disabled = true;
+  P2.genBtn.textContent = '打包中...';
+  P2.msg.textContent = '';
+  P2.msg.className = 'msg';
+
+  var dir = getP2Direction();
+  var zip = new JSZip();
+  var success = 0, skipped = 0;
+  var targetCount = {};
+
+  var results = p2Files.map(function(f) {
+    var key = f.name.replace(/\.[^.]+$/, '');
+    var ext = f.name.split('.').pop();
+    var target = lookupP2(key, dir);
+    return { f: f, key: key, ext: ext, target: target };
+  });
+
+  var finalNames = results.map(function(r) {
+    if (!r.target) return null;
+    var base = r.target;
+    targetCount[base] = (targetCount[base] || 0) + 1;
+    if (targetCount[base] > 1 || results.filter(function(x) { return x.target === base; }).length > 1) {
+      return base + '_' + targetCount[base];
+    }
+    return base;
+  });
+
+  for (var i = 0; i < results.length; i++) {
+    var r = results[i];
+    if (!r.target) { skipped++; continue; }
+    zip.file(finalNames[i] + '.' + r.ext, r.f);
+    success++;
+  }
+
+  zip.generateAsync({ type: 'blob' }).then(function(zipBlob) {
+    var url = URL.createObjectURL(zipBlob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '重命名图片_' + new Date().toISOString().slice(0,10) + '.zip';
+    a.click();
+    URL.revokeObjectURL(url);
+    P2.msg.textContent = '完成！成功 ' + success + ' 张' + (skipped > 0 ? '，' + skipped + ' 张未匹配跳过' : '');
+    P2.msg.className = 'msg ok';
+  }).catch(function(e) {
+    P2.msg.textContent = '打包失败: ' + e.message;
+    P2.msg.className = 'msg err';
+  }).finally(function() {
+    P2.genBtn.disabled = p2Files.length === 0;
+    P2.genBtn.textContent = '生成并下载重命名后的图片';
+  });
+});
+
+// 推送到第1页
+document.getElementById('p2PushBtn').addEventListener('click', function() {
+  if (p2Files.length === 0 || p2Mapping.length === 0) return;
+
+  var dir = getP2Direction();
+  var targetCount = {};
+  var results = p2Files.map(function(f) {
+    var key = f.name.replace(/\.[^.]+$/, '');
+    var ext = f.name.split('.').pop();
+    var target = lookupP2(key, dir);
+    return { f: f, key: key, ext: ext, target: target };
+  });
+
+  var finalNames = results.map(function(r) {
+    if (!r.target) return null;
+    var base = r.target;
+    targetCount[base] = (targetCount[base] || 0) + 1;
+    if (targetCount[base] > 1 || results.filter(function(x) { return x.target === base; }).length > 1) {
+      return base + '_' + targetCount[base];
+    }
+    return base;
+  });
+
+  var matchedFiles = [];
+  for (var i = 0; i < results.length; i++) {
+    var r = results[i];
+    if (!r.target) continue;
+    var newName = finalNames[i] + '.' + r.ext;
+    var renamed = new File([r.f], newName, { type: r.f.type });
+    matchedFiles.push(renamed);
+  }
+
+  if (matchedFiles.length > 0) {
+    addFiles(matchedFiles);
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tool-page').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelector('[data-page="page1"]').classList.add('active');
+    document.getElementById('page1').classList.add('active');
+  }
+
+  P2.msg.textContent = '已推送 ' + matchedFiles.length + ' 张图片至"批量替换主图"';
+  P2.msg.className = 'msg ok';
+});
+</script>
+</body>
+</html>

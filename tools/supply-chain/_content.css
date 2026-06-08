@@ -1,0 +1,169 @@
+/* ========== Supply Chain Content Styles ========== */
+/* Shared by index.html shell and all sub-pages */
+
+:root {
+  --bg: #0a0a14;
+  --card-bg: rgba(255,255,255,0.035);
+  --card-border: rgba(255,255,255,0.07);
+  --card-hover-bg: rgba(255,255,255,0.055);
+  --card-hover-border: rgba(255,255,255,0.14);
+  --card-shadow: rgba(0,0,0,0.25);
+  --text: #e4e4ec;
+  --text-secondary: #9494a8;
+  --text-tertiary: #6b6b80;
+  --link-color: #8fa8ff;
+  --link-hover: #b8c8ff;
+  --link-item-hover: rgba(255,255,255,0.05);
+  --search-bg: rgba(255,255,255,0.06);
+  --code-bg: rgba(0,0,0,0.3);
+  --code-border: rgba(255,255,255,0.08);
+  --step-num-bg: rgba(140,155,220,0.18);
+  --step-num-color: #a0b0e0;
+  --btn-link-bg: rgba(140,155,220,0.12);
+  --btn-link-border: rgba(140,155,220,0.22);
+  --btn-link-hover-bg: rgba(140,155,220,0.2);
+  --radius: 18px;
+}
+
+[data-theme="light"] {
+  --bg: #f3eff3;
+  --card-bg: rgba(255,255,255,0.62);
+  --card-border: rgba(0,0,0,0.06);
+  --card-hover-bg: rgba(255,255,255,0.82);
+  --card-hover-border: rgba(251,114,153,0.22);
+  --card-shadow: rgba(0,0,0,0.06);
+  --text: #18181e;
+  --text-secondary: #6b6b80;
+  --text-tertiary: #999;
+  --link-color: #d44070;
+  --link-hover: #fb7299;
+  --link-item-hover: rgba(0,0,0,0.04);
+  --search-bg: rgba(0,0,0,0.03);
+  --code-bg: rgba(0,0,0,0.04);
+  --code-border: rgba(0,0,0,0.08);
+  --step-num-bg: rgba(251,114,153,0.18);
+  --step-num-color: #b05060;
+  --btn-link-bg: rgba(251,114,153,0.12);
+  --btn-link-border: rgba(251,114,153,0.22);
+  --btn-link-hover-bg: rgba(251,114,153,0.2);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg); color: var(--text);
+  line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Intro Card ---- */
+.intro-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 22px 26px;
+  margin-bottom: 24px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7;
+}
+.intro-card strong { color: var(--text); }
+.intro-card a { color: var(--link-color); text-decoration: none; }
+.intro-card a:hover { color: var(--link-hover); }
+
+/* ---- Step / Tool Card ---- */
+.step {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 24px 26px;
+  margin-bottom: 14px; transition: all 0.3s;
+}
+.step:hover { background: var(--card-hover-bg); border-color: var(--card-hover-border); }
+.step-head {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+}
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 10px;
+  background: var(--step-num-bg); color: var(--step-num-color);
+  font-size: 0.82rem; font-weight: 700; flex-shrink: 0;
+}
+.step-title { font-size: 0.95rem; font-weight: 600; }
+.step-body { font-size: 0.84rem; color: var(--text); line-height: 1.7; }
+.step-body p { margin-bottom: 8px; }
+.step-body p:last-child { margin-bottom: 0; }
+.step-body a { color: var(--link-color); text-decoration: none; }
+.step-body a:hover { color: var(--link-hover); }
+
+/* ---- Code Block ---- */
+.code-wrap { position: relative; margin: 10px 0; }
+.code-block {
+  background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 10px;
+  padding: 12px 44px 12px 16px; overflow-x: auto;
+  font-family: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+  font-size: 0.8rem; color: var(--text); line-height: 1.5;
+  white-space: pre-wrap; word-break: break-all;
+}
+.copy-btn {
+  position: absolute; top: 6px; right: 6px;
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  color: var(--text-secondary); font-size: 0.7rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.copy-btn:hover { background: var(--card-hover-bg); border-color: var(--card-hover-border); color: var(--text); }
+.copy-btn.copied { color: #5cb878; border-color: rgba(92,184,120,0.3); background: rgba(92,184,120,0.1); }
+
+/* ---- Link Buttons ---- */
+.btn-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 10px;
+  background: var(--btn-link-bg); border: 1px solid var(--btn-link-border);
+  color: var(--link-color); text-decoration: none;
+  font-size: 0.82rem; font-weight: 500; transition: all 0.2s;
+  margin: 4px 8px 4px 0;
+}
+.btn-link:hover { background: var(--btn-link-hover-bg); color: var(--link-hover); }
+
+/* ---- Note ---- */
+.note {
+  margin: 10px 0; padding: 10px 14px; border-radius: 10px;
+  background: rgba(210,170,100,0.1); border: 1px solid rgba(210,170,100,0.18);
+  font-size: 0.8rem; color: var(--text-secondary);
+}
+.note-info { background: rgba(140,130,220,0.1); border-color: rgba(140,130,220,0.2); }
+
+/* ---- Link Table ---- */
+.link-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 10px 0; }
+.link-table th, .link-table td {
+  padding: 10px 12px; text-align: left;
+  border-bottom: 1px solid var(--card-border);
+}
+.link-table th { color: var(--text-tertiary); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.link-table td a { color: var(--link-color); text-decoration: none; }
+.link-table td a:hover { color: var(--link-hover); }
+.link-table td { color: var(--text-secondary); }
+.link-table tr:hover td { background: var(--link-item-hover); }
+
+/* ---- Sec label ---- */
+.sec-label {
+  display: flex; align-items: center; gap: 0;
+  margin: 28px 0 14px; font-size: 0.88rem; font-weight: 700;
+  color: var(--text); letter-spacing: -0.01em;
+}
+.sec-label::before {
+  content: ''; width: 4px; height: 18px; border-radius: 2px;
+  background: var(--link-color); margin-right: 10px; flex-shrink: 0;
+}
+
+/* ---- Page Header ---- */
+.page-header { text-align: center; margin-bottom: 28px; }
+.page-header h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; }
+.page-header p  { font-size: 0.82rem; color: var(--text-secondary); margin-top: 6px; }
+
+/* ---- Footer ---- */
+.footer { text-align: center; margin-top: 36px; padding-top: 20px; }
+.footer span { font-size: 0.72rem; color: var(--text-tertiary); opacity: 0.6; }
+
+/* ---- Back Link ---- */
+.back-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--text-tertiary); text-decoration: none;
+  font-size: 0.82rem; transition: color 0.2s; margin-bottom: 18px;
+}
+.back-link:hover { color: var(--link-color); }
