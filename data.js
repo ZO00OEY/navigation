@@ -1,5 +1,5 @@
 const SITE_DATA = {
-  "title": "My Nav",
+  "title": "芝士的摸鱼站 (๑˃̵ᴗ˂̵)و",
   "subtitle": "攻略 · 工具 · 资源集",
   "blocks": [
     {
@@ -9,7 +9,7 @@ const SITE_DATA = {
       "rows": 1,
       "avatar": "avatar.jpg",
       "username": "ZO.oEY",
-      "bio": "如果能帮到你很开心 (๑˃̵ᴗ˂̵)و",
+      "bio": "如果能帮到你，就很开心啦 (๑˃̵ᴗ˂̵)و",
       "socials": [
         { "name": "B站", "url": "https://space.bilibili.com/18637872" },
         { "name": "小红书", "url": "https://xhslink.com/m/4mCKNKRlZXc" },
@@ -63,16 +63,6 @@ const SITE_DATA = {
       "layout": "tabs",
       "page": "tools",
       "subcategories": [
-        {
-          "name": "云服务一键脚本",
-          "links": [
-            { "title": "服务器初始化脚本", "url": "https://github.com/", "desc": "新机一键配置环境" },
-            { "title": "Docker 一键部署", "url": "https://github.com/", "desc": "容器化快速部署" },
-            { "title": "LNMP 一键安装", "url": "https://github.com/", "desc": "Nginx+MySQL+PHP 环境" },
-            { "title": "SSL 证书自动续签", "url": "https://github.com/", "desc": "Let's Encrypt 自动化" },
-            { "title": "VPS 测速脚本", "url": "https://github.com/", "desc": "服务器性能一键测试" }
-          ]
-        },
         {
           "name": "京东自营店铺小工具",
           "links": [

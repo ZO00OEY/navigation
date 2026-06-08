@@ -236,7 +236,7 @@
   }
 
   function renderLinkItem(link, i, subIdx) {
-    return '<a href="' + esc(link.url) + '" class="link-item" target="_blank" rel="noopener" data-subcat="' + subIdx + '">' +
+    return '<a href="' + esc(link.url) + '" class="link-item" data-subcat="' + subIdx + '">' +
       '<span class="link-num">' + (i + 1).toString().padStart(2, '0') + '</span>' +
       '<span class="link-title">' + esc(link.title) + '</span>' +
       (link.desc ? '<span class="link-desc">' + esc(link.desc) + '</span>' : '') +
@@ -244,10 +244,10 @@
   }
 
   if (subcat) {
-    document.title = parentName + ' / ' + subcat.name + ' - My Nav';
+    document.title = parentName + ' / ' + subcat.name + ' - 芝士的摸鱼站 (๑˃̵ᴗ˂̵)و';
     document.getElementById('pageTitle').innerHTML = '<span class="breadcrumb">' + esc(parentName) + ' / </span>' + esc(subcat.name);
   } else if (block && block.subcategories) {
-    document.title = block.name + ' - My Nav';
+    document.title = block.name + ' - 芝士的摸鱼站 (๑˃̵ᴗ˂̵)و';
     document.getElementById('pageTitle').innerHTML = esc(block.name);
   } else if (!block && !subcat) {
     document.getElementById('pageTitle').textContent = '未找到';

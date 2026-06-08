@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Nav</title>
+<title>芝士的摸鱼站 (๑˃̵ᴗ˂̵)و</title>
+<link rel="icon" id="favicon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cellipse cx='11' cy='19' rx='9' ry='7' fill='none' stroke='%238fa8ff' stroke-width='2.5'/%3E%3Cpolygon points='20,12 27,6 27,24 20,20' fill='none' stroke='%238fa8ff' stroke-width='2.5' stroke-linejoin='round'/%3E%3Ccircle cx='7' cy='18' r='1.8' fill='%238fa8ff'/%3E%3C/svg%3E">
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <link rel="stylesheet" href="guides/shared.css">
 <style>
@@ -528,7 +529,7 @@ body { line-height: 1.5; overflow-x: hidden; }
       html += '<span class="hi-sub hi-links">';
       profile.socials.forEach(function(s, i) {
         if (i > 0) html += '<span class="hi-sep">·</span>';
-        html += '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + '</a>';
+        html += '<a href="' + esc(s.url) + '">' + esc(s.name) + '</a>';
       });
       html += '</span>';
     }
@@ -566,7 +567,7 @@ body { line-height: 1.5; overflow-x: hidden; }
         html += '</div>';
         html += '<div class="subcat-body' + (links.length >= 4 ? ' multi' : '') + '">';
         links.forEach(function(link, i) {
-          html += '<a href="' + esc(link.url) + '" class="link-item' + (i >= VISIBLE ? ' link-extra' : '') + '" target="_blank" rel="noopener" data-searchable>' +
+          html += '<a href="' + esc(link.url) + '" class="link-item' + (i >= VISIBLE ? ' link-extra' : '') + '" data-searchable>' +
             '<span class="link-title">' + esc(link.title) + '</span>' +
             (link.desc ? '<span class="link-desc">' + esc(link.desc) + '</span>' : '') +
             '<span class="link-arrow">→</span></a>';
@@ -584,7 +585,7 @@ body { line-height: 1.5; overflow-x: hidden; }
   }
 
   function renderLink(link) {
-    return '<a href="' + esc(link.url) + '" class="link-item" target="_blank" rel="noopener" data-searchable>' +
+    return '<a href="' + esc(link.url) + '" class="link-item" data-searchable>' +
       '<span class="link-title">' + esc(link.title) + '</span>' +
       (link.desc ? '<span class="link-desc">' + esc(link.desc) + '</span>' : '') +
       '<span class="link-arrow">→</span></a>';
@@ -664,7 +665,7 @@ body { line-height: 1.5; overflow-x: hidden; }
     if (hasSubcats && block.page) inner += '<a class="card-more" href="detail.html?page=' + esc(block.page) + '">更多</a>';
     inner += '</div>';
     if (block.cardFooter) {
-      inner += '<a href="' + esc(block.cardFooter.url) + '" class="card-footer-link" target="_blank" rel="noopener" data-searchable>' +
+      inner += '<a href="' + esc(block.cardFooter.url) + '" class="card-footer-link" data-searchable>' +
         '<span class="cfl-badge">' + esc(block.cardFooter.title) + '</span>' +
         '<span class="cfl-desc">' + esc(block.cardFooter.desc) + '</span>' +
         '<span class="link-arrow">→</span></a>';
