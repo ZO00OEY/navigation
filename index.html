@@ -571,7 +571,7 @@ body { line-height: 1.5; overflow-x: hidden; }
     const profile = SITE_DATA.blocks.find(function(b) { return b.type === 'profile'; });
     if (!profile) return;
     const h = document.getElementById('siteHeader');
-    const initial = (profile.name || '?')[0];
+    const initial = (profile.username || profile.name || '?')[0];
     let avatarHtml;
     if (profile.avatar) {
       avatarHtml = '<img class="header-avatar-img" src="' + esc(profile.avatar) + '" alt="avatar">';
@@ -583,7 +583,7 @@ body { line-height: 1.5; overflow-x: hidden; }
     if (profile.username) html += '<span class="header-avatar-cap">' + esc(profile.username) + '</span>';
     html += '</div>';
     html += '<div class="header-info">';
-    html += '<span class="hi-name">' + esc(profile.name) + '</span>';
+    if (profile.name) html += '<span class="hi-name">' + esc(profile.name) + '</span>';
     html += '<span class="hi-sub hi-bio">' + esc(profile.bio || '') + '</span>';
     if (profile.socials && profile.socials.length) {
       html += '<span class="hi-sub hi-links">';
