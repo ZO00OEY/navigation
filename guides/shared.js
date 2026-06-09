@@ -91,6 +91,12 @@ function copyCode(btn) {
     // Sync favicon with theme
     var favicon = document.getElementById('favicon');
     if (!favicon) { favicon = document.querySelector('link[rel="icon"]'); }
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      favicon.id = 'favicon';
+      document.head.appendChild(favicon);
+    }
     if (favicon) {
       var fc = t === LIGHT ? '%23d44070' : '%238fa8ff';
       favicon.href = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'%3E%3Cellipse cx=\'11\' cy=\'19\' rx=\'9\' ry=\'7\' fill=\'none\' stroke=\'' + fc + '\' stroke-width=\'2.5\'/%3E%3Cpolygon points=\'20,12 27,6 27,24 20,20\' fill=\'none\' stroke=\'' + fc + '\' stroke-width=\'2.5\' stroke-linejoin=\'round\'/%3E%3Ccircle cx=\'7\' cy=\'18\' r=\'1.8\' fill=\'' + fc + '\'/%3E%3C/svg%3E';

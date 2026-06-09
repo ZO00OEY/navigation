@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>【工具名】 - 芝士的摸鱼站</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="../../guides/shared.css">
+<style>
+/* ---- Blob overrides ---- */
+.bg-decor { overflow: visible; }
+.blob { filter: blur(120px); opacity: 0.45; }
+.blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(80,100,220,0.5), transparent); top: -200px; left: -150px; }
+.blob-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(140,80,200,0.4), transparent); top: 50%; right: -200px; bottom: auto; transform: translateY(-50%); }
+.blob-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(60,180,160,0.35), transparent); bottom: -150px; left: 30%; top: auto; }
+[data-theme="light"] .blob { opacity: 0.35; }
+[data-theme="light"] .blob-1 { background: radial-gradient(circle, rgba(251,130,160,0.42), transparent); }
+[data-theme="light"] .blob-2 { background: radial-gradient(circle, rgba(220,150,200,0.36), transparent); }
+[data-theme="light"] .blob-3 { background: radial-gradient(circle, rgba(255,180,140,0.32), transparent); }
+
+/* ---- Layout ---- */
+.app { max-width: 1000px; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--text-tertiary); text-decoration: none;
+  font-size: 0.82rem; transition: color 0.2s; margin-bottom: 20px;
+}
+.back-link:hover { color: var(--link-color); }
+
+/* ---- Tool Shell ---- */
+.tool-shell {
+  display: flex;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius); overflow: hidden;
+  box-shadow: 0 4px 24px var(--card-shadow);
+  min-height: 580px;
+}
+
+/* ---- Sidebar ---- */
+.tool-sidebar {
+  width: 178px; flex-shrink: 0;
+  background: var(--card-bg);
+  border-right: 1px solid var(--card-border);
+  padding: 16px 0;
+}
+.tool-sidebar .tab-btn {
+  display: block; width: 100%;
+  padding: 13px 18px; border: none; background: none;
+  text-align: left; font-size: 0.8rem; color: var(--text-secondary);
+  cursor: pointer; font-family: inherit;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+}
+.tool-sidebar .tab-btn:hover { background: var(--link-item-hover); color: var(--text); }
+.tool-sidebar .tab-btn.active {
+  background: rgba(140,155,220,0.14); color: var(--link-color);
+  font-weight: 600; border-left-color: var(--link-color);
+}
+[data-theme="light"] .tool-sidebar .tab-btn.active {
+  background: rgba(251,114,153,0.12);
+}
+
+/* ---- Main Area ---- */
+.tool-main { flex: 1; padding: 32px 36px; overflow-y: auto; min-width: 0; }
+.tool-page { display: none; }
+.tool-page.active { display: block; }
+.tool-main h1 { font-size: 1.3rem; margin-bottom: 8px; color: var(--text); }
+.tool-main .sub { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 24px; line-height: 1.6; }
+.tool-main .sub a { color: var(--link-color); text-decoration: none; }
+.tool-main .sub a:hover { color: var(--link-hover); }
+
+/* ---- Step Cards ---- */
+.step {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 20px 22px;
+  margin-bottom: 14px;
+}
+.step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--step-num-bg); color: var(--step-num-color);
+  font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+}
+.step-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.step-title .clear { font-size: 0.72rem; color: var(--text-tertiary); cursor: pointer; margin-left: 8px; font-weight: 400; }
+.step-title .clear:hover { color: #e74c3c; }
+.step-body { font-size: 0.84rem; color: var(--text); line-height: 1.7; }
+.step-body p { margin-bottom: 8px; }
+.step-body p:last-child { margin-bottom: 0; }
+
+/* ---- Footer ---- */
+.footer { text-align: center; margin-top: 40px; }
+.footer span { font-size: 0.72rem; color: var(--text-tertiary); opacity: 0.6; }
+
+@media (max-width: 700px) {
+  .tool-shell { flex-direction: column; }
+  .tool-sidebar { width: 100%; display: flex; padding: 0; border-right: none; border-bottom: 1px solid var(--card-border); overflow-x: auto; }
+  .tool-sidebar .tab-btn { border-left: none; border-bottom: 2px solid transparent; white-space: nowrap; flex-shrink: 0; }
+  .tool-sidebar .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--link-color); }
+  .tool-main { padding: 22px 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="float-wrapper" id="floatWrapper">
+  <div class="float-stack open" id="floatStack">
+    <div class="bookmark-strip">
+      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
+      <div class="bookmark-buttons">
+        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+        <a href="../../index.html" class="float-btn" title="返回导航">⌂</a>
+        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
+      </div>
+    </div>
+  </div>
+  <div class="float-w"></div>
+</div>
+
+<div class="bg-decor"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+
+<div class="app">
+  <a class="back-link" href="../../index.html">← 返回导航</a>
+
+  <div class="tool-shell">
+    <div class="tool-sidebar">
+      <button class="tab-btn active" data-page="page1">01 【功能A】</button>
+      <button class="tab-btn" data-page="page2">02 【功能B】</button>
+      <!-- 更多标签... -->
+    </div>
+    <div class="tool-main">
+      <div class="tool-page active" id="page1">
+        <h1>【功能A标题】</h1>
+        <div class="sub">【功能A说明】</div>
+
+        <div class="step">
+          <div class="step-head"><span class="step-num">1</span><span class="step-title">【步骤标题】</span></div>
+          <div class="step-body">
+            <!-- 步骤内容 -->
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-head"><span class="step-num">2</span><span class="step-title">【步骤标题】</span></div>
+          <div class="step-body">
+            <!-- 步骤内容 -->
+          </div>
+        </div>
+      </div>
+      <div class="tool-page" id="page2">
+        <h1>【功能B标题】</h1>
+        <div class="sub">【功能B说明】</div>
+        <!-- 自由内容 -->
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer"><span>🐾 【所属分类】</span></footer>
+</div>
+
+<script src="../../guides/shared.js"></script>
+<script>
+(function() {
+  function switchPage(id) {
+    document.querySelectorAll('.tool-page').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    var page = document.getElementById(id);
+    if (page) page.classList.add('active');
+    var btn = document.querySelector('.tab-btn[data-page="' + id + '"]');
+    if (btn) btn.classList.add('active');
+  }
+  // Click on tab → update hash
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      location.hash = this.getAttribute('data-page');
+    });
+  });
+  // Hash change → switch page (supports browser back/forward)
+  window.addEventListener('hashchange', function() {
+    switchPage(location.hash.slice(1) || 'page1');
+  });
+  // Init from current hash
+  switchPage(location.hash.slice(1) || 'page1');
+})();
+</script>
+</body>
+</html>

@@ -23,7 +23,6 @@
 /* ---- Layout ---- */
 .app { max-width: 1000px; }
 
-/* ---- Back Link ---- */
 .back-link {
   display: inline-flex; align-items: center; gap: 4px;
   color: var(--text-tertiary); text-decoration: none;
@@ -39,8 +38,6 @@
   box-shadow: 0 4px 24px var(--card-shadow);
   min-height: 580px;
 }
-
-/* ---- Sidebar ---- */
 .tool-sidebar {
   width: 178px; flex-shrink: 0;
   background: var(--card-bg);
@@ -64,7 +61,6 @@
   background: rgba(251,114,153,0.12);
 }
 
-/* ---- Main Area ---- */
 .tool-main { flex: 1; padding: 32px 36px; overflow-y: auto; min-width: 0; }
 .tool-page { display: none; }
 .tool-page.active { display: block; }
@@ -73,74 +69,53 @@
 .tool-main .sub a { color: var(--link-color); text-decoration: none; }
 .tool-main .sub a:hover { color: var(--link-hover); }
 
-/* ---- Official Link ---- */
-.official-link {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 10px 18px; border-radius: 10px; margin-bottom: 22px;
-  background: var(--btn-link-bg); border: 1px solid var(--btn-link-border);
-  color: var(--link-color); text-decoration: none;
-  font-size: 0.84rem; font-weight: 600; transition: all 0.2s;
-}
-.official-link:hover { background: var(--btn-link-hover-bg); color: var(--link-hover); }
-
-/* ---- Shared Card (intro + settings) ---- */
+/* ---- Info Card ---- */
 .info-card {
   background: rgba(0,0,0,0.03); border: none;
   border-radius: 4px; padding: 14px 20px;
   margin-bottom: 14px; line-height: 1.7;
 }
-[data-theme="dark"] .info-card {
-  background: rgba(255,255,255,0.04);
-}
-[data-theme="light"] .upload-zone { border-color: rgba(251,114,153,0.25); }
-[data-theme="light"] .file-list ul { border-color: rgba(251,114,153,0.2); }
-/* ---- Intro Card ---- */
+[data-theme="dark"] .info-card { background: rgba(255,255,255,0.04); }
 .intro-card { margin-bottom: 22px; }
 .intro-title { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
 .intro-toggle { font-size: 0.72rem; color: var(--text-tertiary); background: none; border: none; cursor: pointer; font-family: inherit; transition: color 0.15s; flex-shrink: 0; padding: 4px 8px; margin: -4px -8px; }
 .intro-toggle:hover { color: var(--link-color); }
 .intro-content { transition: max-height 0.35s ease, opacity 0.25s; overflow: hidden; }
-.intro-card.collapsed { padding: 10px 20px; }
 .intro-card.collapsed .intro-content { max-height: 0; opacity: 0; margin: 0; }
 .intro-card.collapsed .intro-title { margin-bottom: 0; }
 .intro-body { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5; }
 .intro-body p { margin-bottom: 0; }
-.intro-body strong { color: var(--text); }
 .intro-subtitle { font-size: 0.84rem; font-weight: 700; color: var(--text); margin: 10px 0 4px; }
 .intro-note { font-size: 0.76rem; color: var(--text-tertiary); margin-top: 4px; line-height: 1.5; }
 .intro-note a { color: var(--link-color); text-decoration: none; }
 .intro-note a:hover { color: var(--link-hover); }
 
-/* ---- Section Label ---- */
-.section-label { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 14px; }
-
-/* ---- Usage Guide ---- */
-.usage-guide {
-  margin-top: 24px; padding: 18px 20px;
-  background: var(--search-bg); border: 1px solid var(--card-border);
-  border-radius: 12px;
+/* ---- Step Cards ---- */
+.step {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 20px 22px;
+  margin-bottom: 14px;
 }
-.usage-title { font-size: 0.82rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
-.usage-guide p { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px; line-height: 1.7; }
-.usage-guide p:last-child { margin-bottom: 0; }
-.usage-guide a { color: var(--link-color); text-decoration: none; }
-.usage-guide a:hover { color: var(--link-hover); }
-
-/* ---- Step Heading ---- */
-.step-heading { font-size: 0.84rem; color: var(--text); margin-bottom: 10px; }
-.step-heading .clear { font-size: 0.72rem; color: var(--text-tertiary); cursor: pointer; margin-left: 8px; }
-.step-heading .clear:hover { color: #e74c3c; }
-
-.row-inline { width: 36px; padding: 2px 4px; border: 1.5px solid rgba(140,155,220,0.3); border-radius: 5px; font-size: 0.84rem; text-align: center; outline: none; background: var(--search-bg); color: var(--text); font-family: inherit; transition: border-color 0.15s; }
-[data-theme="light"] .row-inline { border-color: rgba(251,114,153,0.3); }
-.row-inline:focus { border-color: var(--link-color); }
+.step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--step-num-bg); color: var(--step-num-color);
+  font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+}
+.step-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.step-title .clear { font-size: 0.72rem; color: var(--text-tertiary); cursor: pointer; margin-left: 8px; font-weight: 400; }
+.step-title .clear:hover { color: #e74c3c; }
+.step-body { font-size: 0.84rem; color: var(--text); line-height: 1.7; }
+.step-body p { margin-bottom: 8px; }
+.step-body p:last-child { margin-bottom: 0; }
 
 /* ---- Upload Zone ---- */
 .upload-zone {
   border: 2px dashed rgba(140,155,220,0.22);
   border-radius: 10px; padding: 40px 20px;
   text-align: center; cursor: pointer;
-  transition: all 0.2s; margin-bottom: 20px;
+  transition: all 0.2s; margin-bottom: 10px;
 }
 .upload-zone:hover, .upload-zone.dragover {
   border-color: var(--link-color);
@@ -149,22 +124,16 @@
 .upload-zone .icon { font-size: 2.2rem; margin-bottom: 8px; }
 .upload-zone .hint { color: var(--text-secondary); font-size: 0.84rem; }
 .upload-zone .hint span { color: var(--link-color); text-decoration: underline; }
+[data-theme="light"] .upload-zone { border-color: rgba(251,114,153,0.25); }
 
-.row input, .row select {
-  flex: 1; padding: 6px 10px; border: 1px solid var(--card-border);
-  border-radius: 6px; font-size: 0.84rem; outline: none;
-  background: var(--search-bg); color: var(--text); font-family: inherit; min-width: 0;
-}
-.row input:focus, .row select:focus { border-color: var(--link-color); }
+.row-inline { width: 36px; padding: 2px 4px; border: 1.5px solid rgba(140,155,220,0.3); border-radius: 5px; font-size: 0.84rem; text-align: center; outline: none; background: var(--search-bg); color: var(--text); font-family: inherit; transition: border-color 0.15s; }
+[data-theme="light"] .row-inline { border-color: rgba(251,114,153,0.3); }
+.row-inline:focus { border-color: var(--link-color); }
 
 /* ---- File List ---- */
 .file-list { margin-bottom: 16px; }
-.file-list .head {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
-}
+.file-list .head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
 .file-list .head span { font-size: 0.84rem; color: var(--text-secondary); }
-.step-title .clear { font-size: 0.72rem; color: var(--text-tertiary); cursor: pointer; margin-left: 8px; font-weight: 400; }
-.step-title .clear:hover { color: #e74c3c; }
 .file-list ul {
   list-style: none; max-height: 200px; overflow-y: auto;
   border: 1px solid var(--card-border); border-radius: 6px; padding: 4px 8px;
@@ -178,15 +147,12 @@
 .file-list li .info { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .file-list li .dims { color: var(--text-tertiary); font-size: 0.75rem; }
 .file-list li .warn { color: #e67e22; font-size: 0.75rem; }
-.file-list li .err { color: #e74c3c; font-size: 0.75rem; }
-.file-list li:hover { background: var(--link-item-hover); }
 .empty { color: var(--text-tertiary); font-size: 0.82rem; text-align: center; padding: 20px; }
+[data-theme="light"] .file-list ul { border-color: rgba(251,114,153,0.2); }
 
 /* ---- Summary Tags ---- */
 .summary { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-.tag {
-  font-size: 0.72rem; padding: 4px 12px; border-radius: 14px; font-weight: 600;
-}
+.tag { font-size: 0.72rem; padding: 4px 12px; border-radius: 14px; font-weight: 600; }
 .tag-11 { background: rgba(42,126,176,0.15); color: #4da6d9; }
 .tag-34 { background: rgba(184,122,43,0.15); color: #d4953b; }
 .tag-other { background: var(--search-bg); color: var(--text-tertiary); }
@@ -202,7 +168,6 @@
 }
 .btn:hover { opacity: 0.88; transform: translateY(-1px); }
 .btn:disabled { background: var(--card-border); color: var(--text-tertiary); cursor: not-allowed; transform: none; }
-
 .btn-sm {
   padding: 7px 16px; background: var(--card-bg);
   color: var(--link-color); border: 1px solid var(--card-border);
@@ -229,8 +194,59 @@
 .mapping-table th { background: var(--search-bg); color: var(--text-tertiary); font-weight: 600; }
 .mapping-table tbody { display: block; max-height: 200px; overflow-y: auto; }
 .mapping-table thead, .mapping-table tbody tr { display: table; width: 100%; table-layout: fixed; }
-.mapping-table .col-num { width: 44px; color: var(--text-tertiary); }
-.mapping-table .col-sku { font-family: monospace; }
+.mapping-table .col-num { width: 36px; color: var(--text-tertiary); position: relative; }
+.mapping-table .col-sku { width: 30%; font-family: monospace; }
+.mapping-table .col-name { width: 70%; }
+
+/* cell hover: pink border */
+.mapping-table tbody td.col-sku:hover,
+.mapping-table tbody td.col-name:hover {
+  outline: 1.5px solid #fb7299; outline-offset: -1px;
+  cursor: text;
+}
+
+/* hover: # becomes ×, click to delete */
+.mapping-table tbody tr .col-num .num-text { transition: opacity 0.1s; }
+.mapping-table tbody tr .col-num .del-x {
+  position: absolute; left: 50%; top: 50%; margin-left: -9px; margin-top: -10px;
+  width: 18px; height: 18px; border-radius: 4px;
+  background: #e74c3c; color: #fff;
+  font-size: 13px; font-weight: 700; line-height: 17px; text-align: center;
+  cursor: pointer; display: none;
+}
+.mapping-table tbody tr:hover .col-num .del-x { display: block; }
+.mapping-table tbody tr .col-num .del-x:hover { opacity: 0.85; }
+.mapping-table tbody tr:hover .col-num .num-text { opacity: 0; }
+.mapping-table tbody tr:hover .col-num .del-x { display: block; }
+.mapping-table tbody tr .col-num .del-x:hover { font-weight: 700; }
+
+.mapping-add-row {
+  display: table; width: 100%; table-layout: fixed;
+  margin-top: 4px;
+}
+.add-num-cell { display: table-cell; width: 36px; vertical-align: middle; text-align: center; }
+.add-sku-cell { display: table-cell; width: 30%; vertical-align: middle; padding: 0 4px; }
+.add-name-cell { display: table-cell; width: 70%; vertical-align: middle; padding: 0 4px; }
+.add-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 4px;
+  background: var(--link-color); color: #fff;
+  font-size: 0.85rem; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+}
+.add-num:hover { opacity: 0.85; transform: scale(1.15); }
+.add-input {
+  width: 100%; padding: 5px 8px; border: 1px solid var(--card-border);
+  border-radius: 4px; font-size: 0.82rem; outline: none;
+  background: var(--search-bg); color: var(--text); font-family: inherit;
+  box-sizing: border-box;
+}
+.add-input:focus { border-color: var(--link-color); }
+
+.mapping-table td[contenteditable="true"] {
+  outline: 1px solid var(--link-color); outline-offset: -1px;
+  background: var(--search-focus-bg);
+}
 
 /* ---- Radio ---- */
 .radio-group { display: flex; gap: 20px; margin-bottom: 14px; }
@@ -239,8 +255,22 @@
 
 /* ---- Rename List ---- */
 .rename-list { margin-bottom: 16px; }
-.rename-list .head { margin-bottom: 6px; }
+.rename-list .head { margin-bottom: 6px; display: flex; align-items: center; flex-wrap: wrap; }
 .rename-list .head span { font-size: 0.84rem; color: var(--text-secondary); }
+.rename-tabs {
+  display: flex; gap: 4px; margin-bottom: 6px;
+}
+.rename-tab {
+  padding: 4px 12px; border: 1px solid var(--card-border);
+  background: var(--card-bg); color: var(--text-secondary);
+  border-radius: 6px; font-size: 0.76rem; cursor: pointer;
+  font-family: inherit; transition: all 0.15s;
+}
+.rename-tab:hover { border-color: var(--link-color); color: var(--text); }
+.rename-tab.active {
+  background: var(--accent-1); border-color: var(--link-color);
+  color: var(--link-color); font-weight: 600;
+}
 .rename-list ul {
   list-style: none; max-height: 200px; overflow-y: auto;
   border: 1px solid var(--card-border); border-radius: 6px; padding: 4px 8px;
@@ -263,24 +293,6 @@
 }
 .folder-tree .sku-hl { color: var(--link-color); }
 
-/* ---- Step Cards (for page 2) ---- */
-.step {
-  background: var(--card-bg); border: 1px solid var(--card-border);
-  border-radius: var(--radius); padding: 20px 22px;
-  margin-bottom: 14px;
-}
-.step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.step-num {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; border-radius: 8px;
-  background: var(--step-num-bg); color: var(--step-num-color);
-  font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
-}
-.step-title { font-size: 0.9rem; font-weight: 600; }
-.step-body { font-size: 0.84rem; color: var(--text); line-height: 1.7; }
-.step-body p { margin-bottom: 8px; }
-.step-body p:last-child { margin-bottom: 0; }
-
 /* ---- Footer ---- */
 .footer { text-align: center; margin-top: 40px; }
 .footer span { font-size: 0.72rem; color: var(--text-tertiary); opacity: 0.6; }
@@ -292,7 +304,6 @@
   .tool-sidebar .tab-btn { border-left: none; border-bottom: 2px solid transparent; white-space: nowrap; flex-shrink: 0; }
   .tool-sidebar .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--link-color); }
   .tool-main { padding: 22px 18px; }
-  .tool-row { flex-direction: column; }
 }
 </style>
 </head>
@@ -318,17 +329,16 @@
   <a class="back-link" href="../../index.html">← 返回导航</a>
 
   <div class="tool-shell">
-    <!-- ===== Sidebar ===== -->
     <nav class="tool-sidebar">
       <button class="tab-btn active" data-page="page1">01 主图：定时批量替换</button>
-      <button class="tab-btn" data-page="page2">02 图片批量重命名</button>
+      <button class="tab-btn" data-page="page2">02 图片：批量重命名</button>
     </nav>
 
-    <!-- ===== Main ===== -->
     <div class="tool-main">
+
       <!-- ===== Page 1: 批量替换主图 ===== -->
       <div class="tool-page active" id="page1">
-<div class="intro-card info-card" id="introCard">
+        <div class="intro-card info-card" id="introCard">
           <div class="intro-title">
             功能介绍
             <button class="intro-toggle" id="introToggle">收起</button>
@@ -337,9 +347,7 @@
             <div class="intro-body">
               <p>自动检测图片比例，并按照商家后台的要求生成指定格式的四层嵌套目录压缩包。</p>
             </div>
-            <div class="intro-subtitle">使用步骤</div>
-            <p class="intro-note">① 将图片按商品的 SKU 命名（如 <code>123456789.jpg</code>），拖入上传<br>② 默认替换第一张主图（即图片全部命名为 1），如需替换其他位置可在操作区调整<br>③ 点击「生成并下载压缩包」，解压后在 <a href="https://ware-material-jdm.jd.com/mainImageChange/changeRecord" target="_blank" rel="noopener">定时批量替换主图</a> 页面上传</p>
-            <div class="intro-subtitle" style="margin-top:14px">目录结构示意</div>
+            <div class="intro-subtitle">目录结构示意</div>
             <div class="folder-tree">
               SKU主图（上传本文件夹）.zip<br>
               ├── 1：1主图/<br>
@@ -349,49 +357,71 @@
               &emsp;&emsp;&emsp;└── <span class="sku-hl">987654321</span>/<br>
               &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;└── 1.jpg
             </div>
-            <p class="intro-note">解压后上传「SKU主图」文件夹（即第一层），内含 1：1主图 和 3：4主图 两个比例分类。</p>
+            <p class="intro-note">解压后上传「SKU主图」文件夹，在 <a href="https://ware-material-jdm.jd.com/mainImageChange/changeRecord" target="_blank" rel="noopener">定时批量替换主图</a> 页面上传</p>
           </div>
         </div>
 
-        <div class="upload-zone" id="dropZone">
-          <div class="icon">📁</div>
-          <p class="hint">拖拽图片到此处，或 <span>点击选择文件</span></p>
-        </div>
-        <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
-
-        <div class="step-heading">1. 大小限制 <input type="text" class="row-inline" id="maxSize" value="3"> MB，超出跳过</div>
-
-        <div class="step-heading">2. 替换第 <input type="text" class="row-inline" id="outName" value="1"> 张主图</div>
-
-        <div class="step-heading">3. 文件列表预览 <span class="clear" id="clearBtn">清空</span></div>
-        <div class="file-list">
-          <div class="head">
-            <span>已添加 <em id="count">0</em> 张</span>
+        <div class="step">
+          <div class="step-head"><span class="step-num">1</span><span class="step-title">上传图片</span></div>
+          <div class="step-body">
+            <div class="upload-zone" id="dropZone">
+              <div class="icon">📁</div>
+              <p class="hint">拖拽图片到此处，或 <span>点击选择文件</span></p>
+            </div>
+            <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+            <div style="margin-top:10px;font-size:0.84rem;color:var(--text-secondary);">
+              大小限制 <input type="text" class="row-inline" id="maxSize" value="3"> MB，超出跳过
+            </div>
           </div>
-          <div class="summary" id="summary"></div>
-          <ul id="fileList"><li class="empty">暂无文件</li></ul>
         </div>
 
-        <button class="btn" id="genBtn" disabled>生成并下载压缩包</button>
-        <div class="msg" id="msg"></div>
+        <div class="step">
+          <div class="step-head"><span class="step-num">2</span><span class="step-title">设置替换位置</span></div>
+          <div class="step-body">
+            <p style="font-size:0.84rem;color:var(--text-secondary);">
+              替换第 <input type="text" class="row-inline" id="outName" value="1"> 张主图（默认第 1 张）
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-head"><span class="step-num">3</span><span class="step-title">预览与生成 <span class="clear" id="clearBtn">清空</span></span></div>
+          <div class="step-body">
+            <div class="file-list">
+              <div class="head"><span>已添加 <em id="count">0</em> 张</span></div>
+              <div class="summary" id="summary"></div>
+              <ul id="fileList"><li class="empty">暂无文件</li></ul>
+            </div>
+            <button class="btn" id="genBtn" disabled>生成并下载压缩包</button>
+            <div class="msg" id="msg"></div>
+          </div>
+        </div>
       </div>
 
       <!-- ===== Page 2: 图片批量重命名 ===== -->
       <div class="tool-page" id="page2">
         <div class="step">
-          <div class="step-head"><span class="step-num">1</span><span class="step-title">导入 SKU 与中文名称对照表</span></div>
+          <div class="step-head"><span class="step-num">1</span><span class="step-title">导入 SKU 与简称对照表</span></div>
           <div class="step-body">
             <div class="btn-bar">
-              <button class="btn-sm primary" id="p2DownloadTpl">下载空模版</button>
+              <button class="btn-sm" id="p2DownloadTpl">下载空模版</button>
               <button class="btn-sm" id="p2ImportExcel">导入 Excel</button>
+              <button class="btn-sm" id="p2ExportExcel">导出为 Excel</button>
               <button class="btn-sm" id="p2ClearMapping">清空</button>
               <input type="file" id="p2ExcelInput" accept=".xlsx,.xls" style="display:none">
             </div>
             <table class="mapping-table" id="p2MappingTable">
-              <thead><tr><th class="col-num">#</th><th class="col-sku">SKU</th><th>中文名称</th></tr></thead>
+              <thead><tr><th class="col-num">#</th><th class="col-sku">SKU</th><th class="col-name">简称</th></tr></thead>
               <tbody id="p2MappingBody"><tr><td colspan="3" style="text-align:center;color:var(--text-tertiary);padding:20px">暂无映射数据，请导入 Excel 或下载模版填写后导入</td></tr></tbody>
             </table>
-            <div style="font-size:0.75rem;color:var(--text-tertiary)">共 <em id="p2MappingCount">0</em> 条映射</div>
+            <div class="mapping-add-row">
+              <span class="add-num-cell"><span class="add-num" id="p2AddBtn" title="添加">+</span></span>
+              <span class="add-sku-cell"><input type="text" id="p2NewSku" placeholder="SKU" class="add-input"></span>
+              <span class="add-name-cell"><input type="text" id="p2NewName" placeholder="简称" class="add-input"></span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-tertiary);margin-top:4px;">
+              共 <em id="p2MappingCount">0</em> 条映射 · 单击单元格编辑
+            </div>
           </div>
         </div>
 
@@ -410,8 +440,8 @@
           <div class="step-head"><span class="step-num">3</span><span class="step-title">重命名方向</span></div>
           <div class="step-body">
             <div class="radio-group">
-              <label><input type="radio" name="p2Direction" value="name2sku" checked> 中文名称 → SKU</label>
-              <label><input type="radio" name="p2Direction" value="sku2name"> SKU → 中文名称</label>
+              <label><input type="radio" name="p2Direction" value="name2sku" checked> 简称 → SKU</label>
+              <label><input type="radio" name="p2Direction" value="sku2name"> SKU → 简称</label>
             </div>
           </div>
         </div>
@@ -422,6 +452,11 @@
             <div class="rename-list">
               <div class="head">
                 <span>已添加 <em id="p2FileCount">0</em> 张</span>
+                <span id="p2FailHint" style="display:none;color:#e74c3c;margin-left:8px;">，<em id="p2FailCount">0</em> 张匹配失败</span>
+              </div>
+              <div class="rename-tabs" id="p2RenameTabs" style="display:none;">
+                <button class="rename-tab active" data-filter="success">匹配成功</button>
+                <button class="rename-tab" data-filter="fail">匹配失败 <span id="p2FailBadge" style="color:#e74c3c;">0</span></button>
               </div>
               <ul id="p2RenameList"><li class="empty">暂无文件</li></ul>
             </div>
@@ -654,22 +689,32 @@ document.getElementById('p2ClearMapping').addEventListener('click', function() {
   P2.msg.className = 'msg ok';
 });
 
-// 恢复本地缓存映射
 try {
   var cached = localStorage.getItem('p2Mapping');
   if (cached) { p2Mapping = JSON.parse(cached); renderP2Mapping(); }
 } catch(e) {}
 
-// 下载 Excel 模版
 document.getElementById('p2DownloadTpl').addEventListener('click', function() {
   var wb = XLSX.utils.book_new();
-  var ws = XLSX.utils.aoa_to_sheet([['SKU', '中文名称']]);
+  var ws = XLSX.utils.aoa_to_sheet([['SKU', '简称']]);
   ws['!cols'] = [{ wch: 20 }, { wch: 40 }];
   XLSX.utils.book_append_sheet(wb, ws, 'SKU映射表');
   XLSX.writeFile(wb, 'SKU映射模版.xlsx');
 });
 
-// 导入 Excel
+document.getElementById('p2ExportExcel').addEventListener('click', function() {
+  if (p2Mapping.length === 0) return;
+  var wb = XLSX.utils.book_new();
+  var data = [['SKU', '简称']];
+  p2Mapping.forEach(function(m) { data.push([m.sku, m.name]); });
+  var ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{ wch: 20 }, { wch: 40 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'SKU映射表');
+  XLSX.writeFile(wb, 'SKU映射表_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  P2.msg.textContent = '已导出 ' + p2Mapping.length + ' 条映射';
+  P2.msg.className = 'msg ok';
+});
+
 document.getElementById('p2ImportExcel').addEventListener('click', function() {
   document.getElementById('p2ExcelInput').click();
 });
@@ -699,6 +744,15 @@ document.getElementById('p2ExcelInput').addEventListener('change', function(e) {
   e.target.value = '';
 });
 
+function deleteMapping(idx) {
+  p2Mapping.splice(idx, 1);
+  localStorage.setItem('p2Mapping', JSON.stringify(p2Mapping));
+  renderP2Mapping();
+  renderP2RenameList();
+  P2.msg.textContent = '已删除';
+  P2.msg.className = 'msg ok';
+}
+
 function renderP2Mapping() {
   P2.mappingCount.textContent = p2Mapping.length;
   if (p2Mapping.length === 0) {
@@ -706,11 +760,79 @@ function renderP2Mapping() {
     return;
   }
   P2.mappingBody.innerHTML = p2Mapping.map(function(m, i) {
-    return '<tr><td class="col-num">' + (i + 1) + '</td><td class="col-sku">' + m.sku + '</td><td>' + m.name + '</td></tr>';
+    return '<tr data-index="' + i + '"><td class="col-num"><span class="num-text">' + (i + 1) + '</span><span class="del-x" title="删除" onclick="deleteMapping(' + i + ')">×</span></td><td class="col-sku">' + escHtml(m.sku) + '</td><td class="col-name">' + escHtml(m.name) + '</td></tr>';
   }).join('');
 }
 
-// 图片上传
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===== Add new mapping entry =====
+document.getElementById('p2AddBtn').addEventListener('click', function() {
+  var sku = document.getElementById('p2NewSku').value.trim();
+  var name = document.getElementById('p2NewName').value.trim();
+  if (!sku || !name) return;
+  p2Mapping.push({ sku: sku, name: name });
+  localStorage.setItem('p2Mapping', JSON.stringify(p2Mapping));
+  document.getElementById('p2NewSku').value = '';
+  document.getElementById('p2NewName').value = '';
+  renderP2Mapping();
+  renderP2RenameList();
+  P2.msg.textContent = '已添加 ' + sku + ' → ' + name;
+  P2.msg.className = 'msg ok';
+});
+
+document.getElementById('p2NewName').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('p2AddBtn').click();
+});
+
+// ===== Click to edit =====
+document.getElementById('p2MappingBody').addEventListener('click', function(e) {
+  var td = e.target.closest('td.col-sku, td.col-name');
+  if (!td) return;
+  var tr = td.closest('tr');
+  var idx = parseInt(tr.getAttribute('data-index'), 10);
+  var field = td.classList.contains('col-sku') ? 'sku' : 'name';
+  var oldVal = p2Mapping[idx][field];
+
+  td.setAttribute('contenteditable', 'true');
+  td.textContent = oldVal;
+  td.focus();
+
+  // Select all text
+  var range = document.createRange();
+  range.selectNodeContents(td);
+  var sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  function finish() {
+    td.removeAttribute('contenteditable');
+    td.removeEventListener('blur', finish);
+    td.removeEventListener('keydown', onKey);
+    var newVal = td.textContent.trim();
+    if (newVal && newVal !== oldVal) {
+      p2Mapping[idx][field] = newVal;
+      localStorage.setItem('p2Mapping', JSON.stringify(p2Mapping));
+      renderP2Mapping();
+      renderP2RenameList();
+    } else if (newVal === oldVal) {
+      td.textContent = oldVal; // restore display
+    } else {
+      renderP2Mapping(); // restore if empty
+    }
+  }
+
+  function onKey(e) {
+    if (e.key === 'Enter') { e.preventDefault(); finish(); }
+    if (e.key === 'Escape') { td.textContent = oldVal; finish(); }
+  }
+
+  td.addEventListener('blur', finish);
+  td.addEventListener('keydown', onKey);
+});
+
 P2.dropZone.addEventListener('click', function() { P2.fileInput.click(); });
 P2.dropZone.addEventListener('dragover', function(e) { e.preventDefault(); P2.dropZone.classList.add('dragover'); });
 P2.dropZone.addEventListener('dragleave', function() { P2.dropZone.classList.remove('dragover'); });
@@ -748,6 +870,8 @@ function lookupP2(key, direction) {
   }
 }
 
+var p2CurrentFilter = 'success'; // 'success' | 'fail'
+
 function renderP2RenameList() {
   P2.fileCount.textContent = p2Files.length;
   P2.genBtn.disabled = p2Files.length === 0 || p2Mapping.length === 0;
@@ -755,6 +879,8 @@ function renderP2RenameList() {
 
   if (p2Files.length === 0) {
     P2.renameList.innerHTML = '<li class="empty">暂无文件</li>';
+    document.getElementById('p2RenameTabs').style.display = 'none';
+    document.getElementById('p2FailHint').style.display = 'none';
     return;
   }
 
@@ -767,6 +893,25 @@ function renderP2RenameList() {
     return { f: f, key: key, ext: ext, target: target };
   });
 
+  // Count failures
+  var failCount = 0;
+  results.forEach(function(r) { if (!r.target) failCount++; });
+
+  // Show/hide failure hint and tabs
+  var failHint = document.getElementById('p2FailHint');
+  var renameTabs = document.getElementById('p2RenameTabs');
+  if (failCount > 0) {
+    failHint.style.display = '';
+    document.getElementById('p2FailCount').textContent = failCount;
+    renameTabs.style.display = '';
+    document.getElementById('p2FailBadge').textContent = failCount;
+  } else {
+    failHint.style.display = 'none';
+    renameTabs.style.display = 'none';
+    p2CurrentFilter = 'success';
+  }
+
+  // Build final names for matched items
   var finalNames = results.map(function(r) {
     if (!r.target) return null;
     var base = r.target;
@@ -777,21 +922,50 @@ function renderP2RenameList() {
     return base;
   });
 
+  // Build all items
   var items = results.map(function(r, i) {
     if (!r.target) {
-      return '<li><span class="from-name">' + r.f.name + '</span><span class="not-found">未在映射表中找到，跳过</span></li>';
+      return '<li class="rename-item fail"><span class="from-name">' + r.f.name + '</span><span class="not-found">未在映射表中找到</span></li>';
     }
-    return '<li><span class="from-name">' + r.f.name + '</span><span class="arrow">→</span><span class="to-name">' + finalNames[i] + '.' + r.ext + '</span></li>';
+    return '<li class="rename-item success"><span class="from-name">' + r.f.name + '</span><span class="arrow">→</span><span class="to-name">' + finalNames[i] + '.' + r.ext + '</span></li>';
   });
 
   P2.renameList.innerHTML = items.join('');
+
+  // Apply current filter
+  applyRenameFilter(p2CurrentFilter);
+
+  // Update tab active state
+  renameTabs.querySelectorAll('.rename-tab').forEach(function(t) {
+    t.classList.toggle('active', t.getAttribute('data-filter') === p2CurrentFilter);
+  });
 }
+
+function applyRenameFilter(filter) {
+  p2CurrentFilter = filter;
+  document.querySelectorAll('.rename-item').forEach(function(item) {
+    if (filter === 'success') {
+      item.style.display = item.classList.contains('success') ? '' : 'none';
+    } else {
+      item.style.display = item.classList.contains('fail') ? '' : 'none';
+    }
+  });
+}
+
+// Rename tab click handler
+document.addEventListener('click', function(e) {
+  var tab = e.target.closest('.rename-tab');
+  if (!tab) return;
+  applyRenameFilter(tab.getAttribute('data-filter'));
+  var tabs = tab.parentElement;
+  tabs.querySelectorAll('.rename-tab').forEach(function(t) { t.classList.remove('active'); });
+  tab.classList.add('active');
+});
 
 document.querySelectorAll('input[name="p2Direction"]').forEach(function(r) {
   r.addEventListener('change', renderP2RenameList);
 });
 
-// 生成重命名压缩包
 P2.genBtn.addEventListener('click', function() {
   if (p2Files.length === 0 || p2Mapping.length === 0) return;
   P2.genBtn.disabled = true;
@@ -846,7 +1020,6 @@ P2.genBtn.addEventListener('click', function() {
   });
 });
 
-// 推送到第1页
 document.getElementById('p2PushBtn').addEventListener('click', function() {
   if (p2Files.length === 0 || p2Mapping.length === 0) return;
 

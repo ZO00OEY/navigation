@@ -390,6 +390,13 @@ body { line-height: 1.5; overflow-x: hidden; }
 /* ========== Footer ========== */
 .footer { text-align: center; margin-top: 48px; padding-top: 24px; }
 .footer span { font-size: 0.72rem; color: var(--text-tertiary); opacity: 0.6; }
+.footer-poem {
+  margin-top: 16px; padding-top: 16px;
+  border-top: 1px solid var(--card-border);
+  font-size: 0.72rem; color: var(--text-tertiary);
+  line-height: 2; opacity: 0.5;
+}
+.footer-poem em { font-style: normal; color: var(--link-color); opacity: 0.7; }
 
 /* ========== Responsive ========== */
 @media (max-width: 900px) {
@@ -466,7 +473,13 @@ body { line-height: 1.5; overflow-x: hidden; }
 
   <div class="no-results" id="noResults">没有匹配的结果</div>
 
-  <footer class="footer"><span id="footerInfo"></span></footer>
+  <footer class="footer">
+    <span id="footerInfo"></span>
+    <div class="footer-poem">
+      执掌划水的<em>摸鱼之神</em>啊，请赐予我 ——<br>
+      永远有年假的假象，永远不加班的自由，永远不必来的周一。
+    </div>
+  </footer>
 </div>
 
 <script src="data.js"></script>

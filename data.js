@@ -70,6 +70,12 @@ const SITE_DATA = {
             { "title": "商品主图更换", "url": "tools/JD/main-image.html", "desc": "批量替换主图·图片重命名" },
             { "title": "数据分析小工具", "url": "tools/JD/data-analysis.html", "desc": "销售·流量·转化数据分析" }
           ]
+        },
+        {
+          "name": "通用喵喵小工具",
+          "links": [
+            { "title": "鼠标识别检测", "url": "tools/dev/mouse-debug.html", "desc": "光标热点校准 · 偏移量可视化" }
+          ]
         }
       ]
     },

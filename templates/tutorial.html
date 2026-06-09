@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>【标题】 - 芝士的摸鱼站</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="tutorial.css">
+<style>
+/* 页面独有样式（可选） */
+</style>
+</head>
+<body>
+
+<!-- 浮动工具栏（固定结构） -->
+<div class="float-wrapper" id="floatWrapper">
+  <div class="float-stack open" id="floatStack">
+    <div class="bookmark-strip">
+      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
+      <div class="bookmark-buttons">
+        <button class="toc-toggle float-btn" id="tocToggle" title="目录" aria-label="打开目录">☰</button>
+        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+        <a href="index.html" class="float-btn" title="返回导航">⌂</a>
+        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
+      </div>
+    </div>
+  </div>
+  <div class="float-w"></div>
+</div>
+
+<!-- 移动端目录弹出层 -->
+<div class="toc-popup" id="tocPopup"></div>
+
+<!-- 背景装饰 -->
+<div class="bg-decor">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<!-- 桌面端目录 + 内容区 -->
+<div class="toc-layout">
+  <nav class="toc">
+    <div class="toc-label">目录</div>
+    <!--
+    <div class="toc-part">分组名（可选）</div>
+    <a href="#step-01" class="toc-item active"><span class="toc-num">01</span> 步骤标题</a>
+    <a href="#step-01-1" class="toc-item toc-sub">子步骤</a>
+    -->
+  </nav>
+
+  <article class="toc-content">
+    <header class="page-header">
+      <a class="back-link" href="index.html">← 返回导航</a>
+      <h1>【页面标题】</h1>
+      <p class="page-meta">【简短描述 / 更新时间】</p>
+    </header>
+
+    <!-- 步骤区：每个步骤一个 section.step，id 对应 TOC 的 href -->
+    <!--
+    <section class="step" id="step-01">
+      <div class="step-heading">
+        <span class="step-num">01</span>
+        <h2>【步骤标题】</h2>
+      </div>
+      <div class="step-body">
+        <p>【步骤内容】</p>
+        <img class="step-img" src="img/xxx/image1.png" alt="【截图说明】">
+      </div>
+    </section>
+
+    <section class="step" id="step-01-1">
+      <div class="step-heading">
+        <span class="step-num">1.1</span>
+        <h3>【子步骤标题】</h3>
+      </div>
+      <div class="step-body">
+        <p>【子步骤内容】</p>
+      </div>
+    </section>
+    -->
+  </article>
+</div>
+
+<footer class="footer"><span>🌱 持续更新中</span></footer>
+
+<script src="shared.js"></script>
+<script>
+(function() {
+  // ========== TOC 移动端切换 ==========
+  var tocToggle = document.getElementById('tocToggle');
+  var tocPopup  = document.getElementById('tocPopup');
+  if (tocToggle && tocPopup) {
+    tocToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      tocPopup.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e) {
+      if (!tocPopup.contains(e.target) && e.target !== tocToggle) {
+        tocPopup.classList.remove('open');
+      }
+    });
+  }
+
+  // ========== TOC 滚动高亮 ==========
+  var tocItems = document.querySelectorAll('.toc-item');
+  var sections = [];
+  tocItems.forEach(function(item) {
+    var href = item.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      var el = document.querySelector(href);
+      if (el) sections.push({ item: item, el: el });
+    }
+  });
+
+  function updateActive() {
+    var scrollY = window.scrollY + 120;
+    var active = null;
+    sections.forEach(function(s) {
+      if (s.el.offsetTop <= scrollY) active = s.item;
+    });
+    tocItems.forEach(function(item) { item.classList.remove('active'); });
+    if (active) active.classList.add('active');
+  }
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+})();
+</script>
+</body>
+</html>

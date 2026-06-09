@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光标热点校准 - 芝士的摸鱼站</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="../../guides/shared.css">
+<style>
+/* ---- Blob overrides ---- */
+.bg-decor { overflow: visible; }
+.blob { filter: blur(120px); opacity: 0.45; }
+.blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(80,100,220,0.5), transparent); top: -200px; left: -150px; }
+.blob-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(140,80,200,0.4), transparent); top: 50%; right: -200px; bottom: auto; transform: translateY(-50%); }
+.blob-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(60,180,160,0.35), transparent); bottom: -150px; left: 30%; top: auto; }
+[data-theme="light"] .blob { opacity: 0.35; }
+[data-theme="light"] .blob-1 { background: radial-gradient(circle, rgba(251,130,160,0.42), transparent); }
+[data-theme="light"] .blob-2 { background: radial-gradient(circle, rgba(220,150,200,0.36), transparent); }
+[data-theme="light"] .blob-3 { background: radial-gradient(circle, rgba(255,180,140,0.32), transparent); }
+
+.app { max-width: 900px; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--text-tertiary); text-decoration: none;
+  font-size: 0.82rem; transition: color 0.2s; margin-bottom: 20px;
+}
+.back-link:hover { color: var(--link-color); }
+
+/* ---- Cursor toggle ---- */
+body.native-cursor,
+body.native-cursor * { cursor: auto !important; }
+
+/* ---- Grid ---- */
+.grid-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+[data-theme="light"] .grid-overlay {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+}
+
+/* ---- Crosshair ---- */
+.crosshair {
+  position: fixed; z-index: 200; pointer-events: none;
+}
+.crosshair-line {
+  position: absolute;
+  background: var(--link-color);
+  opacity: 0.7;
+}
+.crosshair-h { width: 100vw; height: 1px; top: 0; left: -50vw; }
+.crosshair-v { width: 1px; height: 100vh; left: 0; top: -50vh; }
+.crosshair-dot {
+  position: absolute; left: -3px; top: -3px;
+  width: 7px; height: 7px;
+  background: var(--link-color); opacity: 0.9;
+  border-radius: 50%;
+}
+
+/* ---- Content ---- */
+.content-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 28px 32px;
+  box-shadow: 0 4px 24px var(--card-shadow);
+  position: relative; z-index: 1;
+}
+.content-card h1 {
+  font-size: 1.25rem; font-weight: 700; color: var(--text);
+  letter-spacing: -0.01em; margin-bottom: 6px;
+}
+.content-card .subtitle {
+  color: var(--text-secondary); font-size: 0.82rem; line-height: 1.8;
+}
+.content-card .subtitle strong { color: var(--link-color); }
+
+/* ---- Toggle ---- */
+.cursor-toggle {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 18px; border: 1px solid var(--card-border);
+  border-radius: 10px; font-size: 0.82rem; color: var(--text-secondary);
+  cursor: pointer; user-select: none; transition: all 0.2s;
+  background: var(--card-bg);
+}
+.cursor-toggle:hover { border-color: var(--link-color); }
+.cursor-toggle .switch {
+  width: 38px; height: 22px; border-radius: 11px;
+  background: var(--card-border); position: relative; transition: background 0.25s;
+}
+.cursor-toggle .switch::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; transition: transform 0.25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.cursor-toggle.on .switch {
+  background: var(--link-color);
+}
+.cursor-toggle.on .switch::after {
+  transform: translateX(16px);
+}
+
+.footer { text-align: center; margin-top: 40px; }
+.footer span { font-size: 0.72rem; color: var(--text-tertiary); opacity: 0.6; }
+
+@media (max-width: 600px) {
+  .content-card { padding: 20px 16px; }
+}
+</style>
+</head>
+<body class="native-cursor">
+
+<div class="float-wrapper" id="floatWrapper">
+  <div class="float-stack open" id="floatStack">
+    <div class="bookmark-strip">
+      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
+      <div class="bookmark-buttons">
+        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+        <a href="../../index.html" class="float-btn" title="返回导航">⌂</a>
+        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
+      </div>
+    </div>
+  </div>
+  <div class="float-w"></div>
+</div>
+
+<div class="bg-decor"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+<div class="grid-overlay"></div>
+
+<!-- 十字架 -->
+<div class="crosshair" id="crosshair">
+  <div class="crosshair-line crosshair-h"></div>
+  <div class="crosshair-line crosshair-v"></div>
+  <div class="crosshair-dot"></div>
+</div>
+
+<div class="app">
+  <a class="back-link" href="../../index.html">← 返回导航</a>
+
+  <div class="content-card">
+    <h1>🐾 光标热点校准</h1>
+    <div class="subtitle" style="margin-bottom:18px;">
+      十字线的<strong>交叉点</strong>就是浏览器识别到的光标<strong>热点位置</strong>。<br>
+      移动光标，观察交叉点是否对准光标的<strong>视觉尖端</strong>。
+    </div>
+    <div class="cursor-toggle" id="cursorToggle" onclick="toggleCursor()">
+      <div class="switch"></div>
+      <span id="cursorLabel">网站自定义光标：已关闭</span>
+    </div>
+  </div>
+
+  <footer class="footer"><span>🐾 通用喵喵小工具</span></footer>
+</div>
+
+<script src="../../guides/shared.js"></script>
+<script>
+(function() {
+  var ch = document.getElementById('crosshair');
+  document.addEventListener('mousemove', function(e) {
+    ch.style.left = e.clientX + 'px';
+    ch.style.top  = e.clientY + 'px';
+  });
+
+  var body = document.body;
+  var toggle = document.getElementById('cursorToggle');
+  var label = document.getElementById('cursorLabel');
+
+  // Default: native cursor on (custom cursor off)
+  window.toggleCursor = function() {
+    if (body.classList.contains('native-cursor')) {
+      body.classList.remove('native-cursor');
+      toggle.classList.add('on');
+      label.textContent = '网站自定义光标：已开启';
+    } else {
+      body.classList.add('native-cursor');
+      toggle.classList.remove('on');
+      label.textContent = '网站自定义光标：已关闭';
+    }
+  };
+})();
+</script>
+</body>
+</html>
