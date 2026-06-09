@@ -1,5 +1,5 @@
 const SITE_DATA = {
-  "title": "芝士的摸鱼站 (๑˃̵ᴗ˂̵)و",
+  "title": "摸鱼神 (๑˃̵ᴗ˂̵)و",
   "subtitle": "攻略 · 工具 · 资源集",
   "blocks": [
     {
@@ -9,7 +9,7 @@ const SITE_DATA = {
       "rows": 1,
       "avatar": "avatar.jpg",
       "username": "ZO.oEY",
-      "bio": "如果能帮到你，就很开心啦 (๑˃̵ᴗ˂̵)و",
+      "bio": "摸鱼之神的忠犬，在此献上摸鱼圣器，愿你在工位得享安息。加入我们，传播摸鱼福音 (๑˃̵ᴗ˂̵)و",
       "socials": [
         { "name": "B站", "url": "https://space.bilibili.com/18637872" },
         { "name": "小红书", "url": "https://xhslink.com/m/4mCKNKRlZXc" },
