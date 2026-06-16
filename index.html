@@ -121,6 +121,10 @@
   <div class="scroll-note">水面以下，还有一些东西</div>
 </section>
 
+<div class="water-to-paper" aria-hidden="true">
+  <span></span>
+</div>
+
 <main class="content" id="content">
   <div class="content-inner">
     <div class="section-head">
@@ -131,16 +135,43 @@
       <p>首屏负责让人停下来，功能区负责让人顺利抵达。这里先沿用现有数据，把教程、工具与收藏重新整理成更安静的入口。</p>
     </div>
     <div class="portal-grid" id="portalGrid"></div>
-    <footer class="site-footer">
-      <span>摸鱼神国 · 持续整理中</span>
-      <span>愿你在工位得享片刻喘息</span>
-    </footer>
   </div>
 </main>
+
+<section class="seabed-scene" id="seabedScene" aria-label="海底祈愿区">
+  <img class="seabed-art" src="concepts/watercolor-seabed-footer-v2.png" alt="">
+  <div class="seabed-fish-layer" id="seabedFishLayer" aria-hidden="true"></div>
+
+  <div class="seabed-prayer">
+    <p>
+      执掌划水的
+      <button class="fish-god" id="fishGod" type="button">摸鱼之神</button>
+      啊，请赐予我 ——
+    </p>
+    <p>永远有年假的假象，永远不加班的自由，永远不必来的周一。</p>
+  </div>
+
+  <div class="shell-button" id="shellButton" data-shell-state="closed" role="button" tabindex="0" aria-label="打开祈愿贝壳" aria-expanded="false">
+    <span class="shell-halo" aria-hidden="true"></span>
+    <img class="shell-frame shell-frame-closed" src="concepts/shell/shell-closed.png" alt="">
+    <img class="shell-frame shell-frame-half" src="concepts/shell/shell-half.png" alt="">
+    <img class="shell-frame shell-frame-open" src="concepts/shell/shell-open.png" alt="">
+    <button class="pearl-button" id="pearlButton" type="button" aria-label="点击珍珠，召唤摸鱼">
+      <img class="shell-pearl" src="concepts/shell/shell-pearl.png" alt="">
+    </button>
+  </div>
+
+  <div class="seabed-message" id="seabedMessage" role="status" aria-live="polite"></div>
+  <div class="seabed-meta">
+    <span>摸鱼神国 · 持续整理中</span>
+    <span>愿你在工位得享片刻喘息</span>
+  </div>
+</section>
 </div>
 
 <script src="data.js"></script>
 <script src="scripts/home-layout.js"></script>
 <script src="scripts/home.js"></script>
+<script src="scripts/seabed.js"></script>
 </body>
 </html>
