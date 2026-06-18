@@ -11,8 +11,11 @@
 
 ## 当前记录
 
+- [首页当前工作记忆](homepage-current-worklog.md)
 - [首页底部海底祈愿区](footer-seabed-design.md)
 
 ## 目录选择
 
-大型团队通常会使用 `docs/design/`、`docs/decisions/` 或 ADR 目录；当前项目规模较小，并且已有“记忆”这一使用习惯，因此先使用 `memory/`。如果文档数量明显增多，再拆分为 `memory/design/` 与 `memory/decisions/`。
+大型团队通常会使用 `docs/design/`、`docs/decisions/` 或 ADR 目录；当前项目规模较小，并且已经有“记忆”这一使用习惯，因此先使用 `memory/`。
+
+如果文档数量明显增加，再拆分为 `memory/design/` 和 `memory/decisions/`。
