@@ -10,3 +10,10 @@ desktop.ini
 
 # Codex local config
 .codex/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
