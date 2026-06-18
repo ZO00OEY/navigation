@@ -130,6 +130,14 @@
 [data-theme="light"] .row-inline { border-color: rgba(251,114,153,0.3); }
 .row-inline:focus { border-color: var(--link-color); }
 
+/* ---- Export Actions ---- */
+.export-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.export-actions .btn { margin: 0; }
+
 /* ---- File List ---- */
 .file-list { margin-bottom: 16px; }
 .file-list .head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
@@ -304,6 +312,7 @@
   .tool-sidebar .tab-btn { border-left: none; border-bottom: 2px solid transparent; white-space: nowrap; flex-shrink: 0; }
   .tool-sidebar .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--link-color); }
   .tool-main { padding: 22px 18px; }
+  .export-actions { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -345,19 +354,15 @@
           </div>
           <div class="intro-content" id="introContent">
             <div class="intro-body">
-              <p>自动检测图片比例，并按照商家后台的要求生成指定格式的四层嵌套目录压缩包。</p>
+              <p>把要替换的主图拖进来，工具会自动判断是方图还是长图，并按京东后台现在支持的两种上传格式打包。你只需要确认要替换第几张主图，下载后直接上传压缩包即可。</p>
             </div>
-            <div class="intro-subtitle">目录结构示意</div>
+            <div class="intro-subtitle">现在支持两种导出</div>
             <div class="folder-tree">
-              SKU主图（上传本文件夹）.zip<br>
-              ├── 1：1主图/<br>
-              │&emsp;&emsp;└── <span class="sku-hl">123456789</span>/<br>
-              │&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;└── 1.jpg<br>
-              └── 3：4主图/<br>
-              &emsp;&emsp;&emsp;└── <span class="sku-hl">987654321</span>/<br>
-              &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;└── 1.jpg
+              图片命名上传：<span class="sku-hl">123456789+方+1.jpg</span><br>
+              文件夹命名上传：<span class="sku-hl">123456789+方/1.jpg</span><br>
+              长图会自动写成「长」，方图会自动写成「方」
             </div>
-            <p class="intro-note">解压后上传「SKU主图」文件夹，在 <a href="https://ware-material-jdm.jd.com/mainImageChange/changeRecord" target="_blank" rel="noopener">定时批量替换主图</a> 页面上传</p>
+            <p class="intro-note">文件名需要先是 SKU。仅打包 3M 内的 jpg、jpeg、png、webp 图片，最多 1000 张；在 <a href="https://ware-material-jdm.jd.com/mainImageChange/changeRecord" target="_blank" rel="noopener">定时批量替换主图</a> 页面按对应方式上传。</p>
           </div>
         </div>
 
@@ -368,9 +373,9 @@
               <div class="icon">📁</div>
               <p class="hint">拖拽图片到此处，或 <span>点击选择文件</span></p>
             </div>
-            <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+            <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" style="display:none">
             <div style="margin-top:10px;font-size:0.84rem;color:var(--text-secondary);">
-              大小限制 <input type="text" class="row-inline" id="maxSize" value="3"> MB，超出跳过
+              图片文件名请用 SKU 命名；大小限制 <input type="text" class="row-inline" id="maxSize" value="3"> MB，超出会跳过
             </div>
           </div>
         </div>
@@ -379,7 +384,7 @@
           <div class="step-head"><span class="step-num">2</span><span class="step-title">设置替换位置</span></div>
           <div class="step-body">
             <p style="font-size:0.84rem;color:var(--text-secondary);">
-              替换第 <input type="text" class="row-inline" id="outName" value="1"> 张主图（默认第 1 张）
+              替换第 <input type="text" class="row-inline" id="outName" value="1"> 张主图（支持 1-10，默认第 1 张）
             </p>
           </div>
         </div>
@@ -392,7 +397,10 @@
               <div class="summary" id="summary"></div>
               <ul id="fileList"><li class="empty">暂无文件</li></ul>
             </div>
-            <button class="btn" id="genBtn" disabled>生成并下载压缩包</button>
+            <div class="export-actions">
+              <button class="btn export-btn" data-export-mode="file" disabled>导出 SKU 命名包</button>
+              <button class="btn export-btn" data-export-mode="folder" disabled>导出文件夹命名包</button>
+            </div>
             <div class="msg" id="msg"></div>
           </div>
         </div>
@@ -506,7 +514,7 @@ var DROP_ZONE = document.getElementById('dropZone');
 var FILE_INPUT = document.getElementById('fileInput');
 var FILE_LIST = document.getElementById('fileList');
 var COUNT_EL = document.getElementById('count');
-var GEN_BTN = document.getElementById('genBtn');
+var GEN_BTNS = Array.from(document.querySelectorAll('.export-btn'));
 var MSG_EL = document.getElementById('msg');
 var CLEAR_BTN = document.getElementById('clearBtn');
 var SUMMARY = document.getElementById('summary');
@@ -549,15 +557,46 @@ function classifyRatio(w, h) {
 }
 
 function folderName(type) {
-  return type === '1:1' ? '1：1主图' : '3：4主图';
+  return type === '1:1' ? '方' : '长';
+}
+
+function ratioUploadWord(type) {
+  return type === '3:4' ? '长' : '方';
+}
+
+function getPositionValue() {
+  var value = document.getElementById('outName').value.trim() || '1';
+  return /^[1-9]$|^10$/.test(value) ? value : null;
+}
+
+function setExportButtonsDisabled(disabled) {
+  GEN_BTNS.forEach(function(btn) { btn.disabled = disabled; });
+}
+
+function setExportButtonsText(loading) {
+  GEN_BTNS.forEach(function(btn) {
+    var mode = btn.getAttribute('data-export-mode');
+    btn.textContent = loading ? '打包中...' : (mode === 'folder' ? '导出文件夹命名包' : '导出 SKU 命名包');
+  });
 }
 
 async function addFiles(newFiles) {
-  var imageExts = ['.jpg','.jpeg','.png','.webp','.gif','.bmp'];
+  var imageExts = ['.jpg','.jpeg','.png','.webp'];
   var filtered = newFiles.filter(function(f) {
     var ext = '.' + f.name.split('.').pop().toLowerCase();
     return imageExts.indexOf(ext) !== -1;
   });
+  var remaining = 1000 - files.length;
+  if (remaining <= 0) {
+    MSG_EL.textContent = '最多支持 1000 张图片，已达到上限';
+    MSG_EL.className = 'msg err';
+    return;
+  }
+  if (filtered.length > remaining) {
+    filtered = filtered.slice(0, remaining);
+    MSG_EL.textContent = '最多支持 1000 张图片，超出的已跳过';
+    MSG_EL.className = 'msg err';
+  }
 
   for (var i = 0; i < filtered.length; i++) {
     var f = filtered[i];
@@ -574,7 +613,7 @@ async function addFiles(newFiles) {
 function renderList() {
   FILE_LIST.innerHTML = '';
   COUNT_EL.textContent = files.length;
-  GEN_BTN.disabled = files.length === 0;
+  setExportButtonsDisabled(files.length === 0);
 
   var maxSize = parseFloat(document.getElementById('maxSize').value) * 1024 * 1024;
 
@@ -585,8 +624,8 @@ function renderList() {
     else countOther++;
   });
   var summaryHTML = '';
-  if (count11) summaryHTML += '<span class="tag tag-11">1:1 主图 ' + count11 + ' 张</span>';
-  if (count34) summaryHTML += '<span class="tag tag-34">3:4 主图 ' + count34 + ' 张</span>';
+  if (count11) summaryHTML += '<span class="tag tag-11">方图 ' + count11 + ' 张</span>';
+  if (count34) summaryHTML += '<span class="tag tag-34">长图 ' + count34 + ' 张</span>';
   if (countOther) summaryHTML += '<span class="tag tag-other">无法识别 ' + countOther + ' 张</span>';
   SUMMARY.innerHTML = summaryHTML;
 
@@ -595,7 +634,7 @@ function renderList() {
     return;
   }
 
-  var ratioLabels = { '1:1': '1:1 → 1：1主图', '3:4': '3:4 → 3：4主图', '?': '识别失败' };
+  var ratioLabels = { '1:1': '方图 → 方', '3:4': '长图 → 长', '?': '识别失败' };
 
   files.forEach(function(f) {
     var li = document.createElement('li');
@@ -614,31 +653,48 @@ function renderList() {
 }
 
 document.getElementById('maxSize').addEventListener('change', renderList);
+document.getElementById('outName').addEventListener('change', function() {
+  var pos = getPositionValue();
+  if (!pos) {
+    MSG_EL.textContent = '替换位置只能填写 1-10';
+    MSG_EL.className = 'msg err';
+  }
+});
 
-GEN_BTN.addEventListener('click', function() {
+function exportMainImages(exportMode) {
   if (files.length === 0) return;
-  GEN_BTN.disabled = true;
-  GEN_BTN.textContent = '打包中...';
+  setExportButtonsDisabled(true);
+  setExportButtonsText(true);
   MSG_EL.textContent = '';
   MSG_EL.className = 'msg';
 
   var maxSize = parseFloat(document.getElementById('maxSize').value) * 1024 * 1024;
-  var outName = document.getElementById('outName').value.trim() || '1';
+  var outName = getPositionValue();
+  if (!outName) {
+    setExportButtonsDisabled(files.length === 0);
+    setExportButtonsText(false);
+    MSG_EL.textContent = '替换位置只能填写 1-10';
+    MSG_EL.className = 'msg err';
+    return;
+  }
 
   var zip = new JSZip();
-  var folder11 = zip.folder('1：1主图');
-  var folder34 = zip.folder('3：4主图');
   var skipped = 0;
+  var skippedUnknown = 0;
   var count11 = 0, count34 = 0;
 
   files.forEach(function(entry) {
     var f = entry.file;
     if (f.size > maxSize) { skipped++; return; }
+    if (entry.ratio !== '1:1' && entry.ratio !== '3:4') { skippedUnknown++; return; }
     var sku = f.name.replace(/\.[^.]+$/, '');
     var ext = f.name.split('.').pop().toLowerCase();
-    var targetFolder = entry.ratio === '1:1' ? folder11 : folder34;
-    var finalName = outName + '.' + ext;
-    targetFolder.folder(sku).file(finalName, f);
+    var ratioWord = ratioUploadWord(entry.ratio);
+    if (exportMode === 'folder') {
+      zip.folder(sku + '+' + ratioWord).file(outName + '.' + ext, f);
+    } else {
+      zip.file(sku + '+' + ratioWord + '+' + outName + '.' + ext, f);
+    }
     if (entry.ratio === '1:1') count11++; else count34++;
   });
 
@@ -646,20 +702,28 @@ GEN_BTN.addEventListener('click', function() {
     var url = URL.createObjectURL(zipBlob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'SKU主图_' + new Date().toISOString().slice(0,10) + '.zip';
+    a.download = (exportMode === 'folder' ? 'SKU主图_文件夹命名_' : 'SKU主图_SKU命名_') + new Date().toISOString().slice(0,10) + '.zip';
     a.click();
     URL.revokeObjectURL(url);
     var parts = [];
-    if (count11) parts.push('1:1 ' + count11 + ' 张');
-    if (count34) parts.push('3:4 ' + count34 + ' 张');
-    MSG_EL.textContent = '完成！' + parts.join('，') + (skipped > 0 ? '，' + skipped + ' 张超限跳过' : '');
+    if (count11) parts.push('方图 ' + count11 + ' 张');
+    if (count34) parts.push('长图 ' + count34 + ' 张');
+    if (skipped > 0) parts.push(skipped + ' 张超限跳过');
+    if (skippedUnknown > 0) parts.push(skippedUnknown + ' 张识别失败跳过');
+    MSG_EL.textContent = '完成！已按' + (exportMode === 'folder' ? '文件夹命名上传' : 'SKU 命名上传') + '导出' + (parts.length ? '，' + parts.join('，') : '');
     MSG_EL.className = 'msg ok';
   }).catch(function(e) {
     MSG_EL.textContent = '打包失败: ' + e.message;
     MSG_EL.className = 'msg err';
   }).finally(function() {
-    GEN_BTN.disabled = files.length === 0;
-    GEN_BTN.textContent = '生成并下载压缩包';
+    setExportButtonsDisabled(files.length === 0);
+    setExportButtonsText(false);
+  });
+}
+
+GEN_BTNS.forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    exportMainImages(btn.getAttribute('data-export-mode') || 'file');
   });
 });
 
