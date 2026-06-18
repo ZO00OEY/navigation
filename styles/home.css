@@ -1072,78 +1072,99 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
   filter: drop-shadow(0 14px 18px rgba(119, 76, 86, 0.08));
   animation: shellRestBreath 5.8s ease-in-out infinite;
 }
-.shell-frame,
-.shell-pearl,
+.shell-layer,
 .shell-halo,
+.pearl-hit-glow,
 .pearl-button {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
-.shell-frame,
-.shell-pearl,
+.shell-layer,
 .shell-halo {
   pointer-events: none;
 }
 .pearl-button {
-  z-index: 3;
+  z-index: 6;
+  inset: 60% 38% 14% 38%;
+  width: auto;
+  height: auto;
   padding: 0;
   border: 0;
   opacity: 0;
   background: transparent;
+  border-radius: 50%;
   cursor: pointer;
   pointer-events: none;
   transition: opacity 0.13s ease;
 }
-.shell-frame,
-.shell-pearl {
+.shell-layer {
   object-fit: contain;
-  opacity: 0;
-  transition: opacity 0.13s ease, transform 0.24s cubic-bezier(.2,.78,.25,1);
-}
-.shell-frame-closed { opacity: 1; }
-.shell-frame-half { transform: translateY(3px) scale(0.985); }
-.shell-frame-open { transform: translateY(4px) scale(0.98); }
-.shell-pearl {
-  transform: translateY(-14px) scale(0.78);
-  transform-origin: 50% 72%;
-}
-.shell-button[data-shell-state="half"] .shell-frame-closed,
-.shell-button[data-shell-state="open"] .shell-frame-closed { opacity: 0; }
-.shell-button[data-shell-state="half"] .shell-frame-half {
   opacity: 1;
-  transform: none;
+  transform-origin: 50% 69%;
+  transition:
+    opacity 0.16s ease,
+    transform 0.34s cubic-bezier(.2,.78,.25,1),
+    filter 0.34s ease;
+}
+.shell-layer-bottom {
+  z-index: 1;
+}
+.shell-layer-pearl {
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(8px) scale(0.86);
+  filter: blur(2px) saturate(0.92);
+  transition:
+    opacity 0.22s ease,
+    transform 0.32s cubic-bezier(.2,.78,.25,1),
+    filter 0.28s ease;
+}
+.shell-layer-top {
+  z-index: 4;
+  transform: translateY(31%) scaleX(1.04) scaleY(0.42) rotate(-0.4deg);
+  filter: saturate(0.98);
+}
+.pearl-hit-glow {
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(circle, rgba(255, 247, 235, 0.42), rgba(222, 145, 170, 0.16) 42%, transparent 70%);
+  filter: blur(6px);
+  transform: scale(0.78);
+  transition: opacity 0.2s ease, transform 0.28s ease;
+}
+.shell-button[data-shell-state="half"] .shell-layer-top {
+  transform: translateY(14%) scaleX(1.015) scaleY(0.72) rotate(-0.2deg);
+}
+.shell-button[data-shell-state="half"] .shell-layer-pearl {
+  opacity: 0.28;
+  transform: translateY(3px) scale(0.92);
+  filter: blur(1.2px) saturate(0.96);
 }
 .shell-button[data-shell-state="half"] .pearl-button {
-  opacity: 0.36;
+  opacity: 0;
   pointer-events: none;
 }
-.shell-button[data-shell-state="half"] .shell-pearl {
-  opacity: 1;
-  transform: translateY(-18px) scale(0.86);
-}
-.shell-button[data-shell-state="open"] .shell-frame-half { opacity: 0; }
-.shell-button[data-shell-state="open"] .shell-frame-open {
-  opacity: 1;
+.shell-button[data-shell-state="open"] .shell-layer-top {
   transform: none;
 }
 .shell-button[data-shell-state="open"] {
   animation-play-state: paused;
 }
+.shell-button[data-shell-state="open"] .shell-layer-pearl {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
 .shell-button[data-shell-state="open"] .pearl-button {
   opacity: 1;
   pointer-events: auto;
 }
-.shell-button[data-shell-state="open"] .shell-pearl {
+.pearl-button:hover .pearl-hit-glow,
+.pearl-button:focus-visible .pearl-hit-glow {
   opacity: 1;
-  transform: translateY(-28px) scale(1.02);
-  transition-delay: 0.02s;
-}
-.pearl-button:hover .shell-pearl,
-.pearl-button:focus-visible .shell-pearl {
-  transform: translateY(-31px) scale(1.08);
-  filter: drop-shadow(0 0 15px rgba(224, 154, 177, 0.32));
+  transform: scale(1.08);
 }
 .shell-halo {
   inset: 42% 12% 2%;
@@ -1185,8 +1206,8 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
 .shell-button[data-shell-state="open"]::after {
   animation-play-state: paused;
 }
-.shell-button:hover .shell-frame-closed {
-  transform: translateY(-2px) rotate(-0.5deg);
+.shell-button[data-shell-state="closed"]:hover .shell-layer-top {
+  transform: translateY(30%) scaleX(1.04) scaleY(0.43) rotate(-0.7deg);
 }
 .shell-button:focus-visible,
 .pearl-button:focus-visible {
