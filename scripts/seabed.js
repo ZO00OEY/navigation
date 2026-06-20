@@ -41,7 +41,7 @@
   var lastTime = 0;
   var bounds = { width: 0, height: 0, upper: 0, lower: 0 };
   var pointer = { x: -9999, y: -9999, active: false };
-  var shellPositionStorageKey = 'seabedShellPosition';
+  var shellPositionStorageKey = 'seabedShellPositionShellPocketV4';
   var shellDrag = null;
   var fish = [];
   var shellFrameIndex = 0;
@@ -84,9 +84,13 @@
   }
 
   function applyShellPosition(position) {
-    if (!position || typeof position.leftPct !== 'number' || typeof position.bottomPx !== 'number') return;
+    if (!position || typeof position.leftPct !== 'number') return;
     shell.style.setProperty('--shell-left', position.leftPct.toFixed(3) + '%');
-    shell.style.setProperty('--shell-bottom', Math.round(position.bottomPx) + 'px');
+    if (typeof position.bottomPct === 'number') {
+      shell.style.setProperty('--shell-bottom', position.bottomPct.toFixed(3) + '%');
+    } else if (typeof position.bottomPx === 'number') {
+      shell.style.setProperty('--shell-bottom', Math.round(position.bottomPx) + 'px');
+    }
   }
 
   applyShellPosition(readShellPosition());
@@ -343,7 +347,7 @@
     shellDrag.moved = shellDrag.moved || Math.abs(dx) > 3 || Math.abs(dy) > 3;
     applyShellPosition({
       leftPct: nextLeft / sceneRect.width * 100,
-      bottomPx: nextBottom
+      bottomPct: nextBottom / sceneRect.height * 100
     });
   });
   shell.addEventListener('pointerup', function (event) {
@@ -352,7 +356,7 @@
     var shellRect = shell.getBoundingClientRect();
     saveShellPosition({
       leftPct: (shellRect.left - sceneRect.left + shellRect.width * 0.5) / sceneRect.width * 100,
-      bottomPx: sceneRect.bottom - shellRect.bottom
+      bottomPct: (sceneRect.bottom - shellRect.bottom) / sceneRect.height * 100
     });
     shell.dataset.dragged = shellDrag.moved ? 'true' : 'false';
     shellDrag = null;

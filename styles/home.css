@@ -799,7 +799,12 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
   background:
     radial-gradient(ellipse at 4% 4%, rgba(237, 190, 203, 0.15), transparent 26%),
     radial-gradient(ellipse at 92% 28%, rgba(226, 176, 195, 0.1), transparent 25%),
-    linear-gradient(rgba(255, 252, 248, 0.88), rgba(253, 247, 245, 0.92));
+    linear-gradient(
+      rgba(255, 252, 248, 0.88) 0%,
+      rgba(253, 247, 245, 0.92) 68%,
+      rgba(253, 247, 245, 0.64) 86%,
+      rgba(253, 247, 245, 0) 100%
+    );
   padding:
     clamp(42px, 7vw, 96px)
     var(--layout-gutter)
@@ -956,8 +961,9 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
 .seabed-scene {
   position: relative;
   z-index: 9;
-  min-height: clamp(390px, 29vw, 480px);
-  margin-top: clamp(-96px, -6vw, -56px);
+  min-height: 0;
+  height: calc(100vw * 941 / 1672);
+  margin-top: clamp(-260px, -15vw, -150px);
   overflow: hidden;
   background:
     linear-gradient(180deg, rgba(255, 252, 248, 0), rgba(252, 243, 241, 0.82) 16%, #fffaf7 100%);
@@ -968,27 +974,17 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
   position: absolute;
   inset: 0 0 auto;
   z-index: 2;
-  height: clamp(112px, 10vw, 170px);
+  height: 34%;
   pointer-events: none;
   background: linear-gradient(
     to bottom,
-    rgba(253, 247, 245, 0.99),
-    rgba(255, 250, 246, 0.72) 42%,
-    transparent
+    rgba(253, 247, 245, 0.98) 0%,
+    rgba(255, 250, 246, 0.72) 34%,
+    rgba(255, 250, 246, 0) 100%
   );
 }
 .seabed-scene::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  z-index: 1;
-  height: 54%;
-  pointer-events: none;
-  background:
-    linear-gradient(to top, rgba(255, 252, 248, 0.38), transparent 68%),
-    radial-gradient(ellipse at 18% 88%, rgba(246, 211, 217, 0.34), transparent 34%),
-    radial-gradient(ellipse at 72% 78%, rgba(244, 202, 214, 0.24), transparent 30%);
-  mix-blend-mode: screen;
+  content: none;
 }
 .seabed-art {
   position: absolute;
@@ -996,9 +992,9 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
   z-index: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: fill;
   object-position: center bottom;
-  opacity: 0.72;
+  opacity: 1;
   display: block;
 }
 .seabed-fish-layer {
@@ -1032,7 +1028,7 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
 .seabed-prayer {
   position: absolute;
   z-index: 5;
-  top: clamp(76px, 8vw, 118px);
+  top: clamp(170px, 18vw, 300px);
   left: 50%;
   width: min(720px, calc(100% - 120px));
   color: rgba(91, 77, 80, 0.48);
@@ -1060,9 +1056,9 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
 .shell-button {
   position: absolute;
   z-index: 5;
-  left: var(--shell-left, clamp(260px, 24%, 430px));
-  bottom: var(--shell-bottom, 26px);
-  width: clamp(146px, 11vw, 186px);
+  left: var(--shell-left, 30%);
+  bottom: var(--shell-bottom, 8%);
+  width: clamp(150px, 10.6vw, 190px);
   aspect-ratio: 560 / 500;
   padding: 0;
   border: 0;
@@ -1418,18 +1414,19 @@ body.sidebar-open .seabed-meta {
   .search-dialog { width: 100%; border-radius: 22px; }
   .water-to-paper { height: 128px; }
   .seabed-scene {
-    min-height: 480px;
-    margin-top: -32px;
+    min-height: 0;
+    height: calc(100vw * 941 / 1672);
+    margin-top: -118px;
   }
   .seabed-art { object-position: 61% bottom; }
   .seabed-prayer {
-    top: 72px;
+    top: 142px;
     width: calc(100% - 88px);
     font-size: 0.7rem;
   }
   .shell-button {
-    left: var(--shell-left, 50%);
-    bottom: var(--shell-bottom, 36px);
+    left: var(--shell-left, 30%);
+    bottom: var(--shell-bottom, 8%);
     width: 154px;
   }
   .seabed-message {
