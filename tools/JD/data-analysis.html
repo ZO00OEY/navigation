@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -6,37 +6,406 @@
 <title>数据分析小工具 - 芝士的摸鱼站</title>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <link rel="stylesheet" href="../../guides/shared.css">
+<script defer src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <style>
 .bg-decor { overflow: visible; }
-.blob { filter: blur(120px); opacity: 0.45; }
-.blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(80,100,220,0.5), transparent); top: -200px; left: -150px; }
-.blob-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(140,80,200,0.4), transparent); top: 50%; right: -200px; bottom: auto; transform: translateY(-50%); }
-.blob-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(60,180,160,0.35), transparent); bottom: -150px; left: 30%; top: auto; }
-[data-theme="light"] .blob { opacity: 0.35; }
-[data-theme="light"] .blob-1 { background: radial-gradient(circle, rgba(251,130,160,0.42), transparent); }
-[data-theme="light"] .blob-2 { background: radial-gradient(circle, rgba(220,150,200,0.36), transparent); }
-[data-theme="light"] .blob-3 { background: radial-gradient(circle, rgba(255,180,140,0.32), transparent); }
+.blob { filter: blur(120px); opacity: 0.32; }
+.blob-1 { width: 520px; height: 520px; background: radial-gradient(circle, rgba(61, 121, 184, 0.48), transparent); top: -180px; left: -140px; }
+.blob-2 { width: 460px; height: 460px; background: radial-gradient(circle, rgba(73, 161, 135, 0.34), transparent); top: 42%; right: -180px; bottom: auto; transform: translateY(-50%); }
+.blob-3 { width: 360px; height: 360px; background: radial-gradient(circle, rgba(204, 122, 75, 0.24), transparent); bottom: -150px; left: 32%; top: auto; }
+[data-theme="light"] .blob { opacity: 0.26; }
+[data-theme="light"] .blob-1 { background: radial-gradient(circle, rgba(57, 124, 178, 0.34), transparent); }
+[data-theme="light"] .blob-2 { background: radial-gradient(circle, rgba(42, 157, 143, 0.25), transparent); }
+[data-theme="light"] .blob-3 { background: radial-gradient(circle, rgba(232, 142, 86, 0.22), transparent); }
 
-.app { max-width: 900px; }
-
+.app { max-width: 1180px; }
 .back-link {
   display: inline-flex; align-items: center; gap: 4px;
   color: var(--text-tertiary); text-decoration: none;
-  font-size: 0.82rem; transition: color 0.2s; margin-bottom: 20px;
+  font-size: 0.82rem; transition: color 0.2s; margin-bottom: 18px;
 }
 .back-link:hover { color: var(--link-color); }
 
-.card {
+.tool-shell {
+  display: flex; min-height: 680px; overflow: visible; align-items: flex-start;
   background: var(--card-bg); border: 1px solid var(--card-border);
-  border-radius: var(--radius); padding: 48px 32px;
-  text-align: center; color: var(--text-secondary); line-height: 1.8;
-  box-shadow: 0 4px 24px var(--card-shadow);
+  border-radius: var(--radius); box-shadow: 0 4px 24px var(--card-shadow);
 }
-.card .icon { font-size: 3rem; margin-bottom: 16px; }
-.card h2 { font-size: 1.1rem; color: var(--text); margin-bottom: 8px; }
+.tool-sidebar {
+  width: 192px; flex-shrink: 0; padding: 16px 0;
+  display: flex; flex-direction: column;
+  position: sticky; top: 22px; height: min(760px, calc(100vh - 44px)); min-height: 620px;
+  border-right: 1px solid var(--card-border);
+  background: rgba(0, 0, 0, 0.02);
+}
+[data-theme="dark"] .tool-sidebar { background: rgba(255, 255, 255, 0.025); }
+.sidebar-main { flex: 1; }
+.sidebar-archive {
+  margin-top: auto; padding-top: 12px;
+  border-top: 1px dashed rgba(120, 145, 180, 0.42);
+}
+.sidebar-archive .tab-btn { padding-top: 10px; padding-bottom: 10px; font-size: 0.74rem; }
+.tab-btn {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; padding: 13px 17px; border: none; background: none;
+  border-left: 2px solid transparent; color: var(--text-secondary);
+  font-size: 0.8rem; text-align: left; font-family: inherit;
+  transition: all 0.15s;
+}
+.tab-btn:hover { background: var(--link-item-hover); color: var(--text); }
+.tab-btn.active {
+  color: var(--link-color); background: rgba(76, 142, 179, 0.12);
+  border-left-color: var(--link-color); font-weight: 700;
+}
+[data-theme="light"] .tab-btn.active { background: rgba(251, 114, 153, 0.1); }
+.tab-kicker { color: var(--text-tertiary); font-size: 0.68rem; font-weight: 600; }
+.tool-main { flex: 1; min-width: 0; padding: 28px 32px 34px; overflow: visible; }
+.tool-page { display: none; }
+.tool-page.active { display: block; }
 
-.footer { text-align: center; margin-top: 48px; }
-.footer span { font-size: 0.72rem; color: var(--text-tertiary); opacity: 0.6; }
+.page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 20px; }
+.page-title h1 { margin: 0 0 7px; color: var(--text); font-size: 1.35rem; letter-spacing: 0; }
+.page-title p { margin: 0; max-width: 680px; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.7; }
+.status-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 10px; border: 1px solid var(--card-border); border-radius: 999px;
+  color: var(--text-tertiary); background: var(--search-bg); font-size: 0.72rem; white-space: nowrap;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; background: #56b47d; box-shadow: 0 0 0 3px rgba(86, 180, 125, 0.12); }
+
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.panel {
+  border: 1px solid var(--card-border); border-radius: 8px; background: var(--card-bg);
+  padding: 18px; min-width: 0;
+}
+.panel-title {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 12px; color: var(--text); font-size: 0.92rem; font-weight: 700;
+}
+.panel-sub { margin: -6px 0 14px; color: var(--text-tertiary); font-size: 0.75rem; line-height: 1.6; }
+.metric-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.metric {
+  border: 1px solid var(--card-border); border-radius: 8px; padding: 13px 14px;
+  background: var(--search-bg);
+}
+.metric span { display: block; color: var(--text-tertiary); font-size: 0.72rem; margin-bottom: 7px; }
+.metric strong { color: var(--text); font-size: 1.12rem; letter-spacing: 0; }
+
+.form-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field label { color: var(--text-secondary); font-size: 0.75rem; }
+.input, .select, .textarea {
+  width: 100%; box-sizing: border-box; border: 1px solid var(--card-border);
+  border-radius: 7px; padding: 9px 10px; color: var(--text); background: var(--search-bg);
+  outline: none; font-family: inherit; font-size: 0.82rem;
+}
+.textarea { min-height: 72px; resize: vertical; line-height: 1.55; }
+.input:focus, .select:focus, .textarea:focus { border-color: var(--link-color); }
+.date-picker-field { position: relative; }
+.date-input-wrap { position: relative; }
+.date-input-wrap .input { padding-left: 34px; padding-right: 70px; }
+.date-trigger {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border: none; background: transparent; color: var(--text-tertiary);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.date-step-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border: none; border-radius: 7px;
+  background: transparent; color: var(--text-tertiary);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.date-step-btn:hover { background: var(--link-item-hover); color: var(--link-color); }
+.date-step-btn:disabled { opacity: 0.28; cursor: not-allowed; background: transparent; color: var(--text-tertiary); }
+.date-step-prev { left: 7px; }
+.date-step-next { right: 36px; }
+.date-popover {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 30;
+  display: none; min-width: 520px; border: 1px solid var(--card-border); border-radius: 8px;
+  background: #ffffff; box-shadow: 0 18px 36px rgba(33, 38, 48, 0.22); overflow: hidden;
+}
+[data-theme="dark"] .date-popover { background: #22222a; box-shadow: 0 18px 36px rgba(0, 0, 0, 0.46); }
+.date-popover.open { display: grid; grid-template-columns: 122px 1fr; }
+.date-shortcuts { background: #eef3f8; padding: 10px 0; border-right: 1px solid var(--card-border); }
+[data-theme="dark"] .date-shortcuts { background: #2b2c35; }
+.date-shortcuts button {
+  width: 100%; border: none; background: transparent; padding: 11px 18px; text-align: left;
+  color: var(--text-secondary); font-family: inherit; font-size: 0.78rem;
+}
+.date-shortcuts button:hover, .date-shortcuts button.active { background: var(--link-item-hover); color: var(--link-color); }
+.date-calendar { padding: 16px 18px 18px; }
+.date-cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.date-cal-head strong { color: var(--text); font-size: 0.9rem; }
+.date-nav { display: flex; gap: 8px; }
+.date-nav button {
+  width: 26px; height: 26px; border: 1px solid var(--card-border); border-radius: 50%;
+  background: var(--search-bg); color: var(--link-color); font-family: inherit; font-weight: 700;
+}
+.date-week, .date-grid { display: grid; grid-template-columns: repeat(7, 38px); gap: 0; justify-content: center; }
+.date-week span { text-align: center; color: var(--text-tertiary); font-size: 0.74rem; padding: 8px 0; }
+.date-day {
+  height: 32px; border: none; background: transparent; color: var(--text-secondary);
+  font-family: inherit; font-size: 0.78rem; font-weight: 600; pointer-events: auto;
+}
+.date-day.muted { color: rgba(150, 150, 150, 0.42); }
+.date-day.future {
+  color: rgba(150, 150, 150, 0.26);
+  background: transparent !important;
+  cursor: not-allowed;
+}
+.date-day.preview-range,
+.date-day.in-range,
+.date-day.selected { background: rgba(251, 114, 153, 0.22); color: var(--link-color); }
+.date-day.range-start { border-radius: 6px 0 0 6px; }
+.date-day.range-end { border-radius: 0 6px 6px 0; }
+.date-day.single { border-radius: 6px; }
+.date-grid.month-grid { grid-template-columns: repeat(3, 78px); gap: 10px; padding-top: 12px; }
+.date-month {
+  height: 42px; border: 1px solid var(--card-border); border-radius: 7px;
+  background: var(--search-bg); color: var(--text-secondary); font-family: inherit; font-weight: 700; pointer-events: auto;
+}
+.date-month.preview-range,
+.date-month.selected { background: rgba(251, 114, 153, 0.22); color: var(--link-color); border-color: rgba(251, 114, 153, 0.42); }
+.date-month.future {
+  color: rgba(150, 150, 150, 0.3);
+  background: rgba(246, 246, 248, 0.72) !important;
+  border-color: rgba(160, 160, 160, 0.16);
+  cursor: not-allowed;
+}
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 36px; padding: 8px 13px; border-radius: 7px; border: 1px solid var(--card-border);
+  background: var(--card-bg); color: var(--text); font-family: inherit;
+  font-size: 0.8rem; transition: all 0.15s; text-decoration: none;
+}
+.btn:hover { border-color: var(--link-color); color: var(--link-color); background: var(--link-item-hover); }
+.btn.primary { border-color: var(--link-color); background: var(--link-color); color: #fff; }
+.btn.primary:hover { opacity: 0.9; color: #fff; }
+.btn.danger:hover { border-color: #d9534f; color: #d9534f; background: rgba(217, 83, 79, 0.08); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.upload-zone {
+  border: 1.5px dashed rgba(120, 145, 180, 0.36); border-radius: 8px; padding: 24px;
+  text-align: center; background: var(--search-bg); transition: all 0.15s;
+}
+.upload-zone:hover, .upload-zone.dragover { border-color: var(--link-color); background: var(--link-item-hover); }
+.upload-zone strong { display: block; color: var(--text); font-size: 0.9rem; margin-bottom: 5px; }
+.upload-zone span { color: var(--text-tertiary); font-size: 0.75rem; }
+
+.table-wrap { overflow: auto; border: 1px solid var(--card-border); border-radius: 8px; background: var(--card-bg); }
+.sku-table-wrap { max-height: 690px; background: var(--card-bg); }
+.sku-table-wrap thead { position: sticky; top: 0; z-index: 5; background: var(--card-bg); }
+.sku-table-wrap thead th {
+  position: sticky; top: 0; z-index: 6;
+  background: var(--card-bg);
+  background-clip: padding-box;
+  box-shadow: 0 1px 0 var(--card-border), 0 12px 0 var(--card-bg), 0 14px 16px rgba(0, 0, 0, 0.04);
+}
+.sku-table-wrap thead th::before {
+  content: ""; position: absolute; inset: -2px 0 0 0;
+  background: var(--card-bg); z-index: -1;
+}
+.data-table { width: 100%; border-collapse: collapse; min-width: 720px; font-size: 0.78rem; }
+.sku-table { table-layout: fixed; min-width: 0; }
+.sku-table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.data-table th, .data-table td { padding: 9px 10px; border-bottom: 1px solid var(--card-border); text-align: left; vertical-align: middle; }
+.data-table th { color: var(--text-tertiary); background: var(--search-bg); font-weight: 700; white-space: nowrap; }
+.data-table td { color: var(--text-secondary); }
+.data-table tr:last-child td { border-bottom: none; }
+.sku-table th, .sku-table td { padding: 5px 10px; height: 34px; line-height: 1.25; }
+.sku-table .check-pill { padding: 4px 8px; }
+.empty-row { text-align: center; color: var(--text-tertiary); padding: 24px !important; }
+.tag {
+  display: inline-flex; align-items: center; border-radius: 999px; padding: 3px 8px;
+  font-size: 0.68rem; background: var(--search-bg); color: var(--text-tertiary);
+}
+.import-status {
+  display: inline-flex; align-items: center; border-radius: 999px; padding: 3px 8px;
+  font-size: 0.68rem; background: rgba(86, 180, 125, 0.1); color: #3a9b67;
+}
+.import-status.warn { background: rgba(217, 83, 79, 0.08); color: #d9534f; }
+.tag.good { background: rgba(86, 180, 125, 0.13); color: #56b47d; }
+.tag.warn { background: rgba(216, 151, 64, 0.14); color: #d89740; }
+.tag.info { background: rgba(72, 135, 190, 0.14); color: #4d98cf; }
+
+.dimension-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.filter-strip {
+  display: grid; grid-template-columns: minmax(260px, 430px) 1fr; gap: 16px;
+  align-items: end; margin-bottom: 10px;
+}
+.filter-left { max-width: 430px; }
+.filter-right { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.filter-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.filter-dims {
+  display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center;
+  gap: 8px; margin: 4px 0 12px;
+}
+.filter-dim-row { max-width: 720px; }
+.filter-dim-label {
+  color: var(--text-tertiary); font-size: 0; margin-right: 2px;
+}
+.filter-dim-label::before { content: "\9009\53d6\6570\636e\67e5\770b\7ef4\5ea6"; font-size: 0.74rem; }
+.check-pill {
+  display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px;
+  border: 1px solid var(--card-border); border-radius: 999px; color: var(--text-secondary);
+  background: var(--search-bg); font-size: 0.76rem;
+}
+.check-pill input { accent-color: var(--link-color); }
+.dim-remove-btn {
+  width: 18px; height: 18px; border: none; border-radius: 50%;
+  background: transparent; color: var(--text-tertiary); display: inline-flex;
+  align-items: center; justify-content: center; font-size: 0.9rem; line-height: 1;
+}
+.dim-remove-btn:hover { background: rgba(217, 83, 79, 0.1); color: #d9534f; }
+.add-dim-pill {
+  width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--card-border);
+  background: var(--search-bg); color: var(--text-tertiary); font: 700 1rem/1 inherit;
+}
+.add-dim-pill:hover { border-color: rgba(222, 115, 158, 0.42); color: #c84f83; background: rgba(222, 115, 158, 0.08); }
+.filter-note { margin: 0 0 10px; color: var(--text-tertiary); font-size: 0.74rem; text-align: left; }
+.note {
+  padding: 12px 14px; border-radius: 8px; background: var(--search-bg);
+  color: var(--text-secondary); font-size: 0.78rem; line-height: 1.7;
+}
+.sku-alert {
+  display: flex; align-items: flex-start; gap: 12px;
+  border: 1px solid rgba(222, 115, 158, 0.2);
+  border-radius: 8px; padding: 13px 15px; margin-bottom: 14px;
+  background: rgba(222, 115, 158, 0.06);
+  color: var(--text-secondary); font-size: 0.8rem; line-height: 1.65;
+}
+.sku-alert svg { width: 22px; height: 22px; flex-shrink: 0; color: #df739f; margin-top: 1px; }
+.sku-board { display: grid; gap: 16px; }
+.sku-panel { position: relative; overflow: hidden; }
+.sku-panel::before {
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 4px;
+  background: #eaa3bf; opacity: 0.75;
+}
+.sku-titlebar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; }
+.sku-titlebar h2 { margin: 0; color: var(--text); font-size: 0.98rem; letter-spacing: 0; }
+.sku-titlebar p { margin: 4px 0 0; color: var(--text-tertiary); font-size: 0.72rem; }
+.sku-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 78px; height: 34px; padding: 0 12px; border: 1px solid rgba(222, 115, 158, 0.36);
+  border-radius: 8px; background: rgba(222, 115, 158, 0.18); color: #c84f83;
+  font-size: 0.78rem; font-weight: 700; font-family: inherit; transition: all 0.15s;
+}
+.icon-btn:hover { background: rgba(222, 115, 158, 0.24); transform: translateY(-1px); }
+.ghost-file { display: none; }
+.sku-table th[draggable="true"] { cursor: inherit; }
+.sku-table th.dragging { opacity: 0.45; }
+.sku-table th[data-drag-col] { position: relative; }
+.sku-table th[data-drag-col]:hover { color: #c84f83; }
+.sku-table th { position: relative; }
+.sku-table th.is-resizing { color: #c84f83; }
+.sort-head, .sku-col-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%;
+}
+.sort-tools { display: inline-flex; align-items: center; margin-left: auto; opacity: 0; transition: opacity 0.14s; }
+.sku-table th[data-sort-col]:hover .sort-tools,
+.sku-table th[data-sort-col].sort-active .sort-tools { opacity: 1; }
+.sort-tool {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border: none; border-radius: 7px;
+  background: transparent; color: var(--text-tertiary);
+}
+.sort-tool:hover, .sort-tool.active { background: rgba(222, 115, 158, 0.12); color: #c84f83; }
+.sort-tool svg { width: 14px; height: 14px; stroke: currentColor; }
+.col-resizer {
+  position: absolute; top: 8px; right: 0; bottom: 8px; width: 9px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.14s;
+}
+.col-resizer::after {
+  content: ""; width: 2px; height: 100%; border-radius: 999px;
+  background: rgba(200, 79, 131, 0.42);
+}
+.sku-table th:hover .col-resizer,
+.sku-table th.is-resizing .col-resizer { opacity: 1; }
+.sku-table th.drop-before::before,
+.sku-table th.drop-after::after {
+  content: ""; position: absolute; top: 9px; bottom: 9px; width: 3px;
+  border-radius: 999px; background: #e68daf; box-shadow: 0 0 0 3px rgba(230, 141, 175, 0.16);
+}
+.sku-table th.drop-before::before { left: 0; }
+.sku-table th.drop-after::after { right: 0; }
+.sku-col-head {
+  display: inline-flex; align-items: center; gap: 7px; max-width: 100%;
+}
+.sku-col-label { min-width: 24px; outline: none; border-radius: 5px; padding: 2px 3px; }
+.sku-col-label[contenteditable="true"] {
+  background: rgba(222, 115, 158, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(222, 115, 158, 0.38);
+  color: var(--text);
+}
+.sku-col-tools {
+  display: inline-flex; align-items: center; gap: 3px;
+  opacity: 0; transform: translateX(-2px); transition: all 0.15s;
+}
+.sku-table th[data-drag-col]:hover .sku-col-tools,
+.sku-col-label[contenteditable="true"] + .sku-col-tools { opacity: 1; transform: none; }
+.col-tool {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border: none; border-radius: 6px;
+  background: rgba(222, 115, 158, 0.14); color: #c84f83;
+}
+.col-tool:hover { background: rgba(222, 115, 158, 0.24); }
+.col-tool svg { width: 14px; height: 14px; stroke: currentColor; }
+.sku-table th,
+.sku-table td { border-right: 1px solid rgba(222, 115, 158, 0.18); }
+.sku-table th:last-child,
+.sku-table td:last-child { border-right: none; }
+.sku-table td[contenteditable="true"] { outline: none; background: transparent; color: var(--text); }
+.sku-table td[contenteditable="true"]:focus {
+  outline: 1.5px solid rgba(222, 115, 158, 0.58); outline-offset: -2px;
+  background: rgba(222, 115, 158, 0.06);
+}
+.sku-table .required-head { color: #d86b9a; }
+.sku-table .add-col-cell, .sku-table .add-col-head { width: 44px; text-align: center; }
+.sku-row-delete {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border: 1px solid var(--card-border);
+  border-radius: 7px; background: var(--search-bg); color: var(--text-tertiary);
+  opacity: 0; transform: scale(0.92); transition: all 0.14s;
+}
+.sku-table tbody tr:hover .sku-row-delete {
+  opacity: 1; transform: none; color: #dd4f88;
+  border-color: rgba(221, 79, 136, 0.28); background: rgba(221, 79, 136, 0.08);
+}
+.sku-row-delete:hover { border-color: rgba(221, 79, 136, 0.5); background: rgba(221, 79, 136, 0.16); color: #d82473; }
+.sku-row-delete svg { width: 14px; height: 14px; stroke: currentColor; }
+.small-plus {
+  width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--card-border);
+  background: var(--search-bg); color: var(--text-tertiary);
+  font-weight: 700; line-height: 1; font-family: inherit;
+}
+.small-plus:hover { border-color: rgba(222, 115, 158, 0.32); background: rgba(222, 115, 158, 0.08); color: #c84f83; }
+.sku-msg-line { min-height: 20px; margin-top: 8px; color: var(--text-tertiary); font-size: 0.75rem; }
+.sku-msg-line.ok { color: #56b47d; }
+.sku-msg-line.err { color: #d9534f; }
+.msg { min-height: 20px; margin-top: 9px; color: var(--text-tertiary); font-size: 0.76rem; }
+.msg.ok { color: #56b47d; }
+.msg.err { color: #d9534f; }
+.footer { text-align: center; margin-top: 38px; }
+.footer span { color: var(--text-tertiary); opacity: 0.65; font-size: 0.72rem; }
+
+@media (max-width: 860px) {
+  .tool-shell { flex-direction: column; min-height: 680px; overflow: hidden; }
+  .tool-sidebar { position: static; height: auto; min-height: 0; width: 100%; display: flex; overflow-x: auto; padding: 0; border-right: none; border-bottom: 1px solid var(--card-border); }
+  .tab-btn { white-space: nowrap; border-left: none; border-bottom: 2px solid transparent; justify-content: center; }
+  .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--link-color); }
+  .tool-main { padding: 22px 18px; }
+  .page-head { flex-direction: column; }
+  .filter-strip { grid-template-columns: 1fr; }
+  .filter-left { max-width: none; }
+  .filter-right, .filter-actions { align-items: flex-start; justify-content: flex-start; }
+  .grid-2, .grid-3, .metric-row, .form-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -46,9 +415,9 @@
     <div class="bookmark-strip">
       <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
       <div class="bookmark-buttons">
-        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
-        <a href="../../index.html" class="float-btn" title="返回导航">⌂</a>
-        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
+        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜模式"></button>
+        <a href="../../index.html" class="float-btn" title="返回导航">&larr;</a>
+        <button class="float-btn" id="backToTop" title="回到顶部">&uarr;</button>
       </div>
     </div>
   </div>
@@ -58,15 +427,2792 @@
 <div class="bg-decor"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
 
 <div class="app">
-  <a class="back-link" href="../../index.html">← 返回导航</a>
-  <div class="card">
-    <div class="icon">🚧</div>
-    <h2>即将上线</h2>
-    <p>数据分析功能正在开发中…</p>
+  <a class="back-link" href="../../index.html">&larr; 返回导航</a>
+
+  <div class="tool-shell">
+    <nav class="tool-sidebar">
+      <div class="sidebar-main">
+        <button class="tab-btn active" data-page="dashboard">看板<span class="tab-kicker">01</span></button>
+        <button class="tab-btn" data-page="import">导入<span class="tab-kicker">02</span></button>
+        <button class="tab-btn" data-page="cost">花费<span class="tab-kicker">04</span></button>
+        <button class="tab-btn" data-page="competitor">竞品<span class="tab-kicker">05</span></button>
+        <button class="tab-btn" data-page="cleanup">清理<span class="tab-kicker">06</span></button>
+      </div>
+      <div class="sidebar-archive">
+        <button class="tab-btn" data-page="db-sku">SKU 档案<span class="tab-kicker">D1</span></button>
+        <button class="tab-btn" data-page="raw-snapshots">&#21407;&#22987;&#24555;&#29031;&#35760;&#24405;<span class="tab-kicker">D2</span></button>
+        <button class="tab-btn" data-page="db-analyzed">已分析数据<span class="tab-kicker">D3</span></button>
+        <button class="tab-btn" data-page="ranking-raw">榜单原始指标<span class="tab-kicker">D4</span></button>
+        <button class="tab-btn" data-page="db-estimates">竞品估算结果<span class="tab-kicker">D5</span></button>
+      </div>
+    </nav>
+
+    <main class="tool-main">
+      <section class="tool-page active" id="dashboard">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>经营数据看板</h1>
+            <p>这里会汇总已分析数据。现在先搭好周期、日期和维度选择，后续接入销售数量、金额、点击、站内外花费和排名。</p>
+          </div>
+          <span class="status-pill"><span class="dot"></span><span id="dbStatus">本地库准备中</span></span>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric"><span>SKU 档案</span><strong id="metricSkuCount">0</strong></div>
+          <div class="metric"><span>原始快照</span><strong id="metricSnapshotCount">0</strong></div>
+          <div class="metric"><span>已分析记录</span><strong id="metricAnalyzedCount">0</strong></div>
+          <div class="metric"><span>竞品估算</span><strong id="metricEstimateCount">0</strong></div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="panel">
+            <div class="panel-title">筛选口径</div>
+            <div class="form-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+              <div class="field">
+                <label>周期类型</label>
+                <select class="select" id="viewPeriod">
+                  <option value="day">日</option>
+                  <option value="week">周</option>
+                  <option value="month">月</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>开始日期</label>
+                <input class="input" type="date" id="viewStart">
+              </div>
+              <div class="field">
+                <label>结束日期</label>
+                <input class="input" type="date" id="viewEnd">
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">透视维度</div>
+            <div class="dimension-list">
+              <label class="check-pill"><input type="checkbox" class="dim-check" value="mainSeries">大系列</label>
+              <label class="check-pill"><input type="checkbox" class="dim-check" value="subSeries" checked>小系列</label>
+              <label class="check-pill"><input type="checkbox" class="dim-check" value="shortName">商品简称</label>
+              <label class="check-pill"><input type="checkbox" class="dim-check" value="brand">品牌</label>
+            </div>
+            <div class="note" id="dimensionHint">当前最小维度：小系列，数据显示该小系列求和。</div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px;">
+          <div class="panel-title">
+            <span>监控追踪区</span>
+            <button class="btn" id="addMonitorBtn">新增追踪</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>追踪名称</th><th>追踪维度</th><th>追踪目标</th><th>匹配 SKU</th><th>销售数量</th><th>销售金额</th><th>访客</th><th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="monitorBody"><tr><td class="empty-row" colspan="8">暂无追踪项</td></tr></tbody>
+            </table>
+          </div>
+          <div class="msg" id="monitorMsg"></div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="import">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>数据导入中心</h1>
+            <p>把销售明细、站内花费、站外 CPS 和行业榜单一起拖进来，页面会先自动识别表类型、周期和日期，再保存原始快照。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">批量自动导入</div>
+          <div class="upload-zone" id="dropZone">
+            <strong>拖入四类 Excel / CSV 文件，或点击选择</strong>
+            <span>支持一次选择多个文件；列位置可以变，页面会按文件名、工作表名和表头自动判断。</span>
+          </div>
+          <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" multiple style="display:none">
+          <div class="msg" id="importMsg"></div>
+          <div class="table-wrap" style="margin-top:14px;">
+            <table class="data-table">
+              <thead><tr><th>文件名</th><th>识别表类型</th><th>周期</th><th>日期范围</th><th>行数</th><th>状态</th></tr></thead>
+              <tbody id="importPreviewBody"><tr><td class="empty-row" colspan="6">还没有导入文件</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px;">
+          <div class="panel-title">
+            <span>导入字段对照</span>
+            <button class="btn" id="addMappingBtn">新增对照项</button>
+          </div>
+          <p class="hint">当前先配置“商品明细表”。右侧必须和导入表格列标题完全一致；你手动改过的列名会优先使用。</p>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>系统数据库字段名</th><th>导入表格字段名</th><th>说明</th><th></th></tr></thead>
+              <tbody id="mappingBody"></tbody>
+            </table>
+          </div>
+          <div class="msg" id="mappingMsg"></div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="raw-snapshots">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>&#21407;&#22987;&#24555;&#29031;&#35760;&#24405;</h1>
+            <p>这里保存每次导入的原始文件记录，用来复查文件识别、日期范围、行数和后续重新计算。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>&#21407;&#22987;&#24555;&#29031;&#35760;&#24405;</span>
+            <div class="btn-row">
+              <button class="btn" id="refreshSnapshotsBtn">刷新</button>
+              <button class="btn danger" id="clearSnapshotsBtn">清表</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>导入时间</th><th>表类型</th><th>周期</th><th>日期范围</th><th>文件名</th><th>行数</th></tr></thead>
+              <tbody id="snapshotBody"><tr><td class="empty-row" colspan="6">暂无原始快照</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="db-sku">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>&#26412;&#21697;&#31454;&#21697; SKU &#26723;&#26696;</h1>
+          </div>
+        </div>
+
+        <div class="sku-alert">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle>
+            <path d="M12 7.5v5.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            <path d="M12 16.4h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>
+          </svg>
+          <div><strong>SKU &#21644;&#31616;&#31216;&#26159;&#24517;&#22635;&#39033;&#12290;</strong>&#25903;&#25345;&#32473;&#21830;&#21697;&#26631;&#35760;&#31995;&#21015;&#65292;&#24182;&#26597;&#30475;&#31995;&#21015;&#32500;&#24230;&#24635;&#25968;&#25454;&#65307;&#22914;&#38656;&#22686;&#21152;&#26032;&#31995;&#21015;&#65292;&#21482;&#38656;&#22312;&#23548;&#20837;&#26102;&#22312;&#34920;&#20869;&#22686;&#21152;&#26032;&#21015;&#21363;&#21487;&#12290;</div>
+        </div>
+
+        <div class="sku-board">
+          <div class="panel sku-panel">
+            <div class="sku-titlebar">
+              <div>
+                <h2>&#26412;&#21697; SKU &#21015;&#34920;</h2>
+                <p>&#40664;&#35748;&#21015;&#65306;SKU&#12289;&#31616;&#31216;&#12289;&#22823;&#31995;&#21015;&#12289;&#23567;&#31995;&#21015;&#65307;&#21152;&#21495;&#21487;&#26032;&#22686;&#31579;&#36873;&#32500;&#24230;&#21015;&#12290;</p>
+              </div>
+              <div class="sku-actions">
+                <button class="btn" data-import-sku="own">&#23548;&#20837;</button>
+                <button class="btn" data-export-sku="own">&#23548;&#20986;</button>
+                <button class="btn danger" data-clear-sku="own">&#28165;&#34920;</button>
+                <button class="icon-btn" data-add-row="own" title="&#26032;&#22686;&#26412;&#21697; SKU" aria-label="&#26032;&#22686;&#26412;&#21697; SKU">&#26032;&#22686;SKU</button>
+              </div>
+            </div>
+            <div class="table-wrap sku-table-wrap">
+              <table class="data-table sku-table" id="ownSkuTable"></table>
+            </div>
+            <div class="sku-msg-line" id="ownSkuMsg"></div>
+          </div>
+
+          <div class="panel sku-panel">
+            <div class="sku-titlebar">
+              <div>
+                <h2>&#31454;&#21697; SKU &#21015;&#34920;</h2>
+                <p>&#20165;&#23545;&#37325;&#28857;&#36861;&#36394;&#30340;&#31454;&#21697;&#36827;&#34892;&#21518;&#32493;&#30340;&#25968;&#25454;&#20272;&#31639;&#12290;</p>
+              </div>
+              <div class="sku-actions">
+                <button class="btn" data-import-sku="competitor">&#23548;&#20837;</button>
+                <button class="btn" data-export-sku="competitor">&#23548;&#20986;</button>
+                <button class="btn danger" data-clear-sku="competitor">&#28165;&#34920;</button>
+                <button class="icon-btn" data-add-row="competitor" title="&#26032;&#22686;&#31454;&#21697; SKU" aria-label="&#26032;&#22686;&#31454;&#21697; SKU">&#26032;&#22686;SKU</button>
+              </div>
+            </div>
+            <div class="table-wrap sku-table-wrap">
+              <table class="data-table sku-table" id="competitorSkuTable"></table>
+            </div>
+            <div class="sku-msg-line" id="competitorSkuMsg"></div>
+          </div>
+          <input class="ghost-file" type="file" id="skuImportInput" accept=".xlsx,.xls,.csv">
+          <div class="msg" id="skuMsg"></div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="db-analyzed">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>已分析数据</h1>
+            <p>这里是原始表经过规则整理后的数据，会被看板和后续透视统计使用。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>筛选口径</span>
+          </div>
+          <div class="filter-strip">
+            <div class="filter-left">
+              <div class="field date-picker-field">
+                <label id="analyzedStartLabel">日期范围</label>
+                <div class="date-input-wrap">
+                  <button class="date-step-btn date-step-prev" id="analyzedDatePrev" type="button" title="前一天" aria-label="前一天">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </button>
+                  <input class="input" type="text" id="analyzedDateInput" placeholder="YYYY-MM-DD">
+                  <button class="date-step-btn date-step-next" id="analyzedDateNext" type="button" title="后一天" aria-label="后一天">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </button>
+                  <button class="date-trigger" id="analyzedDateTrigger" type="button" title="选择日期">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
+                      <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+                    </svg>
+                  </button>
+                </div>
+                <input type="hidden" id="analyzedStartDate">
+                <input type="hidden" id="analyzedEndDate">
+                <div class="date-popover" id="analyzedDatePopover">
+                  <div class="date-shortcuts">
+                    <button type="button" data-date-shortcut="yesterday">昨日</button>
+                    <button type="button" data-date-shortcut="7">近7日</button>
+                    <button type="button" data-date-shortcut="30">近30日</button>
+                    <button type="button" data-date-shortcut="today">自然日</button>
+                    <button type="button" data-date-shortcut="week">自然周</button>
+                    <button type="button" data-date-shortcut="month">自然月</button>
+                    <button type="button" data-date-shortcut="custom">自定义</button>
+                  </div>
+                  <div class="date-calendar">
+                    <div class="date-cal-head">
+                      <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
+                      <strong id="datePickerMonth">2026-06</strong>
+                      <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
+                    </div>
+                    <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+                    <div class="date-grid" id="datePickerGrid"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="filter-right">
+              <div class="filter-actions">
+                <label class="check-pill"><input type="checkbox" id="managedSkuOnlyCheck">已维护 SKU</label>
+                <button class="btn" id="refreshAnalyzedDbBtn">刷新</button>
+                <button class="btn danger" id="clearAnalyzedDbBtn">清空当前</button>
+              </div>
+            </div>
+          </div>
+          <div class="filter-dim-row">
+              <div class="filter-dims" id="analyzedDimList">
+                <span class="filter-dim-label">选取数据查看维度</span>
+                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="mainSeries">大系列</label>
+                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="subSeries" checked>小系列</label>
+                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="shortName">商品简称</label>
+                <button class="add-dim-pill" id="addAnalyzedDimBtn" type="button" title="增加展示维度">+</button>
+              </div>
+              <p class="filter-note" id="analyzedDimensionHint">当前最小维度：小系列，数据显示该小系列求和。</p>
+          </div>
+          <template id="legacyAnalyzedFilterDisabled">
+            <div class="btn-row">
+              <label class="check-pill"><input type="checkbox" id="managedSkuOnlyCheck">已维护 SKU</label>
+              <button class="btn" id="refreshAnalyzedDbBtn">刷新</button>
+              <button class="btn danger" id="clearAnalyzedDbBtn">清表</button>
+            </div>
+          </div>
+          <div class="grid grid-2">
+            <div>
+              <div class="field date-picker-field">
+                <label id="analyzedStartLabel">日期范围</label>
+                <div class="date-input-wrap">
+                  <button class="date-step-btn date-step-prev" id="analyzedDatePrev" type="button" title="前一天" aria-label="前一天">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </button>
+                  <input class="input" type="text" id="analyzedDateInput" placeholder="YYYY-MM-DD">
+                  <button class="date-step-btn date-step-next" id="analyzedDateNext" type="button" title="后一天" aria-label="后一天">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </button>
+                  <button class="date-trigger" id="analyzedDateTrigger" type="button" title="选择日期">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
+                      <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+                    </svg>
+                  </button>
+                </div>
+                <input type="hidden" id="analyzedStartDate">
+                <input type="hidden" id="analyzedEndDate">
+                <div class="date-popover" id="analyzedDatePopover">
+                  <div class="date-shortcuts">
+                    <button type="button" data-date-shortcut="yesterday">昨日</button>
+                    <button type="button" data-date-shortcut="7">近7日</button>
+                    <button type="button" data-date-shortcut="30">近30日</button>
+                    <button type="button" data-date-shortcut="today">自然日</button>
+                    <button type="button" data-date-shortcut="week">自然周</button>
+                    <button type="button" data-date-shortcut="month">自然月</button>
+                    <button type="button" data-date-shortcut="custom">自定义</button>
+                  </div>
+                  <div class="date-calendar">
+                    <div class="date-cal-head">
+                      <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
+                      <strong id="datePickerMonth">2026-06</strong>
+                      <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
+                    </div>
+                    <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+                    <div class="date-grid" id="datePickerGrid"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="dimension-list">
+                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="mainSeries">大系列</label>
+                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="subSeries" checked>小系列</label>
+                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="shortName">商品简称</label>
+                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="brand">品牌</label>
+              </div>
+              <div class="note" id="analyzedDimensionHint">当前最小维度：小系列，数据显示该小系列求和。</div>
+            </div>
+          </div>
+          </template>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead id="analyzedDbHead"><tr><th>日期</th><th>维度（小系列）</th><th>销售数量</th><th>销售金额</th><th>访客/点击</th><th>站内花费</th><th>站外花费</th><th>排名</th></tr></thead>
+              <tbody id="analyzedDbBody"><tr><td class="empty-row" colspan="8">暂无已分析数据</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="ranking-raw">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>榜单原始指标</h1>
+            <p>这里放行业销售榜单解析后的中间层：排名、金额区间、件数区间、涨幅等，后续再用于竞品估算。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>竞品榜单中间层</span>
+            <div class="btn-row">
+              <button class="btn" id="refreshRankingRawBtn">刷新</button>
+              <button class="btn danger" id="clearRankingRawBtn">清表</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>周期</th><th>SKU</th><th>排名</th><th>金额区间</th><th>件数区间</th><th>涨幅</th><th>来源</th></tr></thead>
+              <tbody id="rankingRawBody"><tr><td class="empty-row" colspan="7">暂无榜单原始指标</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="db-estimates">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>竞品估算结果</h1>
+            <p>这里查看竞品经过估算法则收敛后的最终估算层。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>竞品估算数据库</span>
+            <div class="btn-row">
+              <button class="btn" id="refreshEstimatesDbBtn">刷新</button>
+              <button class="btn danger" id="clearEstimatesDbBtn">清表</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>周期</th><th>SKU</th><th>金额区间</th><th>件数区间</th><th>估算说明</th><th>来源</th><th>其他数据</th></tr></thead>
+              <tbody id="estimatesDbBody"><tr><td class="empty-row" colspan="7">暂无竞品估算结果</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="cost">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>花费规则</h1>
+            <p>这里预留站内投放和站外 CPS 的计算规则。后续拿到原表后，会把列名识别、SKU 匹配、替换归因和求和逻辑放到这里。</p>
+          </div>
+        </div>
+        <div class="grid grid-2">
+          <div class="panel">
+            <div class="panel-title">站内投放花费</div>
+            <div class="note">预留：直接抓取并按 SKU / 商品简称匹配求和，写入已分析数据的站内花费字段。</div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">站外 CPS 花费</div>
+            <div class="note">预留：从订单或 CPS 明细中过 SKU 替换、归因和求和，写入已分析数据的站外花费字段。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="competitor">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>竞品数据估算区</h1>
+            <p>行业榜单原始区间会长期记录在中间层，实际估算区后续负责 T-1、T、T+1 的区间收敛与反向修正。</p>
+          </div>
+        </div>
+        <div class="grid grid-2">
+          <div class="panel">
+            <div class="panel-title">重点跟踪竞品</div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>SKU</th><th>简称</th><th>品牌</th><th>大系列</th><th>小系列</th></tr></thead>
+                <tbody id="trackedCompetitorBody"><tr><td class="empty-row" colspan="5">暂无重点竞品</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">估算逻辑占位</div>
+            <div class="note">
+              1. 用 T 日排名和本品真实金额压缩竞品上下限。<br>
+              2. 用 T-1 区间和 T 日涨幅区间继续取交集。<br>
+              3. 用 T+1 反向校验并修正 T 日历史区间。
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="cleanup">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>数据清理与备份</h1>
+            <p>像管理文件一样管理原始快照。删除快照时，会同步删除由它生成的已分析数据。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>原始快照管理</span>
+            <button class="btn" id="refreshCleanupSnapshotsBtn">刷新</button>
+          </div>
+          <div class="btn-row" style="margin-top:10px;">
+            <button class="btn" data-cleanup-pick="1">选中上月</button>
+            <button class="btn" data-cleanup-pick="3">选中近 3 个月</button>
+            <button class="btn" data-cleanup-pick="6">选中近 6 个月</button>
+            <button class="btn" id="clearCleanupSelectionBtn">取消选择</button>
+            <button class="btn danger" id="deleteSelectedSnapshotsBtn">删除选中快照</button>
+          </div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="cleanupSelectAll"></th>
+                  <th>表格类型</th>
+                  <th>表格时期</th>
+                  <th>表格原标题</th>
+                  <th>导入时间</th>
+                  <th>行数</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="cleanupSnapshotBody"><tr><td class="empty-row" colspan="7">暂无原始快照</td></tr></tbody>
+            </table>
+          </div>
+          <div class="msg" id="cleanupMsg"></div>
+        </div>
+      </section>
+    </main>
   </div>
-  <footer class="footer"><span>🌱 数据分析小工具</span></footer>
+
+  <footer class="footer"><span>数据分析小工具</span></footer>
 </div>
 
 <script src="../../guides/shared.js"></script>
+<script>
+(function() {
+  var DB_NAME = 'jdDataAnalysisTool';
+  var DB_VERSION = 1;
+  var db = null;
+  var skuImportTarget = 'own';
+  var draggingColumnKey = null;
+  var dropColumnSide = 'before';
+  var resizingColumn = null;
+  var skuSortState = JSON.parse(localStorage.getItem('jdSkuSortState') || '{"own":null,"competitor":null}');
+
+  var labels = {
+    sourceType: {
+      unknown: '待识别',
+      sales_detail: '销售明细表',
+      onsite_cost: '站内投放花费表',
+      offsite_cps_cost: '站外 CPS 花费表',
+      industry_ranking: '行业销售榜单'
+    },
+    periodType: { unknown: '待确认', day: '日', week: '周', month: '月' },
+    itemType: { own: '本品', competitor: '竞品' }
+  };
+  var DEFAULT_IMPORT_MAPPINGS = {
+    sales_detail: [
+      { key: 'date', label: '时间', column: '时间', locked: true, note: '用于判断单日或分日多日' },
+      { key: 'sku', label: 'SKU', column: 'SKU', locked: true, note: '按文本保存，不转数字' },
+      { key: 'salesQty', label: '件数', column: '成交商品件数', locked: true, note: '销售件数' },
+      { key: 'salesAmount', label: '金额', column: '成交金额', locked: true, note: '销售金额' },
+      { key: 'visitorCount', label: '访客', column: '商品访客数', locked: true, note: '商品访客数' },
+      { key: 'conversionRate', label: '成交率', column: '成交转化率', locked: true, note: '成交转化率' },
+      { key: 'customerPrice', label: '客单价', column: '客单价', locked: true, note: '客单价' },
+      { key: 'itemPrice', label: '件单价', column: '件单价', locked: true, note: '件单价' },
+      { key: 'searchExposure', label: '搜索曝光次数', column: '搜索曝光次数', locked: true, note: '搜索曝光' },
+      { key: 'searchClick', label: '搜索点击次数', column: '搜索点击次数', locked: true, note: '搜索点击' }
+    ]
+  };
+  var importMappings = JSON.parse(localStorage.getItem('jdImportMappings') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_MAPPINGS));
+  var monitorTracks = JSON.parse(localStorage.getItem('jdMonitorTracks') || '[]');
+  var hideUnmanagedAnalyzed = localStorage.getItem('jdHideUnmanagedAnalyzed') !== 'false';
+  var analyzedExtraDimensions = JSON.parse(localStorage.getItem('jdAnalyzedExtraDimensions') || '[]');
+  var cleanupSelectedSnapshotIds = new Set();
+  var analyzedCalendarMonth = new Date();
+  var analyzedRangeDraftStart = '';
+  var analyzedPickerMode = 'custom';
+  var analyzedPreviewRange = null;
+  var analyzedSuppressSelectedRange = false;
+  var analyzedLastGridPickAt = 0;
+  var skuColumnLabels = JSON.parse(localStorage.getItem('jdSkuColumnLabels') || '{}');
+  var skuDimensionColumns = JSON.parse(localStorage.getItem('jdSkuDimensionColumns') || '["mainSeries","subSeries"]');
+  var skuColumnWidths = JSON.parse(localStorage.getItem('jdSkuColumnWidths') || '{}');
+  Object.keys(skuColumnWidths).forEach(function(key) {
+    var value = Number(skuColumnWidths[key]);
+    if (key.indexOf(':shortName') !== -1) {
+      if (value < 360) skuColumnWidths[key] = 360;
+      if (value > 560) skuColumnWidths[key] = 420;
+    } else if (key.indexOf(':sku') !== -1) {
+      if (value < 170) skuColumnWidths[key] = 170;
+      if (value > 240) skuColumnWidths[key] = 190;
+    } else if (value > 260) {
+      skuColumnWidths[key] = 160;
+    }
+  });
+  skuColumnLabels.mainSeries = skuColumnLabels.mainSeries || '大系列';
+  skuColumnLabels.subSeries = skuColumnLabels.subSeries || '小系列';
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function today() { return ymd(new Date()); }
+  function dateFromYmd(value) {
+    var parts = String(value || '').split('-').map(Number);
+    if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) return null;
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+  function ymd(date) {
+    return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+  }
+  function addDays(date, days) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+  }
+  function yesterday() {
+    var date = dateFromYmd(today());
+    return date ? ymd(addDays(date, -1)) : today();
+  }
+  function daysBetween(start, end) {
+    var a = dateFromYmd(start);
+    var b = dateFromYmd(end);
+    if (!a || !b) return 1;
+    return Math.round((b - a) / 86400000) + 1;
+  }
+  function isLastDayOfMonth(date) {
+    return date.getDate() === new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  }
+  function sameMonth(a, b) {
+    return a && b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
+  }
+  function isSameRange(a, b) {
+    return !!(a && b && a.start === b.start && a.end === b.end);
+  }
+  function rangeText(item) {
+    var start = item.startDate || '';
+    var end = item.endDate || '';
+    if (start && end && start === end) return start;
+    if (start && end) return start + ' 至 ' + end;
+    return start || end || '-';
+  }
+  function saveImportMappings() {
+    localStorage.setItem('jdImportMappings', JSON.stringify(importMappings));
+  }
+  function getImportMappings(type) {
+    if (!importMappings[type]) importMappings[type] = JSON.parse(JSON.stringify(DEFAULT_IMPORT_MAPPINGS[type] || []));
+    return importMappings[type];
+  }
+  function saveMonitorTracks() {
+    localStorage.setItem('jdMonitorTracks', JSON.stringify(monitorTracks));
+  }
+
+  function syncAnalyzedDateInput() {
+    var start = $('analyzedStartDate').value;
+    var end = $('analyzedEndDate').value;
+    $('analyzedDateInput').value = start && end && start !== end ? start + ' 至 ' + end : (start || end || '');
+    updateAnalyzedDateStepButtons();
+  }
+
+  function parseAnalyzedDateInput() {
+    var text = $('analyzedDateInput').value.trim();
+    var dates = extractDatesFromText(text);
+    if (!dates.length) return;
+    $('analyzedStartDate').value = dates[0];
+    $('analyzedEndDate').value = dates[1] || dates[0];
+    if ($('analyzedStartDate').value > $('analyzedEndDate').value) {
+      var tmp = $('analyzedStartDate').value;
+      $('analyzedStartDate').value = $('analyzedEndDate').value;
+      $('analyzedEndDate').value = tmp;
+    }
+    var date = dateFromYmd($('analyzedStartDate').value);
+    if (date) analyzedCalendarMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  }
+
+  function openAnalyzedDatePicker() {
+    parseAnalyzedDateInput();
+    var defaultPreview = rangeForShortcut('yesterday');
+    analyzedPickerMode = 'day';
+    analyzedRangeDraftStart = '';
+    analyzedPreviewRange = defaultPreview;
+    analyzedSuppressSelectedRange = true;
+    if (defaultPreview && defaultPreview.start) {
+      var previewDate = dateFromYmd(defaultPreview.start);
+      if (previewDate) analyzedCalendarMonth = new Date(previewDate.getFullYear(), previewDate.getMonth(), 1);
+    }
+    document.querySelectorAll('[data-date-shortcut]').forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.dateShortcut === 'yesterday');
+    });
+    renderAnalyzedDatePicker();
+    $('analyzedDatePopover').classList.add('open');
+  }
+
+  function closeAnalyzedDatePicker() {
+    analyzedPreviewRange = null;
+    analyzedSuppressSelectedRange = false;
+    $('analyzedDatePopover').classList.remove('open');
+  }
+
+  function setAnalyzedRange(start, end) {
+    $('analyzedStartDate').value = start;
+    $('analyzedEndDate').value = end || start;
+    syncAnalyzedDateInput();
+    analyzedPreviewRange = null;
+    analyzedSuppressSelectedRange = false;
+    renderAnalyzedDatePicker();
+    renderAnalyzedDb();
+  }
+
+  function normalizedRange(start, end) {
+    if (!start) return null;
+    end = end || start;
+    return start <= end ? { start: start, end: end } : { start: end, end: start };
+  }
+
+  function isFutureYmd(value) {
+    return !!value && value > today();
+  }
+
+  function clampRangeToToday(range) {
+    if (!range) return null;
+    var limit = today();
+    if (range.start > limit) return null;
+    return {
+      start: range.start,
+      end: range.end > limit ? limit : range.end
+    };
+  }
+
+  function getAnalyzedCurrentRange() {
+    parseAnalyzedDateInput();
+    return normalizedRange($('analyzedStartDate').value, $('analyzedEndDate').value || $('analyzedStartDate').value);
+  }
+
+  function inferAnalyzedRangeStep(range) {
+    var start = dateFromYmd(range.start);
+    var end = dateFromYmd(range.end);
+    var todayDate = dateFromYmd(today());
+    var days = daysBetween(range.start, range.end);
+    if (!start || !end || days <= 1) return { type: 'day', days: 1 };
+    if (
+      start.getDate() === 1 &&
+      sameMonth(start, end) &&
+      (isLastDayOfMonth(end) || (range.end === today() && sameMonth(start, todayDate)))
+    ) {
+      return { type: 'month' };
+    }
+    if (
+      start.getDay() === 1 &&
+      days <= 7 &&
+      (end.getDay() === 0 || (range.end === today() && daysBetween(range.start, range.end) <= 7))
+    ) {
+      return { type: 'week', days: 7 };
+    }
+    return { type: 'custom', days: days };
+  }
+
+  function shiftedAnalyzedRange(direction) {
+    var range = getAnalyzedCurrentRange();
+    if (!range) return null;
+    var step = inferAnalyzedRangeStep(range);
+    var start = dateFromYmd(range.start);
+    var end = dateFromYmd(range.end);
+    if (!start || !end) return null;
+    if (step.type === 'month') {
+      var nextStart = new Date(start.getFullYear(), start.getMonth() + direction, 1);
+      var nextEnd = new Date(nextStart.getFullYear(), nextStart.getMonth() + 1, 0);
+      return clampRangeToToday({ start: ymd(nextStart), end: ymd(nextEnd) });
+    }
+    var offset = direction * (step.days || 1);
+    return clampRangeToToday({ start: ymd(addDays(start, offset)), end: ymd(addDays(end, offset)) });
+  }
+
+  function updateAnalyzedDateStepButtons() {
+    var prev = $('analyzedDatePrev');
+    var next = $('analyzedDateNext');
+    if (!prev || !next) return;
+    var forward = shiftedAnalyzedRange(1);
+    var current = normalizedRange($('analyzedStartDate').value, $('analyzedEndDate').value || $('analyzedStartDate').value);
+    prev.disabled = !shiftedAnalyzedRange(-1);
+    next.disabled = !forward || isSameRange(forward, current);
+  }
+
+  function shiftAnalyzedDateRange(direction) {
+    var range = shiftedAnalyzedRange(direction);
+    var current = normalizedRange($('analyzedStartDate').value, $('analyzedEndDate').value || $('analyzedStartDate').value);
+    if (!range || isSameRange(range, current)) return;
+    setAnalyzedRange(range.start, range.end);
+    closeAnalyzedDatePicker();
+  }
+
+  function rangeForShortcut(kind, baseDate) {
+    var now = baseDate || dateFromYmd(today());
+    var start;
+    var end;
+    if (kind === 'yesterday') {
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+      end = start;
+    } else if (kind === '7' || kind === '30') {
+      end = now;
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - Number(kind) + 1);
+    } else if (kind === 'day' || kind === 'today') {
+      start = now;
+      end = now;
+    } else if (kind === 'week') {
+      var offset = (now.getDay() + 6) % 7;
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - offset);
+      end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6);
+    } else if (kind === 'month') {
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    } else {
+      start = now;
+      end = now;
+    }
+    return clampRangeToToday({ start: ymd(start), end: ymd(end) });
+  }
+
+  function setDatePickerMode(mode) {
+    var wasMonth = analyzedPickerMode === 'month';
+    analyzedPickerMode = mode;
+    analyzedRangeDraftStart = '';
+    analyzedPreviewRange = null;
+    analyzedSuppressSelectedRange = true;
+    if (mode === 'custom') {
+      $('analyzedStartDate').value = '';
+      $('analyzedEndDate').value = '';
+      $('analyzedDateInput').value = '';
+    }
+    document.querySelectorAll('[data-date-shortcut]').forEach(function(btn) {
+      var value = btn.dataset.dateShortcut === 'today' ? 'day' : btn.dataset.dateShortcut;
+      btn.classList.toggle('active', value === mode);
+    });
+    if (wasMonth || mode === 'month') renderAnalyzedDatePicker();
+    else applyAnalyzedDateClasses();
+  }
+
+  function renderAnalyzedDatePicker() {
+    var year = analyzedCalendarMonth.getFullYear();
+    var month = analyzedCalendarMonth.getMonth();
+    $('datePickerMonth').textContent = analyzedPickerMode === 'month' ? String(year) : year + '-' + String(month + 1).padStart(2, '0');
+    document.querySelector('.date-week').style.display = analyzedPickerMode === 'month' ? 'none' : '';
+    if (analyzedPickerMode === 'month') {
+      var selectedStart = $('analyzedStartDate').value;
+      var selectedEnd = $('analyzedEndDate').value || selectedStart;
+      var preview = analyzedPreviewRange;
+      $('datePickerGrid').className = 'date-grid month-grid';
+      $('datePickerGrid').innerHTML = Array.from({ length: 12 }).map(function(_, index) {
+        var start = ymd(new Date(year, index, 1));
+        var end = ymd(new Date(year, index + 1, 0));
+        var classes = ['date-month'];
+        var isFuture = start > today();
+        if (isFuture) classes.push('future');
+        if (!isFuture && preview && start <= preview.end && end >= preview.start) classes.push('preview-range');
+        if (!isFuture && !analyzedSuppressSelectedRange && selectedStart && selectedEnd && start <= selectedEnd && end >= selectedStart) classes.push('selected');
+        return '<button type="button" class="' + classes.join(' ') + '" data-month="' + index + '">' + (index + 1) + '\u6708</button>';
+        return '<button type="button" class="' + classes.join(' ') + '" data-month="' + index + '">' + (index + 1) + '月</button>';
+      }).join('');
+      applyAnalyzedDateClasses();
+      return;
+    }
+    $('datePickerGrid').className = 'date-grid';
+    var first = new Date(year, month, 1);
+    var startOffset = (first.getDay() + 6) % 7;
+    var gridStart = new Date(year, month, 1 - startOffset);
+    var selectedStart = $('analyzedStartDate').value;
+    var selectedEnd = $('analyzedEndDate').value || selectedStart;
+    var previewRange = analyzedPreviewRange;
+    var html = '';
+    for (var i = 0; i < 42; i++) {
+      var date = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+      var value = ymd(date);
+      var classes = ['date-day'];
+      var future = isFutureYmd(value);
+      if (date.getMonth() !== month) classes.push('muted');
+      if (future) classes.push('future');
+      if (!future && previewRange && value >= previewRange.start && value <= previewRange.end) classes.push('preview-range');
+      if (!future && !analyzedSuppressSelectedRange && selectedStart && selectedEnd && value >= selectedStart && value <= selectedEnd) classes.push('in-range');
+      if (!future && !analyzedSuppressSelectedRange && value === selectedStart && value === selectedEnd) classes.push('selected', 'single');
+      else if (!future && !analyzedSuppressSelectedRange && value === selectedStart) classes.push('selected', 'range-start');
+      else if (!future && !analyzedSuppressSelectedRange && value === selectedEnd) classes.push('selected', 'range-end');
+      html += '<button type="button" class="' + classes.join(' ') + '" data-date="' + value + '">' + String(date.getDate()).padStart(2, '0') + '</button>';
+    }
+    $('datePickerGrid').innerHTML = html;
+    applyAnalyzedDateClasses();
+  }
+
+  function applyAnalyzedDateClasses() {
+    var selectedStart = $('analyzedStartDate').value;
+    var selectedEnd = $('analyzedEndDate').value || selectedStart;
+    var preview = analyzedPreviewRange;
+    if (analyzedPickerMode === 'month') {
+      var year = analyzedCalendarMonth.getFullYear();
+      document.querySelectorAll('#datePickerGrid [data-month]').forEach(function(btn) {
+        var index = Number(btn.dataset.month);
+        var start = ymd(new Date(year, index, 1));
+        var end = ymd(new Date(year, index + 1, 0));
+        btn.className = 'date-month';
+        var isFuture = start > today();
+        if (isFuture) btn.classList.add('future');
+        if (!isFuture && preview && start <= preview.end && end >= preview.start) btn.classList.add('preview-range');
+        if (!isFuture && !analyzedSuppressSelectedRange && selectedStart && selectedEnd && start <= selectedEnd && end >= selectedStart) btn.classList.add('selected');
+      });
+      return;
+    }
+    document.querySelectorAll('#datePickerGrid [data-date]').forEach(function(btn) {
+      var value = btn.dataset.date;
+      var muted = btn.classList.contains('muted');
+      var future = isFutureYmd(value);
+      btn.className = 'date-day';
+      if (muted) btn.classList.add('muted');
+      if (future) btn.classList.add('future');
+      if (!future && preview && value >= preview.start && value <= preview.end) btn.classList.add('preview-range');
+      if (!future && !analyzedSuppressSelectedRange && selectedStart && selectedEnd && value >= selectedStart && value <= selectedEnd) btn.classList.add('in-range');
+      if (!future && !analyzedSuppressSelectedRange && value === selectedStart && value === selectedEnd) btn.classList.add('selected', 'single');
+      else if (!future && !analyzedSuppressSelectedRange && value === selectedStart) btn.classList.add('selected', 'range-start');
+      else if (!future && !analyzedSuppressSelectedRange && value === selectedEnd) btn.classList.add('selected', 'range-end');
+    });
+  }
+
+  function openDb() {
+    return new Promise(function(resolve, reject) {
+      var req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = function(event) {
+        var database = event.target.result;
+        if (!database.objectStoreNames.contains('sku_profiles')) {
+          var sku = database.createObjectStore('sku_profiles', { keyPath: 'sku' });
+          sku.createIndex('itemType', 'itemType', { unique: false });
+          sku.createIndex('shortName', 'shortName', { unique: false });
+        }
+        if (!database.objectStoreNames.contains('raw_snapshots')) {
+          var raw = database.createObjectStore('raw_snapshots', { keyPath: 'id', autoIncrement: true });
+          raw.createIndex('sourceType', 'sourceType', { unique: false });
+          raw.createIndex('periodType', 'periodType', { unique: false });
+          raw.createIndex('startDate', 'startDate', { unique: false });
+          raw.createIndex('endDate', 'endDate', { unique: false });
+        }
+        if (!database.objectStoreNames.contains('analyzed_metrics')) {
+          var analyzed = database.createObjectStore('analyzed_metrics', { keyPath: 'id', autoIncrement: true });
+          analyzed.createIndex('sku', 'sku', { unique: false });
+          analyzed.createIndex('periodType', 'periodType', { unique: false });
+          analyzed.createIndex('startDate', 'startDate', { unique: false });
+        }
+        if (!database.objectStoreNames.contains('ranking_raw_metrics')) {
+          var ranking = database.createObjectStore('ranking_raw_metrics', { keyPath: 'id', autoIncrement: true });
+          ranking.createIndex('sku', 'sku', { unique: false });
+          ranking.createIndex('periodType', 'periodType', { unique: false });
+          ranking.createIndex('startDate', 'startDate', { unique: false });
+        }
+        if (!database.objectStoreNames.contains('competitor_estimates')) {
+          var estimates = database.createObjectStore('competitor_estimates', { keyPath: 'id', autoIncrement: true });
+          estimates.createIndex('sku', 'sku', { unique: false });
+          estimates.createIndex('periodType', 'periodType', { unique: false });
+          estimates.createIndex('startDate', 'startDate', { unique: false });
+        }
+      };
+      req.onsuccess = function() { db = req.result; resolve(db); };
+      req.onerror = function() { reject(req.error); };
+    });
+  }
+
+  function tx(store, mode) { return db.transaction(store, mode || 'readonly').objectStore(store); }
+  function getAll(store) {
+    return new Promise(function(resolve, reject) {
+      var req = tx(store).getAll();
+      req.onsuccess = function() { resolve(req.result || []); };
+      req.onerror = function() { reject(req.error); };
+    });
+  }
+  function countStore(store) {
+    return new Promise(function(resolve, reject) {
+      var req = tx(store).count();
+      req.onsuccess = function() { resolve(req.result || 0); };
+      req.onerror = function() { reject(req.error); };
+    });
+  }
+  function put(store, value) {
+    return new Promise(function(resolve, reject) {
+      var req = tx(store, 'readwrite').put(value);
+      req.onsuccess = function() { resolve(req.result); };
+      req.onerror = function() { reject(req.error); };
+    });
+  }
+  function remove(store, key) {
+    return new Promise(function(resolve, reject) {
+      var req = tx(store, 'readwrite').delete(key);
+      req.onsuccess = function() { resolve(); };
+      req.onerror = function() { reject(req.error); };
+    });
+  }
+  function clearStore(store) {
+    return new Promise(function(resolve, reject) {
+      var req = tx(store, 'readwrite').clear();
+      req.onsuccess = function() { resolve(); };
+      req.onerror = function() { reject(req.error); };
+    });
+  }
+
+  function switchPage(id) {
+    if (id === 'sku') id = 'db-sku';
+    document.querySelectorAll('.tool-page').forEach(function(page) { page.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+    var page = $(id);
+    var btn = document.querySelector('.tab-btn[data-page="' + id + '"]');
+    if (page) page.classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  async function refreshCounts() {
+    var skus = await getAll('sku_profiles');
+    var snapshotCount = await countStore('raw_snapshots');
+    var analyzedCount = await countStore('analyzed_metrics');
+    var estimateCount = await countStore('competitor_estimates');
+    $('metricSkuCount').textContent = skus.length;
+    $('metricSnapshotCount').textContent = snapshotCount;
+    $('metricAnalyzedCount').textContent = analyzedCount;
+    $('metricEstimateCount').textContent = estimateCount;
+    renderTrackedCompetitors(skus);
+  }
+
+  async function renderSkus() {
+    var rows = await getAll('sku_profiles');
+    rows.sort(function(a, b) { return String(a.sku).localeCompare(String(b.sku)); });
+    renderSkuTable('own', rows.filter(function(row) { return row.itemType !== 'competitor'; }));
+    renderSkuTable('competitor', rows.filter(function(row) { return row.itemType === 'competitor'; }));
+    renderTrackedCompetitors(rows);
+  }
+
+  function renderSkuTable(type, rows) {
+    var table = $(type === 'competitor' ? 'competitorSkuTable' : 'ownSkuTable');
+    rows = sortSkuRows(type, rows);
+    var columns = [
+      { key: 'sku', label: 'SKU', required: true },
+      { key: 'shortName', label: '简称', required: true }
+    ];
+    if (type === 'competitor') {
+      columns = columns.concat([
+        { key: 'brand', label: '鍝佺墝' },
+        { key: 'isTrackedCompetitor', label: '閲嶇偣璺熻釜' }
+      ]);
+    }
+    columns = columns.concat(skuDimensionColumns.map(function(key) {
+      return { key: key, label: skuColumnLabels[key] || key, dimension: true };
+    }));
+
+    var addColKey = '__add__';
+    var tableWidth = 0;
+    var colgroup = columns.map(function(col) {
+      var width = getSkuColumnWidth(type, col.key);
+      tableWidth += width;
+      return '<col style="width:' + width + 'px">';
+    }).join('');
+    var addColWidth = getSkuColumnWidth(type, addColKey);
+    tableWidth += addColWidth;
+    colgroup += '<col style="width:' + addColWidth + 'px">';
+
+    var header = columns.map(function(col) {
+      var cls = (col.required ? 'required-head ' : '') + (isSortActive(type, col.key) ? 'sort-active' : '');
+      cls = cls.trim() ? ' class="' + cls.trim() + '"' : '';
+      var sortAttr = ' data-sort-col="' + esc(col.key) + '"';
+      if (!col.dimension) return '<th' + cls + sortAttr + ' data-col-key="' + esc(col.key) + '">' + sortLabel(type, col.key, col.label) + resizeHandle(type, col.key) + '</th>';
+      return '<th draggable="true" data-drag-col="' + esc(col.key) + '"' + sortAttr + ' title="鎷栧姩璋冩暣椤哄簭锛屽弻鍑诲悕绉板彲缂栬緫">' +
+        '<span class="sku-col-head">' +
+          '<span class="sku-col-label" data-col-label="' + esc(col.key) + '">' + esc(col.label) + '</span>' +
+          sortTools(type, col.key) +
+          '<span class="sku-col-tools">' +
+            '<button class="col-tool" data-remove-col="' + esc(col.key) + '" title="删除此维度" aria-label="删除此维度">' +
+              '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16" stroke-width="1.8" stroke-linecap="round"/><path d="M10 11v6M14 11v6" stroke-width="1.8" stroke-linecap="round"/><path d="M6.5 7l.8 13h9.4l.8-13M9 7l.7-2h4.6L15 7" stroke-width="1.8" stroke-linejoin="round"/></svg>' +
+            '</button>' +
+          '</span>' +
+        '</span>' +
+        resizeHandle(type, col.key) +
+      '</th>';
+    }).join('') + '<th class="add-col-head" data-col-key="' + addColKey + '"><button class="small-plus" data-add-col="' + type + '" title="新增维度列">+</button>' + resizeHandle(type, addColKey) + '</th>';
+
+    var body = rows.length ? rows.map(function(row) {
+      return renderSkuRow(type, row, columns);
+    }).join('') : '<tr><td class="empty-row" colspan="' + (columns.length + 1) + '">暂无' + (type === 'competitor' ? '竞品' : '本品') + ' SKU</td></tr>';
+
+    table.innerHTML = '<colgroup>' + colgroup + '</colgroup><thead><tr>' + header + '</tr></thead><tbody>' + body + '</tbody>';
+    table.style.width = tableWidth + 'px';
+  }
+
+  function sortLabel(type, key, label) {
+    return '<span class="sort-head"><span>' + esc(label) + '</span>' + sortTools(type, key) + '</span>';
+  }
+
+  function isSortActive(type, key) {
+    var state = skuSortState[type];
+    return !!(state && state.key === key);
+  }
+
+  function sortTools(type, key) {
+    var state = skuSortState[type];
+    var ascActive = state && state.key === key && state.dir === 'asc';
+    var descActive = state && state.key === key && state.dir === 'desc';
+    var nextDir = !state || state.key !== key ? 'asc' : state.dir === 'asc' ? 'desc' : 'none';
+    var icon = descActive
+      ? '<path d="M12 5v14" stroke-width="1.8" stroke-linecap="round"/><path d="M7 14l5 5 5-5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+      : '<path d="M12 19V5" stroke-width="1.8" stroke-linecap="round"/><path d="M7 10l5-5 5 5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>';
+    return '<span class="sort-tools">' +
+      '<button class="sort-tool ' + ((ascActive || descActive) ? 'active' : '') + '" data-sort-dir="' + nextDir + '" title="排序" aria-label="排序">' +
+        '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' + icon + '</svg>' +
+      '</button>' +
+    '</span>';
+  }
+
+  function sortSkuRows(type, rows) {
+    var state = skuSortState[type];
+    if (!state || !state.key) return rows;
+    var dir = state.dir === 'desc' ? -1 : 1;
+    return rows.slice().sort(function(a, b) {
+      var av = String(a[state.key] || '').trim();
+      var bv = String(b[state.key] || '').trim();
+      var an = Number(av), bn = Number(bv);
+      var cmp = av && bv && !isNaN(an) && !isNaN(bn) ? an - bn : av.localeCompare(bv, 'zh-Hans-CN', { numeric: true });
+      return cmp * dir;
+    });
+  }
+
+  function toggleSkuSort(type, key, dir) {
+    var state = skuSortState[type];
+    if (dir) {
+      if (dir === 'none') skuSortState[type] = null;
+      else if (state && state.key === key && state.dir === dir) skuSortState[type] = null;
+      else skuSortState[type] = { key: key, dir: dir };
+    } else if (!state || state.key !== key) skuSortState[type] = { key: key, dir: 'asc' };
+    else if (state.dir === 'asc') skuSortState[type] = { key: key, dir: 'desc' };
+    else skuSortState[type] = null;
+    localStorage.setItem('jdSkuSortState', JSON.stringify(skuSortState));
+    renderSkus();
+  }
+
+  function getSkuColumnWidth(type, key) {
+    var fallback = key === '__add__' ? 48 : key === 'sku' ? 180 : key === 'shortName' ? 360 : key === 'isTrackedCompetitor' ? 92 : key === 'brand' ? 92 : 128;
+    return Math.max(48, Number(skuColumnWidths[type + ':' + key] || fallback));
+  }
+
+  function resizeHandle(type, key) {
+    return '<span class="col-resizer" data-resize-col="' + esc(key) + '" data-resize-type="' + esc(type) + '" aria-hidden="true"></span>';
+  }
+
+  function saveSkuColumnWidths() {
+    localStorage.setItem('jdSkuColumnWidths', JSON.stringify(skuColumnWidths));
+  }
+
+  async function mergeDuplicateSeriesColumns() {
+    var pairs = [
+      { key: 'mainSeries', label: '大系列' },
+      { key: 'subSeries', label: '小系列' }
+    ];
+    var duplicateMap = {};
+    pairs.forEach(function(pair) {
+      duplicateMap[pair.key] = skuDimensionColumns.filter(function(key) {
+        return key !== pair.key && (skuColumnLabels[key] || key) === pair.label;
+      });
+    });
+    var duplicateKeys = Object.keys(duplicateMap).reduce(function(all, key) {
+      return all.concat(duplicateMap[key]);
+    }, []);
+    if (!duplicateKeys.length) return;
+
+    var rows = await getAll('sku_profiles');
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var changed = false;
+      pairs.forEach(function(pair) {
+        duplicateMap[pair.key].forEach(function(dupKey) {
+          if (!row[pair.key] && row[dupKey]) {
+            row[pair.key] = row[dupKey];
+            changed = true;
+          }
+          if (dupKey in row) {
+            delete row[dupKey];
+            changed = true;
+          }
+        });
+      });
+      if (changed) await put('sku_profiles', row);
+    }
+    skuDimensionColumns = skuDimensionColumns.filter(function(key) {
+      return duplicateKeys.indexOf(key) === -1;
+    });
+    saveSkuColumnState();
+  }
+
+  function renderSkuRow(type, row, columns) {
+    var key = row.sku || row.__tempKey || '';
+    var cells = columns.map(function(col) {
+      if (col.key === 'isTrackedCompetitor') {
+        return '<td><label class="check-pill"><input type="checkbox" data-sku-check="isTrackedCompetitor" ' + (row.isTrackedCompetitor ? 'checked' : '') + '>是</label></td>';
+      }
+      return '<td contenteditable="true" data-sku-field="' + esc(col.key) + '">' + esc(row[col.key] || '') + '</td>';
+    }).join('');
+    return '<tr data-item-type="' + type + '" data-old-sku="' + esc(row.sku || '') + '" data-temp-key="' + esc(key) + '">' +
+      cells + '<td class="add-col-cell"><button class="sku-row-delete" data-row-delete="' + esc(row.sku || '') + '" title="删除这一行" aria-label="删除这一行"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16" stroke-width="1.8" stroke-linecap="round"/><path d="M9 7V5.8C9 4.8 9.8 4 10.8 4h2.4C14.2 4 15 4.8 15 5.8V7" stroke-width="1.8"/><path d="M18 7l-.7 11.2A2 2 0 0 1 15.3 20H8.7a2 2 0 0 1-2-1.8L6 7" stroke-width="1.8"/><path d="M10 11v5M14 11v5" stroke-width="1.8" stroke-linecap="round"/></svg></button></td></tr>';
+  }
+
+  function saveSkuColumnState() {
+    localStorage.setItem('jdSkuColumnLabels', JSON.stringify(skuColumnLabels));
+    localStorage.setItem('jdSkuDimensionColumns', JSON.stringify(skuDimensionColumns));
+  }
+
+  function makeColumnKey(label) {
+    var base = String(label || '').trim() || '新维度';
+    var existing = Object.keys(skuColumnLabels).find(function(key) { return skuColumnLabels[key] === base; });
+    if (existing) return existing;
+    var key = 'custom_' + base.replace(/\s+/g, '_').replace(/[^\w\u4e00-\u9fa5]/g, '').slice(0, 24);
+    var finalKey = key;
+    var i = 2;
+    while (skuDimensionColumns.indexOf(finalKey) !== -1 || finalKey === 'sku' || finalKey === 'shortName' || finalKey === 'brand') {
+      finalKey = key + '_' + i++;
+    }
+    skuColumnLabels[finalKey] = base;
+    return finalKey;
+  }
+
+  async function addSkuColumn(type) {
+    var label = '新维度';
+    var key = makeColumnKey(label);
+    skuDimensionColumns.push(key);
+    saveSkuColumnState();
+    await renderSkus();
+    beginRenameColumn(type, key);
+  }
+
+  async function removeSkuColumn(key) {
+    skuDimensionColumns = skuDimensionColumns.filter(function(col) { return col !== key; });
+    saveSkuColumnState();
+    await renderSkus();
+  }
+
+  function beginRenameColumn(type, key) {
+    var table = $(type === 'competitor' ? 'competitorSkuTable' : 'ownSkuTable');
+    var label = Array.from(table.querySelectorAll('[data-col-label]')).find(function(el) {
+      return el.getAttribute('data-col-label') === key;
+    });
+    if (!label) return;
+    label.setAttribute('contenteditable', 'true');
+    label.focus();
+    var range = document.createRange();
+    range.selectNodeContents(label);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  async function finishRenameColumn(labelEl) {
+    var key = labelEl.getAttribute('data-col-label');
+    var next = labelEl.textContent.trim() || skuColumnLabels[key] || key;
+    skuColumnLabels[key] = next;
+    labelEl.textContent = next;
+    labelEl.removeAttribute('contenteditable');
+    saveSkuColumnState();
+    await renderSkus();
+  }
+
+  function clearDropMarkers(table) {
+    table.querySelectorAll('.drop-before, .drop-after').forEach(function(th) {
+      th.classList.remove('drop-before', 'drop-after');
+    });
+  }
+
+  function startColumnResize(e, table) {
+    var handle = e.target.closest('[data-resize-col]');
+    if (!handle) return false;
+    e.preventDefault();
+    e.stopPropagation();
+    var th = handle.closest('th');
+    var type = handle.getAttribute('data-resize-type');
+    var key = handle.getAttribute('data-resize-col');
+    freezeTableColumnWidths(table, type);
+    var startX = e.clientX;
+    var startWidth = th.getBoundingClientRect().width;
+    th.classList.add('is-resizing');
+    resizingColumn = { table: table, th: th, type: type, key: key, startX: startX, startWidth: startWidth };
+    return true;
+  }
+
+  function freezeTableColumnWidths(table, type) {
+    var cols = Array.from(table.querySelectorAll('col'));
+    var ths = Array.from(table.querySelectorAll('thead th'));
+    var total = 0;
+    ths.forEach(function(th, index) {
+      var key = th.getAttribute('data-col-key') || th.getAttribute('data-drag-col');
+      if (!key || !cols[index]) return;
+      var width = Math.max(48, Math.round(th.getBoundingClientRect().width));
+      cols[index].style.width = width + 'px';
+      skuColumnWidths[type + ':' + key] = width;
+      total += width;
+    });
+    if (total > 0) table.style.width = total + 'px';
+    saveSkuColumnWidths();
+  }
+
+  function moveColumnResize(e) {
+    if (!resizingColumn) return;
+    var width = Math.max(48, Math.round(resizingColumn.startWidth + e.clientX - resizingColumn.startX));
+    skuColumnWidths[resizingColumn.type + ':' + resizingColumn.key] = width;
+    var colIndex = Array.from(resizingColumn.th.parentElement.children).indexOf(resizingColumn.th);
+    var col = resizingColumn.table.querySelectorAll('col')[colIndex];
+    if (col) col.style.width = width + 'px';
+    var total = Array.from(resizingColumn.table.querySelectorAll('col')).reduce(function(sum, c) {
+      return sum + (parseFloat(c.style.width) || 0);
+    }, 0);
+    if (total > 0) resizingColumn.table.style.width = total + 'px';
+  }
+
+  function finishColumnResize() {
+    if (!resizingColumn) return;
+    resizingColumn.th.classList.remove('is-resizing');
+    saveSkuColumnWidths();
+    resizingColumn = null;
+  }
+
+  async function addSkuRow(type) {
+    var rows = await getAll('sku_profiles');
+    rows.push({ itemType: type, __tempKey: 'new_' + Date.now() });
+    renderSkuTable(type, rows.filter(function(row) { return type === 'competitor' ? row.itemType === 'competitor' : row.itemType !== 'competitor'; }));
+    setSkuMsg(type, '已新增一行，请直接填写 SKU 和简称。');
+  }
+
+  function readSkuRow(tr) {
+    var row = {
+      itemType: tr.getAttribute('data-item-type') || 'own',
+      updatedAt: new Date().toISOString()
+    };
+    tr.querySelectorAll('[data-sku-field]').forEach(function(cell) {
+      row[cell.getAttribute('data-sku-field')] = cell.textContent.trim();
+    });
+    var checked = tr.querySelector('[data-sku-check="isTrackedCompetitor"]');
+    if (checked) row.isTrackedCompetitor = checked.checked;
+    if (row.itemType !== 'competitor') row.isTrackedCompetitor = false;
+    return row;
+  }
+
+  function setSkuMsg(type, text, isErr) {
+    var el = $(type === 'competitor' ? 'competitorSkuMsg' : 'ownSkuMsg');
+    el.textContent = text || '';
+    el.className = 'sku-msg-line' + (isErr ? ' err' : ' ok');
+  }
+
+  async function saveSkuRow(tr) {
+    var row = readSkuRow(tr);
+    var oldSku = tr.getAttribute('data-old-sku') || '';
+    if (!row.sku && !row.shortName) return;
+    if (!row.sku || !row.shortName) {
+      setSkuMsg(row.itemType, 'SKU 和简称都要填写后才会保存。', true);
+      return;
+    }
+    if (oldSku && oldSku !== row.sku) await remove('sku_profiles', oldSku);
+    await put('sku_profiles', row);
+    setSkuMsg(row.itemType, '已保存：' + row.sku);
+    await renderSkus();
+    await refreshCounts();
+  }
+
+  function headerAlias(name) {
+    var n = normalizeHeader(name);
+    if (['sku', '商品id', '商品ID', '商品编号', '商品编码', 'skuid'].indexOf(n) !== -1) return 'sku';
+    if (['简称', '商品简称', '名称', '商品名称', 'sku名称'].indexOf(n) !== -1) return 'shortName';
+    if (['品牌', '竞品品牌'].indexOf(n) !== -1) return 'brand';
+    if (['大系列', '大类'].indexOf(n) !== -1) return 'mainSeries';
+    if (['小系列', '小类'].indexOf(n) !== -1) return 'subSeries';
+    if (['重点追踪', '重点竞品', '是否重点追踪'].indexOf(n) !== -1) return 'isTrackedCompetitor';
+    return '';
+  }
+
+  function normalizeHeader(name) {
+    return String(name || '')
+      .replace(/^\uFEFF/, '')
+      .replace(/[\s　:：]/g, '')
+      .trim()
+      .toLowerCase();
+  }
+
+  function isSkuDimensionKey(key) {
+    return ['sku', 'shortName', 'brand', 'isTrackedCompetitor'].indexOf(key) === -1;
+  }
+
+  function ensureSkuDimensionColumn(key, label) {
+    if (!isSkuDimensionKey(key)) return;
+    if (!skuColumnLabels[key]) skuColumnLabels[key] = label || key;
+    if (skuDimensionColumns.indexOf(key) === -1) skuDimensionColumns.push(key);
+  }
+
+  function buildSkuImportHeaderPlan(rows) {
+    var seen = {};
+    var plan = [];
+    rows.forEach(function(row) {
+      Object.keys(row).forEach(function(header) {
+        if (seen[header]) return;
+        seen[header] = true;
+        var mapped = headerAlias(header);
+        if (!mapped) mapped = makeColumnKey(header);
+        ensureSkuDimensionColumn(mapped, header);
+        plan.push({ header: header, key: mapped });
+      });
+    });
+    return plan;
+  }
+
+  async function importSkuFile(file, type) {
+    if (!file) return;
+    try {
+      var rows = await parseWorkbook(file);
+      var debug = rows.__debug || {};
+      var headerPlan = buildSkuImportHeaderPlan(rows);
+      var count = 0;
+      var skipped = [];
+      for (var i = 0; i < rows.length; i++) {
+        var src = rows[i];
+        var item = { itemType: type, updatedAt: new Date().toISOString() };
+        headerPlan.forEach(function(col) {
+          item[col.key] = String(src[col.header] == null ? '' : src[col.header]).trim();
+        });
+        item.isTrackedCompetitor = type === 'competitor' && /^(true|是|1|yes)$/i.test(String(item.isTrackedCompetitor || ''));
+        if (!item.sku || !item.shortName) {
+          if (skipped.length < 5) skipped.push({ row: i + 2, sku: item.sku || '', shortName: item.shortName || '' });
+          continue;
+        }
+        await put('sku_profiles', item);
+        count++;
+      }
+      saveSkuColumnState();
+      await renderSkus();
+      await refreshCounts();
+      if (count === 0) {
+        reportSkuImportFailure(type, rows, headerPlan, skipped, debug);
+      } else {
+        setSkuMsg(type, '已导入 ' + count + ' 条 SKU。' + (skipped.length ? ' 跳过 ' + skipped.length + ' 行缺少 SKU 或简称。' : ''));
+      }
+    } catch (err) {
+      setSkuMsg(type, '导入失败：' + err.message, true);
+    }
+  }
+
+  function reportSkuImportFailure(type, rows, headerPlan, skipped, debug) {
+    var headers = headerPlan.map(function(col) { return col.header; });
+    var mapped = headerPlan.map(function(col) { return col.header + '→' + col.key; });
+    var hasSku = headerPlan.some(function(col) { return col.key === 'sku'; });
+    var hasShortName = headerPlan.some(function(col) { return col.key === 'shortName'; });
+    var reason = [];
+    if (!rows.length) reason.push('没有读到数据行');
+    if (!hasSku) reason.push('没有识别到 SKU 列');
+    if (!hasShortName) reason.push('没有识别到简称列');
+    if (hasSku && hasShortName && rows.length) reason.push('读到了表头，但每行的 SKU 或简称解析后为空');
+    var sample = skipped.map(function(row) {
+      return '第' + row.row + '行 SKU=' + (row.sku || '空') + '，简称=' + (row.shortName || '空');
+    }).join('；');
+    var matrixPreview = debug && debug.matrixPreview ? debug.matrixPreview.map(function(row) {
+      return '[' + row.join(' | ') + ']';
+    }).join(' / ') : '';
+    var message = '导入 0 条。' + reason.join('；') +
+      '。工作表：' + ((debug && debug.sheetNames || []).join(' / ') || '无') +
+      '。二维读取行数：' + ((debug && debug.matrixRows) || 0) +
+      (matrixPreview ? '。前几行：' + matrixPreview : '') +
+      '。表头：' + (headers.join(' / ') || '无') +
+      '。映射：' + (mapped.join(' / ') || '无') +
+      (sample ? '。样例：' + sample : '');
+    console.warn('SKU import diagnostics', { rows: rows.length, headers: headers, mapped: mapped, skipped: skipped, debug: debug });
+    setSkuMsg(type, message, true);
+  }
+
+  async function clearSkuTable(type) {
+    var rows = await getAll('sku_profiles');
+    var targets = rows.filter(function(row) {
+      return type === 'competitor' ? row.itemType === 'competitor' : row.itemType !== 'competitor';
+    });
+    for (var i = 0; i < targets.length; i++) {
+      await remove('sku_profiles', targets[i].sku);
+    }
+    await renderSkus();
+    await refreshCounts();
+    setSkuMsg(type, '已清空' + (type === 'competitor' ? '竞品' : '本品') + ' SKU 列表。');
+  }
+
+  function renderTrackedCompetitors(rows) {
+    var tracked = (rows || []).filter(function(row) { return row.itemType === 'competitor' && row.isTrackedCompetitor; });
+    if (!tracked.length) {
+      $('trackedCompetitorBody').innerHTML = '<tr><td class="empty-row" colspan="5">暂无重点竞品</td></tr>';
+      return;
+    }
+    $('trackedCompetitorBody').innerHTML = tracked.map(function(row) {
+      return '<tr><td>' + esc(row.sku) + '</td><td>' + esc(row.shortName) + '</td><td>' + esc(row.brand) + '</td><td>' + esc(row.mainSeries) + '</td><td>' + esc(row.subSeries) + '</td></tr>';
+    }).join('');
+  }
+
+  async function renderSnapshots() {
+    var rows = await getAll('raw_snapshots');
+    rows.sort(function(a, b) { return String(b.importedAt).localeCompare(String(a.importedAt)); });
+    if (!rows.length) {
+      $('snapshotBody').innerHTML = '<tr><td class="empty-row" colspan="6">暂无原始快照</td></tr>';
+      return;
+    }
+    $('snapshotBody').innerHTML = rows.map(function(row) {
+      return '<tr>' +
+        '<td>' + esc((row.importedAt || '').slice(0, 19).replace('T', ' ')) + '</td>' +
+        '<td>' + esc(labels.sourceType[row.sourceType] || row.sourceType) + '</td>' +
+        '<td>' + esc(labels.periodType[row.periodType] || row.periodType) + '</td>' +
+        '<td>' + esc(rangeText(row)) + '</td>' +
+        '<td>' + esc(row.fileName) + '</td>' +
+        '<td>' + esc(row.rowCount || 0) + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  async function renderRankingRaw() {
+    var rows = await getAll('ranking_raw_metrics');
+    rows.sort(function(a, b) {
+      return String(b.startDate || '').localeCompare(String(a.startDate || '')) || Number(a.rank || 0) - Number(b.rank || 0);
+    });
+    if (!rows.length) {
+      $('rankingRawBody').innerHTML = '<tr><td class="empty-row" colspan="7">暂无榜单原始指标</td></tr>';
+      return;
+    }
+    $('rankingRawBody').innerHTML = rows.slice(0, 200).map(function(row) {
+      return '<tr>' +
+        '<td>' + esc(labels.periodType[row.periodType] || row.periodType || '-') + '<br>' + esc(rangeText(row)) + '</td>' +
+        '<td>' + esc(row.sku || row.productId || '-') + '</td>' +
+        '<td>' + esc(row.rank || '-') + '</td>' +
+        '<td>' + esc(row.amountRange || row.salesAmountRange || '-') + '</td>' +
+        '<td>' + esc(row.qtyRange || row.salesQtyRange || '-') + '</td>' +
+        '<td>' + esc(row.growthRange || row.growth || '-') + '</td>' +
+        '<td>' + esc(row.fileName || row.sourceFile || '-') + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function otherData(row, knownKeys) {
+    var ignored = {};
+    knownKeys.concat(['id']).forEach(function(key) { ignored[key] = true; });
+    var rest = {};
+    Object.keys(row || {}).forEach(function(key) {
+      if (!ignored[key] && row[key] !== '' && row[key] != null) rest[key] = row[key];
+    });
+    return Object.keys(rest).length ? JSON.stringify(rest) : '';
+  }
+
+  async function renderSkuDb() {
+    var rows = await getAll('sku_profiles');
+    rows.sort(function(a, b) {
+      return String(a.itemType || '').localeCompare(String(b.itemType || '')) || String(a.sku || '').localeCompare(String(b.sku || ''), 'zh-Hans-CN', { numeric: true });
+    });
+    var baseColumns = [
+      { key: 'itemType', label: '绫诲瀷', value: function(row) { return labels.itemType[row.itemType] || row.itemType || '-'; } },
+      { key: 'sku', label: 'SKU' },
+      { key: 'shortName', label: '简称' },
+      { key: 'brand', label: '品牌' },
+      { key: 'isTrackedCompetitor', label: '重点追踪', value: function(row) { return row.isTrackedCompetitor ? '是' : ''; } },
+      { key: 'mainSeries', label: '大系列' },
+      { key: 'subSeries', label: '小系列' }
+    ];
+    var hiddenKeys = {
+      id: true,
+      updatedAt: true,
+      createdAt: true
+    };
+    var baseKeyMap = {};
+    baseColumns.forEach(function(col) { baseKeyMap[col.key] = true; });
+    var customKeys = [];
+    rows.forEach(function(row) {
+      Object.keys(row).forEach(function(key) {
+        if (hiddenKeys[key] || baseKeyMap[key] || customKeys.indexOf(key) !== -1) return;
+        customKeys.push(key);
+      });
+    });
+    var customColumns = customKeys.map(function(key) {
+      return { key: key, label: skuColumnLabels[key] || key.replace(/^custom_/, '') };
+    });
+    var columns = baseColumns.concat(customColumns);
+    $('skuDbHead').innerHTML = '<tr>' + columns.map(function(col) { return '<th>' + esc(col.label) + '</th>'; }).join('') + '</tr>';
+    if (!rows.length) {
+      $('skuDbBody').innerHTML = '<tr><td class="empty-row" colspan="' + columns.length + '">暂无 SKU 档案</td></tr>';
+      return;
+    }
+    $('skuDbBody').innerHTML = rows.map(function(row) {
+      return '<tr>' + columns.map(function(col) {
+        var value = col.value ? col.value(row) : row[col.key];
+        return '<td>' + esc(value == null || value === '' ? '-' : value) + '</td>';
+      }).join('') + '</tr>';
+    }).join('');
+  }
+
+  async function renderAnalyzedDb() {
+    var rows = await getAll('analyzed_metrics');
+    var skuRows = await getAll('sku_profiles');
+    var skuMap = {};
+    skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
+    $('managedSkuOnlyCheck').checked = hideUnmanagedAnalyzed;
+    var start = $('analyzedStartDate').value;
+    var end = $('analyzedEndDate').value || start;
+    $('analyzedStartLabel').textContent = '日期范围';
+    syncAnalyzedDateInput();
+    rows = rows.filter(function(row) {
+      if (row.sourceType && row.sourceType !== 'sales_detail') return false;
+      var profile = skuMap[normalizeSkuValue(row.sku)];
+      var isManagedOwnSku = profile && profile.itemType !== 'competitor' && String(profile.shortName || '').trim();
+      if (hideUnmanagedAnalyzed) return !!isManagedOwnSku;
+      return !profile || profile.itemType !== 'competitor';
+    });
+    rows = rows.filter(function(row) {
+      if (start && (row.endDate || row.startDate) < start) return false;
+      if (end && (row.startDate || row.endDate) > end) return false;
+      return true;
+    });
+    if (!rows.length) {
+      $('analyzedDbBody').innerHTML = '<tr><td class="empty-row" colspan="8">暂无已分析数据</td></tr>';
+      return;
+    }
+    var dims = getSelectedAnalyzedDims();
+    renderAnalyzedDbHead();
+    var groupedRows = buildAnalyzedGroups(rows, skuRows, dims);
+    $('analyzedDbBody').innerHTML = groupedRows.slice(0, 200).map(function(row) {
+      return '<tr><td>' + esc(rangeText(row)) + '</td>' +
+        '<td>' + esc(row.dimensionName || '-') + '</td>' +
+        '<td>' + esc(formatMetric(row.salesQty, 0)) + '</td>' +
+        '<td>' + esc(formatMetric(row.salesAmount, 2)) + '</td>' +
+        '<td>' + esc(formatMetric(row.visitorCount, 0)) + '</td>' +
+        '<td>' + esc(formatMetric(row.onsiteCost, 2)) + '</td>' +
+        '<td>' + esc(formatMetric(row.offsiteCost, 2)) + '</td>' +
+        '<td>' + esc(row.rank || '') + '</td></tr>';
+    }).join('');
+  }
+
+  async function renderEstimatesDb() {
+    var rows = await getAll('competitor_estimates');
+    rows.sort(function(a, b) {
+      return String(b.startDate || '').localeCompare(String(a.startDate || '')) || String(a.sku || '').localeCompare(String(b.sku || ''), 'zh-Hans-CN', { numeric: true });
+    });
+    if (!rows.length) {
+      $('estimatesDbBody').innerHTML = '<tr><td class="empty-row" colspan="7">暂无竞品估算结果</td></tr>';
+      return;
+    }
+    var known = ['periodType', 'startDate', 'endDate', 'sku', 'amountRange', 'salesAmountRange', 'qtyRange', 'salesQtyRange', 'note', 'estimateNote', 'fileName', 'sourceFile'];
+    $('estimatesDbBody').innerHTML = rows.map(function(row) {
+      return '<tr>' +
+        '<td>' + esc(labels.periodType[row.periodType] || row.periodType || '-') + '<br>' + esc(rangeText(row)) + '</td>' +
+        '<td>' + esc(row.sku || '-') + '</td>' +
+        '<td>' + esc(row.amountRange || row.salesAmountRange || '-') + '</td>' +
+        '<td>' + esc(row.qtyRange || row.salesQtyRange || '-') + '</td>' +
+        '<td>' + esc(row.note || row.estimateNote || '-') + '</td>' +
+        '<td>' + esc(row.fileName || row.sourceFile || '-') + '</td>' +
+        '<td>' + esc(otherData(row, known)) + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  async function clearDbTable(store, renderFn) {
+    await clearStore(store);
+    await renderFn();
+    await refreshCounts();
+  }
+
+  async function clearCurrentAnalyzedRows() {
+    parseAnalyzedDateInput();
+    var start = $('analyzedStartDate').value;
+    var end = $('analyzedEndDate').value || start;
+    var rows = await getAll('analyzed_metrics');
+    var skuRows = await getAll('sku_profiles');
+    var skuMap = {};
+    skuRows.forEach(function(item) {
+      if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item;
+    });
+    var targets = rows.filter(function(row) {
+      if (row.sourceType && row.sourceType !== 'sales_detail') return false;
+      if (start && (row.endDate || row.startDate) < start) return false;
+      if (end && (row.startDate || row.endDate) > end) return false;
+      var profile = skuMap[normalizeSkuValue(row.sku)];
+      if (profile && profile.itemType === 'competitor') return false;
+      if (hideUnmanagedAnalyzed) {
+        return !!(profile && String(profile.shortName || '').trim());
+      }
+      return true;
+    });
+    for (var i = 0; i < targets.length; i++) {
+      await remove('analyzed_metrics', targets[i].id);
+    }
+    await renderAnalyzedDb();
+    await renderDashboard();
+    await refreshCounts();
+  }
+
+  function renderImportMappings() {
+    var mappings = getImportMappings('sales_detail');
+    $('mappingBody').innerHTML = mappings.map(function(item, index) {
+      return '<tr data-index="' + index + '">' +
+        '<td>' + (item.locked
+          ? '<strong>' + esc(item.label) + '</strong>'
+          : '<input class="input mapping-key" value="' + esc(item.label || item.key) + '">') + '</td>' +
+        '<td><input class="input mapping-column" value="' + esc(item.column || '') + '" placeholder="必须完全等于表头"></td>' +
+        '<td>' + esc(item.note || '自定义追踪字段') + '</td>' +
+        '<td>' + (item.locked ? '' : '<button class="icon-btn row-delete-btn mapping-delete" title="删除对照项">' + iconTrash() + '</button>') + '</td>' +
+      '</tr>';
+    }).join('');
+    $('mappingMsg').textContent = '已保存字段对照，导入商品明细时会优先使用这里的列名。';
+    $('mappingMsg').className = 'msg ok';
+  }
+
+  function updateMappingFromRow(row) {
+    var index = Number(row.dataset.index);
+    var mappings = getImportMappings('sales_detail');
+    var item = mappings[index];
+    if (!item) return;
+    var keyInput = row.querySelector('.mapping-key');
+    var columnInput = row.querySelector('.mapping-column');
+    if (keyInput && !item.locked) {
+      item.label = keyInput.value.trim() || item.label || item.key;
+      item.key = normalizeHeader(item.label) || item.key;
+    }
+    if (columnInput) item.column = columnInput.value.trim();
+    saveImportMappings();
+    $('mappingMsg').textContent = '字段对照已保存。';
+    $('mappingMsg').className = 'msg ok';
+  }
+
+  function parseWorkbook(file) {
+    return new Promise(function(resolve, reject) {
+      if (!window.XLSX) {
+        reject(new Error('Excel 解析组件还没加载完成，请稍等几秒后重试'));
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function() {
+        try {
+          var wb;
+          if (/\.csv$/i.test(file.name)) {
+            wb = XLSX.read(reader.result, { type: 'string' });
+          } else {
+            wb = XLSX.read(reader.result, { type: 'array' });
+          }
+          var ws = wb.Sheets[wb.SheetNames[0]];
+          var matrix = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', raw: false });
+          var parsedRows = matrixToObjects(matrix);
+          parsedRows.__debug = {
+            sheetNames: wb.SheetNames || [],
+            matrixRows: matrix.length,
+            matrixPreview: matrix.slice(0, 5).map(function(row) {
+              return (row || []).slice(0, 8).map(function(cell) {
+                return String(cell == null ? '' : cell);
+              });
+            })
+          };
+          resolve(parsedRows);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = function() { reject(reader.error); };
+      if (/\.csv$/i.test(file.name)) reader.readAsText(file, 'utf-8');
+      else reader.readAsArrayBuffer(file);
+    });
+  }
+
+  function matrixToObjects(matrix) {
+    matrix = (matrix || []).filter(function(row) {
+      return row && row.some(function(cell) { return String(cell == null ? '' : cell).trim() !== ''; });
+    });
+    if (!matrix.length) return [];
+    var headerIndex = 0;
+    for (var i = 0; i < Math.min(matrix.length, 8); i++) {
+      var normalized = matrix[i].map(normalizeHeader);
+      if (normalized.indexOf('sku') !== -1 || normalized.indexOf('简称') !== -1 || normalized.indexOf('商品简称') !== -1) {
+        headerIndex = i;
+        break;
+      }
+    }
+    var headers = matrix[headerIndex].map(function(cell, index) {
+      var text = String(cell == null ? '' : cell).trim();
+      return text || ('未命名列' + (index + 1));
+    });
+    return matrix.slice(headerIndex + 1).map(function(row) {
+      var obj = {};
+      headers.forEach(function(header, index) {
+        obj[header] = row[index] == null ? '' : row[index];
+      });
+      return obj;
+    });
+  }
+
+  function normalizeDetectText(value) {
+    return normalizeHeader(value).replace(/\s+/g, '');
+  }
+
+  function collectDetectText(file, rows) {
+    var debug = rows.__debug || {};
+    var headerText = rows.slice(0, 30).map(function(row) {
+      return Object.keys(row).concat(Object.values(row).slice(0, 12)).join(' ');
+    }).join(' ');
+    var matrixText = (debug.matrixPreview || []).map(function(row) { return row.join(' '); }).join(' ');
+    return [file.name, (debug.sheetNames || []).join(' '), headerText, matrixText].join(' ');
+  }
+
+  function scoreText(text, words) {
+    var normalized = normalizeDetectText(text);
+    return words.reduce(function(total, word) {
+      return total + (normalized.indexOf(normalizeDetectText(word)) !== -1 ? 1 : 0);
+    }, 0);
+  }
+
+  function detectSourceType(file, rows) {
+    var text = collectDetectText(file, rows);
+    var scores = {
+      sales_detail: scoreText(text, ['销售明细', '成交金额', '成交件数', '访客', '浏览量', '商品明细', '下单件数']),
+      onsite_cost: scoreText(text, ['站内', '投放', '京准通', '快车', '海投', '展现', '点击', '花费']),
+      offsite_cps_cost: scoreText(text, ['站外', 'CPS', 'cps', '佣金', '服务费', '订单', '达人']),
+      industry_ranking: scoreText(text, ['行业', '榜单', '排行榜', '排名', '金额区间', '件数区间', '涨幅', '销售榜'])
+    };
+    var best = Object.keys(scores).sort(function(a, b) { return scores[b] - scores[a]; })[0];
+    return scores[best] > 0 ? best : 'unknown';
+  }
+
+  function normalizeDateValue(year, month, day) {
+    year = Number(year);
+    month = Number(month);
+    day = Number(day);
+    if (!year || !month || !day) return '';
+    if (year < 100) year += 2000;
+    var date = new Date(year, month - 1, day);
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return '';
+    return String(year).padStart(4, '0') + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+  }
+
+  function extractDatesFromText(text) {
+    var dates = [];
+    var seen = {};
+    function push(date) {
+      if (date && !seen[date]) {
+        seen[date] = true;
+        dates.push(date);
+      }
+    }
+    String(text || '').replace(/(20\d{2})[-/.年](\d{1,2})[-/.月](\d{1,2})日?/g, function(_, y, m, d) {
+      push(normalizeDateValue(y, m, d));
+    });
+    String(text || '').replace(/(?<!\d)(20\d{2})(\d{2})(\d{2})(?!\d)/g, function(_, y, m, d) {
+      push(normalizeDateValue(y, m, d));
+    });
+    return dates.sort();
+  }
+
+  function inferPeriodType(startDate, endDate, text) {
+    var normalized = normalizeDetectText(text);
+    if (normalized.indexOf('分天') !== -1 || normalized.indexOf('分日') !== -1 || normalized.indexOf('按日') !== -1) return 'day';
+    if (normalized.indexOf('月') !== -1 || normalized.indexOf('month') !== -1) return 'month';
+    if (normalized.indexOf('周') !== -1 || normalized.indexOf('week') !== -1) return 'week';
+    if (!startDate || !endDate) return 'unknown';
+    var start = new Date(startDate);
+    var end = new Date(endDate);
+    var days = Math.round((end - start) / 86400000) + 1;
+    if (days <= 1) return 'day';
+    if (days <= 10) return 'week';
+    if (days <= 35) return 'month';
+    return 'unknown';
+  }
+
+  function detectImportMeta(file, rows) {
+    var text = collectDetectText(file, rows);
+    var dates = extractDatesFromText(text);
+    var startDate = dates[0] || '';
+    var endDate = dates[dates.length - 1] || startDate;
+    var sourceType = detectSourceType(file, rows);
+    var periodType = inferPeriodType(startDate, endDate, text);
+    var notes = [];
+    if (sourceType === 'unknown') notes.push('表类型待确认');
+    if (periodType === 'unknown' || !startDate || !endDate) notes.push('日期待确认');
+    if (!rows.length) notes.push('没有读取到数据行');
+    return {
+      sourceType: sourceType,
+      periodType: periodType,
+      startDate: startDate,
+      endDate: endDate,
+      note: notes.length ? notes.join('，') : '已识别并保存'
+    };
+  }
+
+  function exactRowValue(row, columnName) {
+    if (!columnName) return '';
+    return Object.prototype.hasOwnProperty.call(row, columnName) ? row[columnName] : '';
+  }
+
+  function normalizeSkuValue(value) {
+    return String(value == null ? '' : value).trim().replace(/\.0$/, '');
+  }
+
+  function normalizeImportedDate(value) {
+    if (value instanceof Date && !isNaN(value.getTime())) return ymd(value);
+    var text = String(value == null ? '' : value).trim();
+    var dates = extractDatesFromText(text);
+    if (dates.length) return dates[0];
+    var excelDate = Number(text);
+    if (excelDate > 20000 && excelDate < 80000) {
+      var epoch = new Date(1899, 11, 30);
+      var date = new Date(epoch.getFullYear(), epoch.getMonth(), epoch.getDate() + Math.floor(excelDate));
+      return ymd(date);
+    }
+    return '';
+  }
+
+  function parseMetricNumber(value) {
+    if (value == null || value === '') return '';
+    if (typeof value === 'number') return value;
+    var text = String(value).trim();
+    if (!text) return '';
+    var isPercent = text.indexOf('%') !== -1;
+    var number = Number(text.replace(/,/g, '').replace(/%/g, ''));
+    if (!isFinite(number)) return text;
+    return isPercent ? number / 100 : number;
+  }
+
+  function formatMetric(value, decimals) {
+    if (value === '' || value == null) return '';
+    var number = Number(value);
+    if (!isFinite(number)) return value || '';
+    return number.toLocaleString('zh-CN', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+  }
+
+  function formatPercent(value) {
+    if (value === '' || value == null) return '';
+    var number = Number(value);
+    if (!isFinite(number)) return value || '';
+    return (number * 100).toLocaleString('zh-CN', { maximumFractionDigits: 2 }) + '%';
+  }
+
+  async function saveSalesDetailMetrics(rows, file, snapshotId) {
+    var mappings = getImportMappings('sales_detail');
+    var dateMap = mappings.find(function(item) { return item.key === 'date'; });
+    var skuMap = mappings.find(function(item) { return item.key === 'sku'; });
+    var sample = rows[0] || {};
+    var headers = Object.keys(sample);
+    var missing = mappings.filter(function(item) {
+      return item.column && headers.indexOf(item.column) === -1;
+    }).map(function(item) { return item.column; });
+    if (!dateMap || !dateMap.column || headers.indexOf(dateMap.column) === -1) {
+      return { saved: 0, skipped: rows.length, note: '没有匹配到时间列' };
+    }
+    if (!skuMap || !skuMap.column || headers.indexOf(skuMap.column) === -1) {
+      return { saved: 0, skipped: rows.length, note: '没有匹配到 SKU 列' };
+    }
+    var existing = await getAll('analyzed_metrics');
+    var saved = 0;
+    var skipped = 0;
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var sku = normalizeSkuValue(exactRowValue(row, skuMap.column));
+      if (!sku || sku === '合计') {
+        skipped++;
+        continue;
+      }
+      var date = normalizeImportedDate(exactRowValue(row, dateMap.column));
+      if (!date) {
+        skipped++;
+        continue;
+      }
+      var record = {
+        sourceType: 'sales_detail',
+        periodType: 'day',
+        startDate: date,
+        endDate: date,
+        sku: sku,
+        skuName: exactRowValue(row, 'SKU名称'),
+        importedAt: new Date().toISOString(),
+        snapshotId: snapshotId,
+        fileName: file.name,
+        extraMetrics: {}
+      };
+      mappings.forEach(function(item) {
+        if (item.key === 'date' || item.key === 'sku') return;
+        var value = parseMetricNumber(exactRowValue(row, item.column));
+        if (item.key && Object.prototype.hasOwnProperty.call(record, item.key) === false) {
+          record[item.key] = value;
+        } else {
+          record.extraMetrics[item.label || item.key] = value;
+        }
+      });
+      var duplicates = existing.filter(function(item) {
+        return item.sourceType === 'sales_detail' && item.periodType === 'day' && item.startDate === date && item.sku === sku;
+      });
+      for (var d = 0; d < duplicates.length; d++) await remove('analyzed_metrics', duplicates[d].id);
+      await put('analyzed_metrics', record);
+      saved++;
+    }
+    var noteParts = ['写入 ' + saved + ' 条日数据'];
+    if (skipped) noteParts.push('跳过 ' + skipped + ' 行');
+    if (missing.length) noteParts.push('缺少列：' + missing.join('、'));
+    return { saved: saved, skipped: skipped, note: noteParts.join('；') };
+  }
+
+  function renderImportPreview(results) {
+    if (!results.length) {
+      $('importPreviewBody').innerHTML = '<tr><td class="empty-row" colspan="6">还没有导入文件</td></tr>';
+      return;
+    }
+    $('importPreviewBody').innerHTML = results.map(function(item) {
+      var ok = item.ok && item.meta && item.meta.sourceType !== 'unknown' && item.meta.startDate && item.meta.endDate;
+      var typeLabel = item.meta ? (labels.sourceType[item.meta.sourceType] || item.meta.sourceType) : '-';
+      var periodLabel = item.meta ? (labels.periodType[item.meta.periodType] || item.meta.periodType) : '-';
+      var range = item.meta ? rangeText(item.meta) : '-';
+      var note = item.error || (item.meta ? item.meta.note : '');
+      return '<tr>' +
+        '<td>' + esc(item.fileName) + '</td>' +
+        '<td>' + esc(typeLabel) + '</td>' +
+        '<td>' + esc(periodLabel) + '</td>' +
+        '<td>' + esc(range) + '</td>' +
+        '<td>' + esc(item.rowCount || 0) + '</td>' +
+        '<td><span class="import-status ' + (ok ? '' : 'warn') + '">' + esc(note) + '</span></td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  async function handleImportFiles(files) {
+    files = Array.prototype.slice.call(files || []).filter(Boolean);
+    if (!files.length) return;
+    var results = [];
+    $('importMsg').textContent = '正在读取 ' + files.length + ' 个文件...';
+    $('importMsg').className = 'msg';
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      try {
+        var rows = await parseWorkbook(file);
+        var meta = detectImportMeta(file, rows);
+        var snapshotId = await put('raw_snapshots', {
+          sourceType: meta.sourceType,
+          periodType: meta.periodType,
+          startDate: meta.startDate,
+          endDate: meta.endDate,
+          fileName: file.name,
+          importedAt: new Date().toISOString(),
+          rowCount: rows.length,
+          rows: rows,
+          detectNote: meta.note
+        });
+        if (meta.sourceType === 'sales_detail') {
+          var metricResult = await saveSalesDetailMetrics(rows, file, snapshotId);
+          meta.periodType = 'day';
+          meta.note = metricResult.note;
+        }
+        results.push({ ok: true, fileName: file.name, rowCount: rows.length, meta: meta });
+      } catch (err) {
+        results.push({ ok: false, fileName: file.name, rowCount: 0, error: '导入失败：' + err.message });
+      }
+      renderImportPreview(results);
+    }
+    var successCount = results.filter(function(item) { return item.ok; }).length;
+    $('importMsg').textContent = '已处理 ' + files.length + ' 个文件，保存 ' + successCount + ' 个原始快照记录。';
+    $('importMsg').className = successCount ? 'msg ok' : 'msg err';
+    await renderSnapshots();
+    await refreshCounts();
+  }
+
+  async function renderDashboard() {
+    var rows = await getAll('analyzed_metrics');
+    var skus = await getAll('sku_profiles');
+    await renderMonitorTracks(rows, skus);
+  }
+
+  function buildAnalyzedGroups(rows, skus, dims) {
+    var skuMap = {};
+    skus.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
+    if (!dims.length) dims = ['sku'];
+    var groups = {};
+    rows.forEach(function(row) {
+      var skuProfile = skuMap[normalizeSkuValue(row.sku)] || {};
+      var dimValues = dims.map(function(dim) {
+        if (dim === 'sku') return row.sku || '-';
+        return skuProfile[dim] || (dim === 'shortName' ? row.sku : '未归类');
+      });
+      var key = [row.periodType || '', row.startDate || '', row.endDate || '', dimValues.join(' / ')].join('|');
+      if (!groups[key]) {
+        groups[key] = {
+          periodType: row.periodType,
+          startDate: row.startDate,
+          endDate: row.endDate,
+          dimensionName: dimValues.join(' / '),
+          salesQty: 0,
+          salesAmount: 0,
+          visitorCount: 0,
+          onsiteCost: 0,
+          offsiteCost: 0,
+          rank: ''
+        };
+      }
+      groups[key].salesQty += Number(row.salesQty || 0);
+      groups[key].salesAmount += Number(row.salesAmount || 0);
+      groups[key].visitorCount += Number(row.visitorCount || row.clickCount || 0);
+      groups[key].onsiteCost += Number(row.onsiteCost || 0);
+      groups[key].offsiteCost += Number(row.offsiteCost || 0);
+      if (row.rank) groups[key].rank = row.rank;
+    });
+    return Object.values(groups).sort(function(a, b) {
+      return String(b.startDate || '').localeCompare(String(a.startDate || '')) || String(a.dimensionName || '').localeCompare(String(b.dimensionName || ''), 'zh-Hans-CN', { numeric: true });
+    });
+  }
+
+  function monitorDimensionLabel(dim) {
+    return {
+      sku: 'SKU',
+      shortName: '商品简称',
+      mainSeries: '大系列',
+      subSeries: '小系列',
+      brand: '品牌'
+    }[dim] || dim;
+  }
+
+  async function renderMonitorTracks(analyzedRows, skuRows) {
+    analyzedRows = analyzedRows || await getAll('analyzed_metrics');
+    skuRows = skuRows || await getAll('sku_profiles');
+    if (!monitorTracks.length) {
+      $('monitorBody').innerHTML = '<tr><td class="empty-row" colspan="8">暂无追踪项</td></tr>';
+      $('monitorMsg').textContent = '';
+      return;
+    }
+    var skuMap = {};
+    skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
+    $('monitorBody').innerHTML = monitorTracks.map(function(track, index) {
+      var matchedSku = {};
+      analyzedRows.forEach(function(row) {
+        var sku = normalizeSkuValue(row.sku);
+        var profile = skuMap[sku] || {};
+        var value = track.dimension === 'sku' ? sku : (profile[track.dimension] || '');
+        if (String(value) === String(track.target || '')) matchedSku[sku] = true;
+      });
+      var total = { qty: 0, amount: 0, visitors: 0 };
+      analyzedRows.forEach(function(row) {
+        var sku = normalizeSkuValue(row.sku);
+        if (!matchedSku[sku]) return;
+        total.qty += Number(row.salesQty || 0);
+        total.amount += Number(row.salesAmount || 0);
+        total.visitors += Number(row.visitorCount || row.clickCount || 0);
+      });
+      return '<tr data-index="' + index + '">' +
+        '<td><input class="input monitor-name" value="' + esc(track.name || '') + '" placeholder="例如 鲲鹏70"></td>' +
+        '<td><select class="select monitor-dim">' +
+          ['subSeries', 'mainSeries', 'shortName', 'sku', 'brand'].map(function(dim) {
+            return '<option value="' + dim + '"' + (track.dimension === dim ? ' selected' : '') + '>' + monitorDimensionLabel(dim) + '</option>';
+          }).join('') +
+        '</select></td>' +
+        '<td><input class="input monitor-target" value="' + esc(track.target || '') + '" placeholder="完全等于档案中的值"></td>' +
+        '<td>' + esc(Object.keys(matchedSku).length) + '</td>' +
+        '<td>' + esc(formatMetric(total.qty, 0)) + '</td>' +
+        '<td>' + esc(formatMetric(total.amount, 2)) + '</td>' +
+        '<td>' + esc(formatMetric(total.visitors, 0)) + '</td>' +
+        '<td><button class="icon-btn row-delete-btn monitor-delete" title="删除追踪项">' + iconTrash() + '</button></td>' +
+      '</tr>';
+    }).join('');
+    $('monitorMsg').textContent = '每条追踪项单独设置维度；追踪目标需要和 SKU 档案里的字段值完全一致。';
+    $('monitorMsg').className = 'msg';
+  }
+
+  function updateMonitorTrackFromRow(row) {
+    var index = Number(row.dataset.index);
+    var track = monitorTracks[index];
+    if (!track) return;
+    track.name = (row.querySelector('.monitor-name') || {}).value || '';
+    track.dimension = (row.querySelector('.monitor-dim') || {}).value || 'subSeries';
+    track.target = (row.querySelector('.monitor-target') || {}).value || '';
+    saveMonitorTracks();
+  }
+
+  function updateDimensionHint() {
+    var checked = Array.from(document.querySelectorAll('.dim-check:checked')).map(function(i) { return i.value; });
+    var text = '当前最小维度：';
+    if (checked.indexOf('shortName') !== -1) text += '商品简称。';
+    else if (checked.indexOf('subSeries') !== -1) text += '小系列，数据显示该小系列求和。';
+    else if (checked.indexOf('mainSeries') !== -1) text += '大系列，数据显示该大系列求和。';
+    else text += '未选择，请至少保留一个维度。';
+    $('dimensionHint').textContent = text;
+  }
+
+  function updateAnalyzedDimensionHint() {
+    var checked = getSelectedAnalyzedDims();
+    var text = '当前最小维度：';
+    if (checked.indexOf('shortName') !== -1) text += '商品简称。';
+    else if (checked.indexOf('subSeries') !== -1) text += '小系列，数据显示该小系列求和。';
+    else if (checked.indexOf('mainSeries') !== -1) text += '大系列，数据显示该大系列求和。';
+    else if (checked.length) text += analyzedDimensionLabel(checked[checked.length - 1]) + '。';
+    else text += '未选择，请至少保留一个维度。';
+    $('analyzedDimensionHint').textContent = text;
+    renderAnalyzedDbHead();
+  }
+
+  function analyzedDimensionLabel(key) {
+    var builtin = { mainSeries: '大系列', subSeries: '小系列', shortName: '商品简称' };
+    return builtin[key] || skuColumnLabels[key] || key;
+  }
+
+  function getSelectedAnalyzedDims() {
+    return Array.from(document.querySelectorAll('.analyzed-dim-check:checked')).map(function(input) { return input.value; });
+  }
+
+  function renderAnalyzedDbHead() {
+    var labelsText = getSelectedAnalyzedDims().map(analyzedDimensionLabel).join(' / ') || '未选择';
+    $('analyzedDbHead').innerHTML = '<tr><th>日期</th><th>维度（' + esc(labelsText) + '）</th><th>销售数量</th><th>销售金额</th><th>访客/点击</th><th>站内花费</th><th>站外花费</th><th>排名</th></tr>';
+  }
+
+  function saveAnalyzedExtraDimensions() {
+    localStorage.setItem('jdAnalyzedExtraDimensions', JSON.stringify(analyzedExtraDimensions));
+  }
+
+  function renderAnalyzedDimensionControls() {
+    var addBtn = $('addAnalyzedDimBtn');
+    if (!addBtn) return;
+    document.querySelectorAll('.analyzed-extra-dim-pill').forEach(function(node) { node.remove(); });
+    analyzedExtraDimensions = analyzedExtraDimensions.filter(function(key, index, arr) {
+      return arr.indexOf(key) === index && skuDimensionColumns.indexOf(key) !== -1 && ['mainSeries', 'subSeries', 'shortName', 'brand'].indexOf(key) === -1;
+    });
+    analyzedExtraDimensions.forEach(function(key) {
+      var pill = document.createElement('span');
+      pill.className = 'check-pill analyzed-extra-dim-pill';
+      pill.innerHTML = '<label style="display:inline-flex;align-items:center;gap:7px;"><input type="checkbox" class="analyzed-dim-check analyzed-extra-dim" value="' + esc(key) + '" checked> ' + esc(analyzedDimensionLabel(key)) + '</label><button class="dim-remove-btn" type="button" data-remove-analyzed-dim="' + esc(key) + '" title="移除此维度" aria-label="移除此维度">×</button>';
+      addBtn.parentNode.insertBefore(pill, addBtn);
+      pill.querySelector('input').addEventListener('change', function() {
+        updateAnalyzedDimensionHint();
+        renderAnalyzedDb();
+      });
+      pill.querySelector('[data-remove-analyzed-dim]').addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        removeAnalyzedDimension(key);
+      });
+    });
+    saveAnalyzedExtraDimensions();
+  }
+
+  function removeAnalyzedDimension(key) {
+    analyzedExtraDimensions = analyzedExtraDimensions.filter(function(item) { return item !== key; });
+    saveAnalyzedExtraDimensions();
+    renderAnalyzedDimensionControls();
+    updateAnalyzedDimensionHint();
+    renderAnalyzedDb();
+  }
+
+  function addAnalyzedDimension() {
+    var base = ['mainSeries', 'subSeries', 'shortName', 'brand'];
+    var available = skuDimensionColumns.filter(function(key) {
+      return base.indexOf(key) === -1 && analyzedExtraDimensions.indexOf(key) === -1;
+    });
+    if (!available.length) {
+      $('analyzedDimensionHint').textContent = '暂无可添加的自定义维度；可以先在 SKU 档案里导入或新增维度列。';
+      return;
+    }
+    analyzedExtraDimensions.push(available[0]);
+    renderAnalyzedDimensionControls();
+    updateAnalyzedDimensionHint();
+    renderAnalyzedDb();
+  }
+
+  function exportRows(filename, rows) {
+    var wb = XLSX.utils.book_new();
+    var ws = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, 'data');
+    XLSX.writeFile(wb, filename);
+  }
+
+  function getSkuExportColumns(type) {
+    var columns = [
+      { key: 'sku', label: 'SKU' },
+      { key: 'shortName', label: '简称' }
+    ];
+    if (type === 'competitor') {
+      columns = columns.concat([
+        { key: 'brand', label: '鍝佺墝' },
+        { key: 'isTrackedCompetitor', label: '閲嶇偣璺熻釜' }
+      ]);
+    }
+    return columns.concat(skuDimensionColumns.map(function(key) {
+      return { key: key, label: skuColumnLabels[key] || key };
+    }));
+  }
+
+  function exportSkuRows(type, rows) {
+    var columns = getSkuExportColumns(type);
+    var data = rows.length ? rows.map(function(row) {
+      return columns.map(function(col) {
+        if (col.key === 'isTrackedCompetitor') return row.isTrackedCompetitor ? '是' : '';
+        return row[col.key] || '';
+      });
+    }) : [[]];
+    var aoa = [columns.map(function(col) { return col.label; })].concat(data);
+    var wb = XLSX.utils.book_new();
+    var ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = columns.map(function(col) {
+      return { wch: col.key === 'shortName' ? 24 : col.label.length + 8 };
+    });
+    XLSX.utils.book_append_sheet(wb, ws, type === 'competitor' ? '竞品SKU模板' : '本品SKU模板');
+    XLSX.writeFile(wb, (type === 'competitor' ? '竞品SKU_' : '本品SKU_') + today() + '.xlsx');
+  }
+
+  function snapshotMonthKey(snapshot) {
+    var date = snapshot.startDate || snapshot.endDate || '';
+    return /^\d{4}-\d{2}/.test(date) ? date.slice(0, 7) : '';
+  }
+
+  function previousMonthKeys(count) {
+    var now = new Date();
+    var keys = [];
+    for (var i = 1; i <= count; i++) {
+      var date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      keys.push(date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0'));
+    }
+    return keys;
+  }
+
+  async function renderCleanupSnapshots() {
+    var rows = await getAll('raw_snapshots');
+    rows.sort(function(a, b) { return String(b.importedAt || '').localeCompare(String(a.importedAt || '')); });
+    var validIds = {};
+    rows.forEach(function(row) { validIds[row.id] = true; });
+    Array.from(cleanupSelectedSnapshotIds).forEach(function(id) {
+      if (!validIds[id]) cleanupSelectedSnapshotIds.delete(id);
+    });
+    if (!rows.length) {
+      $('cleanupSnapshotBody').innerHTML = '<tr><td class="empty-row" colspan="7">暂无原始快照记录</td></tr>';
+      $('cleanupSelectAll').checked = false;
+      $('cleanupMsg').textContent = '';
+      return;
+    }
+    $('cleanupSnapshotBody').innerHTML = rows.map(function(row) {
+      var checked = cleanupSelectedSnapshotIds.has(row.id) ? ' checked' : '';
+      return '<tr>' +
+        '<td><input type="checkbox" class="cleanup-row-check" data-id="' + row.id + '"' + checked + '></td>' +
+        '<td>' + esc(labels.sourceType[row.sourceType] || row.sourceType || '-') + '</td>' +
+        '<td>' + esc(labels.periodType[row.periodType] || row.periodType || '-') + '<br>' + esc(rangeText(row)) + '</td>' +
+        '<td>' + esc(row.fileName || '-') + '</td>' +
+        '<td>' + esc((row.importedAt || '').slice(0, 19).replace('T', ' ')) + '</td>' +
+        '<td>' + esc(row.rowCount || 0) + '</td>' +
+        '<td><button class="btn danger cleanup-delete-one" data-id="' + row.id + '">删除</button></td>' +
+      '</tr>';
+    }).join('');
+    $('cleanupSelectAll').checked = rows.every(function(row) { return cleanupSelectedSnapshotIds.has(row.id); });
+    $('cleanupMsg').textContent = '当前选中 ' + cleanupSelectedSnapshotIds.size + ' 条原始快照记录。';
+    $('cleanupMsg').className = 'msg';
+  }
+
+  async function selectCleanupMonths(count) {
+    var rows = await getAll('raw_snapshots');
+    var keys = previousMonthKeys(count);
+    rows.forEach(function(row) {
+      if (keys.indexOf(snapshotMonthKey(row)) !== -1) cleanupSelectedSnapshotIds.add(row.id);
+    });
+    await renderCleanupSnapshots();
+  }
+
+  async function deleteSelectedSnapshots() {
+    var ids = Array.from(cleanupSelectedSnapshotIds);
+    if (!ids.length) {
+      $('cleanupMsg').textContent = '请先勾选要删除的原始快照记录。';
+      $('cleanupMsg').className = 'msg err';
+      return;
+    }
+    var idMap = {};
+    ids.forEach(function(id) { idMap[id] = true; });
+    var analyzed = await getAll('analyzed_metrics');
+    var matchedAnalyzed = analyzed.filter(function(row) { return row.snapshotId && idMap[row.snapshotId]; });
+    for (var i = 0; i < ids.length; i++) await remove('raw_snapshots', ids[i]);
+    for (var j = 0; j < matchedAnalyzed.length; j++) await remove('analyzed_metrics', matchedAnalyzed[j].id);
+    cleanupSelectedSnapshotIds.clear();
+    $('cleanupMsg').textContent = '已删除 ' + ids.length + ' 条原始快照记录、' + matchedAnalyzed.length + ' 条已分析数据。';
+    $('cleanupMsg').className = 'msg ok';
+    await renderCleanupSnapshots();
+    await renderSnapshots();
+    await renderAnalyzedDb();
+    await renderDashboard();
+    await refreshCounts();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      location.hash = btn.getAttribute('data-page');
+    });
+  });
+  window.addEventListener('hashchange', function() {
+    var page = location.hash.slice(1) || 'dashboard';
+    switchPage(page);
+    if (page === 'import') {
+      renderImportMappings();
+    }
+    if (page === 'db-sku' || page === 'sku') renderSkus();
+    if (page === 'raw-snapshots') renderSnapshots();
+    if (page === 'db-analyzed') renderAnalyzedDb();
+    if (page === 'ranking-raw') renderRankingRaw();
+    if (page === 'db-estimates') renderEstimatesDb();
+    if (page === 'cleanup') renderCleanupSnapshots();
+  });
+
+  $('refreshSnapshotsBtn').addEventListener('click', renderSnapshots);
+  $('refreshRankingRawBtn').addEventListener('click', renderRankingRaw);
+  if ($('refreshSkuDbBtn')) $('refreshSkuDbBtn').addEventListener('click', renderSkuDb);
+  $('refreshAnalyzedDbBtn').addEventListener('click', renderAnalyzedDb);
+  $('refreshEstimatesDbBtn').addEventListener('click', renderEstimatesDb);
+  $('managedSkuOnlyCheck').addEventListener('change', async function(e) {
+    hideUnmanagedAnalyzed = e.target.checked;
+    localStorage.setItem('jdHideUnmanagedAnalyzed', hideUnmanagedAnalyzed ? 'true' : 'false');
+    await renderAnalyzedDb();
+  });
+  $('analyzedDateInput').addEventListener('focus', openAnalyzedDatePicker);
+  $('analyzedDateInput').addEventListener('click', openAnalyzedDatePicker);
+  $('analyzedDateTrigger').addEventListener('click', openAnalyzedDatePicker);
+  $('analyzedDatePrev').addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    shiftAnalyzedDateRange(-1);
+  });
+  $('analyzedDateNext').addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    shiftAnalyzedDateRange(1);
+  });
+  $('analyzedDateInput').addEventListener('change', function() {
+    parseAnalyzedDateInput();
+    syncAnalyzedDateInput();
+    renderAnalyzedDatePicker();
+    renderAnalyzedDb();
+  });
+  document.querySelectorAll('[data-month-shift]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var shift = Number(btn.dataset.monthShift);
+      if (analyzedPickerMode === 'month') shift = shift < 0 ? -12 : 12;
+      analyzedCalendarMonth = new Date(analyzedCalendarMonth.getFullYear(), analyzedCalendarMonth.getMonth() + shift, 1);
+      renderAnalyzedDatePicker();
+    });
+  });
+  function confirmDateGridPick(e) {
+    if (e.type === 'click' && Date.now() - analyzedLastGridPickAt < 350) return;
+    if ((e.type === 'mousedown' || e.type === 'pointerdown') && e.button != null && e.button !== 0) return;
+    var monthBtn = e.target.closest('[data-month]');
+    if (monthBtn) {
+      analyzedLastGridPickAt = Date.now();
+      e.preventDefault();
+      e.stopPropagation();
+      var monthIndex = Number(monthBtn.dataset.month);
+      var range = rangeForShortcut('month', new Date(analyzedCalendarMonth.getFullYear(), monthIndex, 1));
+      if (!range) return;
+      setAnalyzedRange(range.start, range.end);
+      closeAnalyzedDatePicker();
+      return;
+    }
+    var btn = e.target.closest('[data-date]');
+    if (!btn) return;
+    analyzedLastGridPickAt = Date.now();
+    e.preventDefault();
+    e.stopPropagation();
+    var value = btn.dataset.date;
+    if (isFutureYmd(value)) return;
+    if (analyzedPickerMode === 'day') {
+      setAnalyzedRange(value, value);
+      closeAnalyzedDatePicker();
+      return;
+    }
+    if (analyzedPickerMode === 'week') {
+      var weekRange = rangeForShortcut('week', dateFromYmd(value));
+      if (!weekRange) return;
+      setAnalyzedRange(weekRange.start, weekRange.end);
+      closeAnalyzedDatePicker();
+      return;
+    }
+    if (!analyzedRangeDraftStart) {
+      analyzedRangeDraftStart = value;
+      $('analyzedStartDate').value = value;
+      $('analyzedEndDate').value = value;
+      syncAnalyzedDateInput();
+      analyzedPreviewRange = normalizedRange(value, value);
+      analyzedSuppressSelectedRange = false;
+      applyAnalyzedDateClasses();
+      return;
+    }
+    var customRange = normalizedRange(analyzedRangeDraftStart, value);
+    analyzedRangeDraftStart = '';
+    setAnalyzedRange(customRange.start, customRange.end);
+    closeAnalyzedDatePicker();
+  }
+  ['pointerdown', 'mousedown', 'click'].forEach(function(eventName) {
+    $('datePickerGrid').addEventListener(eventName, confirmDateGridPick, true);
+  });
+  $('datePickerGrid').addEventListener('mouseover', function(e) {
+    var monthBtn = e.target.closest('[data-month]');
+    if (monthBtn) {
+      analyzedPreviewRange = monthBtn.classList.contains('future') ? null : rangeForShortcut('month', new Date(analyzedCalendarMonth.getFullYear(), Number(monthBtn.dataset.month), 1));
+      analyzedSuppressSelectedRange = true;
+      applyAnalyzedDateClasses();
+      return;
+    }
+    var btn = e.target.closest('[data-date]');
+    if (!btn) return;
+    var value = btn.dataset.date;
+    if (isFutureYmd(value)) {
+      analyzedPreviewRange = null;
+      analyzedSuppressSelectedRange = true;
+      applyAnalyzedDateClasses();
+      return;
+    }
+    if (analyzedPickerMode === 'day') analyzedPreviewRange = normalizedRange(value, value);
+    else if (analyzedPickerMode === 'week') analyzedPreviewRange = rangeForShortcut('week', dateFromYmd(value));
+    else if (analyzedPickerMode === 'custom' && analyzedRangeDraftStart) analyzedPreviewRange = normalizedRange(analyzedRangeDraftStart, value);
+    else analyzedPreviewRange = null;
+    analyzedSuppressSelectedRange = !!analyzedPreviewRange;
+    applyAnalyzedDateClasses();
+  });
+  $('analyzedDatePopover').addEventListener('click', function(e) {
+    var shortcut = e.target.closest('[data-date-shortcut]');
+    if (!shortcut) return;
+    var kind = shortcut.dataset.dateShortcut;
+    if (kind === 'yesterday' || kind === '7' || kind === '30') {
+      var fixedRange = rangeForShortcut(kind);
+      analyzedCalendarMonth = dateFromYmd(fixedRange.start);
+      setAnalyzedRange(fixedRange.start, fixedRange.end);
+      closeAnalyzedDatePicker();
+    } else {
+      setDatePickerMode(kind === 'today' ? 'day' : kind);
+    }
+  });
+  $('analyzedDatePopover').addEventListener('mouseover', function(e) {
+    var shortcut = e.target.closest('[data-date-shortcut]');
+    if (!shortcut) return;
+    var kind = shortcut.dataset.dateShortcut;
+    if (kind === 'yesterday' || kind === '7' || kind === '30') {
+      analyzedPreviewRange = rangeForShortcut(kind);
+      analyzedSuppressSelectedRange = true;
+      applyAnalyzedDateClasses();
+    } else {
+      setDatePickerMode(kind === 'today' ? 'day' : kind);
+      analyzedSuppressSelectedRange = true;
+    }
+  });
+  $('analyzedDatePopover').addEventListener('mouseleave', function() {
+    analyzedPreviewRange = null;
+    analyzedSuppressSelectedRange = false;
+    applyAnalyzedDateClasses();
+  });
+  document.addEventListener('click', function(e) {
+    if (!$('analyzedDatePopover').classList.contains('open')) return;
+    if (e.target.closest('.date-picker-field')) return;
+    closeAnalyzedDatePicker();
+  });
+  document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
+    input.addEventListener('change', function() {
+      updateAnalyzedDimensionHint();
+      renderAnalyzedDb();
+    });
+  });
+  $('addAnalyzedDimBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    addAnalyzedDimension();
+  });
+  $('clearSnapshotsBtn').addEventListener('click', function() { clearDbTable('raw_snapshots', renderSnapshots); });
+  $('clearRankingRawBtn').addEventListener('click', function() { clearDbTable('ranking_raw_metrics', renderRankingRaw); });
+  if ($('clearSkuDbBtn')) $('clearSkuDbBtn').addEventListener('click', function() { clearDbTable('sku_profiles', renderSkuDb); });
+  $('clearAnalyzedDbBtn').addEventListener('click', clearCurrentAnalyzedRows);
+  $('clearEstimatesDbBtn').addEventListener('click', function() { clearDbTable('competitor_estimates', renderEstimatesDb); });
+  $('addMappingBtn').addEventListener('click', function() {
+    var mappings = getImportMappings('sales_detail');
+    var next = mappings.length + 1;
+    mappings.push({ key: 'customMetric' + next, label: '自定义字段' + next, column: '', locked: false, note: '自定义追踪字段' });
+    saveImportMappings();
+    renderImportMappings();
+  });
+  $('mappingBody').addEventListener('input', function(e) {
+    var row = e.target.closest('tr[data-index]');
+    if (row) updateMappingFromRow(row);
+  });
+  $('mappingBody').addEventListener('click', function(e) {
+    var del = e.target.closest('.mapping-delete');
+    if (!del) return;
+    var row = del.closest('tr[data-index]');
+    var index = Number(row.dataset.index);
+    var mappings = getImportMappings('sales_detail');
+    if (mappings[index] && !mappings[index].locked) {
+      mappings.splice(index, 1);
+      saveImportMappings();
+      renderImportMappings();
+    }
+  });
+  $('addMonitorBtn').addEventListener('click', async function() {
+    monitorTracks.push({ name: '', dimension: 'subSeries', target: '' });
+    saveMonitorTracks();
+    await renderMonitorTracks();
+  });
+  $('monitorBody').addEventListener('input', function(e) {
+    var row = e.target.closest('tr[data-index]');
+    if (!row) return;
+    updateMonitorTrackFromRow(row);
+  });
+  $('monitorBody').addEventListener('change', async function(e) {
+    var row = e.target.closest('tr[data-index]');
+    if (!row) return;
+    updateMonitorTrackFromRow(row);
+    await renderMonitorTracks();
+  });
+  $('monitorBody').addEventListener('click', async function(e) {
+    var del = e.target.closest('.monitor-delete');
+    if (!del) return;
+    var row = del.closest('tr[data-index]');
+    monitorTracks.splice(Number(row.dataset.index), 1);
+    saveMonitorTracks();
+    await renderMonitorTracks();
+  });
+  $('refreshCleanupSnapshotsBtn').addEventListener('click', renderCleanupSnapshots);
+  $('clearCleanupSelectionBtn').addEventListener('click', async function() {
+    cleanupSelectedSnapshotIds.clear();
+    await renderCleanupSnapshots();
+  });
+  $('deleteSelectedSnapshotsBtn').addEventListener('click', deleteSelectedSnapshots);
+  $('cleanupSelectAll').addEventListener('change', async function(e) {
+    var rows = await getAll('raw_snapshots');
+    if (e.target.checked) rows.forEach(function(row) { cleanupSelectedSnapshotIds.add(row.id); });
+    else cleanupSelectedSnapshotIds.clear();
+    await renderCleanupSnapshots();
+  });
+  document.querySelectorAll('[data-cleanup-pick]').forEach(function(btn) {
+    btn.addEventListener('click', function() { selectCleanupMonths(Number(btn.dataset.cleanupPick)); });
+  });
+  $('cleanupSnapshotBody').addEventListener('change', async function(e) {
+    if (!e.target.classList.contains('cleanup-row-check')) return;
+    var id = Number(e.target.dataset.id);
+    if (e.target.checked) cleanupSelectedSnapshotIds.add(id);
+    else cleanupSelectedSnapshotIds.delete(id);
+    await renderCleanupSnapshots();
+  });
+  $('cleanupSnapshotBody').addEventListener('click', async function(e) {
+    var btn = e.target.closest('.cleanup-delete-one');
+    if (!btn) return;
+    cleanupSelectedSnapshotIds.clear();
+    cleanupSelectedSnapshotIds.add(Number(btn.dataset.id));
+    await deleteSelectedSnapshots();
+  });
+  document.querySelectorAll('.dim-check').forEach(function(input) {
+    input.addEventListener('change', function() {
+      updateDimensionHint();
+      renderDashboard();
+    });
+  });
+  document.addEventListener('mousemove', moveColumnResize);
+  document.addEventListener('mouseup', finishColumnResize);
+
+  document.querySelectorAll('[data-add-row]').forEach(function(btn) {
+    btn.addEventListener('click', function() { addSkuRow(btn.getAttribute('data-add-row')); });
+  });
+  document.querySelectorAll('[data-import-sku]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      skuImportTarget = btn.getAttribute('data-import-sku');
+      $('skuImportInput').click();
+    });
+  });
+  document.querySelectorAll('[data-export-sku]').forEach(function(btn) {
+    btn.addEventListener('click', async function() {
+      var type = btn.getAttribute('data-export-sku');
+      var rows = (await getAll('sku_profiles')).filter(function(row) {
+        return type === 'competitor' ? row.itemType === 'competitor' : row.itemType !== 'competitor';
+      });
+      exportSkuRows(type, rows);
+    });
+  });
+  document.querySelectorAll('[data-clear-sku]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      clearSkuTable(btn.getAttribute('data-clear-sku'));
+    });
+  });
+  $('skuImportInput').addEventListener('change', function() {
+    importSkuFile($('skuImportInput').files[0], skuImportTarget);
+    $('skuImportInput').value = '';
+  });
+
+  ['ownSkuTable', 'competitorSkuTable'].forEach(function(tableId) {
+    var table = $(tableId);
+    table.addEventListener('mousedown', function(e) {
+      startColumnResize(e, table);
+    });
+    table.addEventListener('focusout', function(e) {
+      var tr = e.target.closest('tr[data-item-type]');
+      if (tr && e.target.matches('[data-sku-field]')) saveSkuRow(tr);
+    });
+    table.addEventListener('change', function(e) {
+      var tr = e.target.closest('tr[data-item-type]');
+      if (tr && e.target.matches('[data-sku-check]')) saveSkuRow(tr);
+    });
+    table.addEventListener('click', async function(e) {
+      var addCol = e.target.closest('[data-add-col]');
+      var removeCol = e.target.closest('[data-remove-col]');
+      var rowDelete = e.target.closest('[data-row-delete]');
+      var sortCol = e.target.closest('[data-sort-col]');
+      var sortDir = e.target.closest('[data-sort-dir]');
+      if (addCol) addSkuColumn(addCol.getAttribute('data-add-col'));
+      if (removeCol) {
+        e.stopPropagation();
+        removeSkuColumn(removeCol.getAttribute('data-remove-col'));
+      }
+      if (rowDelete) {
+        e.stopPropagation();
+        var tr = rowDelete.closest('tr[data-item-type]');
+        var type = tr ? tr.getAttribute('data-item-type') : 'own';
+        var sku = rowDelete.getAttribute('data-row-delete') || tr.getAttribute('data-old-sku') || '';
+        if (sku) await remove('sku_profiles', sku);
+        else if (tr) tr.remove();
+        setSkuMsg(type, sku ? '已删除：' + sku : '空白行已删除。');
+        await renderSkus();
+        await refreshCounts();
+      }
+      if (sortDir && sortCol) {
+        e.stopPropagation();
+        var typeForSort = tableId === 'competitorSkuTable' ? 'competitor' : 'own';
+        toggleSkuSort(typeForSort, sortCol.getAttribute('data-sort-col'), sortDir.getAttribute('data-sort-dir'));
+      }
+    });
+    table.addEventListener('dblclick', function(e) {
+      var label = e.target.closest('[data-col-label]');
+      if (label) beginRenameColumn(tableId === 'competitorSkuTable' ? 'competitor' : 'own', label.getAttribute('data-col-label'));
+    });
+    table.addEventListener('focusout', function(e) {
+      if (e.target.matches('[data-col-label][contenteditable="true"]')) finishRenameColumn(e.target);
+    });
+    table.addEventListener('keydown', function(e) {
+      if (!e.target.matches('[data-col-label][contenteditable="true"]')) return;
+      if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
+      if (e.key === 'Escape') { e.preventDefault(); e.target.textContent = skuColumnLabels[e.target.getAttribute('data-col-label')] || ''; e.target.blur(); }
+    });
+    table.addEventListener('dragstart', function(e) {
+      var th = e.target.closest('[data-drag-col]');
+      if (!th || resizingColumn || e.target.closest('.col-resizer') || e.target.closest('.col-tool') || e.target.closest('[contenteditable="true"]')) {
+        e.preventDefault();
+        return;
+      }
+      draggingColumnKey = th.getAttribute('data-drag-col');
+      th.classList.add('dragging');
+    });
+    table.addEventListener('dragend', function(e) {
+      var th = e.target.closest('[data-drag-col]');
+      if (th) th.classList.remove('dragging');
+      clearDropMarkers(table);
+      draggingColumnKey = null;
+    });
+    table.addEventListener('dragover', function(e) {
+      var target = e.target.closest('[data-drag-col]');
+      if (!target || !draggingColumnKey) return;
+      e.preventDefault();
+      clearDropMarkers(table);
+      var rect = target.getBoundingClientRect();
+      dropColumnSide = e.clientX < rect.left + rect.width / 2 ? 'before' : 'after';
+      target.classList.add(dropColumnSide === 'before' ? 'drop-before' : 'drop-after');
+    });
+    table.addEventListener('dragleave', function(e) {
+      if (!table.contains(e.relatedTarget)) clearDropMarkers(table);
+    });
+    table.addEventListener('drop', async function(e) {
+      var target = e.target.closest('[data-drag-col]');
+      if (!target || !draggingColumnKey) return;
+      e.preventDefault();
+      var targetKey = target.getAttribute('data-drag-col');
+      clearDropMarkers(table);
+      if (targetKey === draggingColumnKey) return;
+      skuDimensionColumns = skuDimensionColumns.filter(function(key) { return key !== draggingColumnKey; });
+      var targetIndex = skuDimensionColumns.indexOf(targetKey);
+      if (dropColumnSide === 'after') targetIndex += 1;
+      skuDimensionColumns.splice(targetIndex, 0, draggingColumnKey);
+      saveSkuColumnState();
+      await renderSkus();
+    });
+  });
+
+  var dropZone = $('dropZone');
+  dropZone.addEventListener('click', function() { $('fileInput').click(); });
+  dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    handleImportFiles(e.dataTransfer.files);
+  });
+  $('fileInput').addEventListener('change', function() {
+    handleImportFiles($('fileInput').files);
+    $('fileInput').value = '';
+  });
+
+  $('viewStart').value = today();
+  $('viewEnd').value = today();
+  var defaultAnalyzedDate = yesterday();
+  $('analyzedStartDate').value = defaultAnalyzedDate;
+  $('analyzedEndDate').value = defaultAnalyzedDate;
+  $('analyzedDateInput').value = defaultAnalyzedDate;
+  analyzedCalendarMonth = dateFromYmd(defaultAnalyzedDate) || new Date();
+  switchPage(location.hash.slice(1) || 'dashboard');
+  updateDimensionHint();
+  renderAnalyzedDimensionControls();
+  updateAnalyzedDimensionHint();
+  renderAnalyzedDatePicker();
+
+  openDb().then(async function() {
+    $('dbStatus').textContent = '本地库准备中';
+    await mergeDuplicateSeriesColumns();
+    renderAnalyzedDimensionControls();
+    updateAnalyzedDimensionHint();
+    await renderSkus();
+    await renderDashboard();
+    await refreshCounts();
+    await renderAnalyzedDb();
+    var currentPage = location.hash.slice(1) || 'dashboard';
+    if (currentPage === 'import') {
+      renderImportMappings();
+    }
+    if (currentPage === 'db-sku' || currentPage === 'sku') await renderSkus();
+    if (currentPage === 'raw-snapshots') await renderSnapshots();
+    if (currentPage === 'ranking-raw') await renderRankingRaw();
+    if (currentPage === 'db-estimates') await renderEstimatesDb();
+    if (currentPage === 'cleanup') await renderCleanupSnapshots();
+  }).catch(function(err) {
+      $('dbStatus').textContent = '本地库已就绪';
+    console.error(err);
+  });
+})();
+</script>
 </body>
 </html>
+
