@@ -19,11 +19,11 @@
     'concepts/fish/fish-6.png'
   ];
   var shellFrames = [
-    'concepts/shell/web-frames/shell-web-frame-0.png',
-    'concepts/shell/web-frames/shell-web-frame-1.png',
-    'concepts/shell/web-frames/shell-web-frame-2.png',
-    'concepts/shell/web-frames/shell-web-frame-3.png',
-    'concepts/shell/web-frames/shell-web-frame-4.png'
+    'concepts/shell/web-frames/shell-web-frame-0.png?v=20260620-shell-trim',
+    'concepts/shell/web-frames/shell-web-frame-1.png?v=20260620-shell-trim',
+    'concepts/shell/web-frames/shell-web-frame-2.png?v=20260620-shell-trim',
+    'concepts/shell/web-frames/shell-web-frame-3.png?v=20260620-shell-trim',
+    'concepts/shell/web-frames/shell-web-frame-4.png?v=20260620-shell-trim'
   ];
   var oracleResponses = [
     '摸鱼之神翻了个身：今日宜慢一点。',
@@ -41,6 +41,8 @@
   var lastTime = 0;
   var bounds = { width: 0, height: 0, upper: 0, lower: 0 };
   var pointer = { x: -9999, y: -9999, active: false };
+  var shellPositionStorageKey = 'seabedShellPosition';
+  var shellDrag = null;
   var fish = [];
   var shellFrameIndex = 0;
 
@@ -61,6 +63,33 @@
     shell.setAttribute('aria-label', open ? '祈愿贝壳已打开，可以点击珍珠' : '打开祈愿贝壳');
     if (reducedMotion) setShellFrame(open ? shellFrames.length - 1 : 0);
   }
+
+  function readShellPosition() {
+    try {
+      var saved = window.localStorage.getItem(shellPositionStorageKey);
+      return saved ? JSON.parse(saved) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function saveShellPosition(position) {
+    try {
+      window.localStorage.setItem(shellPositionStorageKey, JSON.stringify(position));
+    } catch (error) {}
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function applyShellPosition(position) {
+    if (!position || typeof position.leftPct !== 'number' || typeof position.bottomPx !== 'number') return;
+    shell.style.setProperty('--shell-left', position.leftPct.toFixed(3) + '%');
+    shell.style.setProperty('--shell-bottom', Math.round(position.bottomPx) + 'px');
+  }
+
+  applyShellPosition(readShellPosition());
 
   function wait(ms, token) {
     return new Promise(function (resolve) {
@@ -286,11 +315,62 @@
     if (hoverCapable) openShell();
   });
   shell.addEventListener('pointerleave', function () {
-    if (hoverCapable) closeShell();
+    if (hoverCapable && !shellDrag) closeShell();
+  });
+  shell.addEventListener('pointerdown', function (event) {
+    if (event.button !== 0 || pearl.contains(event.target)) return;
+    var sceneRect = scene.getBoundingClientRect();
+    var shellRect = shell.getBoundingClientRect();
+    shellDrag = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startLeft: shellRect.left - sceneRect.left + shellRect.width * 0.5,
+      startBottom: sceneRect.bottom - shellRect.bottom,
+      moved: false
+    };
+    shell.classList.add('is-dragging');
+    shell.setPointerCapture(event.pointerId);
+  });
+  shell.addEventListener('pointermove', function (event) {
+    if (!shellDrag || event.pointerId !== shellDrag.pointerId) return;
+    var sceneRect = scene.getBoundingClientRect();
+    var shellRect = shell.getBoundingClientRect();
+    var dx = event.clientX - shellDrag.startX;
+    var dy = event.clientY - shellDrag.startY;
+    var nextLeft = clamp(shellDrag.startLeft + dx, shellRect.width * 0.5, sceneRect.width - shellRect.width * 0.5);
+    var nextBottom = clamp(shellDrag.startBottom - dy, 0, Math.max(0, sceneRect.height - shellRect.height));
+    shellDrag.moved = shellDrag.moved || Math.abs(dx) > 3 || Math.abs(dy) > 3;
+    applyShellPosition({
+      leftPct: nextLeft / sceneRect.width * 100,
+      bottomPx: nextBottom
+    });
+  });
+  shell.addEventListener('pointerup', function (event) {
+    if (!shellDrag || event.pointerId !== shellDrag.pointerId) return;
+    var sceneRect = scene.getBoundingClientRect();
+    var shellRect = shell.getBoundingClientRect();
+    saveShellPosition({
+      leftPct: (shellRect.left - sceneRect.left + shellRect.width * 0.5) / sceneRect.width * 100,
+      bottomPx: sceneRect.bottom - shellRect.bottom
+    });
+    shell.dataset.dragged = shellDrag.moved ? 'true' : 'false';
+    shellDrag = null;
+    shell.classList.remove('is-dragging');
+  });
+  shell.addEventListener('pointercancel', function (event) {
+    if (!shellDrag || event.pointerId !== shellDrag.pointerId) return;
+    shellDrag = null;
+    shell.classList.remove('is-dragging');
   });
   shell.addEventListener('focusin', openShell);
   shell.addEventListener('focusout', closeAfterFocusLeaves);
-  shell.addEventListener('click', function () {
+  shell.addEventListener('click', function (event) {
+    if (shell.dataset.dragged === 'true') {
+      event.preventDefault();
+      shell.dataset.dragged = 'false';
+      return;
+    }
     openShell();
     scheduleTouchClose();
   });

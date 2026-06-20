@@ -1060,17 +1060,22 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
 .shell-button {
   position: absolute;
   z-index: 5;
-  left: clamp(260px, 24%, 430px);
-  bottom: 26px;
+  left: var(--shell-left, clamp(260px, 24%, 430px));
+  bottom: var(--shell-bottom, 26px);
   width: clamp(146px, 11vw, 186px);
   aspect-ratio: 560 / 500;
   padding: 0;
   border: 0;
   background: transparent;
-  cursor: pointer;
+  cursor: grab;
+  touch-action: none;
   transform: translateX(-50%);
   filter: drop-shadow(0 14px 18px rgba(119, 76, 86, 0.08));
   animation: shellRestBreath 5.8s ease-in-out infinite;
+}
+.shell-button.is-dragging {
+  cursor: grabbing;
+  animation-play-state: paused;
 }
 .shell-frame,
 .shell-halo,
@@ -1423,8 +1428,8 @@ body.sidebar-open .seabed-meta {
     font-size: 0.7rem;
   }
   .shell-button {
-    left: 50%;
-    bottom: 36px;
+    left: var(--shell-left, 50%);
+    bottom: var(--shell-bottom, 36px);
     width: 154px;
   }
   .seabed-message {
