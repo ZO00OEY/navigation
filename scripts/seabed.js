@@ -1,11 +1,12 @@
 (function () {
   var scene = document.getElementById('seabedScene');
   var shell = document.getElementById('shellButton');
+  var shellFrame = document.getElementById('shellFrame');
   var pearl = document.getElementById('pearlButton');
   var fishGod = document.getElementById('fishGod');
   var message = document.getElementById('seabedMessage');
   var fishLayer = document.getElementById('seabedFishLayer');
-  if (!scene || !shell || !pearl || !fishGod || !message || !fishLayer) return;
+  if (!scene || !shell || !shellFrame || !pearl || !fishGod || !message || !fishLayer) return;
 
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -16,6 +17,13 @@
     'concepts/fish/fish-4.png',
     'concepts/fish/fish-5.png',
     'concepts/fish/fish-6.png'
+  ];
+  var shellFrames = [
+    'concepts/shell/web-frames/shell-web-frame-0.png',
+    'concepts/shell/web-frames/shell-web-frame-1.png',
+    'concepts/shell/web-frames/shell-web-frame-2.png',
+    'concepts/shell/web-frames/shell-web-frame-3.png',
+    'concepts/shell/web-frames/shell-web-frame-4.png'
   ];
   var oracleResponses = [
     '摸鱼之神翻了个身：今日宜慢一点。',
@@ -34,12 +42,24 @@
   var bounds = { width: 0, height: 0, upper: 0, lower: 0 };
   var pointer = { x: -9999, y: -9999, active: false };
   var fish = [];
+  var shellFrameIndex = 0;
+
+  shellFrames.forEach(function (src) {
+    var image = new Image();
+    image.src = src;
+  });
+
+  function setShellFrame(index) {
+    shellFrameIndex = Math.max(0, Math.min(shellFrames.length - 1, index));
+    shellFrame.src = shellFrames[shellFrameIndex];
+  }
 
   function setShellState(state) {
     shell.dataset.shellState = state;
     var open = state === 'open';
     shell.setAttribute('aria-expanded', String(open));
     shell.setAttribute('aria-label', open ? '祈愿贝壳已打开，可以点击珍珠' : '打开祈愿贝壳');
+    if (reducedMotion) setShellFrame(open ? shellFrames.length - 1 : 0);
   }
 
   function wait(ms, token) {
@@ -55,8 +75,14 @@
     if (shell.dataset.shellState === 'open') return;
     var token = ++sequenceToken;
     setShellState(reducedMotion ? 'open' : 'half');
-    if (!await wait(115, token)) return;
+    if (!reducedMotion) {
+      for (var i = shellFrameIndex + 1; i < shellFrames.length - 1; i++) {
+        setShellFrame(i);
+        if (!await wait(72, token)) return;
+      }
+    }
     setShellState('open');
+    setShellFrame(shellFrames.length - 1);
   }
 
   async function closeShell() {
@@ -64,8 +90,14 @@
     if (shell.dataset.shellState === 'closed') return;
     var token = ++sequenceToken;
     setShellState(reducedMotion ? 'closed' : 'half');
-    if (!await wait(105, token)) return;
+    if (!reducedMotion) {
+      for (var i = shellFrameIndex - 1; i > 0; i--) {
+        setShellFrame(i);
+        if (!await wait(62, token)) return;
+      }
+    }
     setShellState('closed');
+    setShellFrame(0);
   }
 
   function showMessage(text) {
@@ -254,7 +286,7 @@
     if (hoverCapable) openShell();
   });
   shell.addEventListener('pointerleave', function () {
-    if (hoverCapable && !shell.matches(':focus-within')) closeShell();
+    if (hoverCapable) closeShell();
   });
   shell.addEventListener('focusin', openShell);
   shell.addEventListener('focusout', closeAfterFocusLeaves);
@@ -272,6 +304,7 @@
     summonFish();
   });
   fishGod.addEventListener('click', summonFish);
+  window.addEventListener('blur', closeShell);
   window.addEventListener('resize', updateBounds);
   if ('ResizeObserver' in window) new ResizeObserver(updateBounds).observe(scene);
 
