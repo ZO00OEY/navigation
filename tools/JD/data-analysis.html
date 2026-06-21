@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -8,43 +8,60 @@
 <link rel="stylesheet" href="../../guides/shared.css">
 <script defer src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <style>
-.bg-decor { overflow: visible; }
-.blob { filter: blur(120px); opacity: 0.32; }
+.bg-decor {
+  overflow: visible;
+  background:
+    linear-gradient(180deg, #ffeaf3 0%, #f7f0f5 210px, #f3f4f6 520px, #f5f5f5 100%);
+}
+.blob { display: none; }
 .blob-1 { width: 520px; height: 520px; background: radial-gradient(circle, rgba(61, 121, 184, 0.48), transparent); top: -180px; left: -140px; }
 .blob-2 { width: 460px; height: 460px; background: radial-gradient(circle, rgba(73, 161, 135, 0.34), transparent); top: 42%; right: -180px; bottom: auto; transform: translateY(-50%); }
 .blob-3 { width: 360px; height: 360px; background: radial-gradient(circle, rgba(204, 122, 75, 0.24), transparent); bottom: -150px; left: 32%; top: auto; }
-[data-theme="light"] .blob { opacity: 0.26; }
+[data-theme="light"] body {
+  background:
+    linear-gradient(180deg, #ffeaf3 0%, #f8eef4 210px, #f4f5f7 520px, #f5f5f5 100%);
+}
+[data-theme="light"] .blob { opacity: 0.025; }
 [data-theme="light"] .blob-1 { background: radial-gradient(circle, rgba(57, 124, 178, 0.34), transparent); }
 [data-theme="light"] .blob-2 { background: radial-gradient(circle, rgba(42, 157, 143, 0.25), transparent); }
 [data-theme="light"] .blob-3 { background: radial-gradient(circle, rgba(232, 142, 86, 0.22), transparent); }
 
-.app { max-width: 1180px; }
+.app { max-width: none; width: 100%; min-height: 100vh; padding: 0; }
 .back-link {
+  position: fixed; left: 18px; top: 16px; z-index: 20;
   display: inline-flex; align-items: center; gap: 4px;
   color: var(--text-tertiary); text-decoration: none;
-  font-size: 0.82rem; transition: color 0.2s; margin-bottom: 18px;
+  font-size: 0.74rem; transition: color 0.2s;
 }
 .back-link:hover { color: var(--link-color); }
 
 .tool-shell {
-  display: grid; grid-template-columns: 192px minmax(0, 1fr);
-  min-height: 680px; overflow: visible; align-items: stretch;
-  background: var(--card-bg); border: 1px solid var(--card-border);
-  border-radius: var(--radius); box-shadow: 0 4px 24px var(--card-shadow);
+  display: grid; grid-template-columns: 208px minmax(0, 1fr);
+  min-height: 100vh; overflow: visible; align-items: stretch;
+  background: transparent; border: none; border-radius: 0; box-shadow: none;
 }
 .tool-sidebar {
   grid-column: 1; grid-row: 1;
-  width: 192px; min-width: 0; padding: 16px 0;
+  width: 208px; min-width: 0; padding: 54px 0 16px;
   display: flex; flex-direction: column;
-  position: sticky; top: 22px; height: min(760px, calc(100vh - 44px)); min-height: 620px;
-  border-right: 1px solid var(--card-border);
-  background: rgba(0, 0, 0, 0.02);
+  position: fixed; left: 0; top: 0; z-index: 15;
+  height: 100vh; min-height: 0;
+  border-right: 1px solid #dde1e8;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
 }
-[data-theme="dark"] .tool-sidebar { background: rgba(255, 255, 255, 0.025); }
+[data-theme="dark"] .tool-sidebar { background: rgba(24, 24, 32, 0.78); }
 .sidebar-main { flex: 1; }
 .sidebar-archive {
   margin-top: auto; padding-top: 12px;
-  border-top: 1px dashed rgba(120, 145, 180, 0.42);
+  border-top: 1px dashed #d7dce5;
+}
+.sidebar-section-title {
+  padding: 0 17px 8px;
+  color: var(--text);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 .sidebar-archive .tab-btn { padding-top: 10px; padding-bottom: 10px; font-size: 0.74rem; }
 .tab-btn {
@@ -56,30 +73,42 @@
 }
 .tab-btn:hover { background: var(--link-item-hover); color: var(--text); }
 .tab-btn.active {
-  color: var(--link-color); background: rgba(76, 142, 179, 0.12);
+  color: var(--link-color); background: rgba(222, 115, 158, 0.08);
   border-left-color: var(--link-color); font-weight: 700;
 }
-[data-theme="light"] .tab-btn.active { background: rgba(251, 114, 153, 0.1); }
+[data-theme="light"] .tab-btn.active { background: rgba(222, 115, 158, 0.08); }
 .tab-kicker { color: var(--text-tertiary); font-size: 0.68rem; font-weight: 600; }
 .tool-main {
   grid-column: 2; grid-row: 1;
-  min-width: 0; width: 100%; padding: 28px 32px 34px; overflow: visible;
+  min-width: 0; width: 100%; padding: 34px clamp(18px, 2.2vw, 34px) 34px; overflow: visible;
 }
 .tool-page { display: none; }
 .tool-page.active { display: block; }
 
 [data-theme="light"] .tool-shell {
+  --card-bg: #ffffff;
+  --search-bg: #fbfbfc;
+  --link-item-hover: rgba(222, 115, 158, 0.07);
   --text: #15161c;
   --text-secondary: #242630;
   --text-tertiary: #686b74;
+  --card-border: #e6e8ee;
+  --line-soft: #eceef3;
+  --line-medium: #dde1e8;
+}
+[data-theme="dark"] .tool-shell {
+  --search-bg: rgba(255, 255, 255, 0.045);
+  --line-soft: rgba(222, 115, 158, 0.28);
+  --line-medium: rgba(222, 115, 158, 0.36);
 }
 
 .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 20px; }
 .page-title h1 { margin: 0 0 7px; color: var(--text); font-size: 1.35rem; letter-spacing: 0; }
 .page-title p { margin: 0; max-width: 680px; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.7; }
+#import .page-title p { max-width: none; white-space: nowrap; }
 .status-pill {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 10px; border: 1px solid var(--card-border); border-radius: 999px;
+  padding: 7px 10px; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 999px;
   color: var(--text-tertiary); background: var(--search-bg); font-size: 0.72rem; white-space: nowrap;
 }
 .dot { width: 7px; height: 7px; border-radius: 50%; background: #56b47d; box-shadow: 0 0 0 3px rgba(86, 180, 125, 0.12); }
@@ -88,8 +117,198 @@
 .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .panel {
-  border: 1px solid var(--card-border); border-radius: 8px; background: var(--card-bg);
-  padding: 18px; min-width: 0;
+  border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; background: var(--card-bg);
+  padding: 18px; min-width: 0; box-shadow: 0 2px 8px rgba(40, 46, 56, 0.035);
+}
+.import-rule-card {
+  margin: 10px 0 12px;
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 3px;
+  background: #ffffff;
+}
+.import-rule-card summary {
+  cursor: pointer;
+  padding: 9px 12px;
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 700;
+  list-style-position: inside;
+}
+.import-rule-card[open] summary {
+  border-bottom: 1px solid var(--line-soft, var(--card-border));
+}
+.rule-desc {
+  padding: 10px 12px 0;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  line-height: 1.6;
+}
+.compact-table-wrap { margin: 10px 12px 12px; }
+.compact-table th,
+.compact-table td {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  height: auto;
+}
+.report-toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(320px, 460px) max-content;
+  align-items: center;
+  gap: 14px 22px;
+}
+.report-mode-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line-medium, var(--card-border));
+  background: #ffffff;
+  padding: 3px;
+  border-radius: 3px;
+}
+.mode-btn {
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 7px 13px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.mode-btn.active {
+  background: rgba(222, 115, 158, 0.12);
+  color: var(--link-color);
+  font-weight: 700;
+}
+.report-dim-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.report-template-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.report-template-preview {
+  min-height: 120px;
+  border: 1px solid var(--line-medium, var(--card-border));
+  background: #fff;
+  overflow: auto;
+}
+.report-template-preview table {
+  border-collapse: collapse;
+  min-width: 680px;
+  width: max-content;
+  font-size: 0.76rem;
+}
+.report-template-preview td,
+.report-template-preview th {
+  border: 1px solid var(--line-soft, var(--card-border));
+  padding: 7px 9px;
+  min-width: 90px;
+  height: 30px;
+  color: var(--text);
+}
+.report-template-preview th,
+.report-template-preview tr:first-child td {
+  background: rgba(222, 115, 158, 0.06);
+  font-weight: 700;
+}
+.report-sheet-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.report-sheet-tab {
+  border: 1px solid var(--line-medium, var(--card-border));
+  background: #fff;
+  color: var(--text-secondary);
+  border-radius: 3px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 0.74rem;
+  cursor: pointer;
+}
+.report-sheet-tab.active {
+  color: var(--link-color);
+  background: rgba(222, 115, 158, 0.1);
+  font-weight: 700;
+}
+.report-template-empty {
+  padding: 18px;
+  color: var(--text-tertiary);
+  font-size: 0.78rem;
+}
+.report-config-row {
+  display: none;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 12px;
+  align-items: center;
+}
+.report-column-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.report-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 0 8px 0 10px;
+  border: 1px solid var(--line-medium, var(--card-border));
+  background: #fff;
+  color: var(--text);
+  border-radius: 3px;
+  font-size: 0.75rem;
+}
+.report-chip button {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  background: rgba(222, 115, 158, 0.1);
+  color: var(--link-color);
+  cursor: pointer;
+  border-radius: 2px;
+}
+.report-output {
+  display: grid;
+  gap: 6px;
+}
+.report-line {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: stretch;
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 3px;
+  overflow: hidden;
+  background: #fff;
+}
+.copy-line-btn {
+  border: 0;
+  border-right: 1px solid var(--line-medium, var(--card-border));
+  background: rgba(222, 115, 158, 0.08);
+  color: var(--link-color);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.copy-line-btn:hover { background: rgba(222, 115, 158, 0.16); }
+.report-line code {
+  display: block;
+  padding: 8px 10px;
+  color: var(--text);
+  background: #fff;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 0.76rem;
+  line-height: 1.55;
 }
 .panel-title {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -98,35 +317,95 @@
 .panel-sub { margin: -6px 0 14px; color: var(--text-tertiary); font-size: 0.75rem; line-height: 1.6; }
 .metric-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
 .metric {
-  border: 1px solid var(--card-border); border-radius: 8px; padding: 13px 14px;
-  background: var(--search-bg);
+  border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; padding: 13px 14px;
+  background: #ffffff; box-shadow: 0 1px 4px rgba(40, 46, 56, 0.025);
 }
 .metric span { display: block; color: var(--text-tertiary); font-size: 0.72rem; margin-bottom: 7px; }
 .metric strong { color: var(--text); font-size: 1.12rem; letter-spacing: 0; }
 
-.form-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; }
-.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.field label { color: var(--text); font-size: 0.75rem; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(320px, 1fr)); gap: 12px 28px; align-items: center; }
+.field {
+  display: grid; grid-template-columns: max-content minmax(240px, 1fr);
+  align-items: center; gap: 0 14px; min-width: 0;
+}
+.field label { color: var(--text); font-size: 0.82rem; line-height: 1; white-space: nowrap; }
+.field > .input,
+.field > .select,
+.field > .textarea,
+.field > .date-input-wrap { min-width: 0; width: min(100%, 260px); }
+.field > input[type="hidden"] { display: none; }
+.field .date-popover { grid-column: 2; }
 .manual-ranking-toolbar {
-  display: grid; grid-template-columns: minmax(220px, 320px) 1fr; gap: 12px;
-  align-items: end; margin-top: 10px;
+  display: flex; flex-wrap: wrap; gap: 12px 24px;
+  align-items: center; margin-top: 10px;
 }
-.manual-ranking-actions {
-  display: flex; justify-content: flex-end; align-items: end; gap: 10px; flex-wrap: wrap;
+.manual-control {
+  display: grid; grid-template-columns: max-content minmax(180px, auto);
+  align-items: center; gap: 0 14px; min-width: 0;
 }
-.manual-ranking-actions .field { width: auto; min-width: 0; }
-.manual-ranking-actions .check-pill { min-height: 34px; box-sizing: border-box; }
-.manual-ranking-actions .attr-select { width: 170px; min-width: 150px; }
-.manual-date-wrap .input { min-width: 220px; padding-left: 34px; padding-right: 42px; }
+.manual-control-label {
+  color: var(--text); font-size: 0.82rem; font-weight: 500; line-height: 1; white-space: nowrap;
+}
+.manual-control-box {
+  min-height: 36px; height: 36px; display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px;
+  background: #ffffff; color: var(--text); padding: 0 14px; font-size: 0.82rem;
+  box-sizing: border-box;
+}
+.manual-control-box input { accent-color: var(--link-color); }
+.manual-field-picker { position: relative; }
+.manual-field-trigger {
+  min-width: 210px; justify-content: space-between; font-family: inherit; cursor: pointer;
+}
+.manual-field-trigger::after { content: ""; width: 6px; height: 6px; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); margin-left: 8px; opacity: 0.65; }
+.manual-field-panel {
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 20;
+  display: none; min-width: 220px; padding: 8px;
+  border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px;
+  background: #ffffff; box-shadow: 0 12px 30px rgba(33, 38, 48, 0.14);
+}
+.manual-field-panel.open { display: grid; gap: 4px; }
+.manual-field-option {
+  min-height: 32px; display: flex; align-items: center; gap: 8px;
+  padding: 5px 7px; border-radius: 2px; color: var(--text); font-size: 0.76rem;
+}
+.manual-field-option:hover { background: var(--link-item-hover); }
+.manual-field-option input { accent-color: var(--link-color); }
+.manual-date-wrap .input { min-width: 260px; height: 36px; min-height: 36px; padding: 0 42px 0 34px; }
+.manual-entry-table { table-layout: fixed; width: max-content; min-width: 560px; }
+.manual-entry-table th, .manual-entry-table td { padding: 0; height: 36px; }
+.manual-entry-table th { padding: 7px 10px; }
+.manual-entry-table th:first-child, .manual-entry-table td:first-child { width: 190px; padding: 0 10px; }
+.manual-entry-table th:not(:first-child), .manual-entry-table td:not(:first-child) { width: 220px; }
+.manual-entry-table th, .manual-entry-table td { border-right: 1px solid var(--line-soft, var(--card-border)); }
+.manual-entry-table th:last-child, .manual-entry-table td:last-child { border-right: none; }
+.manual-entry-table td { position: relative; }
+.manual-entry-table td:focus-within {
+  box-shadow: inset 0 0 0 1.5px rgba(222, 115, 158, 0.72);
+  background: rgba(222, 115, 158, 0.025);
+}
+.manual-entry-cell {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+  width: 100%; height: 100%; min-width: 0; padding: 0; gap: 0;
+}
+.manual-entry-input {
+  width: 100%; min-width: 0; height: 100%; border: none; outline: none;
+  appearance: none; -webkit-appearance: none;
+  background: transparent; color: var(--text); font: inherit; font-size: 0.76rem;
+  padding: 0 10px; box-sizing: border-box;
+}
+.manual-entry-input::-webkit-calendar-picker-indicator { display: none !important; opacity: 0; }
+.manual-entry-input::placeholder { color: var(--text-tertiary); opacity: 0.75; }
 .input, .select, .textarea {
-  width: 100%; box-sizing: border-box; border: 1px solid var(--card-border);
-  border-radius: 7px; padding: 9px 10px; color: var(--text); background: var(--search-bg);
+  width: 100%; box-sizing: border-box; border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 3px; padding: 0 14px; min-height: 36px; color: var(--text); background: #ffffff;
   outline: none; font-family: inherit; font-size: 0.82rem;
 }
-.textarea { min-height: 72px; resize: vertical; line-height: 1.55; }
+.textarea { min-height: 72px; padding: 9px 14px; resize: vertical; line-height: 1.55; }
 .input:focus, .select:focus, .textarea:focus { border-color: var(--link-color); }
 .date-picker-field { position: relative; }
 .date-input-wrap { position: relative; }
+.date-input-wrap .input { background: #ffffff; height: 36px; min-height: 36px; }
 .date-input-wrap .input { padding-left: 34px; padding-right: 70px; }
 .date-trigger {
   position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
@@ -135,7 +414,7 @@
 }
 .date-step-btn {
   position: absolute; top: 50%; transform: translateY(-50%);
-  width: 24px; height: 24px; border: none; border-radius: 7px;
+  width: 24px; height: 24px; border: none; border-radius: 3px;
   background: transparent; color: var(--text-tertiary);
   display: inline-flex; align-items: center; justify-content: center;
 }
@@ -145,12 +424,14 @@
 .date-step-next { right: 36px; }
 .date-popover {
   position: absolute; top: calc(100% + 8px); left: 0; z-index: 30;
-  display: none; min-width: 520px; border: 1px solid var(--card-border); border-radius: 8px;
+  display: none; min-width: 520px; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px;
   background: #ffffff; box-shadow: 0 18px 36px rgba(33, 38, 48, 0.22); overflow: hidden;
 }
+.field.date-picker-field .date-popover { left: 64px; }
+.manual-control.date-picker-field .date-popover { left: 44px; }
 [data-theme="dark"] .date-popover { background: #22222a; box-shadow: 0 18px 36px rgba(0, 0, 0, 0.46); }
 .date-popover.open { display: grid; grid-template-columns: 122px 1fr; }
-.date-shortcuts { background: #eef3f8; padding: 10px 0; border-right: 1px solid var(--card-border); }
+.date-shortcuts { background: #fafafa; padding: 10px 0; border-right: 1px solid var(--line-medium, var(--card-border)); }
 [data-theme="dark"] .date-shortcuts { background: #2b2c35; }
 .date-shortcuts button {
   width: 100%; border: none; background: transparent; padding: 11px 18px; text-align: left;
@@ -162,7 +443,7 @@
 .date-cal-head strong { color: var(--text); font-size: 0.9rem; }
 .date-nav { display: flex; gap: 8px; }
 .date-nav button {
-  width: 26px; height: 26px; border: 1px solid var(--card-border); border-radius: 50%;
+  width: 26px; height: 26px; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px;
   background: var(--search-bg); color: var(--link-color); font-family: inherit; font-weight: 700;
 }
 .date-week, .date-grid { display: grid; grid-template-columns: repeat(7, 38px); gap: 0; justify-content: center; }
@@ -185,7 +466,7 @@
 .date-day.single { border-radius: 6px; }
 .date-grid.month-grid { grid-template-columns: repeat(3, 78px); gap: 10px; padding-top: 12px; }
 .date-month {
-  height: 42px; border: 1px solid var(--card-border); border-radius: 7px;
+  height: 42px; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px;
   background: var(--search-bg); color: var(--text); font-family: inherit; font-weight: 700; pointer-events: auto;
 }
 .date-month.preview-range,
@@ -199,7 +480,7 @@
 .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  min-height: 36px; padding: 8px 13px; border-radius: 7px; border: 1px solid var(--card-border);
+  min-height: 36px; padding: 8px 13px; border-radius: 3px; border: 1px solid var(--line-medium, var(--card-border));
   background: var(--card-bg); color: var(--text); font-family: inherit;
   font-size: 0.8rem; transition: all 0.15s; text-decoration: none;
 }
@@ -210,24 +491,34 @@
 .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
 .upload-zone {
-  border: 1.5px dashed rgba(120, 145, 180, 0.36); border-radius: 8px; padding: 24px;
-  text-align: center; background: var(--search-bg); transition: all 0.15s;
+  border: 1.5px dashed #cfd5df; border-radius: 3px; padding: 24px;
+  text-align: center; background: #ffffff; transition: all 0.15s;
 }
 .upload-zone:hover, .upload-zone.dragover { border-color: var(--link-color); background: var(--link-item-hover); }
 .upload-zone strong { display: block; color: var(--text); font-size: 0.9rem; margin-bottom: 5px; }
 .upload-zone span { color: var(--text-tertiary); font-size: 0.75rem; }
+.import-summary {
+  display: none; align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 3px; background: #ffffff; color: var(--text);
+  font-size: 0.78rem;
+}
+.import-summary.show { display: flex; }
+.import-summary.ok { border-color: rgba(86, 180, 125, 0.28); background: rgba(86, 180, 125, 0.08); }
+.import-summary.err { border-color: rgba(217, 83, 79, 0.28); background: rgba(217, 83, 79, 0.07); }
+.import-summary .btn { min-height: 28px; padding: 5px 10px; white-space: nowrap; }
 
 .mapping-accordion { display: grid; gap: 10px; margin-top: 10px; }
 .mapping-section {
   position: relative;
-  border: 1px solid var(--card-border); border-radius: 8px; background: var(--card-bg); overflow: hidden;
+  border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; background: var(--card-bg); overflow: hidden;
 }
 .mapping-section::before {
   content: ""; position: absolute; inset: 0 auto 0 0; width: 3px;
   background: var(--link-color); z-index: 2;
 }
 .mapping-section-head {
-  width: 100%; border: none; background: linear-gradient(90deg, rgba(251, 114, 153, 0.12), var(--search-bg)); color: var(--text);
+  width: 100%; border: none; background: #ffffff; color: var(--text);
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 13px 14px 13px 16px; font-family: inherit; text-align: left; cursor: pointer;
 }
@@ -238,7 +529,7 @@
 .mapping-source-link:hover { text-decoration: underline; }
 .mapping-section-toggle {
   color: var(--link-color); font-size: 0.72rem; font-weight: 700;
-  border: 1px solid rgba(251, 114, 153, 0.28); border-radius: 999px; padding: 4px 9px; background: rgba(251, 114, 153, 0.08);
+  border: 1px solid rgba(251, 114, 153, 0.28); border-radius: 3px; padding: 4px 9px; background: rgba(251, 114, 153, 0.08);
 }
 .mapping-section-body { padding: 14px 14px 14px 16px; display: none; }
 .mapping-section.open .mapping-section-body { display: block; }
@@ -247,14 +538,17 @@
 .mapping-section-note { color: var(--text-tertiary); font-size: 0.73rem; line-height: 1.55; }
 .mapping-rule-box {
   display: grid; gap: 8px; margin-bottom: 12px; padding: 10px;
-  border: 1px solid rgba(222, 115, 158, 0.18); border-radius: 8px;
-  background: rgba(222, 115, 158, 0.045);
+  border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px;
+  background: #ffffff;
 }
-.mapping-rule-row { display: grid; grid-template-columns: 108px minmax(220px, 1fr) 28px 28px; gap: 8px; align-items: center; }
-.mapping-rule-label { color: var(--text); font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
-.mapping-rule-row .input { min-height: 34px; font-size: 0.74rem; }
+.mapping-rule-row {
+  display: grid; grid-template-columns: max-content minmax(320px, 1fr) 28px 28px;
+  gap: 8px 14px; align-items: center;
+}
+.mapping-rule-label { min-width: 112px; color: var(--text); font-size: 0.82rem; font-weight: 500; white-space: nowrap; }
+.mapping-rule-row .input { min-height: 36px; font-size: 0.82rem; }
 .mapping-rule-action {
-  width: 26px; height: 26px; border-radius: 7px;
+  width: 26px; height: 26px; border-radius: 3px;
   border: 1px solid rgba(222, 115, 158, 0.26);
   background: rgba(255, 255, 255, 0.72); color: #c84f83;
   display: inline-flex; align-items: center; justify-content: center;
@@ -262,39 +556,39 @@
 }
 .mapping-rule-action svg { width: 13px; height: 13px; }
 .mapping-rule-action:hover { background: rgba(222, 115, 158, 0.14); border-color: rgba(222, 115, 158, 0.42); }
-.mapping-rule-action.add { color: #9a9a9a; border-color: var(--card-border); background: var(--search-bg); font-weight: 700; }
+.mapping-rule-action.add { color: #9a9a9a; border-color: var(--line-medium, var(--card-border)); background: var(--search-bg); font-weight: 700; }
 .mapping-rule-action.add:hover { color: #c84f83; border-color: rgba(222, 115, 158, 0.32); background: rgba(222, 115, 158, 0.08); }
 .mapping-option-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; color: var(--text); font-size: 0.74rem; }
 .mapping-add-head { text-align: right; width: 92px; }
 .mapping-add-btn {
-  min-height: 30px; padding: 0 11px; border-radius: 8px;
+  min-height: 30px; padding: 0 11px; border-radius: 3px;
   border: 1px solid rgba(222, 115, 158, 0.32);
   background: rgba(222, 115, 158, 0.1); color: #c84f83;
   font-size: 0.72rem; font-weight: 700;
 }
 .mapping-add-btn:hover { background: rgba(222, 115, 158, 0.16); }
 
-.table-wrap { overflow: auto; border: 1px solid var(--card-border); border-radius: 8px; background: var(--card-bg); }
-.sku-table-wrap { max-height: 690px; background: var(--card-bg); }
-.sku-table-wrap thead { position: sticky; top: 0; z-index: 5; background: var(--card-bg); }
+.table-wrap { overflow: auto; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; background: #ffffff; }
+.sku-table-wrap { max-height: 690px; background: #ffffff; }
+.sku-table-wrap thead { position: sticky; top: 0; z-index: 5; background: #ffffff; }
 .sku-table-wrap thead th {
   position: sticky; top: 0; z-index: 6;
-  background: var(--card-bg);
+  background: #ffffff;
   background-clip: padding-box;
-  box-shadow: 0 1px 0 var(--card-border), 0 12px 0 var(--card-bg), 0 14px 16px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 0 var(--line-medium, var(--card-border)), 0 12px 0 var(--card-bg), 0 14px 16px rgba(0, 0, 0, 0.04);
 }
 .sku-table-wrap thead th::before {
   content: ""; position: absolute; inset: -2px 0 0 0;
-  background: var(--card-bg); z-index: -1;
+  background: #ffffff; z-index: -1;
 }
 .data-table { width: 100%; border-collapse: collapse; min-width: 720px; font-size: 0.78rem; }
 .sku-table { table-layout: fixed; min-width: 0; }
 .sku-table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.data-table th, .data-table td { padding: 7px 10px; border-bottom: 1px solid var(--card-border); text-align: left; vertical-align: middle; }
-.data-table th { color: var(--text); background: var(--search-bg); font-weight: 700; white-space: nowrap; }
+.data-table th, .data-table td { padding: 7px 10px; border-bottom: 1px solid var(--line-soft, var(--card-border)); text-align: left; vertical-align: middle; }
+.data-table th { color: var(--text); background: #fafafa; font-weight: 700; white-space: nowrap; }
 .data-table td { color: var(--text); }
 .data-table tr:last-child td { border-bottom: none; }
-.data-table .input, .data-table .select { min-height: 30px; padding-top: 5px; padding-bottom: 5px; }
+.data-table .input, .data-table .select { min-height: 30px; padding: 5px 10px; }
 .data-table.resizable-table { table-layout: fixed; min-width: 0; }
 .data-table.resizable-table th { position: relative; }
 .data-table.resizable-table th.is-resizing { color: #c84f83; }
@@ -328,17 +622,19 @@
 
 .dimension-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .filter-strip {
-  display: grid; grid-template-columns: minmax(260px, 430px) 1fr; gap: 16px;
+  display: grid; grid-template-columns: minmax(260px, 320px) 1fr; gap: 16px;
   align-items: end; margin-bottom: 10px;
 }
-.filter-left { max-width: 430px; }
+.filter-left { max-width: 320px; }
+#db-estimates .filter-strip { grid-template-columns: minmax(260px, 320px) minmax(260px, 320px) 1fr; }
+#db-estimates .field > .date-input-wrap { width: min(100%, 310px); }
 .filter-right { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
 .filter-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .filter-dims {
   display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center;
-  gap: 8px; margin: 4px 0 12px;
+  gap: 8px; margin: 4px 0 12px; width: 100%;
 }
-.filter-dim-row { max-width: 720px; }
+.filter-dim-row { max-width: none; width: 100%; }
 .filter-dim-label {
   color: var(--text-tertiary); font-size: 0; margin-right: 2px;
 }
@@ -348,9 +644,9 @@
 }
 .filter-attr-label::before { content: "\67e5\770b\5c5e\6027\5217"; font-size: 0.74rem; }
 .check-pill {
-  display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px;
-  border: 1px solid var(--card-border); border-radius: 999px; color: var(--text);
-  background: var(--search-bg); font-size: 0.76rem;
+  display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px;
+  border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; color: var(--text);
+  background: #ffffff; font-size: 0.82rem; box-sizing: border-box; flex: 0 0 auto;
 }
 .check-pill input { accent-color: var(--link-color); }
 .dim-remove-btn {
@@ -360,26 +656,26 @@
 }
 .dim-remove-btn:hover { background: rgba(217, 83, 79, 0.1); color: #d9534f; }
 .add-dim-pill {
-  width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--card-border);
-  background: var(--search-bg); color: var(--text-tertiary); font: 700 1rem/1 inherit;
+  width: 34px; height: 34px; border-radius: 3px; border: 1px solid var(--line-medium, var(--card-border));
+  background: #ffffff; color: var(--text-tertiary); font: 700 1rem/1 inherit; flex: 0 0 34px;
 }
 .add-dim-pill:hover { border-color: rgba(222, 115, 158, 0.42); color: #c84f83; background: rgba(222, 115, 158, 0.08); }
 .attr-select {
-  height: 34px; min-width: 138px; max-width: 210px; border: 1px solid var(--card-border);
-  border-radius: 999px; padding: 0 30px 0 12px; color: var(--text);
-  background: var(--search-bg); font-family: inherit; font-size: 0.76rem;
+  height: 36px; min-width: 210px; max-width: 260px; border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 3px; padding: 0 30px 0 12px; color: var(--text);
+  background: #ffffff; font-family: inherit; font-size: 0.82rem;
 }
 .attr-select[hidden] { display: none; }
 .filter-note { margin: 0 0 10px; color: var(--text-tertiary); font-size: 0.74rem; text-align: left; }
 .note {
-  padding: 12px 14px; border-radius: 8px; background: var(--search-bg);
+  padding: 12px 14px; border-radius: 3px; background: #fbfbfc;
   color: var(--text-secondary); font-size: 0.78rem; line-height: 1.7;
 }
 .sku-alert {
   display: flex; align-items: flex-start; gap: 12px;
-  border: 1px solid rgba(222, 115, 158, 0.2);
-  border-radius: 8px; padding: 13px 15px; margin-bottom: 14px;
-  background: rgba(222, 115, 158, 0.06);
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 3px; padding: 13px 15px; margin-bottom: 14px;
+  background: #ffffff;
   color: var(--text-secondary); font-size: 0.8rem; line-height: 1.65;
 }
 .sku-alert svg { width: 22px; height: 22px; flex-shrink: 0; color: #df739f; margin-top: 1px; }
@@ -387,7 +683,7 @@
 .sku-panel { position: relative; overflow: hidden; }
 .sku-panel::before {
   content: ""; position: absolute; inset: 0 auto 0 0; width: 4px;
-  background: #eaa3bf; opacity: 0.75;
+  background: #d7dce5; opacity: 1;
 }
 .sku-titlebar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; }
 .sku-titlebar h2 { margin: 0; color: var(--text); font-size: 0.98rem; letter-spacing: 0; }
@@ -396,13 +692,13 @@
 .icon-btn {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 78px; height: 34px; padding: 0 12px; border: 1px solid rgba(222, 115, 158, 0.36);
-  border-radius: 8px; background: rgba(222, 115, 158, 0.18); color: #c84f83;
+  border-radius: 3px; background: rgba(222, 115, 158, 0.18); color: #c84f83;
   font-size: 0.78rem; font-weight: 700; font-family: inherit; transition: all 0.15s;
 }
 .icon-btn:hover { background: rgba(222, 115, 158, 0.24); transform: translateY(-1px); }
 .row-delete-btn {
   min-width: 0; width: 26px; height: 26px; padding: 0;
-  border-radius: 7px; color: #d84f86;
+  border-radius: 3px; color: #d84f86;
   background: rgba(222, 115, 158, 0.08);
   border-color: rgba(222, 115, 158, 0.24);
 }
@@ -429,7 +725,7 @@
 .sku-table th[data-sort-col].sort-active .sort-tools { opacity: 1; }
 .sort-tool {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px; border: none; border-radius: 7px;
+  width: 24px; height: 24px; border: none; border-radius: 3px;
   background: transparent; color: var(--text-tertiary);
 }
 .sort-tool:hover, .sort-tool.active { background: rgba(222, 115, 158, 0.12); color: #c84f83; }
@@ -457,7 +753,7 @@
 .sku-col-head {
   display: inline-flex; align-items: center; gap: 7px; max-width: 100%;
 }
-.sku-col-label { min-width: 24px; outline: none; border-radius: 5px; padding: 2px 3px; }
+.sku-col-label { min-width: 24px; outline: none; border-radius: 3px; padding: 2px 3px; }
 .sku-col-label[contenteditable="true"] {
   background: rgba(222, 115, 158, 0.12);
   box-shadow: inset 0 0 0 1px rgba(222, 115, 158, 0.38);
@@ -471,7 +767,7 @@
 .sku-col-label[contenteditable="true"] + .sku-col-tools { opacity: 1; transform: none; }
 .col-tool {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 22px; height: 22px; border: none; border-radius: 6px;
+  width: 22px; height: 22px; border: none; border-radius: 3px;
   background: rgba(222, 115, 158, 0.14); color: #c84f83;
 }
 .col-tool:hover { background: rgba(222, 115, 158, 0.24); }
@@ -489,8 +785,8 @@
 .sku-table .add-col-cell, .sku-table .add-col-head { width: 44px; text-align: center; }
 .sku-row-delete {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 26px; height: 26px; border: 1px solid var(--card-border);
-  border-radius: 7px; background: var(--search-bg); color: var(--text-tertiary);
+  width: 26px; height: 26px; border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 3px; background: var(--search-bg); color: var(--text-tertiary);
   opacity: 0; transform: scale(0.92); transition: all 0.14s;
 }
 .sku-table tbody tr:hover .sku-row-delete {
@@ -500,7 +796,7 @@
 .sku-row-delete:hover { border-color: rgba(221, 79, 136, 0.5); background: rgba(221, 79, 136, 0.16); color: #d82473; }
 .sku-row-delete svg { width: 14px; height: 14px; stroke: currentColor; }
 .small-plus {
-  width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--card-border);
+  width: 26px; height: 26px; border-radius: 3px; border: 1px solid var(--line-medium, var(--card-border));
   background: var(--search-bg); color: var(--text-tertiary);
   font-weight: 700; line-height: 1; font-family: inherit;
 }
@@ -516,7 +812,9 @@
 
 @media (max-width: 860px) {
   .tool-shell { grid-template-columns: 1fr; min-height: 680px; overflow: hidden; }
-  .tool-sidebar { grid-column: 1; grid-row: 1; position: static; height: auto; min-height: 0; width: 100%; display: flex; overflow-x: auto; padding: 0; border-right: none; border-bottom: 1px solid var(--card-border); }
+  .tool-sidebar { grid-column: 1; grid-row: 1; position: static; height: auto; min-height: 0; width: 100%; display: flex; overflow-x: auto; padding: 0; border-right: none; border-bottom: 1px solid var(--line-medium, var(--card-border)); }
+  .sidebar-section-title { display: none; }
+  .back-link { position: static; display: inline-flex; margin: 14px 18px 0; }
   .tab-btn { white-space: nowrap; border-left: none; border-bottom: 2px solid transparent; justify-content: center; }
   .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--link-color); }
   .tool-main { grid-column: 1; grid-row: 2; padding: 22px 18px; }
@@ -525,8 +823,15 @@
   .filter-left { max-width: none; }
   .filter-right, .filter-actions { align-items: flex-start; justify-content: flex-start; }
   .grid-2, .grid-3, .metric-row, .form-grid { grid-template-columns: 1fr; }
-  .manual-ranking-toolbar { grid-template-columns: 1fr; }
-  .manual-ranking-actions { justify-content: flex-start; }
+  .field, .manual-control { grid-template-columns: 1fr; gap: 6px; align-items: stretch; }
+  .field > .input,
+  .field > .select,
+  .field > .textarea,
+  .field > .date-input-wrap { width: 100%; max-width: none; }
+  .field.date-picker-field .date-popover { left: 0; }
+  .manual-control.date-picker-field .date-popover { left: 0; }
+  .manual-ranking-toolbar { flex-direction: column; align-items: stretch; }
+  .manual-control-box, .manual-field-trigger, .manual-date-wrap .input { width: 100%; min-width: 0; }
 }
 </style>
 </head>
@@ -556,16 +861,18 @@
       <div class="sidebar-main">
         <button class="tab-btn active" data-page="dashboard">看板<span class="tab-kicker">01</span></button>
         <button class="tab-btn" data-page="import">导入<span class="tab-kicker">02</span></button>
+        <button class="tab-btn" data-page="report">报表<span class="tab-kicker">03</span></button>
         <button class="tab-btn" data-page="cost">花费<span class="tab-kicker">04</span></button>
         <button class="tab-btn" data-page="competitor">竞品<span class="tab-kicker">05</span></button>
         <button class="tab-btn" data-page="cleanup">清理<span class="tab-kicker">06</span></button>
       </div>
       <div class="sidebar-archive">
+        <div class="sidebar-section-title">数据管理</div>
         <button class="tab-btn" data-page="db-sku">SKU 档案<span class="tab-kicker">D1</span></button>
         <button class="tab-btn" data-page="raw-snapshots">&#23548;&#20837;&#35760;&#24405;<span class="tab-kicker">D2</span></button>
-        <button class="tab-btn" data-page="db-analyzed">已分析数据<span class="tab-kicker">D3</span></button>
-        <button class="tab-btn" data-page="ranking-raw">榜单原始指标<span class="tab-kicker">D4</span></button>
-        <button class="tab-btn" data-page="db-estimates">竞品估算结果<span class="tab-kicker">D5</span></button>
+        <button class="tab-btn" data-page="db-analyzed">商品明细数据<span class="tab-kicker">D3</span></button>
+        <button class="tab-btn" data-page="ranking-raw">商品榜单数据<span class="tab-kicker">D4</span></button>
+        <button class="tab-btn" data-page="db-estimates">竞品估算数据<span class="tab-kicker">D5</span></button>
       </div>
     </nav>
 
@@ -574,7 +881,7 @@
         <div class="page-head">
           <div class="page-title">
             <h1>经营数据看板</h1>
-            <p>这里会汇总已分析数据。现在先搭好周期、日期和维度选择，后续接入销售数量、金额、点击、站内外花费和排名。</p>
+            <p>这里会汇总商品明细数据。现在先搭好周期、日期和维度选择，后续接入销售数量、金额、点击、站内外花费和排名。</p>
           </div>
           <span class="status-pill"><span class="dot"></span><span id="dbStatus">本地库准备中</span></span>
         </div>
@@ -681,11 +988,9 @@
           </div>
           <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" multiple style="display:none">
           <div class="msg" id="importMsg"></div>
-          <div class="table-wrap" style="margin-top:14px;">
-            <table class="data-table">
-              <thead><tr><th>文件名</th><th>识别表类型</th><th>周期</th><th>日期范围</th><th>行数</th><th>状态</th></tr></thead>
-              <tbody id="importPreviewBody"><tr><td class="empty-row" colspan="6">还没有导入文件</td></tr></tbody>
-            </table>
+          <div class="import-summary" id="importSummary">
+            <span id="importSummaryText">还没有导入文件</span>
+            <button class="btn" type="button" id="viewImportRecordsBtn">查看详细</button>
           </div>
         </div>
 
@@ -693,37 +998,65 @@
           <div class="panel-title">
             <span>&#25163;&#21160;&#25968;&#25454;&#24405;&#20837;</span>
           </div>
-          <p class="hint">&#29992;&#20110;&#34917;&#20805;&#27036;&#21333;&#26080;&#27861;&#30452;&#25509;&#23548;&#20986;&#30340;&#25163;&#21160;&#25351;&#26631;&#12290;&#40664;&#35748;&#32500;&#24230;&#65306;<strong>&#31454;&#21697;</strong>&#65292;&#20445;&#23384;&#26102;&#20250;&#25353;&#26085;&#26399;&#21644;&#31454;&#21697; SKU &#20889;&#20837;&#27036;&#21333;&#21407;&#22987;&#25351;&#26631;&#30340;&#21516;&#19968;&#26465;&#35760;&#24405;&#12290;</p>
+          <p class="hint">&#25163;&#21160;&#34917;&#20805;&#27036;&#21333;&#22686;&#38271;&#29575;&#12290;&#40664;&#35748;&#25353;&#36861;&#36394;&#31454;&#21697;&#21644;&#24403;&#21069;&#26085;&#26399;&#20445;&#23384;&#12290;</p>
           <div class="manual-ranking-toolbar">
-            <div class="field">
-              <label>&#26085;&#26399;</label>
+            <div class="manual-control date-picker-field" id="manualRankingDatePickerField">
+              <span class="manual-control-label">&#26085;&#26399;</span>
               <div class="date-input-wrap manual-date-wrap">
                 <button class="date-step-btn date-step-prev" id="manualRankingDatePrev" type="button" title="&#21069;&#19968;&#22825;" aria-label="&#21069;&#19968;&#22825;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
                     <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </button>
-                <input class="input" type="date" id="manualRankingDate">
+                <input class="input" type="text" id="manualRankingDate" placeholder="YYYY-MM-DD">
                 <button class="date-step-btn date-step-next" id="manualRankingDateNext" type="button" title="&#21518;&#19968;&#22825;" aria-label="&#21518;&#19968;&#22825;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
                     <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </button>
+                <button class="date-trigger" id="manualRankingDateTrigger" type="button" title="&#36873;&#25321;&#26085;&#26399;">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+                    <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
+                    <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+                  </svg>
+                </button>
+              </div>
+              <input type="hidden" id="manualRankingStartDate">
+              <input type="hidden" id="manualRankingEndDate">
+              <div class="date-popover" id="manualRankingDatePopover">
+                <div class="date-shortcuts">
+                  <button type="button" data-date-shortcut="yesterday">&#26152;&#26085;</button>
+                  <button type="button" data-date-shortcut="7">&#36817;7&#26085;</button>
+                  <button type="button" data-date-shortcut="30">&#36817;30&#26085;</button>
+                  <button type="button" data-date-shortcut="today">&#33258;&#28982;&#26085;</button>
+                  <button type="button" data-date-shortcut="week">&#33258;&#28982;&#21608;</button>
+                  <button type="button" data-date-shortcut="month">&#33258;&#28982;&#26376;</button>
+                  <button type="button" data-date-shortcut="custom">&#33258;&#23450;&#20041;</button>
+                </div>
+                <div class="date-calendar">
+                  <div class="date-cal-head">
+                    <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
+                    <strong class="date-picker-month">2026-06</strong>
+                    <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
+                  </div>
+                  <div class="date-week"><span>&#19968;</span><span>&#20108;</span><span>&#19977;</span><span>&#22235;</span><span>&#20116;</span><span>&#20845;</span><span>&#26085;</span></div>
+                  <div class="date-grid"></div>
+                </div>
               </div>
             </div>
-            <div class="manual-ranking-actions">
-              <div class="field">
-                <label>&#26174;&#31034;&#33539;&#22260;</label>
-                <label class="check-pill"><input type="checkbox" id="manualRankingTrackedOnlyCheck" checked>&#21482;&#30475;&#36861;&#36394;&#31454;&#21697;</label>
-              </div>
-              <div class="field">
-                <label>&#22686;&#21152;&#21487;&#22635;&#39033;</label>
-                <select class="attr-select" id="manualRankingFieldSelect" aria-label="&#36873;&#25321;&#25163;&#21160;&#25351;&#26631;"></select>
+            <div class="manual-control">
+              <span class="manual-control-label">&#26174;&#31034;&#33539;&#22260;</span>
+              <label class="manual-control-box"><input type="checkbox" id="manualRankingTrackedOnlyCheck" checked>&#21482;&#30475;&#36861;&#36394;&#31454;&#21697;</label>
+            </div>
+            <div class="manual-control manual-field-picker" id="manualRankingFieldPicker">
+              <span class="manual-control-label">&#22686;&#21152;&#21487;&#22635;&#39033;</span>
+              <button class="manual-control-box manual-field-trigger" type="button" id="manualRankingFieldToggle">&#36873;&#25321;&#25351;&#26631;</button>
+              <div class="manual-field-panel" id="manualRankingFieldPanel" aria-label="&#25163;&#21160;&#25351;&#26631;&#21015;&#34920;">
               </div>
             </div>
           </div>
           <div class="table-wrap" style="margin-top:12px;">
-            <table class="data-table">
+            <table class="data-table manual-entry-table">
               <thead id="manualRankingHead"></thead>
               <tbody id="manualRankingBody"></tbody>
             </table>
@@ -738,6 +1071,103 @@
           <p class="hint">按不同导入表维护数据抓取规则。左侧为系统内的数据名称，右侧为导入表格内该名称实际的表头名称。</p>
           <div class="mapping-accordion" id="mappingSections"></div>
           <div class="msg" id="mappingMsg"></div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="report">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>周日报输出</h1>
+            <p>先按日期范围导出带实际数据的 Excel 模板，再把你编辑好的模板页导回页面预览。日报模板首次制作时，日期范围建议先选“单日”。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="report-toolbar">
+            <div class="field report-issue-field">
+              <label>期数</label>
+              <input class="input" id="reportIssueInput" type="text" placeholder="例如：第 1 期">
+            </div>
+            <div class="field date-picker-field" id="reportDatePickerField">
+              <label>日期范围</label>
+              <div class="date-input-wrap">
+                <button class="date-step-btn date-step-prev" id="reportDatePrev" type="button" title="向前" aria-label="向前">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+                <input class="input" type="text" id="reportDateInput" placeholder="YYYY-MM-DD">
+                <button class="date-step-btn date-step-next" id="reportDateNext" type="button" title="向后" aria-label="向后">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+                <button class="date-trigger" id="reportDateTrigger" type="button" title="选择日期">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+                    <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
+                    <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+                  </svg>
+                </button>
+              </div>
+              <input type="hidden" id="reportStartDate">
+              <input type="hidden" id="reportEndDate">
+              <div class="date-popover" id="reportDatePopover">
+                <div class="date-shortcuts">
+                  <button type="button" data-date-shortcut="yesterday">昨日</button>
+                  <button type="button" data-date-shortcut="7">近7日</button>
+                  <button type="button" data-date-shortcut="30">近30日</button>
+                  <button type="button" data-date-shortcut="today">自然日</button>
+                  <button type="button" data-date-shortcut="week">自然周</button>
+                  <button type="button" data-date-shortcut="month">自然月</button>
+                  <button type="button" data-date-shortcut="custom">自定义</button>
+                </div>
+                <div class="date-calendar">
+                  <div class="date-cal-head">
+                    <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
+                    <strong class="date-picker-month">2026-06</strong>
+                    <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
+                  </div>
+                  <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+                  <div class="date-grid"></div>
+                </div>
+              </div>
+            </div>
+            <div class="report-mode-switch">
+              <button class="mode-btn active" type="button" data-report-mode="daily">日报</button>
+              <button class="mode-btn" type="button" data-report-mode="period">周期报</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel report-daily-panel" style="margin-top:14px;">
+          <div class="panel-title">
+            <span>输出维度</span>
+          </div>
+          <p class="hint">勾选后导出模板会按维度生成对应标签页。日报按日期逐日输出，周期报按当前日期范围汇总输出；另外固定生成“竞品”和空白“模板”页。</p>
+          <div class="report-dim-list" id="reportDimensionList">
+            <label class="check-pill"><input type="checkbox" class="report-dim-check" value="mainSeries" checked>大系列</label>
+            <label class="check-pill"><input type="checkbox" class="report-dim-check" value="subSeries" checked>小系列</label>
+            <label class="check-pill"><input type="checkbox" class="report-dim-check" value="shortName">商品简称</label>
+            <label class="check-pill"><input type="checkbox" class="report-dim-check" value="sku">SKU</label>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px;">
+          <div class="panel-title">
+            <span id="reportOutputTitle">日报模板</span>
+            <div class="btn-row">
+              <button class="btn" id="exportReportTemplateBtn" type="button">导出模板</button>
+              <button class="btn" id="importReportTemplateBtn" type="button">导入模板</button>
+            </div>
+          </div>
+          <input class="ghost-file" type="file" id="reportTemplateInput" accept=".xlsx,.xls">
+          <div class="report-template-actions">
+            <span class="hint">导入修改后的 Excel 后，这里会优先展示“模板”标签页；没有公式缓存时，需要先在 Excel 中保存一次。</span>
+          </div>
+          <div class="report-output" id="reportOutput">
+            <div class="report-template-empty">还没有导入日报模板。请先导出模板，在 Excel 的“模板”页制作日报样式后再导入预览。</div>
+          </div>
+          <div class="msg" id="reportMsg"></div>
         </div>
       </section>
 
@@ -828,8 +1258,8 @@
       <section class="tool-page" id="db-analyzed">
         <div class="page-head">
           <div class="page-title">
-            <h1>已分析数据</h1>
-            <p>这里是原始表经过规则整理后的数据，会被看板和后续透视统计使用。</p>
+            <h1>商品明细数据</h1>
+            <p>这里展示商品明细表整理后的经营数据，并会被看板和后续透视统计使用。</p>
           </div>
         </div>
 
@@ -972,7 +1402,7 @@
           <div class="table-wrap">
             <table class="data-table">
               <thead id="analyzedDbHead"><tr><th>日期</th><th>维度（小系列）</th><th>销售数量</th><th>销售金额</th><th>访客/点击</th><th>站内花费</th><th>站外花费</th><th>排名</th></tr></thead>
-              <tbody id="analyzedDbBody"><tr><td class="empty-row" colspan="8">暂无已分析数据</td></tr></tbody>
+              <tbody id="analyzedDbBody"><tr><td class="empty-row" colspan="8">暂无商品明细数据</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -981,8 +1411,8 @@
       <section class="tool-page" id="ranking-raw">
         <div class="page-head">
           <div class="page-title">
-            <h1>&#27036;&#21333;&#21407;&#22987;&#25351;&#26631;</h1>
-            <p>&#36825;&#37324;&#25918;&#34892;&#19994;&#38144;&#21806;&#27036;&#21333;&#35299;&#26512;&#21518;&#30340;&#20013;&#38388;&#23618;&#65306;&#25490;&#21517;&#12289;&#37329;&#39069;&#21306;&#38388;&#12289;&#20214;&#25968;&#21306;&#38388;&#12289;&#35775;&#23458;&#21306;&#38388;&#31561;&#65292;&#21518;&#32493;&#20877;&#29992;&#20110;&#31454;&#21697;&#20272;&#31639;&#12290;</p>
+            <h1>商品榜单数据</h1>
+            <p>这里放行业商品榜单解析后的中间层：排名、金额区间、件数区间、访客区间等，后续再用于竞品估算。</p>
           </div>
         </div>
 
@@ -1064,23 +1494,97 @@
       <section class="tool-page" id="db-estimates">
         <div class="page-head">
           <div class="page-title">
-            <h1>竞品估算结果</h1>
-            <p>这里查看竞品经过估算法则收敛后的最终估算层。</p>
+            <h1>竞品估算数据</h1>
+            <p>这里查看重点竞品经过估算法则收敛后的估算层，后续会接入区间核对和反向修正。</p>
           </div>
         </div>
 
         <div class="panel">
-          <div class="panel-title">
-            <span>竞品估算数据库</span>
-            <div class="btn-row">
-              <button class="btn" id="refreshEstimatesDbBtn">刷新</button>
-              <button class="btn danger" id="clearEstimatesDbBtn">清表</button>
+          <div class="filter-strip">
+            <div class="filter-left">
+              <div class="field">
+                <label>产品</label>
+                <select class="select" id="estimateProductSelect"></select>
+              </div>
+            </div>
+            <div class="filter-left">
+              <div class="field date-picker-field" id="estimateDatePickerField">
+                <label>日期范围</label>
+                <div class="date-input-wrap">
+                  <button class="date-step-btn date-step-prev" id="estimateDatePrev" type="button" title="向前" aria-label="向前">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </button>
+                  <input class="input" type="text" id="estimateDateInput" placeholder="YYYY-MM-DD">
+                  <button class="date-step-btn date-step-next" id="estimateDateNext" type="button" title="向后" aria-label="向后">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </button>
+                  <button class="date-trigger" id="estimateDateTrigger" type="button" title="选择日期">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
+                      <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+                    </svg>
+                  </button>
+                </div>
+                <input type="hidden" id="estimateStartDate">
+                <input type="hidden" id="estimateEndDate">
+                <div class="date-popover" id="estimateDatePopover">
+                  <div class="date-shortcuts">
+                    <button type="button" data-date-shortcut="yesterday">昨日</button>
+                    <button type="button" data-date-shortcut="7">近7日</button>
+                    <button type="button" data-date-shortcut="30">近30日</button>
+                    <button type="button" data-date-shortcut="today">自然日</button>
+                    <button type="button" data-date-shortcut="week">自然周</button>
+                    <button type="button" data-date-shortcut="month">自然月</button>
+                    <button type="button" data-date-shortcut="custom">自定义</button>
+                  </div>
+                  <div class="date-calendar">
+                    <div class="date-cal-head">
+                      <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
+                      <strong class="date-picker-month">2026-06</strong>
+                      <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
+                    </div>
+                    <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+                    <div class="date-grid"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="filter-right">
+              <div class="filter-actions">
+                <button class="btn" id="importEstimatesBtn">导入</button>
+                <button class="btn" id="exportEstimatesBtn">导出</button>
+                <button class="btn" id="generateEstimatesBtn">生成估算</button>
+                <button class="btn" id="refreshEstimatesDbBtn">刷新</button>
+                <button class="btn danger" id="clearEstimatesDbBtn">清表</button>
+              </div>
             </div>
           </div>
+          <input class="ghost-file" type="file" id="estimateImportInput" accept=".xlsx,.xls">
+          <div class="msg" id="estimateImportMsg"></div>
+          <details class="import-rule-card estimate-template-card">
+            <summary>导入字段对照</summary>
+            <div class="rule-desc">竞品估算数据使用固定模板导入。每个标签页代表一个竞品，优先用标签页名称匹配 SKU；导入时会读取每个标签页。</div>
+            <div class="table-wrap compact-table-wrap">
+              <table class="data-table compact-table">
+                <thead><tr><th>系统内数据名称</th><th>模板字段名</th><th>说明</th></tr></thead>
+                <tbody>
+                  <tr><td>日期</td><td>成交日期</td><td>导入后按单日保存</td></tr>
+                  <tr><td>金额区间</td><td>金额区间 / 金额中值</td><td>区间会拆成下限和上限，中值用于展示</td></tr>
+                  <tr><td>件数区间</td><td>件数区间 / 件数中值</td><td>区间会拆成下限和上限，中值用于展示</td></tr>
+                  <tr><td>客单价区间</td><td>客单价区间 / 客单价中值</td><td>作为后续核算参考</td></tr>
+                  <tr><td>增长系数</td><td>金额增长系数 / 件数增长系数 / 客单价增长系数</td><td>支持正负区间</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
           <div class="table-wrap">
             <table class="data-table">
-              <thead><tr><th>周期</th><th>SKU</th><th>金额区间</th><th>件数区间</th><th>估算说明</th><th>来源</th><th>其他数据</th></tr></thead>
-              <tbody id="estimatesDbBody"><tr><td class="empty-row" colspan="7">暂无竞品估算结果</td></tr></tbody>
+              <thead><tr><th>日期</th><th>排名</th><th>金额</th><th>件数</th><th>金额区间</th><th>件数区间</th><th>备注</th></tr></thead>
+              <tbody id="estimatesDbBody"><tr><td class="empty-row" colspan="7">暂无竞品估算数据</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -1096,11 +1600,11 @@
         <div class="grid grid-2">
           <div class="panel">
             <div class="panel-title">站内投放花费</div>
-            <div class="note">预留：直接抓取并按 SKU / 商品简称匹配求和，写入已分析数据的站内花费字段。</div>
+            <div class="note">预留：直接抓取并按 SKU / 商品简称匹配求和，写入商品明细数据的站内花费字段。</div>
           </div>
           <div class="panel">
             <div class="panel-title">站外 CPS 花费</div>
-            <div class="note">预留：从订单或 CPS 明细中过 SKU 替换、归因和求和，写入已分析数据的站外花费字段。</div>
+            <div class="note">预留：从订单或 CPS 明细中过 SKU 替换、归因和求和，写入商品明细数据的站外花费字段。</div>
           </div>
         </div>
       </section>
@@ -1267,7 +1771,16 @@
   var rankingShowTrackedCompetitors = localStorage.getItem('jdRankingShowTrackedCompetitors') !== 'false';
   var analyzedAttributeColumns = JSON.parse(localStorage.getItem('jdAnalyzedAttributeColumns') || '[]');
   var manualRankingExtraFields = JSON.parse(localStorage.getItem('jdManualRankingExtraFields') || '[]');
+  var manualRankingSelectedFields = JSON.parse(localStorage.getItem('jdManualRankingSelectedFields') || 'null');
   var manualRankingTrackedOnly = localStorage.getItem('jdManualRankingTrackedOnly') !== 'false';
+  var reportMode = localStorage.getItem('jdReportMode') || 'daily';
+  var reportOutputDimensions = JSON.parse(localStorage.getItem('jdReportOutputDimensions') || 'null') || ['mainSeries', 'subSeries'];
+  var reportTemplateWorkbook = null;
+  var reportTemplatePreviewWorkbook = null;
+  var reportTemplateActiveSheet = '';
+  var estimateSavedRange = JSON.parse(localStorage.getItem('jdEstimateDateRange') || 'null');
+  var estimateAutoGenerating = false;
+  var estimateAutoAttemptedKeys = {};
   var enableOrderDimension = localStorage.getItem('jdEnableOrderDimension') === 'true';
   var cleanupSelectedSnapshotIds = new Set();
   var skuColumnLabels = JSON.parse(localStorage.getItem('jdSkuColumnLabels') || '{}');
@@ -1306,6 +1819,13 @@
   }
   function ymd(date) {
     return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+  }
+  function canonicalYmd(value) {
+    if (value instanceof Date && !isNaN(value.getTime())) return ymd(value);
+    var text = String(value == null ? '' : value).trim();
+    var match = text.match(/^(20\d{2})-(\d{1,2})-(\d{1,2})$/);
+    if (match) return normalizeDateValue(match[1], match[2], match[3]);
+    return normalizeImportedDate(value);
   }
   function addDays(date, days) {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
@@ -1426,8 +1946,9 @@
   var datePickers = {};
 
   function normalizedRange(start, end) {
+    start = canonicalYmd(start) || start;
+    end = canonicalYmd(end || start) || end || start;
     if (!start) return null;
-    end = end || start;
     return start <= end ? { start: start, end: end } : { start: end, end: start };
   }
 
@@ -1453,8 +1974,8 @@
       start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
       end = start;
     } else if (kind === '7' || kind === '30') {
-      end = now;
-      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - Number(kind) + 1);
+      end = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+      start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - Number(kind) + 1);
     } else if (kind === 'day' || kind === 'today') {
       start = now;
       end = now;
@@ -1569,8 +2090,9 @@
 
     function setRange(start, end, options) {
       options = options || {};
-      startEl.value = start;
-      endEl.value = end || start;
+      var normalized = normalizedRange(start, end || start);
+      startEl.value = normalized ? normalized.start : start;
+      endEl.value = normalized ? normalized.end : (end || start);
       sync();
       state.previewRange = null;
       state.suppressSelectedRange = false;
@@ -2337,7 +2859,11 @@
     var colgroup = document.createElement('colgroup');
     ths.forEach(function(th, index) {
       var key = th.getAttribute('data-col-key') || ('col' + index);
-      var width = Math.max(58, Number(genericColumnWidths[scope + ':' + key] || Math.round(th.getBoundingClientRect().width) || 116));
+      var storedWidth = Number(genericColumnWidths[scope + ':' + key] || 0);
+      var measuredWidth = Math.round(th.getBoundingClientRect().width) || 116;
+      var defaultWidth = scope === 'manualRanking' ? (index === 0 ? 190 : 220) : measuredWidth;
+      var width = Math.max(58, storedWidth || defaultWidth);
+      if (scope === 'manualRanking') width = Math.min(width, index === 0 ? 220 : 260);
       total += width;
       var col = document.createElement('col');
       col.style.width = width + 'px';
@@ -2355,7 +2881,6 @@
 
   function enhanceAllResizableTables() {
     [
-      ['importPreviewBody', 'importPreview'],
       ['manualRankingBody', 'manualRanking'],
       ['snapshotBody', 'snapshotRecords'],
       ['skuDbBody', 'skuDatabase'],
@@ -2827,13 +3352,17 @@
   var DEFAULT_MANUAL_RANKING_FIELDS = ['amountGrowth', 'qtyGrowth'];
 
   function visibleManualRankingFields() {
-    return DEFAULT_MANUAL_RANKING_FIELDS.concat(manualRankingExtraFields).filter(function(key, index, arr) {
+    if (!Array.isArray(manualRankingSelectedFields)) {
+      manualRankingSelectedFields = DEFAULT_MANUAL_RANKING_FIELDS.concat(manualRankingExtraFields || []);
+      saveManualRankingSelectedFields();
+    }
+    return manualRankingSelectedFields.filter(function(key, index, arr) {
       return MANUAL_RANKING_FIELDS[key] && arr.indexOf(key) === index && key !== 'qtyRange';
     });
   }
 
-  function saveManualRankingExtraFields() {
-    localStorage.setItem('jdManualRankingExtraFields', JSON.stringify(manualRankingExtraFields));
+  function saveManualRankingSelectedFields() {
+    localStorage.setItem('jdManualRankingSelectedFields', JSON.stringify(manualRankingSelectedFields || []));
   }
 
   function manualGrowthOptionLabel(start) {
@@ -2846,17 +3375,12 @@
     return list;
   }
 
-  function ensureManualGrowthDatalist() {
-    var list = $('manualGrowthOptions');
-    if (list) return list;
-    list = document.createElement('datalist');
-    list.id = 'manualGrowthOptions';
-    document.body.appendChild(list);
-    return list;
+  function manualGrowthStart(option) {
+    var match = String(option || '').match(/^-?\d+/);
+    return match ? Number(match[0]) : 0;
   }
 
-  function updateManualGrowthOptions(value) {
-    var list = ensureManualGrowthDatalist();
+  function manualGrowthOptionsFor(value) {
     var text = String(value || '').trim().replace(/\s/g, '').replace(/%/g, '');
     var options = allManualGrowthOptions();
     if (text === '-') {
@@ -2872,9 +3396,40 @@
         });
       }
     }
+    if (!text) return options;
+    options.sort(function(a, b) {
+      var aStart = manualGrowthStart(a);
+      var bStart = manualGrowthStart(b);
+      if (text.charAt(0) === '-' || (aStart < 0 && bStart < 0)) return bStart - aStart;
+      return aStart - bStart;
+    });
+    return options;
+  }
+
+  function ensureManualGrowthDatalist() {
+    var list = $('manualGrowthOptions');
+    if (list) return list;
+    list = document.createElement('datalist');
+    list.id = 'manualGrowthOptions';
+    document.body.appendChild(list);
+    return list;
+  }
+
+  function updateManualGrowthOptions(value) {
+    var list = ensureManualGrowthDatalist();
+    var options = manualGrowthOptionsFor(value);
     list.innerHTML = options.slice(0, 24).map(function(option) {
       return '<option value="' + esc(option) + '"></option>';
     }).join('');
+  }
+
+  function getManualRankingDate() {
+    var hiddenDate = $('manualRankingStartDate') ? $('manualRankingStartDate').value : '';
+    if (hiddenDate) return hiddenDate;
+    var input = $('manualRankingDate');
+    if (!input) return yesterday();
+    var dates = extractDatesFromText(input.value || '');
+    return dates[0] || input.value || yesterday();
   }
 
   async function renderManualRankingEntry() {
@@ -2884,18 +3439,18 @@
     if ($('manualRankingTrackedOnlyCheck')) $('manualRankingTrackedOnlyCheck').checked = manualRankingTrackedOnly;
     $('manualRankingHead').innerHTML = '<tr><th>\u7ef4\u5ea6\uff08\u5546\u54c1\u7b80\u79f0\uff09</th>' +
       fields.map(function(key) { return '<th>' + esc(MANUAL_RANKING_FIELDS[key].label) + '</th>'; }).join('') +
-      '<th>\u64cd\u4f5c</th></tr>';
+      '</tr>';
     var skus = await getAll('sku_profiles');
     var records = await getAll('ranking_raw_metrics');
-    var date = $('manualRankingDate').value || yesterday();
+    var date = getManualRankingDate();
     var competitors = skus.filter(function(row) {
       return row.itemType === 'competitor' && (row.shortName || row.sku) && (!manualRankingTrackedOnly || row.isTrackedCompetitor);
     }).sort(function(a, b) {
       return String(a.shortName || a.sku || '').localeCompare(String(b.shortName || b.sku || ''), 'zh-Hans-CN', { numeric: true });
     });
     if (!competitors.length) {
-      $('manualRankingBody').innerHTML = '<tr><td class="empty-row" colspan="' + (fields.length + 2) + '">\u6682\u65e0\u53ef\u5f55\u5165\u7684\u7ade\u54c1</td></tr>';
-      renderManualRankingFieldSelect();
+      $('manualRankingBody').innerHTML = '<tr><td class="empty-row" colspan="' + (fields.length + 1) + '">\u6682\u65e0\u53ef\u5f55\u5165\u7684\u7ade\u54c1</td></tr>';
+      renderManualRankingFieldPanel();
       enhanceAllResizableTables();
       return;
     }
@@ -2908,31 +3463,30 @@
         '<td>' + esc(profile.shortName || sku) + '</td>' +
         fields.map(function(key) {
           var config = MANUAL_RANKING_FIELDS[key];
-          var remove = DEFAULT_MANUAL_RANKING_FIELDS.indexOf(key) === -1
-            ? '<button class="dim-remove-btn" type="button" data-remove-manual-ranking-field="' + esc(key) + '" title="\u79fb\u9664\u6b64\u6307\u6807" aria-label="\u79fb\u9664\u6b64\u6307\u6807">&times;</button>'
-            : '';
           if (key === 'qtyRange') return '<td>' + esc(rankingRangeText(record.qtyMin, record.qtyMax, 0)) + '</td>';
-          return '<td><div style="display:flex;align-items:center;gap:7px;"><input class="input manual-ranking-field" data-manual-ranking-field="' + esc(key) + '" list="manualGrowthOptions" value="' + esc(record[config.rawKey] || '') + '" placeholder="例如：0%~2%">' + remove + '</div></td>';
-        }).join('') +
-        '<td><button class="btn save-manual-ranking-row" type="button">\u4fdd\u5b58</button></td></tr>';
+          return '<td><div class="manual-entry-cell"><input class="manual-entry-input manual-ranking-field" data-manual-ranking-field="' + esc(key) + '" list="manualGrowthOptions" autocomplete="off" value="' + esc(record[config.rawKey] || '') + '" placeholder="\u4f8b\u5982\uff1a0%~2%"></div></td>';
+        }).join('') + '</tr>';
     }).join('');
-    renderManualRankingFieldSelect();
+    $('manualRankingBody').querySelectorAll('tr[data-manual-ranking-sku]').forEach(function(tr) {
+      tr.dataset.manualSavedSignature = manualRankingRowValueSignature(tr);
+    });
+    renderManualRankingFieldPanel();
     enhanceAllResizableTables();
   }
 
-  function renderManualRankingFieldSelect() {
-    var select = $('manualRankingFieldSelect');
-    if (!select) return;
+  function renderManualRankingFieldPanel() {
+    var panel = $('manualRankingFieldPanel');
+    var toggle = $('manualRankingFieldToggle');
+    if (!panel || !toggle) return;
     var visible = visibleManualRankingFields();
-    var available = Object.keys(MANUAL_RANKING_FIELDS).filter(function(key) {
-      return visible.indexOf(key) === -1 && !MANUAL_RANKING_FIELDS[key].readonly && key !== 'qtyRange';
+    var fields = Object.keys(MANUAL_RANKING_FIELDS).filter(function(key) {
+      return !MANUAL_RANKING_FIELDS[key].readonly && key !== 'qtyRange';
     });
-    select.innerHTML = '<option value="">\u9009\u62e9\u6307\u6807</option>' + available.map(function(key) {
-      return '<option value="' + esc(key) + '">' + esc(MANUAL_RANKING_FIELDS[key].label) + '</option>';
+    panel.innerHTML = fields.map(function(key) {
+      var checked = visible.indexOf(key) !== -1 ? ' checked' : '';
+      return '<label class="manual-field-option"><input type="checkbox" data-manual-field-key="' + esc(key) + '"' + checked + '>' + esc(MANUAL_RANKING_FIELDS[key].label) + '</label>';
     }).join('');
-    select.disabled = !available.length;
-    select.hidden = false;
-    select.value = '';
+    toggle.textContent = visible.length ? '\u5df2\u9009 ' + visible.length + ' \u9879' : '\u9009\u62e9\u6307\u6807';
   }
 
   function setManualRankingMsg(text, isErr) {
@@ -2942,14 +3496,30 @@
   }
 
   function shiftManualRankingDate(days) {
-    var current = dateFromYmd($('manualRankingDate').value || yesterday()) || dateFromYmd(yesterday());
+    var current = dateFromYmd(getManualRankingDate()) || dateFromYmd(yesterday());
     if (!current) return;
-    $('manualRankingDate').value = ymd(addDays(current, days));
+    var nextDate = ymd(addDays(current, days));
+    if (datePickers.manualRanking) datePickers.manualRanking.setRange(nextDate, nextDate);
+    else $('manualRankingDate').value = nextDate;
     renderManualRankingEntry();
   }
 
-  async function saveManualRankingEntry(tr) {
-    var date = $('manualRankingDate').value || yesterday();
+  function manualRankingRowValueSignature(tr) {
+    return Array.from((tr || document).querySelectorAll('.manual-ranking-field')).map(function(input) {
+      return input.getAttribute('data-manual-ranking-field') + '=' + String(input.value || '').trim();
+    }).join('|');
+  }
+
+  async function saveManualRankingRowIfChanged(tr) {
+    if (!tr || !tr.getAttribute('data-manual-ranking-sku')) return;
+    var signature = manualRankingRowValueSignature(tr);
+    if (tr.dataset.manualSavedSignature === signature) return;
+    tr.dataset.manualSavedSignature = signature;
+    await saveManualRankingEntry(tr, true);
+  }
+
+  async function saveManualRankingEntry(tr, silent) {
+    var date = canonicalYmd(getManualRankingDate()) || getManualRankingDate();
     var sku = normalizeSkuValue(tr && tr.getAttribute('data-manual-ranking-sku'));
     if (!date) {
       setManualRankingMsg('\u8bf7\u5148\u586b\u5199\u26085\u671f\u3002', true);
@@ -2965,7 +3535,9 @@
     }
     var rows = await getAll('ranking_raw_metrics');
     var row = rows.find(function(item) {
-      return normalizeSkuValue(item.sku) === sku && item.startDate === date && (item.endDate || item.startDate) === date;
+      var itemStart = canonicalYmd(item.startDate) || item.startDate || '';
+      var itemEnd = canonicalYmd(item.endDate || item.startDate) || item.endDate || itemStart;
+      return normalizeSkuValue(item.sku) === sku && itemStart === date && itemEnd === date;
     });
     if (!row) {
       row = {
@@ -2992,7 +3564,7 @@
       }
     });
     await put('ranking_raw_metrics', row);
-    setManualRankingMsg('\u5df2\u4fdd\u5b58\uff1a' + (profile.shortName || sku) + ' / ' + date);
+    if (!silent) setManualRankingMsg('\u5df2\u4fdd\u5b58\uff1a' + (profile.shortName || sku) + ' / ' + date);
     await renderRankingRaw();
   }
 
@@ -3056,6 +3628,7 @@
   async function renderAnalyzedDb() {
     var rows = await getAll('analyzed_metrics');
     var skuRows = await getAll('sku_profiles');
+    var rankingRows = await getAll('ranking_raw_metrics');
     var skuMap = {};
     skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
     var start = $('analyzedStartDate').value;
@@ -3069,13 +3642,14 @@
     });
     rows = filterMetricRowsByDateRange(rows, { start: start, end: end });
     if (!rows.length) {
-      $('analyzedDbBody').innerHTML = '<tr><td class="empty-row" colspan="' + (8 + getSelectedAnalyzedAttributes().length) + '">暂无已分析数据</td></tr>';
+      $('analyzedDbBody').innerHTML = '<tr><td class="empty-row" colspan="' + (8 + getSelectedAnalyzedAttributes().length) + '">暂无商品明细数据</td></tr>';
       enhanceAllResizableTables();
       return;
     }
     var dims = getSelectedAnalyzedDims();
     renderAnalyzedDbHead();
     var groupedRows = buildAnalyzedGroups(rows, skuRows, dims);
+    applyRankingToAnalyzedGroups(groupedRows, rankingRows);
     var attrs = getSelectedAnalyzedAttributes();
     $('analyzedDbBody').innerHTML = groupedRows.slice(0, 200).map(function(row) {
       var attrCells = attrs.map(function(key) {
@@ -3094,26 +3668,537 @@
     enhanceAllResizableTables();
   }
 
+  function estimateRange(row, minKeys, maxKeys, rangeKeys) {
+    function firstNumber(keys) {
+      for (var i = 0; i < keys.length; i++) {
+        var value = row[keys[i]];
+        if (value !== '' && value != null && isFinite(Number(value))) return Number(value);
+      }
+      return null;
+    }
+    var min = firstNumber(minKeys);
+    var max = firstNumber(maxKeys);
+    if ((min == null || max == null) && rangeKeys) {
+      for (var j = 0; j < rangeKeys.length; j++) {
+        if (!row[rangeKeys[j]]) continue;
+        var parsed = parseRangeMetric(row[rangeKeys[j]]);
+        if (min == null && parsed.min !== '' && parsed.min != null) min = Number(parsed.min);
+        if (max == null && parsed.max !== '' && parsed.max != null) max = Number(parsed.max);
+        if (min != null || max != null) break;
+      }
+    }
+    if (min == null && max != null) min = max;
+    if (max == null && min != null) max = min;
+    return { min: min, max: max };
+  }
+
+  function formatRangeMidpoint(range, decimals) {
+    if (!range || range.min == null || range.max == null) return '-';
+    return formatMetric((Number(range.min) + Number(range.max)) / 2, decimals);
+  }
+
+  function formatEstimateRange(range, decimals) {
+    if (!range || range.min == null || range.max == null) return '-';
+    return rankingRangeText(range.min, range.max, decimals);
+  }
+
+  function resolveEstimateSheetSku(sheetName, skuRows) {
+    var normalizedName = normalizeSkuValue(sheetName);
+    var direct = skuRows.find(function(row) {
+      return row.itemType === 'competitor' && normalizeSkuValue(row.sku) === normalizedName;
+    });
+    if (direct) return normalizeSkuValue(direct.sku);
+    var byName = skuRows.find(function(row) {
+      return row.itemType === 'competitor' && String(row.shortName || '').trim() === String(sheetName || '').trim();
+    });
+    return byName ? normalizeSkuValue(byName.sku) : normalizedName;
+  }
+
+  function estimateColumnValue(row, names) {
+    for (var i = 0; i < names.length; i++) {
+      if (Object.prototype.hasOwnProperty.call(row, names[i])) return row[names[i]];
+    }
+    return '';
+  }
+
+  function parseEstimateRatioRange(value) {
+    var parsed = parseRangeMetric(value);
+    return { raw: parsed.raw, min: parsed.min, max: parsed.max };
+  }
+
+  async function importEstimateFile(file) {
+    var sheets = await parseEstimateWorkbook(file);
+    var skuRows = await getAll('sku_profiles');
+    var parsed = [];
+    var skipped = 0;
+    sheets.forEach(function(sheet) {
+      var sku = resolveEstimateSheetSku(sheet.name, skuRows);
+      if (!sku) return;
+      (sheet.rows || []).forEach(function(row) {
+        var date = normalizeImportedDate(estimateColumnValue(row, ['成交日期', '日期', '时间']));
+        if (!date) {
+          skipped++;
+          return;
+        }
+        var amount = parseRangeMetric(estimateColumnValue(row, ['金额区间', '成交金额区间', '金额']));
+        var qty = parseRangeMetric(estimateColumnValue(row, ['件数区间', '成交件数区间', '件数']));
+        var customerPrice = parseRangeMetric(estimateColumnValue(row, ['客单价区间', '客单价']));
+        var amountGrowth = parseEstimateRatioRange(estimateColumnValue(row, ['金额增长系数', '金额增长率']));
+        var qtyGrowth = parseEstimateRatioRange(estimateColumnValue(row, ['件数增长系数', '件数增长率', '成交件数增长率']));
+        var customerPriceGrowth = parseEstimateRatioRange(estimateColumnValue(row, ['客单价增长系数', '客单价增长率']));
+        parsed.push({
+          periodType: 'day',
+          startDate: date,
+          endDate: date,
+          sku: sku,
+          estimatedAmountMin: amount.min,
+          estimatedAmountMax: amount.max,
+          estimatedQtyMin: qty.min,
+          estimatedQtyMax: qty.max,
+          estimatedCustomerPriceMin: customerPrice.min,
+          estimatedCustomerPriceMax: customerPrice.max,
+          amountRange: amount.raw,
+          qtyRange: qty.raw,
+          customerPriceRange: customerPrice.raw,
+          amountGrowthMin: amountGrowth.min,
+          amountGrowthMax: amountGrowth.max,
+          qtyGrowthMin: qtyGrowth.min,
+          qtyGrowthMax: qtyGrowth.max,
+          customerPriceGrowthMin: customerPriceGrowth.min,
+          customerPriceGrowthMax: customerPriceGrowth.max,
+          amountMid: parseMetricNumber(estimateColumnValue(row, ['金额中值', '成交金额中值'])),
+          qtyMid: parseMetricNumber(estimateColumnValue(row, ['件数中值', '成交件数中值'])),
+          customerPriceMid: parseMetricNumber(estimateColumnValue(row, ['客单价中值'])),
+          noteText: estimateColumnValue(row, ['备注', '修正说明']),
+          estimateNotes: String(estimateColumnValue(row, ['备注', '修正说明']) || '').split(/[;；]/).map(function(item) { return item.trim(); }).filter(Boolean),
+          fileName: file.name,
+          sourceSheet: sheet.name,
+          importedAt: new Date().toISOString()
+        });
+      });
+    });
+    var existing = await getAll('competitor_estimates');
+    var replaceKeys = {};
+    var dates = [];
+    var skus = [];
+    parsed.forEach(function(row) {
+      replaceKeys[[row.sku, row.startDate].join('|')] = true;
+      if (row.startDate) dates.push(row.startDate);
+      if (row.sku && skus.indexOf(row.sku) === -1) skus.push(row.sku);
+    });
+    var replaced = 0;
+    for (var i = 0; i < existing.length; i++) {
+      var key = [normalizeSkuValue(existing[i].sku), existing[i].startDate].join('|');
+      if (replaceKeys[key]) {
+        await remove('competitor_estimates', existing[i].id);
+        replaced++;
+      }
+    }
+    for (var j = 0; j < parsed.length; j++) await put('competitor_estimates', parsed[j]);
+    dates.sort();
+    return { saved: parsed.length, skipped: skipped, replaced: replaced, startDate: dates[0] || '', endDate: dates[dates.length - 1] || '', skus: skus };
+  }
+
+  async function exportEstimateFile() {
+    if (!window.XLSX) {
+      setEstimateMsg('表格导出组件还没加载完成，请稍后重试。', true);
+      return;
+    }
+    var rows = await getAll('competitor_estimates');
+    var skuRows = await getAll('sku_profiles');
+    var range = datePickers.estimate ? datePickers.estimate.getRange() : normalizedRange($('estimateStartDate').value, $('estimateEndDate').value || $('estimateStartDate').value);
+    rows = filterMetricRowsByDateRange(rows, range);
+    var skuMap = {};
+    skuRows.forEach(function(row) { if (row.sku) skuMap[normalizeSkuValue(row.sku)] = row; });
+    var grouped = {};
+    rows.forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      if (!sku) return;
+      if (!grouped[sku]) grouped[sku] = [];
+      grouped[sku].push(row);
+    });
+    var wb = XLSX.utils.book_new();
+    var headers = ['成交日期', '金额区间', '件数区间', '客单价区间', '金额增长系数', '件数增长系数', '客单价增长系数', '金额中值', '件数中值', '客单价中值', '备注'];
+    Object.keys(grouped).sort(function(a, b) {
+      var an = (skuMap[a] || {}).shortName || a;
+      var bn = (skuMap[b] || {}).shortName || b;
+      return String(an).localeCompare(String(bn), 'zh-Hans-CN', { numeric: true });
+    }).forEach(function(sku) {
+      var aoa = [headers].concat(grouped[sku].sort(function(a, b) {
+        return String(a.startDate || '').localeCompare(String(b.startDate || ''));
+      }).map(function(row) {
+        var amount = estimateRange(row, ['estimatedAmountMin', 'amountMin'], ['estimatedAmountMax', 'amountMax'], ['amountRange']);
+        var qty = estimateRange(row, ['estimatedQtyMin', 'qtyMin'], ['estimatedQtyMax', 'qtyMax'], ['qtyRange']);
+        var customerPrice = estimateRange(row, ['estimatedCustomerPriceMin', 'customerPriceMin'], ['estimatedCustomerPriceMax', 'customerPriceMax'], ['customerPriceRange']);
+        return [
+          row.startDate || '',
+          formatEstimateRange(amount, 2),
+          formatEstimateRange(qty, 0),
+          formatEstimateRange(customerPrice, 2),
+          formatEstimateRange({ min: row.amountGrowthMin, max: row.amountGrowthMax }, 2),
+          formatEstimateRange({ min: row.qtyGrowthMin, max: row.qtyGrowthMax }, 2),
+          formatEstimateRange({ min: row.customerPriceGrowthMin, max: row.customerPriceGrowthMax }, 2),
+          row.amountMid || formatRangeMidpoint(amount, 2),
+          row.qtyMid || formatRangeMidpoint(qty, 0),
+          row.customerPriceMid || formatRangeMidpoint(customerPrice, 2),
+          row.noteText || (Array.isArray(row.estimateNotes) ? row.estimateNotes.join('；') : '')
+        ];
+      }));
+      var ws = XLSX.utils.aoa_to_sheet(aoa);
+      ws['!cols'] = headers.map(function(label) { return { wch: Math.max(12, label.length + 6) }; });
+      XLSX.utils.book_append_sheet(wb, ws, sku.slice(0, 31));
+    });
+    if (!wb.SheetNames.length) {
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([headers]), '竞品估算模板');
+    }
+    XLSX.writeFile(wb, '竞品估算数据_' + (range.start || today()) + '_' + (range.end || range.start || today()) + '.xlsx');
+  }
+
+  function setEstimateMsg(text, isErr) {
+    if (!$('estimateImportMsg')) return;
+    $('estimateImportMsg').textContent = text || '';
+    $('estimateImportMsg').className = 'msg ' + (isErr ? 'err' : 'ok');
+  }
+
+  function estimateDateKey(sku, date) {
+    return normalizeSkuValue(sku) + '|' + date;
+  }
+
+  function estimateMetricConfigs() {
+    return [
+      {
+        key: 'amount',
+        label: '金额',
+        minKey: 'estimatedAmountMin',
+        maxKey: 'estimatedAmountMax',
+        rangeKey: 'amountRange',
+        rankMinKey: 'amountMin',
+        rankMaxKey: 'amountMax',
+        growthRawKey: 'amountGrowthRateRaw',
+        growthValueKey: 'amountGrowthRate'
+      },
+      {
+        key: 'qty',
+        label: '件数',
+        minKey: 'estimatedQtyMin',
+        maxKey: 'estimatedQtyMax',
+        rangeKey: 'qtyRange',
+        rankMinKey: 'qtyMin',
+        rankMaxKey: 'qtyMax',
+        growthRawKey: 'qtyGrowthRateRaw',
+        growthValueKey: 'qtyGrowthRate'
+      }
+    ];
+  }
+
+  function numericRange(min, max) {
+    min = min === '' || min == null ? null : Number(min);
+    max = max === '' || max == null ? null : Number(max);
+    if (min == null && max == null) return null;
+    if (min == null) min = max;
+    if (max == null) max = min;
+    if (!isFinite(min) || !isFinite(max)) return null;
+    if (min > max) {
+      var tmp = min;
+      min = max;
+      max = tmp;
+    }
+    return { min: min, max: max };
+  }
+
+  function metricRangeFromEstimate(row, config) {
+    return numericRange(row && row[config.minKey], row && row[config.maxKey]);
+  }
+
+  function metricRangeFromRanking(row, config) {
+    return numericRange(row && row[config.rankMinKey], row && row[config.rankMaxKey]);
+  }
+
+  function growthCoefficientRange(row, config) {
+    if (!row) return null;
+    var parsed = row[config.growthRawKey] ? parseRangeMetric(row[config.growthRawKey]) : null;
+    var growth = parsed && (parsed.min !== '' || parsed.max !== '')
+      ? numericRange(parsed.min, parsed.max)
+      : numericRange(row[config.growthValueKey], row[config.growthValueKey]);
+    if (!growth) return null;
+    return numericRange(1 + Number(growth.min), 1 + Number(growth.max));
+  }
+
+  function intersectRange(a, b) {
+    if (!a || !b) return null;
+    var min = Math.max(Number(a.min), Number(b.min));
+    var max = Math.min(Number(a.max), Number(b.max));
+    if (min > max) return null;
+    return { min: min, max: max };
+  }
+
+  function rangesDiffer(a, b) {
+    if (!a || !b) return true;
+    return Math.abs(Number(a.min) - Number(b.min)) > 0.000001 || Math.abs(Number(a.max) - Number(b.max)) > 0.000001;
+  }
+
+  function addEstimateNote(row, text) {
+    if (!row || !text) return;
+    var notes = Array.isArray(row.estimateNotes) ? row.estimateNotes.slice() : [];
+    if (notes.indexOf(text) === -1) notes.push(text);
+    row.estimateNotes = notes;
+    row.noteText = notes.join('；');
+  }
+
+  function setEstimateMetricRange(row, config, range) {
+    row[config.minKey] = range.min;
+    row[config.maxKey] = range.max;
+    row[config.rangeKey] = rankingRangeText(range.min, range.max, config.key === 'qty' ? 0 : 2);
+  }
+
+  function predictedRangeFromPrevious(prevRange, coeffRange) {
+    if (!prevRange || !coeffRange) return null;
+    return numericRange(Number(prevRange.min) * Number(coeffRange.min), Number(prevRange.max) * Number(coeffRange.max));
+  }
+
+  function previousAllowedRangeFromQuery(queryRange, coeffRange) {
+    if (!queryRange || !coeffRange || !Number(coeffRange.min) || !Number(coeffRange.max)) return null;
+    return numericRange(Number(queryRange.min) / Number(coeffRange.max), Number(queryRange.max) / Number(coeffRange.min));
+  }
+
+  function buildEstimateRowMaps(estimates, rankings) {
+    var estimateMap = {};
+    var rankingMap = {};
+    (estimates || []).forEach(function(row) {
+      if (!row.sku || !row.startDate) return;
+      var date = canonicalYmd(row.startDate) || row.startDate;
+      estimateMap[estimateDateKey(row.sku, date)] = row;
+    });
+    (rankings || []).forEach(function(row) {
+      if (!row.sku || !row.startDate) return;
+      datesInRange(row.startDate, row.endDate || row.startDate).forEach(function(date) {
+        rankingMap[estimateDateKey(row.sku, date)] = row;
+      });
+    });
+    return { estimateMap: estimateMap, rankingMap: rankingMap };
+  }
+
+  function refinePreviousEstimate(sku, date, config, maps, touched, depth) {
+    if (depth > 40) return;
+    var currentRanking = maps.rankingMap[estimateDateKey(sku, date)];
+    var prevDate = ymd(addDays(dateFromYmd(date), -1));
+    var prevRow = maps.estimateMap[estimateDateKey(sku, prevDate)];
+    if (!currentRanking || !prevRow) return;
+    var coeff = growthCoefficientRange(currentRanking, config);
+    var query = metricRangeFromRanking(currentRanking, config);
+    var prev = metricRangeFromEstimate(prevRow, config);
+    var allowed = previousAllowedRangeFromQuery(query, coeff);
+    if (!prev || !allowed) return;
+    var refined = intersectRange(prev, allowed);
+    if (!refined || !rangesDiffer(prev, refined)) return;
+    var oldMin = prev.min;
+    var oldMax = prev.max;
+    setEstimateMetricRange(prevRow, config, refined);
+    if (refined.min > oldMin) addEstimateNote(prevRow, config.label + '下限由后日反向修正得来');
+    if (refined.max < oldMax) addEstimateNote(prevRow, config.label + '上限由后日反向修正得来');
+    prevRow.updatedAt = new Date().toISOString();
+    touched[estimateDateKey(sku, prevDate)] = prevRow;
+    refinePreviousEstimate(sku, prevDate, config, maps, touched, depth + 1);
+  }
+
+  function generateEstimateForDate(sku, date, config, maps, touched) {
+    var ranking = maps.rankingMap[estimateDateKey(sku, date)];
+    var prevDate = ymd(addDays(dateFromYmd(date), -1));
+    var prevRow = maps.estimateMap[estimateDateKey(sku, prevDate)];
+    if (!ranking || !prevRow) return null;
+    var prev = metricRangeFromEstimate(prevRow, config);
+    var coeff = growthCoefficientRange(ranking, config);
+    var query = metricRangeFromRanking(ranking, config);
+    var predicted = predictedRangeFromPrevious(prev, coeff);
+    var finalRange = intersectRange(predicted, query);
+    if (!prev || !coeff || !query || !predicted || !finalRange) return null;
+    refinePreviousEstimate(sku, date, config, maps, touched, 0);
+    prevRow = maps.estimateMap[estimateDateKey(sku, prevDate)] || prevRow;
+    prev = metricRangeFromEstimate(prevRow, config);
+    predicted = predictedRangeFromPrevious(prev, coeff);
+    finalRange = intersectRange(predicted, query);
+    if (!finalRange) return null;
+    var row = maps.estimateMap[estimateDateKey(sku, date)];
+    if (!row) {
+      row = {
+        periodType: 'day',
+        startDate: date,
+        endDate: date,
+        sku: sku,
+        generatedBy: 'estimate_algorithm',
+        importedAt: new Date().toISOString()
+      };
+      maps.estimateMap[estimateDateKey(sku, date)] = row;
+    }
+    setEstimateMetricRange(row, config, finalRange);
+    if (Math.abs(finalRange.min - query.min) < 0.000001) addEstimateNote(row, config.label + '下限由榜单交集收敛');
+    if (Math.abs(finalRange.max - query.max) < 0.000001) addEstimateNote(row, config.label + '上限由榜单交集收敛');
+    row.predictedRanges = row.predictedRanges || {};
+    row.queryRanges = row.queryRanges || {};
+    row.predictedRanges[config.key] = predicted;
+    row.queryRanges[config.key] = query;
+    row.rank = row.rank || ranking.rank || '';
+    row.updatedAt = new Date().toISOString();
+    touched[estimateDateKey(sku, date)] = row;
+    return row;
+  }
+
+  async function generateCompetitorEstimates() {
+    var range = datePickers.estimate ? datePickers.estimate.getRange() : normalizedRange($('estimateStartDate').value, $('estimateEndDate').value || $('estimateStartDate').value);
+    var dates = datesInRange(range.start, range.end || range.start);
+    var estimates = await getAll('competitor_estimates');
+    var rankings = await getAll('ranking_raw_metrics');
+    var skuRows = await getAll('sku_profiles');
+    var trackedSkus = skuRows.filter(function(row) {
+      return row.itemType === 'competitor' && row.isTrackedCompetitor && normalizeSkuValue(row.sku);
+    }).map(function(row) { return normalizeSkuValue(row.sku); });
+    var rankingSkus = rankings.map(function(row) { return normalizeSkuValue(row.sku); }).filter(Boolean);
+    var skus = Array.from(new Set(trackedSkus.concat(rankingSkus)));
+    var maps = buildEstimateRowMaps(estimates, rankings);
+    var touched = {};
+    dates.forEach(function(date) {
+      skus.forEach(function(sku) {
+        estimateMetricConfigs().forEach(function(config) {
+          generateEstimateForDate(sku, date, config, maps, touched);
+        });
+      });
+    });
+    var rows = Object.values(touched);
+    for (var i = 0; i < rows.length; i++) {
+      await put('competitor_estimates', rows[i]);
+    }
+    setEstimateMsg('已生成/修正 ' + rows.length + ' 条竞品估算数据。');
+    await renderEstimatesDb();
+    await refreshCounts();
+  }
+
+  function estimateRowComplete(row) {
+    if (!row) return false;
+    return !!metricRangeFromEstimate(row, estimateMetricConfigs()[0]) && !!metricRangeFromEstimate(row, estimateMetricConfigs()[1]);
+  }
+
+  async function autoGenerateMissingEstimatesForSelection(selectedSku, range) {
+    if (!selectedSku || !range || estimateAutoGenerating) return 0;
+    var normalized = normalizedRange(range.start, range.end || range.start);
+    if (!normalized) return 0;
+    var autoKey = [selectedSku, normalized.start, normalized.end].join('|');
+    if (estimateAutoAttemptedKeys[autoKey]) return 0;
+    estimateAutoAttemptedKeys[autoKey] = true;
+    estimateAutoGenerating = true;
+    try {
+      var dates = datesInRange(normalized.start, normalized.end || normalized.start);
+      var estimates = await getAll('competitor_estimates');
+      var rankings = await getAll('ranking_raw_metrics');
+      var maps = buildEstimateRowMaps(estimates, rankings);
+      var touched = {};
+      dates.forEach(function(date) {
+        var existing = maps.estimateMap[estimateDateKey(selectedSku, date)];
+        if (estimateRowComplete(existing)) return;
+        estimateMetricConfigs().forEach(function(config) {
+          if (metricRangeFromEstimate(existing, config)) return;
+          var generated = generateEstimateForDate(selectedSku, date, config, maps, touched);
+          if (generated) existing = generated;
+        });
+      });
+      var rows = Object.values(touched).filter(function(row) {
+        return normalizeSkuValue(row.sku) === selectedSku;
+      });
+      for (var i = 0; i < rows.length; i++) await put('competitor_estimates', rows[i]);
+      if (rows.length) {
+        setEstimateMsg('已自动补算 ' + rows.length + ' 条缺失竞品估算数据。');
+        await refreshCounts();
+      }
+      return rows.length;
+    } finally {
+      estimateAutoGenerating = false;
+    }
+  }
+
   async function renderEstimatesDb() {
     var rows = await getAll('competitor_estimates');
-    rows.sort(function(a, b) {
-      return String(b.startDate || '').localeCompare(String(a.startDate || '')) || String(a.sku || '').localeCompare(String(b.sku || ''), 'zh-Hans-CN', { numeric: true });
+    var skuRows = await getAll('sku_profiles');
+    var rankingRows = await getAll('ranking_raw_metrics');
+    var productSelect = $('estimateProductSelect');
+    var skuMap = {};
+    skuRows.forEach(function(row) {
+      if (row.sku) skuMap[normalizeSkuValue(row.sku)] = row;
     });
-    if (!rows.length) {
-      $('estimatesDbBody').innerHTML = '<tr><td class="empty-row" colspan="7">暂无竞品估算结果</td></tr>';
+    var optionMap = {};
+    skuRows.forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      if (row.itemType === 'competitor' && row.isTrackedCompetitor && sku) {
+        optionMap[sku] = { sku: sku, label: row.shortName || sku };
+      }
+    });
+    rows.forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      if (!sku) return;
+      var profile = skuMap[sku] || {};
+      optionMap[sku] = optionMap[sku] || { sku: sku, label: profile.shortName || row.sourceSheet || sku };
+    });
+    var estimateOptions = Object.values(optionMap).sort(function(a, b) {
+      return String(a.label || a.sku || '').localeCompare(String(b.label || b.sku || ''), 'zh-Hans-CN', { numeric: true });
+    });
+    if (productSelect) {
+      var current = normalizeSkuValue(productSelect.value || localStorage.getItem('jdEstimateSelectedSku') || '');
+      if (!current || !estimateOptions.some(function(row) { return normalizeSkuValue(row.sku) === current; })) {
+        current = estimateOptions.length ? normalizeSkuValue(estimateOptions[0].sku) : '';
+      }
+      productSelect.innerHTML = estimateOptions.length
+        ? estimateOptions.map(function(row) {
+            var sku = normalizeSkuValue(row.sku);
+            var label = row.label && row.label !== sku ? row.label + '（' + sku + '）' : sku;
+            return '<option value="' + esc(sku) + '"' + (sku === current ? ' selected' : '') + '>' + esc(label) + '</option>';
+          }).join('')
+        : '<option value="">暂无竞品估算数据</option>';
+      productSelect.value = current;
+      if (current) localStorage.setItem('jdEstimateSelectedSku', current);
+    }
+    var selectedSku = normalizeSkuValue(productSelect ? productSelect.value : '');
+    if (!selectedSku) {
+      $('estimatesDbBody').innerHTML = '<tr><td class="empty-row" colspan="7">暂无竞品估算数据，请先导入竞品估算表</td></tr>';
       enhanceAllResizableTables();
       return;
     }
-    var known = ['periodType', 'startDate', 'endDate', 'sku', 'amountRange', 'salesAmountRange', 'qtyRange', 'salesQtyRange', 'note', 'estimateNote', 'fileName', 'sourceFile'];
+    var range = datePickers.estimate ? datePickers.estimate.getRange() : normalizedRange($('estimateStartDate').value, $('estimateEndDate').value || $('estimateStartDate').value);
+    var autoGenerated = await autoGenerateMissingEstimatesForSelection(selectedSku, range);
+    if (autoGenerated) {
+      await renderEstimatesDb();
+      return;
+    }
+    rows = filterMetricRowsByDateRange(rows, range).filter(function(row) {
+      return normalizeSkuValue(row.sku) === selectedSku;
+    });
+    var rankByDate = {};
+    filterMetricRowsByDateRange(rankingRows, range).forEach(function(row) {
+      var rankingSku = normalizeSkuValue(row.sku);
+      var rank = Number(row.rank || 0);
+      if (rankingSku !== selectedSku || !rank) return;
+      datesInRange(row.startDate, row.endDate || row.startDate).forEach(function(date) {
+        if (!rankByDate[date] || rank < Number(rankByDate[date])) rankByDate[date] = rank;
+      });
+    });
+    rows.sort(function(a, b) {
+      return String(a.startDate || '').localeCompare(String(b.startDate || ''));
+    });
+    if (!rows.length) {
+      $('estimatesDbBody').innerHTML = '<tr><td class="empty-row" colspan="7">当前产品和日期范围内暂无竞品估算数据</td></tr>';
+      enhanceAllResizableTables();
+      return;
+    }
     $('estimatesDbBody').innerHTML = rows.map(function(row) {
+      var amount = estimateRange(row, ['estimatedAmountMin', 'amountMin', 'salesAmountMin'], ['estimatedAmountMax', 'amountMax', 'salesAmountMax'], ['estimatedAmountRange', 'amountRange', 'salesAmountRange']);
+      var qty = estimateRange(row, ['estimatedQtyMin', 'qtyMin', 'salesQtyMin'], ['estimatedQtyMax', 'qtyMax', 'salesQtyMax'], ['estimatedQtyRange', 'qtyRange', 'salesQtyRange']);
+      var rowDate = canonicalYmd(row.startDate) || row.startDate || '';
+      var rank = row.rank || rankByDate[rowDate] || '';
       return '<tr>' +
-        '<td>' + esc(labels.periodType[row.periodType] || row.periodType || '-') + '<br>' + esc(rangeText(row)) + '</td>' +
-        '<td>' + esc(row.sku || '-') + '</td>' +
-        '<td>' + esc(row.amountRange || row.salesAmountRange || '-') + '</td>' +
-        '<td>' + esc(row.qtyRange || row.salesQtyRange || '-') + '</td>' +
-        '<td>' + esc(row.note || row.estimateNote || '-') + '</td>' +
-        '<td>' + esc(row.fileName || row.sourceFile || '-') + '</td>' +
-        '<td>' + esc(otherData(row, known)) + '</td>' +
+        '<td>' + esc(rangeText(row)) + '</td>' +
+        '<td>' + esc(rank || '-') + '</td>' +
+        '<td>' + esc(formatRangeMidpoint(amount, 2)) + '</td>' +
+        '<td>' + esc(formatRangeMidpoint(qty, 0)) + '</td>' +
+        '<td>' + esc(formatEstimateRange(amount, 2)) + '</td>' +
+        '<td>' + esc(formatEstimateRange(qty, 0)) + '</td>' +
+        '<td>' + esc(row.noteText || (Array.isArray(row.estimateNotes) ? row.estimateNotes.join('；') : '')) + '</td>' +
       '</tr>';
     }).join('');
     enhanceAllResizableTables();
@@ -3254,6 +4339,30 @@
     });
   }
 
+  function parseEstimateWorkbook(file) {
+    return new Promise(function(resolve, reject) {
+      if (!window.XLSX) {
+        reject(new Error('表格解析组件还没加载完成，请稍等几秒后重试'));
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function() {
+        try {
+          var wb = XLSX.read(reader.result, { type: 'array', cellDates: true });
+          var sheets = (wb.SheetNames || []).map(function(name) {
+            var matrix = worksheetToMatrix(wb.Sheets[name]);
+            return { name: name, rows: matrixToObjects(matrix) };
+          });
+          resolve(sheets);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = function() { reject(reader.error); };
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
   function worksheetToMatrix(ws) {
     var cells = Object.keys(ws || {}).filter(function(key) { return key.charAt(0) !== '!'; });
     if (!cells.length) return [];
@@ -3274,7 +4383,7 @@
       var hasValue = false;
       for (var c = minCol; c <= maxCol; c++) {
         var cell = ws[XLSX.utils.encode_cell({ r: r, c: c })];
-        var value = cell ? (cell.w != null ? cell.w : cell.v) : '';
+        var value = cell ? (cell.v instanceof Date ? cell.v : (cell.w != null ? cell.w : cell.v)) : '';
         if (value != null && String(value).trim() !== '') hasValue = true;
         row.push(value == null ? '' : value);
       }
@@ -3458,6 +4567,9 @@
     String(text || '').replace(/(20\d{2})[-/.\u5e74](\d{1,2})[-/.\u6708](\d{1,2})\u65e5?/g, function(_, y, m, d) {
       push(normalizeDateValue(y, m, d));
     });
+    String(text || '').replace(/(?<!\d)(\d{1,2})[/.](\d{1,2})[/.](\d{2})(?!\d)/g, function(_, m, d, y) {
+      push(normalizeDateValue(y, m, d));
+    });
     String(text || '').replace(/(?<!\d)(20\d{2})(\d{2})(\d{2})(?!\d)/g, function(_, y, m, d) {
       push(normalizeDateValue(y, m, d));
     });
@@ -3569,10 +4681,20 @@
     var raw = String(value == null ? '' : value).trim();
     if (!raw) return { raw: '', min: '', max: '' };
     var isPercent = raw.indexOf('%') !== -1;
-    var parts = raw.split(/\s*(?:~|～|至|-|—|–)\s*/).filter(Boolean);
+    var normalized = raw.replace(/[－—–]/g, '~').replace(/至/g, '~').replace(/～/g, '~');
+    var parts = normalized.split(/\s*~\s*/).filter(Boolean);
+    if (parts.length < 2) {
+      var rangeMatch = normalized.match(/^\s*(-?[\d,]+(?:\.\d+)?%?(?:\s*[万亿])?)\s+-\s+(-?[\d,]+(?:\.\d+)?%?(?:\s*[万亿])?)\s*$/);
+      if (rangeMatch) parts = [rangeMatch[1], rangeMatch[2]];
+    }
     if (parts.length < 2) parts = [raw, raw];
     var min = parseRangeNumberPart(parts[0], isPercent);
     var max = parseRangeNumberPart(parts[parts.length - 1], isPercent);
+    if (min !== '' && max !== '' && Number(min) > Number(max)) {
+      var tmp = min;
+      min = max;
+      max = tmp;
+    }
     return { raw: raw, min: min, max: max };
   }
 
@@ -3943,20 +5065,30 @@
       });
     });
     var existing = await getAll('ranking_raw_metrics');
-    var replaceKeys = {};
-    parsedRows.forEach(function(row) {
-      replaceKeys[[row.periodType, row.startDate, row.endDate, row.sku].join('|')] = true;
+    var existingGroups = {};
+    existing.forEach(function(item) {
+      var itemStart = canonicalYmd(item.startDate) || item.startDate || '';
+      var itemEnd = canonicalYmd(item.endDate || item.startDate) || item.endDate || itemStart;
+      var key = [item.periodType || inferPeriodType(itemStart, itemEnd), itemStart, itemEnd, normalizeSkuValue(item.sku)].join('|');
+      if (!existingGroups[key]) existingGroups[key] = [];
+      existingGroups[key].push(item);
     });
     var replaced = 0;
-    for (var i = 0; i < existing.length; i++) {
-      var item = existing[i];
-      var key = [item.periodType, item.startDate, item.endDate, normalizeSkuValue(item.sku)].join('|');
-      if (replaceKeys[key]) {
-        await remove('ranking_raw_metrics', item.id);
-        replaced++;
+    for (var j = 0; j < parsedRows.length; j++) {
+      var parsed = parsedRows[j];
+      var key = [parsed.periodType, parsed.startDate, parsed.endDate, parsed.sku].join('|');
+      var group = existingGroups[key] || [];
+      if (group.length) {
+        var merged = Object.assign.apply(Object, [{}].concat(group).concat([parsed, { id: group[0].id }]));
+        await put('ranking_raw_metrics', merged);
+        replaced += group.length;
+        for (var d = 1; d < group.length; d++) {
+          if (group[d].id !== group[0].id) await remove('ranking_raw_metrics', group[d].id);
+        }
+      } else {
+        await put('ranking_raw_metrics', parsed);
       }
     }
-    for (var j = 0; j < parsedRows.length; j++) await put('ranking_raw_metrics', parsedRows[j]);
     var noteParts = ['\u5199\u5165 ' + parsedRows.length + ' \u6761\u5546\u54c1\u699c\u5355'];
     if (replaced) noteParts.push('\u8986\u76d6 ' + replaced + ' \u6761\u65e7\u699c\u5355');
     if (skipped) noteParts.push('\u8df3\u8fc7 ' + skipped + ' \u884c');
@@ -3970,27 +5102,20 @@
     };
   }
   function renderImportPreview(results) {
+    var box = $('importSummary');
+    var text = $('importSummaryText');
+    if (!box || !text) return;
     if (!results.length) {
-      $('importPreviewBody').innerHTML = '<tr><td class="empty-row" colspan="6">还没有导入文件</td></tr>';
-      enhanceAllResizableTables();
+      box.className = 'import-summary';
+      text.textContent = '还没有导入文件';
       return;
     }
-    $('importPreviewBody').innerHTML = results.map(function(item) {
-      var status = importStatusMeta({ importStatus: item.importStatus || (item.ok ? 'recorded' : 'failed') });
-      var typeLabel = item.meta ? (labels.sourceType[item.meta.sourceType] || item.meta.sourceType) : '-';
-      var periodLabel = item.meta ? (labels.periodType[item.meta.periodType] || item.meta.periodType) : '-';
-      var range = item.meta ? rangeText(item.meta) : '-';
-      var note = item.error || (item.meta ? item.meta.note : '');
-      return '<tr>' +
-        '<td>' + esc(item.fileName) + '</td>' +
-        '<td>' + esc(typeLabel) + '</td>' +
-        '<td>' + esc(periodLabel) + '</td>' +
-        '<td>' + esc(range) + '</td>' +
-        '<td>' + esc(item.rowCount || 0) + '</td>' +
-        '<td><span class="import-status ' + esc(status.className) + '" title="' + esc(note) + '">' + esc(status.label) + '</span><span class="import-note">' + esc(note || '-') + '</span></td>' +
-      '</tr>';
-    }).join('');
-    enhanceAllResizableTables();
+    var successCount = results.filter(function(item) { return item.importStatus === 'success' || item.importStatus === 'recorded'; }).length;
+    var failedCount = results.filter(function(item) { return item.importStatus === 'failed' || item.ok === false; }).length;
+    box.className = 'import-summary show ' + (failedCount ? 'err' : 'ok');
+    text.textContent = failedCount
+      ? '已处理 ' + results.length + ' 个文件，成功 ' + successCount + ' 个，失败 ' + failedCount + ' 个。'
+      : '已处理 ' + results.length + ' 个文件，全部导入成功。';
   }
 
 
@@ -4000,6 +5125,10 @@
     var results = [];
     $('importMsg').textContent = '\u6b63\u5728\u8bfb\u53d6 ' + files.length + ' \u4e2a\u6587\u4ef6...';
     $('importMsg').className = 'msg';
+    if ($('importSummary') && $('importSummaryText')) {
+      $('importSummary').className = 'import-summary show';
+      $('importSummaryText').textContent = '\u6b63\u5728\u5904\u7406 ' + files.length + ' \u4e2a\u6587\u4ef6...';
+    }
     for (var i = 0; i < files.length; i++) {
       var file = files[i];
       try {
@@ -4073,8 +5202,9 @@
       renderImportPreview(results);
     }
     var successCount = results.filter(function(item) { return item.importStatus === 'success' || item.importStatus === 'recorded'; }).length;
-    $('importMsg').textContent = '\u5df2\u5904\u7406 ' + files.length + ' \u4e2a\u6587\u4ef6\uff0c\u4fdd\u5b58 ' + results.length + ' \u6761\u5bfc\u5165\u8bb0\u5f55\uff0c\u5176\u4e2d\u6210\u529f ' + successCount + ' \u6761\u3002';
-    $('importMsg').className = successCount ? 'msg ok' : 'msg err';
+    var failedCount = results.filter(function(item) { return item.importStatus === 'failed' || item.ok === false; }).length;
+    $('importMsg').textContent = '';
+    $('importMsg').className = 'msg';
     await renderSnapshots();
     await renderRankingRaw();
     await refreshCounts();
@@ -4082,13 +5212,484 @@
 
   function filterMetricRowsByDateRange(rows, range) {
     range = range || {};
-    var start = range.start || '';
-    var end = range.end || start;
+    var normalized = normalizedRange(range.start || '', range.end || range.start || '');
+    var start = normalized ? normalized.start : (range.start || '');
+    var end = normalized ? normalized.end : (range.end || start);
     return (rows || []).filter(function(row) {
-      if (start && (row.endDate || row.startDate) < start) return false;
-      if (end && (row.startDate || row.endDate) > end) return false;
+      var rowStart = canonicalYmd(row.startDate) || row.startDate || '';
+      var rowEnd = canonicalYmd(row.endDate || row.startDate) || row.endDate || rowStart;
+      if (start && rowEnd < start) return false;
+      if (end && rowStart > end) return false;
       return true;
     });
+  }
+
+  function datesInRange(start, end) {
+    var from = dateFromYmd(start);
+    var to = dateFromYmd(end || start);
+    if (!from || !to) return [];
+    var list = [];
+    for (var d = new Date(from.getFullYear(), from.getMonth(), from.getDate()); d <= to; d = addDays(d, 1)) {
+      list.push(ymd(d));
+    }
+    return list;
+  }
+
+  function weekdayText(dateText) {
+    var date = dateFromYmd(dateText);
+    return date ? ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][date.getDay()] : '';
+  }
+
+  function reportDimensionLabel(dim) {
+    if (dim === 'all') return '整体';
+    return analyzedDimensionLabel(dim);
+  }
+
+  function collectSkuDimensionKeys(skuRows) {
+    var keys = ['all', 'mainSeries', 'subSeries', 'shortName', 'sku', 'brand'];
+    (skuRows || []).forEach(function(row) {
+      Object.keys(row || {}).forEach(function(key) {
+        if (key.indexOf('custom_') === 0 && keys.indexOf(key) === -1) keys.push(key);
+      });
+    });
+    return keys;
+  }
+
+  function dimensionValueFromProfile(profile, sku, dim) {
+    if (dim === 'all') return '';
+    if (dim === 'sku') return sku || '';
+    return profile && profile[dim] ? profile[dim] : '未归类';
+  }
+
+  function getSelectedReportDimensions() {
+    var checks = Array.from(document.querySelectorAll('.report-dim-check'));
+    var selected = checks.filter(function(input) { return input.checked; }).map(function(input) { return input.value; });
+    return selected.length ? selected : ['mainSeries', 'subSeries'];
+  }
+
+  function saveReportDimensions() {
+    reportOutputDimensions = getSelectedReportDimensions();
+    localStorage.setItem('jdReportOutputDimensions', JSON.stringify(reportOutputDimensions));
+  }
+
+  function renderReportConfig() {
+    if (!$('reportDimensionList')) return;
+    var fallbackKeys = ['mainSeries', 'subSeries', 'shortName', 'sku'];
+    if (!db) {
+      $('reportDimensionList').innerHTML = fallbackKeys.map(function(key) {
+        return '<label class="check-pill"><input type="checkbox" class="report-dim-check" value="' + esc(key) + '"' + (reportOutputDimensions.indexOf(key) !== -1 ? ' checked' : '') + '>' + esc(reportDimensionLabel(key)) + '</label>';
+      }).join('');
+      return;
+    }
+    getAll('sku_profiles').then(function(skuRows) {
+      var keys = collectSkuDimensionKeys(skuRows).filter(function(key) { return key !== 'all'; });
+      fallbackKeys.forEach(function(key) { if (keys.indexOf(key) === -1) keys.push(key); });
+      $('reportDimensionList').innerHTML = keys.map(function(key) {
+        return '<label class="check-pill"><input type="checkbox" class="report-dim-check" value="' + esc(key) + '"' + (reportOutputDimensions.indexOf(key) !== -1 ? ' checked' : '') + '>' + esc(reportDimensionLabel(key)) + '</label>';
+      }).join('');
+      $('reportDimensionList').querySelectorAll('.report-dim-check').forEach(function(input) {
+        input.addEventListener('change', function() {
+          saveReportDimensions();
+          renderReportOutput();
+        });
+      });
+    });
+    document.querySelectorAll('.report-dim-check').forEach(function(input) {
+      input.checked = reportOutputDimensions.indexOf(input.value) !== -1;
+    });
+  }
+
+  function isReportMetricRowForDate(row, date) {
+    var start = row.startDate || '';
+    var end = row.endDate || start;
+    return start <= date && date <= end;
+  }
+
+  async function loadReportSourceRows() {
+    if (!db) return { rows: [], skuRows: [], skuMap: {} };
+    var rows = await getAll('analyzed_metrics');
+    var skuRows = await getAll('sku_profiles');
+    var rankingRows = await getAll('ranking_raw_metrics');
+    var skuMap = {};
+    skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
+    rows = rows.filter(function(row) {
+      if (row.sourceType && ['sales_detail', 'onsite_cost', 'offsite_cps_cost'].indexOf(row.sourceType) === -1) return false;
+      var profile = skuMap[normalizeSkuValue(row.sku)];
+      return !profile || profile.itemType !== 'competitor';
+    });
+    return { rows: rows, skuRows: skuRows, skuMap: skuMap, rankingRows: rankingRows };
+  }
+
+  function rankLookupForRows(rankingRows) {
+    var rankMap = {};
+    (rankingRows || []).forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      var rank = Number(row.rank || 0);
+      if (!sku || !rank) return;
+      datesInRange(row.startDate, row.endDate || row.startDate).forEach(function(date) {
+        var key = sku + '|' + date;
+        if (!rankMap[key] || rank < rankMap[key]) rankMap[key] = rank;
+      });
+    });
+    return rankMap;
+  }
+
+  function bestRankForSkuSet(skus, date, rankMap) {
+    var best = '';
+    (skus || []).some(function(sku) {
+      var rank = Number(rankMap[normalizeSkuValue(sku) + '|' + date] || 0);
+      if (!rank) return false;
+      best = !best || rank < Number(best) ? rank : best;
+      return true;
+    });
+    return best;
+  }
+
+  function buildReportDimensionRows(rows, skuMap, dim, range, rankingRows) {
+    var isRangeSummary = reportMode === 'period' || (range.end && range.end !== range.start);
+    var dates = isRangeSummary ? [range.start || ''] : datesInRange(range.start, range.end || range.start);
+    var label = range.start || '';
+    if (range.end && range.end !== range.start) label = range.start + ' 至 ' + range.end;
+    var rankMap = rankLookupForRows(rankingRows);
+    var output = [['日期', '星期', reportDimensionLabel(dim), '销售金额', '销售数量', '访客/点击', '转化率', '站内花费', '站外花费', '排名']];
+    dates.forEach(function(date) {
+      var dayRows = isRangeSummary
+        ? filterMetricRowsByDateRange(rows, range)
+        : rows.filter(function(row) { return isReportMetricRowForDate(row, date); });
+      var groups = {};
+      dayRows.forEach(function(row) {
+        var sku = normalizeSkuValue(row.sku);
+        var profile = skuMap[sku] || {};
+        var value = dimensionValueFromProfile(profile, sku, dim) || '未归类';
+        if (!groups[value]) {
+          groups[value] = { salesAmount: 0, salesQty: 0, visitorCount: 0, onsiteCost: 0, offsiteCost: 0, rank: '', skus: [] };
+        }
+        if (sku && groups[value].skus.indexOf(sku) === -1) groups[value].skus.push(sku);
+        groups[value].salesAmount += Number(row.salesAmount || 0);
+        groups[value].salesQty += Number(row.salesQty || 0);
+        groups[value].visitorCount += Number(row.visitorCount || row.clickCount || 0);
+        groups[value].onsiteCost += Number(row.onsiteCost || 0);
+        groups[value].offsiteCost += Number(row.offsiteCost || 0);
+        var rank = Number(row.rank || 0);
+        if (rank && (!groups[value].rank || rank < Number(groups[value].rank))) groups[value].rank = rank;
+      });
+      Object.keys(groups).sort(function(a, b) {
+        return String(a).localeCompare(String(b), 'zh-Hans-CN', { numeric: true });
+      }).forEach(function(value) {
+        var group = groups[value];
+        var reportRank = isRangeSummary ? '' : (group.rank || bestRankForSkuSet(group.skus, date, rankMap));
+        output.push([
+          isRangeSummary ? label : date,
+          isRangeSummary ? '汇总' : weekdayText(date),
+          value,
+          group.salesAmount,
+          group.salesQty,
+          group.visitorCount,
+          group.visitorCount ? group.salesQty / group.visitorCount : '',
+          group.onsiteCost,
+          group.offsiteCost,
+          reportRank || ''
+        ]);
+      });
+    });
+    return output;
+  }
+
+  function buildRankBySkuDate(rankingRows) {
+    var rankMap = {};
+    (rankingRows || []).forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      var rank = Number(row.rank || 0);
+      if (!sku || !rank) return;
+      datesInRange(row.startDate, row.endDate || row.startDate).forEach(function(date) {
+        var key = sku + '|' + date;
+        if (!rankMap[key] || rank < rankMap[key]) rankMap[key] = rank;
+      });
+    });
+    return rankMap;
+  }
+
+  function reportRangeMidpointNumber(range) {
+    if (!range || range.min == null || range.max == null) return '';
+    var min = Number(range.min);
+    var max = Number(range.max);
+    if (!isFinite(min) || !isFinite(max)) return '';
+    return (min + max) / 2;
+  }
+
+  function buildReportCompetitorRows(estimateRows, skuMap, rankingRows, range) {
+    var isPeriod = reportMode === 'period' || (range.end && range.end !== range.start);
+    var rankMap = buildRankBySkuDate(rankingRows);
+    var label = range.start || '';
+    if (range.end && range.end !== range.start) label = range.start + ' 至 ' + range.end;
+    var output = [['日期', '竞品', '排名', '金额', '件数', '金额区间', '件数区间']];
+    var rows = filterMetricRowsByDateRange(estimateRows || [], range);
+    if (isPeriod) {
+      var groups = {};
+      rows.forEach(function(row) {
+        var sku = normalizeSkuValue(row.sku);
+        if (!sku) return;
+        var profile = skuMap[sku] || {};
+        var name = profile.shortName || row.sourceSheet || sku;
+        if (!groups[sku]) {
+          groups[sku] = { name: name, amountMin: 0, amountMax: 0, qtyMin: 0, qtyMax: 0, rank: '' };
+        }
+        var amount = estimateRange(row, ['estimatedAmountMin', 'amountMin', 'salesAmountMin'], ['estimatedAmountMax', 'amountMax', 'salesAmountMax'], ['estimatedAmountRange', 'amountRange', 'salesAmountRange']);
+        var qty = estimateRange(row, ['estimatedQtyMin', 'qtyMin', 'salesQtyMin'], ['estimatedQtyMax', 'qtyMax', 'salesQtyMax'], ['estimatedQtyRange', 'qtyRange', 'salesQtyRange']);
+        groups[sku].amountMin += Number(amount.min || 0);
+        groups[sku].amountMax += Number(amount.max || 0);
+        groups[sku].qtyMin += Number(qty.min || 0);
+        groups[sku].qtyMax += Number(qty.max || 0);
+      });
+      Object.keys(groups).sort(function(a, b) {
+        return String(groups[a].name).localeCompare(String(groups[b].name), 'zh-Hans-CN', { numeric: true });
+      }).forEach(function(sku) {
+        var group = groups[sku];
+        var amountRange = { min: group.amountMin, max: group.amountMax };
+        var qtyRange = { min: group.qtyMin, max: group.qtyMax };
+        output.push([
+          label,
+          group.name,
+          '',
+          reportRangeMidpointNumber(amountRange),
+          reportRangeMidpointNumber(qtyRange),
+          formatEstimateRange(amountRange, 2),
+          formatEstimateRange(qtyRange, 0)
+        ]);
+      });
+      return output;
+    }
+    rows.sort(function(a, b) {
+      return String(a.startDate || '').localeCompare(String(b.startDate || '')) || String(a.sourceSheet || a.sku || '').localeCompare(String(b.sourceSheet || b.sku || ''), 'zh-Hans-CN', { numeric: true });
+    }).forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      var profile = skuMap[sku] || {};
+      var amount = estimateRange(row, ['estimatedAmountMin', 'amountMin', 'salesAmountMin'], ['estimatedAmountMax', 'amountMax', 'salesAmountMax'], ['estimatedAmountRange', 'amountRange', 'salesAmountRange']);
+      var qty = estimateRange(row, ['estimatedQtyMin', 'qtyMin', 'salesQtyMin'], ['estimatedQtyMax', 'qtyMax', 'salesQtyMax'], ['estimatedQtyRange', 'qtyRange', 'salesQtyRange']);
+      output.push([
+        row.startDate || '',
+        profile.shortName || row.sourceSheet || sku || '-',
+        row.rank || rankMap[sku + '|' + (row.startDate || '')] || '',
+        reportRangeMidpointNumber(amount),
+        reportRangeMidpointNumber(qty),
+        formatEstimateRange(amount, 2),
+        formatEstimateRange(qty, 0)
+      ]);
+    });
+    return output;
+  }
+
+  function safeSheetName(name) {
+    return String(name || 'Sheet').replace(/[\\/?*\[\]:]/g, '').slice(0, 31) || 'Sheet';
+  }
+
+  async function buildReportDataWorkbook(includeTemplateSheet) {
+    if (!window.XLSX) {
+      if ($('reportMsg')) $('reportMsg').textContent = '表格组件还没加载完成，请稍后重试。';
+      return null;
+    }
+    var source = await loadReportSourceRows();
+    var estimateRows = await getAll('competitor_estimates');
+    var rankingRows = await getAll('ranking_raw_metrics');
+    var range = datePickers.report ? datePickers.report.getRange() : normalizedRange($('reportStartDate').value, $('reportEndDate').value || $('reportStartDate').value);
+    var wb = XLSX.utils.book_new();
+    getSelectedReportDimensions().forEach(function(dim) {
+      var aoa = buildReportDimensionRows(source.rows, source.skuMap, dim, range, source.rankingRows);
+      var ws = XLSX.utils.aoa_to_sheet(aoa);
+      ws['!cols'] = [
+        { wch: 12 }, { wch: 8 }, { wch: 24 }, { wch: 14 }, { wch: 12 },
+        { wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 8 }
+      ];
+      XLSX.utils.book_append_sheet(wb, ws, safeSheetName(reportDimensionLabel(dim)));
+    });
+    var competitorAoa = buildReportCompetitorRows(estimateRows, source.skuMap, rankingRows, range);
+    var competitorWs = XLSX.utils.aoa_to_sheet(competitorAoa);
+    competitorWs['!cols'] = [
+      { wch: 18 }, { wch: 24 }, { wch: 8 }, { wch: 14 }, { wch: 12 }, { wch: 18 }, { wch: 16 }
+    ];
+    XLSX.utils.book_append_sheet(wb, competitorWs, '竞品');
+    if (includeTemplateSheet) XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([]), '模板');
+    return { workbook: wb, range: range };
+  }
+
+  async function exportReportTemplate() {
+    var built = await buildReportDataWorkbook(true);
+    if (!built) return;
+    var wb = built.workbook;
+    var range = built.range;
+    var issue = String($('reportIssueInput') ? $('reportIssueInput').value || '' : '').trim();
+    var suffix = (range.start || today()) + (range.end && range.end !== range.start ? '_' + range.end : '');
+    var prefix = reportMode === 'period' ? '周期报模板_' : '日报模板_';
+    XLSX.writeFile(wb, prefix + (issue ? issue + '_' : '') + suffix + '.xlsx');
+    if ($('reportMsg')) $('reportMsg').textContent = '已导出模板，建议在 Excel 的“模板”页制作报表样式后再导入预览。';
+  }
+
+  function cloneWorkbookForPreview(workbook) {
+    var clone = { SheetNames: [], Sheets: {} };
+    (workbook.SheetNames || []).forEach(function(name) {
+      clone.SheetNames.push(name);
+      clone.Sheets[name] = workbook.Sheets[name];
+    });
+    return clone;
+  }
+
+  function upsertPreviewSheet(target, name, sheet) {
+    if (!target || !name || !sheet) return;
+    target.Sheets[name] = sheet;
+    if (target.SheetNames.indexOf(name) === -1) {
+      var templateIndex = target.SheetNames.indexOf('模板');
+      if (templateIndex === -1) target.SheetNames.push(name);
+      else target.SheetNames.splice(templateIndex, 0, name);
+    }
+  }
+
+  function cloneWorksheet(sheet) {
+    var clone = {};
+    Object.keys(sheet || {}).forEach(function(key) {
+      var value = sheet[key];
+      clone[key] = value && typeof value === 'object' && !Array.isArray(value) ? Object.assign({}, value) : value;
+    });
+    return clone;
+  }
+
+  function sheetCellValue(workbook, sheetName, address) {
+    var sheet = workbook && workbook.Sheets ? workbook.Sheets[sheetName] : null;
+    var cell = sheet ? sheet[String(address || '').replace(/\$/g, '')] : null;
+    if (!cell) return '';
+    if (cell.v != null) return cell.v;
+    if (cell.w != null) return cell.w;
+    return '';
+  }
+
+  function worksheetRangeAddresses(rangeText) {
+    try {
+      var range = XLSX.utils.decode_range(String(rangeText || '').replace(/\$/g, ''));
+      var list = [];
+      for (var r = range.s.r; r <= range.e.r; r++) {
+        for (var c = range.s.c; c <= range.e.c; c++) {
+          list.push(XLSX.utils.encode_cell({ r: r, c: c }));
+        }
+      }
+      return list;
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function evaluateReportFormula(formula, workbook) {
+    var expr = String(formula || '').replace(/^=/, '').trim();
+    if (!expr) return '';
+    var sumMatch = expr.match(/^SUM\((?:'([^']+)'|([^!]+))!([A-Z]+\d+:[A-Z]+\d+)\)$/i);
+    if (sumMatch) {
+      var sumSheet = (sumMatch[1] || sumMatch[2] || '').trim();
+      return worksheetRangeAddresses(sumMatch[3]).reduce(function(total, address) {
+        var value = sheetCellValue(workbook, sumSheet, address);
+        var number = typeof value === 'number' ? value : Number(String(value).replace(/,/g, ''));
+        return total + (isFinite(number) ? number : 0);
+      }, 0);
+    }
+    var directMatch = expr.match(/^(?:'([^']+)'|([^!]+))!([A-Z]+\d+)$/i);
+    if (directMatch) {
+      return sheetCellValue(workbook, (directMatch[1] || directMatch[2] || '').trim(), directMatch[3]);
+    }
+    return null;
+  }
+
+  function applyReportTemplateFormulas(workbook, sheetName) {
+    var sheet = workbook && workbook.Sheets ? workbook.Sheets[sheetName] : null;
+    if (!sheet) return;
+    Object.keys(sheet).forEach(function(address) {
+      if (address.charAt(0) === '!') return;
+      var cell = sheet[address];
+      if (!cell || !cell.f) return;
+      var value = evaluateReportFormula(cell.f, workbook);
+      if (value == null) return;
+      cell.v = value;
+      cell.w = String(value);
+      cell.t = typeof value === 'number' ? 'n' : 's';
+    });
+  }
+
+  async function refreshReportTemplatePreviewWorkbook() {
+    reportTemplatePreviewWorkbook = null;
+    if (!reportTemplateWorkbook || !window.XLSX) return null;
+    var built = await buildReportDataWorkbook(false);
+    if (!built) return null;
+    var preview = cloneWorkbookForPreview(reportTemplateWorkbook);
+    (built.workbook.SheetNames || []).forEach(function(name) {
+      upsertPreviewSheet(preview, name, built.workbook.Sheets[name]);
+    });
+    if (preview.Sheets['模板']) {
+      preview.Sheets['模板'] = cloneWorksheet(preview.Sheets['模板']);
+      applyReportTemplateFormulas(preview, '模板');
+    }
+    reportTemplatePreviewWorkbook = preview;
+    return preview;
+  }
+
+  function renderReportTemplatePreview(sheetName) {
+    if (!$('reportOutput')) return;
+    if (!reportTemplateWorkbook) {
+      $('reportOutput').innerHTML = '<div class="report-template-empty">还没有导入日报模板。请先导出模板，在 Excel 的“模板”页制作日报样式后再导入预览。</div>';
+      return;
+    }
+    var workbook = reportTemplatePreviewWorkbook || reportTemplateWorkbook;
+    var names = workbook.SheetNames || [];
+    reportTemplateActiveSheet = sheetName || reportTemplateActiveSheet || (names.indexOf('模板') !== -1 ? '模板' : names[0]);
+    if (names.indexOf(reportTemplateActiveSheet) === -1) reportTemplateActiveSheet = names.indexOf('模板') !== -1 ? '模板' : names[0];
+    var ws = workbook.Sheets[reportTemplateActiveSheet];
+    var tabs = '<div class="report-sheet-tabs">' + names.map(function(name) {
+      return '<button class="report-sheet-tab' + (name === reportTemplateActiveSheet ? ' active' : '') + '" type="button" data-report-sheet="' + esc(name) + '">' + esc(name) + '</button>';
+    }).join('') + '</div>';
+    var html = ws ? XLSX.utils.sheet_to_html(ws, { editable: false }) : '<div class="report-template-empty">当前标签页为空。</div>';
+    $('reportOutput').innerHTML = tabs + '<div class="report-template-preview">' + html + '</div>';
+  }
+
+  async function importReportTemplate(file) {
+    if (!file || !window.XLSX) return;
+    var workbook = await new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function() {
+        try {
+          resolve(XLSX.read(reader.result, { type: 'array', cellDates: true, cellFormula: true }));
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = function() { reject(reader.error); };
+      reader.readAsArrayBuffer(file);
+    });
+    reportTemplateWorkbook = workbook;
+    reportTemplateActiveSheet = workbook.SheetNames.indexOf('模板') !== -1 ? '模板' : workbook.SheetNames[0];
+    await refreshReportTemplatePreviewWorkbook();
+    renderReportTemplatePreview(reportTemplateActiveSheet);
+    if ($('reportMsg')) $('reportMsg').textContent = '已导入模板：' + file.name;
+  }
+
+  async function renderReportOutput() {
+    if (!$('reportOutputTitle')) return;
+    var isDaily = reportMode !== 'period';
+    $('reportOutputTitle').textContent = isDaily ? '日报模板' : '周期报模板';
+    document.querySelectorAll('[data-report-mode]').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-report-mode') === reportMode);
+    });
+    if (reportTemplateWorkbook) await refreshReportTemplatePreviewWorkbook();
+    renderReportTemplatePreview(reportTemplateActiveSheet);
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    textarea.remove();
   }
 
   async function renderDashboard() {
@@ -4160,6 +5761,36 @@
     });
     return Object.values(groups).sort(function(a, b) {
       return String(b.startDate || '').localeCompare(String(a.startDate || '')) || String(a.dimensionName || '').localeCompare(String(b.dimensionName || ''), 'zh-Hans-CN', { numeric: true });
+    });
+  }
+
+  function dateRangesOverlap(aStart, aEnd, bStart, bEnd) {
+    aEnd = aEnd || aStart;
+    bEnd = bEnd || bStart;
+    if (!aStart || !bStart) return false;
+    return aStart <= bEnd && bStart <= aEnd;
+  }
+
+  function applyRankingToAnalyzedGroups(groups, rankingRows) {
+    rankingRows = rankingRows || [];
+    var rankBySku = {};
+    rankingRows.forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      var rank = Number(row.rank || 0);
+      if (!sku || !rank) return;
+      if (!rankBySku[sku]) rankBySku[sku] = [];
+      rankBySku[sku].push(row);
+    });
+    groups.forEach(function(group) {
+      var bestRank = Number(group.rank || 0) || 0;
+      (group.skus || []).forEach(function(sku) {
+        (rankBySku[normalizeSkuValue(sku)] || []).forEach(function(row) {
+          if (!dateRangesOverlap(group.startDate, group.endDate || group.startDate, row.startDate, row.endDate || row.startDate)) return;
+          var rank = Number(row.rank || 0);
+          if (rank && (!bestRank || rank < bestRank)) bestRank = rank;
+        });
+      });
+      group.rank = bestRank || group.rank || '';
     });
   }
 
@@ -4622,6 +6253,10 @@
       renderImportMappings();
       renderManualRankingEntry();
     }
+    if (page === 'report') {
+      renderReportConfig();
+      renderReportOutput();
+    }
     if (page === 'db-sku' || page === 'sku') renderSkus();
     if (page === 'raw-snapshots') renderSnapshots();
     if (page === 'db-analyzed') renderAnalyzedDb();
@@ -4635,6 +6270,101 @@
   if ($('refreshSkuDbBtn')) $('refreshSkuDbBtn').addEventListener('click', renderSkuDb);
   $('refreshAnalyzedDbBtn').addEventListener('click', renderAnalyzedDb);
   $('refreshEstimatesDbBtn').addEventListener('click', renderEstimatesDb);
+  if ($('importEstimatesBtn')) {
+    $('importEstimatesBtn').addEventListener('click', function() {
+      $('estimateImportInput').click();
+    });
+  }
+  if ($('exportEstimatesBtn')) {
+    $('exportEstimatesBtn').addEventListener('click', function() {
+      exportEstimateFile();
+    });
+  }
+  if ($('generateEstimatesBtn')) {
+    $('generateEstimatesBtn').addEventListener('click', async function() {
+      try {
+        setEstimateMsg('正在生成竞品估算...');
+        await generateCompetitorEstimates();
+      } catch (err) {
+        setEstimateMsg(err && err.message ? err.message : String(err), true);
+      }
+    });
+  }
+  if ($('estimateImportInput')) {
+    $('estimateImportInput').addEventListener('change', async function(e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      try {
+        setEstimateMsg('正在导入竞品估算数据...');
+        var result = await importEstimateFile(file);
+        if (result.startDate && result.endDate && datePickers.estimate) {
+          datePickers.estimate.setRange(result.startDate, result.endDate);
+          datePickers.estimate.setCalendarMonth(dateFromYmd(result.startDate) || new Date());
+          datePickers.estimate.render();
+        }
+        if (result.skus && result.skus.length && $('estimateProductSelect')) {
+          localStorage.setItem('jdEstimateSelectedSku', normalizeSkuValue(result.skus[0]));
+        }
+        setEstimateMsg('已导入 ' + result.saved + ' 条竞品估算数据；替换旧数据 ' + result.replaced + ' 条；跳过 ' + result.skipped + ' 行。');
+        await renderEstimatesDb();
+        await refreshCounts();
+      } catch (err) {
+        setEstimateMsg(err && err.message ? err.message : String(err), true);
+      } finally {
+        e.target.value = '';
+      }
+    });
+  }
+  if ($('estimateProductSelect')) {
+    $('estimateProductSelect').addEventListener('change', function(e) {
+      localStorage.setItem('jdEstimateSelectedSku', normalizeSkuValue(e.target.value || ''));
+      renderEstimatesDb();
+    });
+  }
+  document.querySelectorAll('[data-report-mode]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      reportMode = btn.getAttribute('data-report-mode') || 'daily';
+      localStorage.setItem('jdReportMode', reportMode);
+      renderReportOutput();
+    });
+  });
+  if ($('reportIssueInput')) {
+    $('reportIssueInput').addEventListener('input', renderReportOutput);
+  }
+  document.querySelectorAll('.report-dim-check').forEach(function(input) {
+    input.addEventListener('change', function() {
+      saveReportDimensions();
+      renderReportOutput();
+    });
+  });
+  if ($('exportReportTemplateBtn')) {
+    $('exportReportTemplateBtn').addEventListener('click', exportReportTemplate);
+  }
+  if ($('importReportTemplateBtn')) {
+    $('importReportTemplateBtn').addEventListener('click', function() {
+      $('reportTemplateInput').click();
+    });
+  }
+  if ($('reportTemplateInput')) {
+    $('reportTemplateInput').addEventListener('change', async function(e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      try {
+        await importReportTemplate(file);
+      } catch (err) {
+        if ($('reportMsg')) $('reportMsg').textContent = err && err.message ? err.message : String(err);
+      } finally {
+        e.target.value = '';
+      }
+    });
+  }
+  if ($('reportOutput')) {
+    $('reportOutput').addEventListener('click', function(e) {
+      var tab = e.target.closest('[data-report-sheet]');
+      if (!tab) return;
+      renderReportTemplatePreview(tab.getAttribute('data-report-sheet'));
+    });
+  }
   datePickers.dashboard = createDateRangePicker({
     rootId: 'dashboardDatePickerField',
     inputId: 'dashboardDateInput',
@@ -4667,6 +6397,43 @@
     triggerId: 'rankingDateTrigger',
     popoverId: 'rankingDatePopover',
     onChange: function() { renderRankingRaw(); }
+  });
+  datePickers.estimate = createDateRangePicker({
+    rootId: 'estimateDatePickerField',
+    inputId: 'estimateDateInput',
+    startId: 'estimateStartDate',
+    endId: 'estimateEndDate',
+    prevId: 'estimateDatePrev',
+    nextId: 'estimateDateNext',
+    triggerId: 'estimateDateTrigger',
+    popoverId: 'estimateDatePopover',
+    onChange: function(range) {
+      range = range || normalizedRange($('estimateStartDate').value, $('estimateEndDate').value || $('estimateStartDate').value);
+      localStorage.setItem('jdEstimateDateRange', JSON.stringify(range));
+      renderEstimatesDb();
+    }
+  });
+  datePickers.report = createDateRangePicker({
+    rootId: 'reportDatePickerField',
+    inputId: 'reportDateInput',
+    startId: 'reportStartDate',
+    endId: 'reportEndDate',
+    prevId: 'reportDatePrev',
+    nextId: 'reportDateNext',
+    triggerId: 'reportDateTrigger',
+    popoverId: 'reportDatePopover',
+    onChange: function() { renderReportOutput(); }
+  });
+  datePickers.manualRanking = createDateRangePicker({
+    rootId: 'manualRankingDatePickerField',
+    inputId: 'manualRankingDate',
+    startId: 'manualRankingStartDate',
+    endId: 'manualRankingEndDate',
+    prevId: 'manualRankingDatePrev',
+    nextId: 'manualRankingDateNext',
+    triggerId: 'manualRankingDateTrigger',
+    popoverId: 'manualRankingDatePopover',
+    onChange: function() { renderManualRankingEntry(); }
   });
 document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     input.addEventListener('change', function() {
@@ -4710,12 +6477,33 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     e.preventDefault();
     addRankingDimension();
   });
-  $('manualRankingFieldSelect').addEventListener('change', function(e) {
-    var key = e.target.value;
-    if (key && manualRankingExtraFields.indexOf(key) === -1 && MANUAL_RANKING_FIELDS[key] && !MANUAL_RANKING_FIELDS[key].readonly) {
-      manualRankingExtraFields.push(key);
-      saveManualRankingExtraFields();
+  if ($('manualRankingFieldToggle')) {
+    $('manualRankingFieldToggle').addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $('manualRankingFieldPanel').classList.toggle('open');
+    });
+  }
+  if ($('manualRankingFieldPanel')) {
+    $('manualRankingFieldPanel').addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+    $('manualRankingFieldPanel').addEventListener('change', function(e) {
+      var input = e.target.closest('[data-manual-field-key]');
+      if (!input) return;
+      var key = input.getAttribute('data-manual-field-key');
+      if (!MANUAL_RANKING_FIELDS[key] || MANUAL_RANKING_FIELDS[key].readonly) return;
+      manualRankingSelectedFields = visibleManualRankingFields().filter(function(item) { return item !== key; });
+      if (input.checked) manualRankingSelectedFields.push(key);
+      saveManualRankingSelectedFields();
       renderManualRankingEntry();
+      $('manualRankingFieldPanel').classList.add('open');
+    });
+  }
+  document.addEventListener('click', function(e) {
+    var picker = $('manualRankingFieldPicker');
+    if (picker && !picker.contains(e.target) && $('manualRankingFieldPanel')) {
+      $('manualRankingFieldPanel').classList.remove('open');
     }
   });
   $('manualRankingTrackedOnlyCheck').addEventListener('change', function(e) {
@@ -4723,35 +6511,38 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     localStorage.setItem('jdManualRankingTrackedOnly', manualRankingTrackedOnly ? 'true' : 'false');
     renderManualRankingEntry();
   });
-  $('manualRankingDate').addEventListener('change', renderManualRankingEntry);
-  $('manualRankingDatePrev').addEventListener('click', function(e) {
-    e.preventDefault();
-    shiftManualRankingDate(-1);
-  });
-  $('manualRankingDateNext').addEventListener('click', function(e) {
-    e.preventDefault();
-    shiftManualRankingDate(1);
-  });
   $('manualRankingBody').addEventListener('click', function(e) {
-    var saveBtn = e.target.closest('.save-manual-ranking-row');
-    if (saveBtn) {
-      e.preventDefault();
-      saveManualRankingEntry(saveBtn.closest('tr'));
-      return;
-    }
-    var remove = e.target.closest('[data-remove-manual-ranking-field]');
-    if (remove) {
-      e.preventDefault();
-      manualRankingExtraFields = manualRankingExtraFields.filter(function(key) { return key !== remove.getAttribute('data-remove-manual-ranking-field'); });
-      saveManualRankingExtraFields();
-      renderManualRankingEntry();
+    var entryCell = e.target.closest('.manual-entry-cell');
+    if (entryCell && !e.target.closest('button')) {
+      var input = entryCell.querySelector('.manual-ranking-field');
+      if (input && e.target !== input) input.focus();
     }
   });
   $('manualRankingBody').addEventListener('input', function(e) {
     if (e.target.classList.contains('manual-ranking-field')) updateManualGrowthOptions(e.target.value);
   });
+  $('manualRankingBody').addEventListener('keydown', function(e) {
+    if (!e.target.classList.contains('manual-ranking-field') || e.key !== 'Enter') return;
+    e.preventDefault();
+    var options = manualGrowthOptionsFor(e.target.value);
+    if (options.length) {
+      e.target.value = options[0];
+      updateManualGrowthOptions(e.target.value);
+    }
+    saveManualRankingRowIfChanged(e.target.closest('tr'));
+    e.target.blur();
+  });
   $('manualRankingBody').addEventListener('focusin', function(e) {
-    if (e.target.classList.contains('manual-ranking-field')) updateManualGrowthOptions(e.target.value);
+    if (e.target.classList.contains('manual-ranking-field')) {
+      var tr = e.target.closest('tr');
+      if (tr && !tr.dataset.manualSavedSignature) tr.dataset.manualSavedSignature = manualRankingRowValueSignature(tr);
+      updateManualGrowthOptions(e.target.value);
+    }
+  });
+  $('manualRankingBody').addEventListener('focusout', function(e) {
+    if (e.target.classList.contains('manual-ranking-field')) {
+      saveManualRankingRowIfChanged(e.target.closest('tr'));
+    }
   });
   $('clearSnapshotsBtn').addEventListener('click', function() { clearDbTable('raw_snapshots', renderSnapshots); });
   $('clearRankingRawBtn').addEventListener('click', function() { clearDbTable('ranking_raw_metrics', renderRankingRaw); });
@@ -5041,6 +6832,12 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     handleImportFiles($('fileInput').files);
     $('fileInput').value = '';
   });
+  if ($('viewImportRecordsBtn')) {
+    $('viewImportRecordsBtn').addEventListener('click', function() {
+      location.hash = 'raw-snapshots';
+      renderSnapshots();
+    });
+  }
 
   var defaultAnalyzedDate = yesterday();
   $('dashboardStartDate').value = defaultAnalyzedDate;
@@ -5052,6 +6849,17 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
   $('rankingStartDate').value = defaultAnalyzedDate;
   $('rankingEndDate').value = defaultAnalyzedDate;
   $('rankingDateInput').value = defaultAnalyzedDate;
+  $('reportStartDate').value = defaultAnalyzedDate;
+  $('reportEndDate').value = defaultAnalyzedDate;
+  $('reportDateInput').value = defaultAnalyzedDate;
+  var defaultEstimateShortcut = rangeForShortcut('30') || { start: defaultAnalyzedDate, end: defaultAnalyzedDate };
+  var defaultEstimateEnd = estimateSavedRange && estimateSavedRange.end ? canonicalYmd(estimateSavedRange.end) || estimateSavedRange.end : defaultEstimateShortcut.end;
+  var defaultEstimateStart = estimateSavedRange && estimateSavedRange.start ? canonicalYmd(estimateSavedRange.start) || estimateSavedRange.start : defaultEstimateShortcut.start;
+  $('estimateStartDate').value = defaultEstimateStart;
+  $('estimateEndDate').value = defaultEstimateEnd;
+  $('estimateDateInput').value = defaultEstimateStart === defaultEstimateEnd ? defaultEstimateStart : defaultEstimateStart + ' 至 ' + defaultEstimateEnd;
+  $('manualRankingStartDate').value = defaultAnalyzedDate;
+  $('manualRankingEndDate').value = defaultAnalyzedDate;
   $('manualRankingDate').value = defaultAnalyzedDate;
   if (datePickers.dashboard) {
     datePickers.dashboard.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
@@ -5067,6 +6875,21 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     datePickers.ranking.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
     datePickers.ranking.sync();
     datePickers.ranking.render();
+  }
+  if (datePickers.estimate) {
+    datePickers.estimate.setCalendarMonth(dateFromYmd(defaultEstimateStart) || new Date());
+    datePickers.estimate.sync();
+    datePickers.estimate.render();
+  }
+  if (datePickers.report) {
+    datePickers.report.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
+    datePickers.report.sync();
+    datePickers.report.render();
+  }
+  if (datePickers.manualRanking) {
+    datePickers.manualRanking.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
+    datePickers.manualRanking.sync();
+    datePickers.manualRanking.render();
   }
   migrateImportConfig();
   switchPage(location.hash.slice(1) || 'dashboard');
@@ -5093,6 +6916,10 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     if (currentPage === 'import') {
       renderImportMappings();
       await renderManualRankingEntry();
+    }
+    if (currentPage === 'report') {
+      await renderReportConfig();
+      await renderReportOutput();
     }
     if (currentPage === 'db-sku' || currentPage === 'sku') await renderSkus();
     if (currentPage === 'raw-snapshots') await renderSnapshots();
