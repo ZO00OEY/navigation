@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -27,12 +27,14 @@
 .back-link:hover { color: var(--link-color); }
 
 .tool-shell {
-  display: flex; min-height: 680px; overflow: visible; align-items: flex-start;
+  display: grid; grid-template-columns: 192px minmax(0, 1fr);
+  min-height: 680px; overflow: visible; align-items: stretch;
   background: var(--card-bg); border: 1px solid var(--card-border);
   border-radius: var(--radius); box-shadow: 0 4px 24px var(--card-shadow);
 }
 .tool-sidebar {
-  width: 192px; flex-shrink: 0; padding: 16px 0;
+  grid-column: 1; grid-row: 1;
+  width: 192px; min-width: 0; padding: 16px 0;
   display: flex; flex-direction: column;
   position: sticky; top: 22px; height: min(760px, calc(100vh - 44px)); min-height: 620px;
   border-right: 1px solid var(--card-border);
@@ -59,7 +61,10 @@
 }
 [data-theme="light"] .tab-btn.active { background: rgba(251, 114, 153, 0.1); }
 .tab-kicker { color: var(--text-tertiary); font-size: 0.68rem; font-weight: 600; }
-.tool-main { flex: 1; min-width: 0; padding: 28px 32px 34px; overflow: visible; }
+.tool-main {
+  grid-column: 2; grid-row: 1;
+  min-width: 0; width: 100%; padding: 28px 32px 34px; overflow: visible;
+}
 .tool-page { display: none; }
 .tool-page.active { display: block; }
 
@@ -195,6 +200,63 @@
 .upload-zone strong { display: block; color: var(--text); font-size: 0.9rem; margin-bottom: 5px; }
 .upload-zone span { color: var(--text-tertiary); font-size: 0.75rem; }
 
+.mapping-accordion { display: grid; gap: 10px; margin-top: 10px; }
+.mapping-section {
+  position: relative;
+  border: 1px solid var(--card-border); border-radius: 8px; background: var(--card-bg); overflow: hidden;
+}
+.mapping-section::before {
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 3px;
+  background: var(--link-color); z-index: 2;
+}
+.mapping-section-head {
+  width: 100%; border: none; background: linear-gradient(90deg, rgba(251, 114, 153, 0.12), var(--search-bg)); color: var(--text);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 13px 14px 13px 16px; font-family: inherit; text-align: left; cursor: pointer;
+}
+.mapping-section-title { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.mapping-section-title strong { font-size: 0.9rem; color: var(--text); }
+.mapping-section-title span { font-size: 0.72rem; color: var(--text-tertiary); line-height: 1.45; }
+.mapping-source-link { color: var(--link-color); font-size: 0.72rem; text-decoration: none; font-weight: 700; }
+.mapping-source-link:hover { text-decoration: underline; }
+.mapping-section-toggle {
+  color: var(--link-color); font-size: 0.72rem; font-weight: 700;
+  border: 1px solid rgba(251, 114, 153, 0.28); border-radius: 999px; padding: 4px 9px; background: rgba(251, 114, 153, 0.08);
+}
+.mapping-section-body { padding: 14px 14px 14px 16px; display: none; }
+.mapping-section.open .mapping-section-body { display: block; }
+
+.mapping-section-toolbar { display: none; }
+.mapping-section-note { color: var(--text-tertiary); font-size: 0.73rem; line-height: 1.55; }
+.mapping-rule-box {
+  display: grid; gap: 8px; margin-bottom: 12px; padding: 10px;
+  border: 1px solid rgba(222, 115, 158, 0.18); border-radius: 8px;
+  background: rgba(222, 115, 158, 0.045);
+}
+.mapping-rule-row { display: grid; grid-template-columns: 108px minmax(220px, 1fr) 28px 28px; gap: 8px; align-items: center; }
+.mapping-rule-label { color: var(--text); font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+.mapping-rule-row .input { min-height: 34px; font-size: 0.74rem; }
+.mapping-rule-action {
+  width: 26px; height: 26px; border-radius: 7px;
+  border: 1px solid rgba(222, 115, 158, 0.26);
+  background: rgba(255, 255, 255, 0.72); color: #c84f83;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0; cursor: pointer;
+}
+.mapping-rule-action svg { width: 13px; height: 13px; }
+.mapping-rule-action:hover { background: rgba(222, 115, 158, 0.14); border-color: rgba(222, 115, 158, 0.42); }
+.mapping-rule-action.add { color: #9a9a9a; border-color: var(--card-border); background: var(--search-bg); font-weight: 700; }
+.mapping-rule-action.add:hover { color: #c84f83; border-color: rgba(222, 115, 158, 0.32); background: rgba(222, 115, 158, 0.08); }
+.mapping-option-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; color: var(--text-secondary); font-size: 0.74rem; }
+.mapping-add-head { text-align: right; width: 92px; }
+.mapping-add-btn {
+  min-height: 30px; padding: 0 11px; border-radius: 8px;
+  border: 1px solid rgba(222, 115, 158, 0.32);
+  background: rgba(222, 115, 158, 0.1); color: #c84f83;
+  font-size: 0.72rem; font-weight: 700;
+}
+.mapping-add-btn:hover { background: rgba(222, 115, 158, 0.16); }
+
 .table-wrap { overflow: auto; border: 1px solid var(--card-border); border-radius: 8px; background: var(--card-bg); }
 .sku-table-wrap { max-height: 690px; background: var(--card-bg); }
 .sku-table-wrap thead { position: sticky; top: 0; z-index: 5; background: var(--card-bg); }
@@ -227,6 +289,11 @@
   font-size: 0.68rem; background: rgba(86, 180, 125, 0.1); color: #3a9b67;
 }
 .import-status.warn { background: rgba(217, 83, 79, 0.08); color: #d9534f; }
+.import-status.info { background: rgba(72, 135, 190, 0.12); color: #4d98cf; }
+.import-note {
+  display: block; margin-top: 5px; max-width: 520px;
+  color: var(--text-tertiary); font-size: 0.68rem; line-height: 1.45;
+}
 .tag.good { background: rgba(86, 180, 125, 0.13); color: #56b47d; }
 .tag.warn { background: rgba(216, 151, 64, 0.14); color: #d89740; }
 .tag.info { background: rgba(72, 135, 190, 0.14); color: #4d98cf; }
@@ -295,6 +362,19 @@
   font-size: 0.78rem; font-weight: 700; font-family: inherit; transition: all 0.15s;
 }
 .icon-btn:hover { background: rgba(222, 115, 158, 0.24); transform: translateY(-1px); }
+.row-delete-btn {
+  min-width: 0; width: 26px; height: 26px; padding: 0;
+  border-radius: 7px; color: #d84f86;
+  background: rgba(222, 115, 158, 0.08);
+  border-color: rgba(222, 115, 158, 0.24);
+}
+.row-delete-btn:hover {
+  background: rgba(222, 115, 158, 0.15);
+  border-color: rgba(216, 79, 134, 0.42);
+  color: #cf2f74;
+  transform: none;
+}
+.row-delete-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
 .ghost-file { display: none; }
 .sku-table th[draggable="true"] { cursor: inherit; }
 .sku-table th.dragging { opacity: 0.45; }
@@ -395,11 +475,11 @@
 .footer span { color: var(--text-tertiary); opacity: 0.65; font-size: 0.72rem; }
 
 @media (max-width: 860px) {
-  .tool-shell { flex-direction: column; min-height: 680px; overflow: hidden; }
-  .tool-sidebar { position: static; height: auto; min-height: 0; width: 100%; display: flex; overflow-x: auto; padding: 0; border-right: none; border-bottom: 1px solid var(--card-border); }
+  .tool-shell { grid-template-columns: 1fr; min-height: 680px; overflow: hidden; }
+  .tool-sidebar { grid-column: 1; grid-row: 1; position: static; height: auto; min-height: 0; width: 100%; display: flex; overflow-x: auto; padding: 0; border-right: none; border-bottom: 1px solid var(--card-border); }
   .tab-btn { white-space: nowrap; border-left: none; border-bottom: 2px solid transparent; justify-content: center; }
   .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--link-color); }
-  .tool-main { padding: 22px 18px; }
+  .tool-main { grid-column: 1; grid-row: 2; padding: 22px 18px; }
   .page-head { flex-direction: column; }
   .filter-strip { grid-template-columns: 1fr; }
   .filter-left { max-width: none; }
@@ -440,7 +520,7 @@
       </div>
       <div class="sidebar-archive">
         <button class="tab-btn" data-page="db-sku">SKU 档案<span class="tab-kicker">D1</span></button>
-        <button class="tab-btn" data-page="raw-snapshots">&#21407;&#22987;&#24555;&#29031;&#35760;&#24405;<span class="tab-kicker">D2</span></button>
+        <button class="tab-btn" data-page="raw-snapshots">&#23548;&#20837;&#35760;&#24405;<span class="tab-kicker">D2</span></button>
         <button class="tab-btn" data-page="db-analyzed">已分析数据<span class="tab-kicker">D3</span></button>
         <button class="tab-btn" data-page="ranking-raw">榜单原始指标<span class="tab-kicker">D4</span></button>
         <button class="tab-btn" data-page="db-estimates">竞品估算结果<span class="tab-kicker">D5</span></button>
@@ -459,7 +539,7 @@
 
         <div class="metric-row">
           <div class="metric"><span>SKU 档案</span><strong id="metricSkuCount">0</strong></div>
-          <div class="metric"><span>原始快照</span><strong id="metricSnapshotCount">0</strong></div>
+          <div class="metric"><span>&#23548;&#20837;&#35760;&#24405;</span><strong id="metricSnapshotCount">0</strong></div>
           <div class="metric"><span>已分析记录</span><strong id="metricAnalyzedCount">0</strong></div>
           <div class="metric"><span>竞品估算</span><strong id="metricEstimateCount">0</strong></div>
         </div>
@@ -467,22 +547,48 @@
         <div class="grid grid-2">
           <div class="panel">
             <div class="panel-title">筛选口径</div>
-            <div class="form-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
-              <div class="field">
-                <label>周期类型</label>
-                <select class="select" id="viewPeriod">
-                  <option value="day">日</option>
-                  <option value="week">周</option>
-                  <option value="month">月</option>
-                </select>
+            <div class="field date-picker-field" id="dashboardDatePickerField">
+              <label>日期范围</label>
+              <div class="date-input-wrap">
+                <button class="date-step-btn date-step-prev" id="dashboardDatePrev" type="button" title="向前" aria-label="向前">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+                <input class="input" type="text" id="dashboardDateInput" placeholder="YYYY-MM-DD">
+                <button class="date-step-btn date-step-next" id="dashboardDateNext" type="button" title="向后" aria-label="向后">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+                <button class="date-trigger" id="dashboardDateTrigger" type="button" title="选择日期">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+                    <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
+                    <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+                  </svg>
+                </button>
               </div>
-              <div class="field">
-                <label>开始日期</label>
-                <input class="input" type="date" id="viewStart">
-              </div>
-              <div class="field">
-                <label>结束日期</label>
-                <input class="input" type="date" id="viewEnd">
+              <input type="hidden" id="dashboardStartDate">
+              <input type="hidden" id="dashboardEndDate">
+              <div class="date-popover" id="dashboardDatePopover">
+                <div class="date-shortcuts">
+                  <button type="button" data-date-shortcut="yesterday">昨日</button>
+                  <button type="button" data-date-shortcut="7">近7日</button>
+                  <button type="button" data-date-shortcut="30">近30日</button>
+                  <button type="button" data-date-shortcut="today">自然日</button>
+                  <button type="button" data-date-shortcut="week">自然周</button>
+                  <button type="button" data-date-shortcut="month">自然月</button>
+                  <button type="button" data-date-shortcut="custom">自定义</button>
+                </div>
+                <div class="date-calendar">
+                  <div class="date-cal-head">
+                    <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
+                    <strong class="date-picker-month">2026-06</strong>
+                    <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
+                  </div>
+                  <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+                  <div class="date-grid"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -507,10 +613,10 @@
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>追踪名称</th><th>追踪维度</th><th>追踪目标</th><th>匹配 SKU</th><th>销售数量</th><th>销售金额</th><th>访客</th><th>操作</th>
+                  <th>维度</th><th>追踪名称</th><th>匹配 SKU</th><th>销售数量</th><th>销量排名</th><th>销售金额</th><th>访客</th><th>转化率</th><th>站内花费</th><th>站外花费</th><th>操作</th>
                 </tr>
               </thead>
-              <tbody id="monitorBody"><tr><td class="empty-row" colspan="8">暂无追踪项</td></tr></tbody>
+              <tbody id="monitorBody"><tr><td class="empty-row" colspan="11">暂无追踪项</td></tr></tbody>
             </table>
           </div>
           <div class="msg" id="monitorMsg"></div>
@@ -521,7 +627,7 @@
         <div class="page-head">
           <div class="page-title">
             <h1>数据导入中心</h1>
-            <p>把销售明细、站内花费、站外 CPS 和行业榜单一起拖进来，页面会先自动识别表类型、周期和日期，再保存原始快照。</p>
+            <p>&#25226;&#38144;&#21806;&#26126;&#32454;&#12289;&#31449;&#20869;&#33457;&#36153;&#12289;&#31449;&#22806; CPS &#21644;&#34892;&#19994;&#27036;&#21333;&#19968;&#36215;&#25302;&#36827;&#26469;&#65292;&#39029;&#38754;&#20250;&#20808;&#33258;&#21160;&#35782;&#21035;&#34920;&#31867;&#22411;&#12289;&#21608;&#26399;&#21644;&#26085;&#26399;&#65292;&#20877;&#20445;&#23384;&#23548;&#20837;&#35760;&#24405;&#12290;</p>
           </div>
         </div>
 
@@ -544,15 +650,9 @@
         <div class="panel" style="margin-top:14px;">
           <div class="panel-title">
             <span>导入字段对照</span>
-            <button class="btn" id="addMappingBtn">新增对照项</button>
           </div>
-          <p class="hint">当前先配置“商品明细表”。右侧必须和导入表格列标题完全一致；你手动改过的列名会优先使用。</p>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr><th>系统数据库字段名</th><th>导入表格字段名</th><th>说明</th><th></th></tr></thead>
-              <tbody id="mappingBody"></tbody>
-            </table>
-          </div>
+          <p class="hint">按不同导入表维护数据抓取规则。左侧为系统内的数据名称，右侧为导入表格内该名称实际的表头名称。</p>
+          <div class="mapping-accordion" id="mappingSections"></div>
           <div class="msg" id="mappingMsg"></div>
         </div>
       </section>
@@ -560,14 +660,14 @@
       <section class="tool-page" id="raw-snapshots">
         <div class="page-head">
           <div class="page-title">
-            <h1>&#21407;&#22987;&#24555;&#29031;&#35760;&#24405;</h1>
-            <p>这里保存每次导入的原始文件记录，用来复查文件识别、日期范围、行数和后续重新计算。</p>
+            <h1>&#23548;&#20837;&#35760;&#24405;</h1>
+            <p>&#36825;&#37324;&#20445;&#23384;&#27599;&#27425;&#23548;&#20837;&#30340;&#25991;&#20214;&#35760;&#24405;&#65292;&#29992;&#26469;&#22797;&#26680;&#25991;&#20214;&#35782;&#21035;&#12289;&#26085;&#26399;&#33539;&#22260;&#12289;&#34892;&#25968;&#21644;&#23548;&#20837;&#29366;&#24577;&#12290;</p>
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-title">
-            <span>&#21407;&#22987;&#24555;&#29031;&#35760;&#24405;</span>
+            <span>&#23548;&#20837;&#35760;&#24405;</span>
             <div class="btn-row">
               <button class="btn" id="refreshSnapshotsBtn">刷新</button>
               <button class="btn danger" id="clearSnapshotsBtn">清表</button>
@@ -575,8 +675,8 @@
           </div>
           <div class="table-wrap">
             <table class="data-table">
-              <thead><tr><th>导入时间</th><th>表类型</th><th>周期</th><th>日期范围</th><th>文件名</th><th>行数</th></tr></thead>
-              <tbody id="snapshotBody"><tr><td class="empty-row" colspan="6">暂无原始快照</td></tr></tbody>
+              <thead><tr><th>&#23548;&#20837;&#26102;&#38388;</th><th>&#34920;&#31867;&#22411;</th><th>&#21608;&#26399;</th><th>&#26085;&#26399;&#33539;&#22260;</th><th>&#25991;&#20214;&#21517;</th><th>&#34892;&#25968;</th><th>&#23548;&#20837;&#29366;&#24577;</th></tr></thead>
+              <tbody id="snapshotBody"><tr><td class="empty-row" colspan="7">&#26242;&#26080;&#23548;&#20837;&#35760;&#24405;</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -655,7 +755,7 @@
           </div>
           <div class="filter-strip">
             <div class="filter-left">
-              <div class="field date-picker-field">
+              <div class="field date-picker-field" id="analyzedDatePickerField">
                 <label id="analyzedStartLabel">日期范围</label>
                 <div class="date-input-wrap">
                   <button class="date-step-btn date-step-prev" id="analyzedDatePrev" type="button" title="前一天" aria-label="前一天">
@@ -691,18 +791,17 @@
                   <div class="date-calendar">
                     <div class="date-cal-head">
                       <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
-                      <strong id="datePickerMonth">2026-06</strong>
+                      <strong class="date-picker-month">2026-06</strong>
                       <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
                     </div>
                     <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-                    <div class="date-grid" id="datePickerGrid"></div>
+                    <div class="date-grid"></div>
                   </div>
                 </div>
               </div>
             </div>
             <div class="filter-right">
               <div class="filter-actions">
-                <label class="check-pill"><input type="checkbox" id="managedSkuOnlyCheck">已维护 SKU</label>
                 <button class="btn" id="refreshAnalyzedDbBtn">刷新</button>
                 <button class="btn danger" id="clearAnalyzedDbBtn">清空当前</button>
               </div>
@@ -714,13 +813,13 @@
                 <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="mainSeries">大系列</label>
                 <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="subSeries" checked>小系列</label>
                 <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="shortName">商品简称</label>
+                <label class="check-pill"><input type="checkbox" id="enableOrderDimensionCheck">&#21551;&#29992;&#35746;&#21333;&#32500;&#24230;</label>
+
                 <button class="add-dim-pill" id="addAnalyzedDimBtn" type="button" title="增加展示维度">+</button>
               </div>
-              <p class="filter-note" id="analyzedDimensionHint">当前最小维度：小系列，数据显示该小系列求和。</p>
           </div>
           <template id="legacyAnalyzedFilterDisabled">
             <div class="btn-row">
-              <label class="check-pill"><input type="checkbox" id="managedSkuOnlyCheck">已维护 SKU</label>
               <button class="btn" id="refreshAnalyzedDbBtn">刷新</button>
               <button class="btn danger" id="clearAnalyzedDbBtn">清表</button>
             </div>
@@ -763,11 +862,11 @@
                   <div class="date-calendar">
                     <div class="date-cal-head">
                       <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
-                      <strong id="datePickerMonth">2026-06</strong>
+                      <strong class="date-picker-month">2026-06</strong>
                       <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
                     </div>
                     <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-                    <div class="date-grid" id="datePickerGrid"></div>
+                    <div class="date-grid"></div>
                   </div>
                 </div>
               </div>
@@ -779,7 +878,6 @@
                 <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="shortName">商品简称</label>
                 <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="brand">品牌</label>
               </div>
-              <div class="note" id="analyzedDimensionHint">当前最小维度：小系列，数据显示该小系列求和。</div>
             </div>
           </div>
           </template>
@@ -892,13 +990,13 @@
         <div class="page-head">
           <div class="page-title">
             <h1>数据清理与备份</h1>
-            <p>像管理文件一样管理原始快照。删除快照时，会同步删除由它生成的已分析数据。</p>
+            <p>&#20687;&#31649;&#29702;&#25991;&#20214;&#19968;&#26679;&#31649;&#29702;&#23548;&#20837;&#35760;&#24405;&#12290;&#21024;&#38500;&#35760;&#24405;&#26102;&#65292;&#20250;&#21516;&#27493;&#21024;&#38500;&#30001;&#23427;&#29983;&#25104;&#30340;&#24050;&#20998;&#26512;&#25968;&#25454;&#12290;</p>
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-title">
-            <span>原始快照管理</span>
+            <span>&#23548;&#20837;&#35760;&#24405;&#31649;&#29702;</span>
             <button class="btn" id="refreshCleanupSnapshotsBtn">刷新</button>
           </div>
           <div class="btn-row" style="margin-top:10px;">
@@ -906,22 +1004,23 @@
             <button class="btn" data-cleanup-pick="3">选中近 3 个月</button>
             <button class="btn" data-cleanup-pick="6">选中近 6 个月</button>
             <button class="btn" id="clearCleanupSelectionBtn">取消选择</button>
-            <button class="btn danger" id="deleteSelectedSnapshotsBtn">删除选中快照</button>
+            <button class="btn danger" id="deleteSelectedSnapshotsBtn">&#21024;&#38500;&#36873;&#20013;&#35760;&#24405;</button>
           </div>
           <div class="table-wrap" style="margin-top:12px;">
             <table class="data-table">
               <thead>
                 <tr>
                   <th><input type="checkbox" id="cleanupSelectAll"></th>
-                  <th>表格类型</th>
-                  <th>表格时期</th>
-                  <th>表格原标题</th>
-                  <th>导入时间</th>
-                  <th>行数</th>
-                  <th>操作</th>
+                  <th>&#34920;&#26684;&#31867;&#22411;</th>
+                  <th>&#34920;&#26684;&#26102;&#26399;</th>
+                  <th>&#34920;&#26684;&#21407;&#26631;&#39064;</th>
+                  <th>&#23548;&#20837;&#26102;&#38388;</th>
+                  <th>&#34892;&#25968;</th>
+                  <th>&#23548;&#20837;&#29366;&#24577;</th>
+                  <th>&#25805;&#20316;</th>
                 </tr>
               </thead>
-              <tbody id="cleanupSnapshotBody"><tr><td class="empty-row" colspan="7">暂无原始快照</td></tr></tbody>
+              <tbody id="cleanupSnapshotBody"><tr><td class="empty-row" colspan="8">&#26242;&#26080;&#23548;&#20837;&#35760;&#24405;</td></tr></tbody>
             </table>
           </div>
           <div class="msg" id="cleanupMsg"></div>
@@ -937,7 +1036,7 @@
 <script>
 (function() {
   var DB_NAME = 'jdDataAnalysisTool';
-  var DB_VERSION = 1;
+  var DB_VERSION = 2;
   var db = null;
   var skuImportTarget = 'own';
   var draggingColumnKey = null;
@@ -953,12 +1052,12 @@
       offsite_cps_cost: '站外 CPS 花费表',
       industry_ranking: '行业销售榜单'
     },
-    periodType: { unknown: '待确认', day: '日', week: '周', month: '月' },
+    periodType: { unknown: '待确认', day: '单日', period: '跨期' },
     itemType: { own: '本品', competitor: '竞品' }
   };
   var DEFAULT_IMPORT_MAPPINGS = {
     sales_detail: [
-      { key: 'date', label: '时间', column: '时间', locked: true, note: '用于判断单日或分日多日' },
+      { key: 'date', label: '时间', column: '时间', locked: true, note: '按原表时间保存，单日与跨期分开入库' },
       { key: 'sku', label: 'SKU', column: 'SKU', locked: true, note: '按文本保存，不转数字' },
       { key: 'salesQty', label: '件数', column: '成交商品件数', locked: true, note: '销售件数' },
       { key: 'salesAmount', label: '金额', column: '成交金额', locked: true, note: '销售金额' },
@@ -968,19 +1067,51 @@
       { key: 'itemPrice', label: '件单价', column: '件单价', locked: true, note: '件单价' },
       { key: 'searchExposure', label: '搜索曝光次数', column: '搜索曝光次数', locked: true, note: '搜索曝光' },
       { key: 'searchClick', label: '搜索点击次数', column: '搜索点击次数', locked: true, note: '搜索点击' }
+    ],
+    onsite_cost: [
+      { key: 'date', label: '时间', column: '点击时间', locked: true, note: '营销概况的统计日期或时间范围' },
+      { key: 'sku', label: 'SKU', column: 'SKU ID', locked: true, note: '用于匹配 SKU，后续可按原表调整列名' },
+      { key: 'onsiteCost', label: '站内花费', column: '花费', locked: true, note: '站内投放花费' },
+      { key: 'roi', label: '投产比', column: '投产比', locked: true, note: '站内投产比' }
+    ],
+    offsite_cps_cost: [
+      { key: 'date', label: '\u65f6\u95f4', column: '\u5b8c\u6210\u65e5\u671f', locked: true, note: '\u4ee5\u5b8c\u6210\u65e5\u671f\u4f5c\u4e3a\u7ad9\u5916 CPS \u5f52\u6863\u65e5\u671f' },
+      { key: 'sku', label: 'SKU', column: '\u5546\u54c1\u7f16\u53f7', locked: true, note: '\u7528\u4e8e\u5339\u914d SKU' },
+      { key: 'offsiteCost', label: '\u7ad9\u5916\u82b1\u8d39', column: '\u603b\u4f63\u91d1', locked: true, note: '\u6309 SKU \u548c\u5355\u65e5\u6c47\u603b\u603b\u4f63\u91d1' },
+      { key: 'campaignPlan', label: '\u6240\u5c5e\u8ba1\u5212/\u6d3b\u52a8', column: '\u6240\u5c5e\u8ba1\u5212/\u6d3b\u52a8', locked: true, note: '\u4fdd\u7559\u63a8\u5ba2 pin \u7684\u4e0a\u7ea7\u8ba1\u5212\u6216\u6d3b\u52a8\u6765\u6e90' },
+      { key: 'affiliatePin', label: '\u63a8\u5ba2 pin', column: '\u63a8\u5ba2pin', locked: true, note: '\u4fdd\u7559\u5408\u4f5c\u63a8\u5ba2\u6765\u6e90' },
+      { key: 'orderId', label: '\u8ba2\u5355\u7f16\u53f7', column: '\u8ba2\u5355\u7f16\u53f7', locked: true, note: '\u7528\u4f5c\u8ba2\u5355\u552f\u4e00\u6807\u8bc6\uff0c\u4e0d\u4f5c\u65e5\u5e38\u900f\u89c6\u7ef4\u5ea6' }
+    ],
+    industry_ranking: [
+      { key: 'date', label: '\u65e5\u671f', column: '\u65e5\u671f', locked: true, note: '\u699c\u5355\u5f52\u6863\u65e5\u671f' },
+      { key: 'rank', label: '\u6392\u540d', column: '\u6392\u540d', locked: true, note: '\u5546\u54c1\u5728\u699c\u5355\u4e2d\u7684\u6392\u540d' },
+      { key: 'sku', label: 'SKU', column: '\u5546\u54c1\u7f16\u53f7', locked: true, note: '\u5bf9\u5e94 SKU' },
+      { key: 'amountRange', label: '\u6210\u4ea4\u91d1\u989d\u533a\u95f4', column: '\u6210\u4ea4\u91d1\u989d\u533a\u95f4', locked: true, note: '\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4' },
+      { key: 'qtyRange', label: '\u6210\u4ea4\u4ef6\u6570\u533a\u95f4', column: '\u6210\u4ea4\u4ef6\u6570\u533a\u95f4', locked: true, note: '\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4' },
+      { key: 'visitorRange', label: '\u8bbf\u5ba2\u533a\u95f4', column: '\u8bbf\u5ba2\u533a\u95f4', locked: true, note: '\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4' },
+      { key: 'conversionRange', label: '\u8f6c\u5316\u7387\u533a\u95f4', column: '\u8f6c\u5316\u7387\u533a\u95f4', locked: true, note: '\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4' },
+      { key: 'customerPriceRange', label: '\u5ba2\u5355\u4ef7\u533a\u95f4', column: '\u5ba2\u5355\u4ef7\u533a\u95f4', locked: true, note: '\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4' }
     ]
   };
+  var DEFAULT_IMPORT_RULES = {
+    sales_detail: { filePatterns: ['商品明细'], includeComparison: false },
+    onsite_cost: { filePatterns: ['营销概况.*SKU维度'], includeComparison: true },
+    offsite_cps_cost: { filePatterns: ['CPS|\u7ad9\u5916|\u4e0b\u5355\u8ba2\u5355\u660e\u7ec6|\u8ba2\u5355\u660e\u7ec6'], includeComparison: false },
+    industry_ranking: { filePatterns: ['\u5546\u54c1\u699c\u5355|\u699c\u5355|\u6392\u884c\u699c|\u884c\u4e1a\u9500\u552e'], includeComparison: false }
+  };
   var importMappings = JSON.parse(localStorage.getItem('jdImportMappings') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_MAPPINGS));
+  var importRules = JSON.parse(localStorage.getItem('jdImportRules') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_RULES));
+  var mappingSections = [
+    { type: 'sales_detail', title: '商品明细表', sourceName: '商品明细数据', sourceUrl: 'https://jdsz.jd.com/szweb/view/product/productDetail.html', desc: '用于导入 SKU 粒度的成交、访客、转化和价格等商品明细数据。', open: false },
+    { type: 'onsite_cost', title: '站内花费', sourceName: '营销概况', sourceUrl: 'https://jzt.jd.com/custom-report/#/overview', desc: '用于导入京准通营销概况里的站内投放花费数据。', open: false },
+    { type: 'offsite_cps_cost', title: '\u7ad9\u5916 CPS \u82b1\u8d39', sourceName: '\u4e0b\u5355\u8ba2\u5355\u660e\u7ec6', sourceUrl: 'https://jzt.jd.com/jtk/#/order-detail', desc: '\u7528\u4e8e\u5bfc\u5165\u4eac\u4e1c\u8054\u76df\u7ad9\u5916 CPS \u82b1\u8d39\u6570\u636e\u3002', open: false },
+    { type: 'industry_ranking', title: '\u5546\u54c1\u699c\u5355', sourceName: '\u884c\u4e1a\u5546\u54c1\u699c\u5355', sourceUrl: 'https://jdsz.jd.com/szweb/view/industry/industry-product-rank-temp.html', desc: '\u7528\u4e8e\u5bfc\u5165\u5546\u54c1\u699c\u5355\u6392\u540d\u53ca\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4\u6570\u636e\u3002', open: false }
+  ];
   var monitorTracks = JSON.parse(localStorage.getItem('jdMonitorTracks') || '[]');
-  var hideUnmanagedAnalyzed = localStorage.getItem('jdHideUnmanagedAnalyzed') !== 'false';
   var analyzedExtraDimensions = JSON.parse(localStorage.getItem('jdAnalyzedExtraDimensions') || '[]');
+  var analyzedSelectedDimensions = JSON.parse(localStorage.getItem('jdAnalyzedSelectedDimensions') || '["subSeries"]');
+  var enableOrderDimension = localStorage.getItem('jdEnableOrderDimension') === 'true';
   var cleanupSelectedSnapshotIds = new Set();
-  var analyzedCalendarMonth = new Date();
-  var analyzedRangeDraftStart = '';
-  var analyzedPickerMode = 'custom';
-  var analyzedPreviewRange = null;
-  var analyzedSuppressSelectedRange = false;
-  var analyzedLastGridPickAt = 0;
   var skuColumnLabels = JSON.parse(localStorage.getItem('jdSkuColumnLabels') || '{}');
   var skuDimensionColumns = JSON.parse(localStorage.getItem('jdSkuDimensionColumns') || '["mainSeries","subSeries"]');
   var skuColumnWidths = JSON.parse(localStorage.getItem('jdSkuColumnWidths') || '{}');
@@ -1004,6 +1135,9 @@
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function iconTrash() {
+    return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6.5 7l.8 13h9.4l.8-13M9 7l.7-2h4.6L15 7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
   }
   function today() { return ymd(new Date()); }
   function dateFromYmd(value) {
@@ -1046,69 +1180,84 @@
   function saveImportMappings() {
     localStorage.setItem('jdImportMappings', JSON.stringify(importMappings));
   }
+  function saveImportRules() {
+    localStorage.setItem('jdImportRules', JSON.stringify(importRules));
+  }
   function getImportMappings(type) {
     if (!importMappings[type]) importMappings[type] = JSON.parse(JSON.stringify(DEFAULT_IMPORT_MAPPINGS[type] || []));
     return importMappings[type];
   }
-  function saveMonitorTracks() {
-    localStorage.setItem('jdMonitorTracks', JSON.stringify(monitorTracks));
+  function getImportRuleConfig(type) {
+    if (!importRules[type]) importRules[type] = JSON.parse(JSON.stringify(DEFAULT_IMPORT_RULES[type] || { filePatterns: [], includeComparison: false }));
+    if (!Array.isArray(importRules[type].filePatterns)) importRules[type].filePatterns = [];
+    return importRules[type];
   }
-
-  function syncAnalyzedDateInput() {
-    var start = $('analyzedStartDate').value;
-    var end = $('analyzedEndDate').value;
-    $('analyzedDateInput').value = start && end && start !== end ? start + ' 至 ' + end : (start || end || '');
-    updateAnalyzedDateStepButtons();
-  }
-
-  function parseAnalyzedDateInput() {
-    var text = $('analyzedDateInput').value.trim();
-    var dates = extractDatesFromText(text);
-    if (!dates.length) return;
-    $('analyzedStartDate').value = dates[0];
-    $('analyzedEndDate').value = dates[1] || dates[0];
-    if ($('analyzedStartDate').value > $('analyzedEndDate').value) {
-      var tmp = $('analyzedStartDate').value;
-      $('analyzedStartDate').value = $('analyzedEndDate').value;
-      $('analyzedEndDate').value = tmp;
-    }
-    var date = dateFromYmd($('analyzedStartDate').value);
-    if (date) analyzedCalendarMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  }
-
-  function openAnalyzedDatePicker() {
-    parseAnalyzedDateInput();
-    var defaultPreview = rangeForShortcut('yesterday');
-    analyzedPickerMode = 'day';
-    analyzedRangeDraftStart = '';
-    analyzedPreviewRange = defaultPreview;
-    analyzedSuppressSelectedRange = true;
-    if (defaultPreview && defaultPreview.start) {
-      var previewDate = dateFromYmd(defaultPreview.start);
-      if (previewDate) analyzedCalendarMonth = new Date(previewDate.getFullYear(), previewDate.getMonth(), 1);
-    }
-    document.querySelectorAll('[data-date-shortcut]').forEach(function(btn) {
-      btn.classList.toggle('active', btn.dataset.dateShortcut === 'yesterday');
+  function migrateImportConfig() {
+    Object.keys(DEFAULT_IMPORT_MAPPINGS).forEach(function(type) {
+      var list = getImportMappings(type);
+      DEFAULT_IMPORT_MAPPINGS[type].forEach(function(defaultItem) {
+        var item = list.find(function(current) { return current.key === defaultItem.key; });
+        if (!item) {
+          list.push(JSON.parse(JSON.stringify(defaultItem)));
+          return;
+        }
+        if (type === 'onsite_cost') {
+          if (item.key === 'date' && item.column === '时间') item.column = '点击时间';
+          if (item.key === 'sku' && item.column === 'SKU') item.column = 'SKU ID';
+          if (item.key === 'timeType') {
+            item.label = '当前/对比标记';
+            item.note = '仅用于判断是否跳过对比段，不参与日期筛选';
+          }
+        }
+      });
+      if (type === 'onsite_cost') {
+        importMappings[type] = list.filter(function(item) { return item.key !== 'timeType'; });
+      }
     });
-    renderAnalyzedDatePicker();
-    $('analyzedDatePopover').classList.add('open');
+    Object.keys(DEFAULT_IMPORT_RULES).forEach(function(type) { getImportRuleConfig(type); });
+    Object.keys(DEFAULT_IMPORT_RULES).forEach(function(type) {
+      var rule = getImportRuleConfig(type);
+      var hasBrokenPattern = rule.filePatterns.some(function(pattern) { return String(pattern || '').indexOf('??') !== -1; });
+      if (hasBrokenPattern || !rule.filePatterns.some(function(pattern) { return String(pattern || '').trim(); })) {
+        rule.filePatterns = DEFAULT_IMPORT_RULES[type].filePatterns.slice();
+      }
+    });
+    var offsiteRule = getImportRuleConfig('offsite_cps_cost');
+    if (!offsiteRule.filePatterns.some(function(pattern) { return /\u4e0b\u5355|\u8ba2\u5355/.test(String(pattern || '')); })) {
+      offsiteRule.filePatterns.push('\u4e0b\u5355\u8ba2\u5355\u660e\u7ec6|\u8ba2\u5355\u660e\u7ec6');
+    }
+    if (localStorage.getItem('jdImportRulesComparisonDefaultV2') !== 'done') {
+      getImportRuleConfig('onsite_cost').includeComparison = true;
+      localStorage.setItem('jdImportRulesComparisonDefaultV2', 'done');
+    }
+    saveImportMappings();
+    saveImportRules();
+  }
+  function saveMonitorTracks() {
+    monitorTracks.forEach(function(track) {
+      if (!track.dimension) track.dimension = 'subSeries';
+    });
+    localStorage.setItem('jdMonitorTracks', JSON.stringify(monitorTracks));
+    if (db && db.objectStoreNames.contains('app_settings')) {
+      put('app_settings', { key: 'monitorTracks', value: monitorTracks, updatedAt: new Date().toISOString() }).catch(function(err) { console.warn(err); });
+    }
   }
 
-  function closeAnalyzedDatePicker() {
-    analyzedPreviewRange = null;
-    analyzedSuppressSelectedRange = false;
-    $('analyzedDatePopover').classList.remove('open');
+  async function loadMonitorTracksFromDb() {
+    if (!db || !db.objectStoreNames.contains('app_settings')) return;
+    var saved = await getOne('app_settings', 'monitorTracks');
+    if (saved && Array.isArray(saved.value)) {
+      monitorTracks = saved.value;
+      monitorTracks.forEach(function(track) {
+        if (!track.dimension) track.dimension = 'subSeries';
+      });
+      localStorage.setItem('jdMonitorTracks', JSON.stringify(monitorTracks));
+      return;
+    }
+    saveMonitorTracks();
   }
 
-  function setAnalyzedRange(start, end) {
-    $('analyzedStartDate').value = start;
-    $('analyzedEndDate').value = end || start;
-    syncAnalyzedDateInput();
-    analyzedPreviewRange = null;
-    analyzedSuppressSelectedRange = false;
-    renderAnalyzedDatePicker();
-    renderAnalyzedDb();
-  }
+  var datePickers = {};
 
   function normalizedRange(start, end) {
     if (!start) return null;
@@ -1128,68 +1277,6 @@
       start: range.start,
       end: range.end > limit ? limit : range.end
     };
-  }
-
-  function getAnalyzedCurrentRange() {
-    parseAnalyzedDateInput();
-    return normalizedRange($('analyzedStartDate').value, $('analyzedEndDate').value || $('analyzedStartDate').value);
-  }
-
-  function inferAnalyzedRangeStep(range) {
-    var start = dateFromYmd(range.start);
-    var end = dateFromYmd(range.end);
-    var todayDate = dateFromYmd(today());
-    var days = daysBetween(range.start, range.end);
-    if (!start || !end || days <= 1) return { type: 'day', days: 1 };
-    if (
-      start.getDate() === 1 &&
-      sameMonth(start, end) &&
-      (isLastDayOfMonth(end) || (range.end === today() && sameMonth(start, todayDate)))
-    ) {
-      return { type: 'month' };
-    }
-    if (
-      start.getDay() === 1 &&
-      days <= 7 &&
-      (end.getDay() === 0 || (range.end === today() && daysBetween(range.start, range.end) <= 7))
-    ) {
-      return { type: 'week', days: 7 };
-    }
-    return { type: 'custom', days: days };
-  }
-
-  function shiftedAnalyzedRange(direction) {
-    var range = getAnalyzedCurrentRange();
-    if (!range) return null;
-    var step = inferAnalyzedRangeStep(range);
-    var start = dateFromYmd(range.start);
-    var end = dateFromYmd(range.end);
-    if (!start || !end) return null;
-    if (step.type === 'month') {
-      var nextStart = new Date(start.getFullYear(), start.getMonth() + direction, 1);
-      var nextEnd = new Date(nextStart.getFullYear(), nextStart.getMonth() + 1, 0);
-      return clampRangeToToday({ start: ymd(nextStart), end: ymd(nextEnd) });
-    }
-    var offset = direction * (step.days || 1);
-    return clampRangeToToday({ start: ymd(addDays(start, offset)), end: ymd(addDays(end, offset)) });
-  }
-
-  function updateAnalyzedDateStepButtons() {
-    var prev = $('analyzedDatePrev');
-    var next = $('analyzedDateNext');
-    if (!prev || !next) return;
-    var forward = shiftedAnalyzedRange(1);
-    var current = normalizedRange($('analyzedStartDate').value, $('analyzedEndDate').value || $('analyzedStartDate').value);
-    prev.disabled = !shiftedAnalyzedRange(-1);
-    next.disabled = !forward || isSameRange(forward, current);
-  }
-
-  function shiftAnalyzedDateRange(direction) {
-    var range = shiftedAnalyzedRange(direction);
-    var current = normalizedRange($('analyzedStartDate').value, $('analyzedEndDate').value || $('analyzedStartDate').value);
-    if (!range || isSameRange(range, current)) return;
-    setAnalyzedRange(range.start, range.end);
-    closeAnalyzedDatePicker();
   }
 
   function rangeForShortcut(kind, baseDate) {
@@ -1219,106 +1306,429 @@
     return clampRangeToToday({ start: ymd(start), end: ymd(end) });
   }
 
-  function setDatePickerMode(mode) {
-    var wasMonth = analyzedPickerMode === 'month';
-    analyzedPickerMode = mode;
-    analyzedRangeDraftStart = '';
-    analyzedPreviewRange = null;
-    analyzedSuppressSelectedRange = true;
-    if (mode === 'custom') {
-      $('analyzedStartDate').value = '';
-      $('analyzedEndDate').value = '';
-      $('analyzedDateInput').value = '';
+  function inferDateRangeStep(range) {
+    var start = dateFromYmd(range.start);
+    var end = dateFromYmd(range.end);
+    var todayDate = dateFromYmd(today());
+    var days = daysBetween(range.start, range.end);
+    if (!start || !end || days <= 1) return { type: 'day', days: 1 };
+    if (
+      start.getDate() === 1 &&
+      sameMonth(start, end) &&
+      (isLastDayOfMonth(end) || (range.end === today() && sameMonth(start, todayDate)))
+    ) {
+      return { type: 'month' };
     }
-    document.querySelectorAll('[data-date-shortcut]').forEach(function(btn) {
-      var value = btn.dataset.dateShortcut === 'today' ? 'day' : btn.dataset.dateShortcut;
-      btn.classList.toggle('active', value === mode);
-    });
-    if (wasMonth || mode === 'month') renderAnalyzedDatePicker();
-    else applyAnalyzedDateClasses();
+    if (
+      start.getDay() === 1 &&
+      days <= 7 &&
+      (end.getDay() === 0 || (range.end === today() && daysBetween(range.start, range.end) <= 7))
+    ) {
+      return { type: 'week', days: 7 };
+    }
+    return { type: 'custom', days: days };
+  }
+
+  function shiftedDateRange(range, direction) {
+    if (!range) return null;
+    var step = inferDateRangeStep(range);
+    var start = dateFromYmd(range.start);
+    var end = dateFromYmd(range.end);
+    if (!start || !end) return null;
+    if (step.type === 'month') {
+      var nextStart = new Date(start.getFullYear(), start.getMonth() + direction, 1);
+      var nextEnd = new Date(nextStart.getFullYear(), nextStart.getMonth() + 1, 0);
+      return clampRangeToToday({ start: ymd(nextStart), end: ymd(nextEnd) });
+    }
+    var offset = direction * (step.days || 1);
+    return clampRangeToToday({ start: ymd(addDays(start, offset)), end: ymd(addDays(end, offset)) });
+  }
+
+  function createDateRangePicker(config) {
+    var root = $(config.rootId);
+    var input = $(config.inputId);
+    var startEl = $(config.startId);
+    var endEl = $(config.endId);
+    var prev = $(config.prevId);
+    var next = $(config.nextId);
+    var trigger = $(config.triggerId);
+    var popover = $(config.popoverId);
+    if (!root || !input || !startEl || !endEl || !popover) return null;
+    var grid = root.querySelector('.date-grid');
+    var monthTitle = root.querySelector('.date-picker-month');
+    var weekRow = root.querySelector('.date-week');
+    var state = {
+      calendarMonth: new Date(),
+      draftStart: '',
+      mode: 'custom',
+      previewRange: null,
+      suppressSelectedRange: false,
+      lastGridPickAt: 0
+    };
+
+    function sync() {
+      var start = startEl.value;
+      var end = endEl.value;
+      input.value = start && end && start !== end ? start + ' \u81f3 ' + end : (start || end || '');
+      updateStepButtons();
+    }
+
+    function parse() {
+      var text = input.value.trim();
+      var dates = extractDatesFromText(text);
+      if (!dates.length) return;
+      startEl.value = dates[0];
+      endEl.value = dates[1] || dates[0];
+      if (startEl.value > endEl.value) {
+        var tmp = startEl.value;
+        startEl.value = endEl.value;
+        endEl.value = tmp;
+      }
+      var date = dateFromYmd(startEl.value);
+      if (date) state.calendarMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    }
+
+    function getRange() {
+      parse();
+      return normalizedRange(startEl.value, endEl.value || startEl.value);
+    }
+
+    function updateStepButtons() {
+      if (!prev || !next) return;
+      var current = normalizedRange(startEl.value, endEl.value || startEl.value);
+      var forward = shiftedDateRange(current, 1);
+      prev.disabled = !shiftedDateRange(current, -1);
+      next.disabled = !forward || isSameRange(forward, current);
+    }
+
+    function setRange(start, end, options) {
+      options = options || {};
+      startEl.value = start;
+      endEl.value = end || start;
+      sync();
+      state.previewRange = null;
+      state.suppressSelectedRange = false;
+      render();
+      if (typeof config.onChange === 'function' && !options.silent) config.onChange(getRange());
+    }
+
+    function shift(direction) {
+      var range = shiftedDateRange(getRange(), direction);
+      var current = normalizedRange(startEl.value, endEl.value || startEl.value);
+      if (!range || isSameRange(range, current)) return;
+      setRange(range.start, range.end);
+      close();
+    }
+
+    function open() {
+      parse();
+      var defaultPreview = rangeForShortcut('yesterday');
+      state.mode = 'day';
+      state.draftStart = '';
+      state.previewRange = defaultPreview;
+      state.suppressSelectedRange = true;
+      if (defaultPreview && defaultPreview.start) {
+        var previewDate = dateFromYmd(defaultPreview.start);
+        if (previewDate) state.calendarMonth = new Date(previewDate.getFullYear(), previewDate.getMonth(), 1);
+      }
+      root.querySelectorAll('[data-date-shortcut]').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.dateShortcut === 'yesterday');
+      });
+      render();
+      popover.classList.add('open');
+    }
+
+    function close() {
+      state.previewRange = null;
+      state.suppressSelectedRange = false;
+      popover.classList.remove('open');
+    }
+
+    function setMode(mode) {
+      var wasMonth = state.mode === 'month';
+      state.mode = mode;
+      state.draftStart = '';
+      state.previewRange = null;
+      state.suppressSelectedRange = true;
+      if (mode === 'custom') {
+        startEl.value = '';
+        endEl.value = '';
+        input.value = '';
+      }
+      root.querySelectorAll('[data-date-shortcut]').forEach(function(btn) {
+        var value = btn.dataset.dateShortcut === 'today' ? 'day' : btn.dataset.dateShortcut;
+        btn.classList.toggle('active', value === mode);
+      });
+      if (wasMonth || mode === 'month') render();
+      else applyClasses();
+    }
+
+    function render() {
+      if (!grid || !monthTitle) return;
+      var year = state.calendarMonth.getFullYear();
+      var month = state.calendarMonth.getMonth();
+      monthTitle.textContent = state.mode === 'month' ? String(year) : year + '-' + String(month + 1).padStart(2, '0');
+      if (weekRow) weekRow.style.display = state.mode === 'month' ? 'none' : '';
+      if (state.mode === 'month') {
+        var selectedStart = startEl.value;
+        var selectedEnd = endEl.value || selectedStart;
+        var preview = state.previewRange;
+        grid.className = 'date-grid month-grid';
+        grid.innerHTML = Array.from({ length: 12 }).map(function(_, index) {
+          var start = ymd(new Date(year, index, 1));
+          var end = ymd(new Date(year, index + 1, 0));
+          var classes = ['date-month'];
+          var isFuture = start > today();
+          if (isFuture) classes.push('future');
+          if (!isFuture && preview && start <= preview.end && end >= preview.start) classes.push('preview-range');
+          if (!isFuture && !state.suppressSelectedRange && selectedStart && selectedEnd && start <= selectedEnd && end >= selectedStart) classes.push('selected');
+          return '<button type="button" class="' + classes.join(' ') + '" data-month="' + index + '">' + (index + 1) + '\u6708</button>';
+        }).join('');
+        applyClasses();
+        return;
+      }
+      grid.className = 'date-grid';
+      var first = new Date(year, month, 1);
+      var startOffset = (first.getDay() + 6) % 7;
+      var gridStart = new Date(year, month, 1 - startOffset);
+      var html = '';
+      for (var i = 0; i < 42; i++) {
+        var date = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+        var value = ymd(date);
+        var classes = ['date-day'];
+        var future = isFutureYmd(value);
+        if (date.getMonth() !== month) classes.push('muted');
+        if (future) classes.push('future');
+        html += '<button type="button" class="' + classes.join(' ') + '" data-date="' + value + '">' + String(date.getDate()).padStart(2, '0') + '</button>';
+      }
+      grid.innerHTML = html;
+      applyClasses();
+    }
+
+    function applyClasses() {
+      if (!grid) return;
+      var selectedStart = startEl.value;
+      var selectedEnd = endEl.value || selectedStart;
+      var preview = state.previewRange;
+      if (state.mode === 'month') {
+        var year = state.calendarMonth.getFullYear();
+        grid.querySelectorAll('[data-month]').forEach(function(btn) {
+          var index = Number(btn.dataset.month);
+          var start = ymd(new Date(year, index, 1));
+          var end = ymd(new Date(year, index + 1, 0));
+          btn.className = 'date-month';
+          var isFuture = start > today();
+          if (isFuture) btn.classList.add('future');
+          if (!isFuture && preview && start <= preview.end && end >= preview.start) btn.classList.add('preview-range');
+          if (!isFuture && !state.suppressSelectedRange && selectedStart && selectedEnd && start <= selectedEnd && end >= selectedStart) btn.classList.add('selected');
+        });
+        return;
+      }
+      grid.querySelectorAll('[data-date]').forEach(function(btn) {
+        var value = btn.dataset.date;
+        var muted = btn.classList.contains('muted');
+        var future = isFutureYmd(value);
+        btn.className = 'date-day';
+        if (muted) btn.classList.add('muted');
+        if (future) btn.classList.add('future');
+        if (!future && preview && value >= preview.start && value <= preview.end) btn.classList.add('preview-range');
+        if (!future && !state.suppressSelectedRange && selectedStart && selectedEnd && value >= selectedStart && value <= selectedEnd) btn.classList.add('in-range');
+        if (!future && !state.suppressSelectedRange && value === selectedStart && value === selectedEnd) btn.classList.add('selected', 'single');
+        else if (!future && !state.suppressSelectedRange && value === selectedStart) btn.classList.add('selected', 'range-start');
+        else if (!future && !state.suppressSelectedRange && value === selectedEnd) btn.classList.add('selected', 'range-end');
+      });
+    }
+
+    function confirmGridPick(e) {
+      if (e.type === 'click' && Date.now() - state.lastGridPickAt < 350) return;
+      if ((e.type === 'mousedown' || e.type === 'pointerdown') && e.button != null && e.button !== 0) return;
+      var monthBtn = e.target.closest('[data-month]');
+      if (monthBtn && grid && grid.contains(monthBtn)) {
+        state.lastGridPickAt = Date.now();
+        e.preventDefault();
+        e.stopPropagation();
+        var monthIndex = Number(monthBtn.dataset.month);
+        var monthRange = rangeForShortcut('month', new Date(state.calendarMonth.getFullYear(), monthIndex, 1));
+        if (!monthRange) return;
+        setRange(monthRange.start, monthRange.end);
+        close();
+        return;
+      }
+      var btn = e.target.closest('[data-date]');
+      if (!btn || !grid || !grid.contains(btn)) return;
+      state.lastGridPickAt = Date.now();
+      e.preventDefault();
+      e.stopPropagation();
+      var value = btn.dataset.date;
+      if (isFutureYmd(value)) return;
+      if (state.mode === 'day') {
+        setRange(value, value);
+        close();
+        return;
+      }
+      if (state.mode === 'week') {
+        var weekRange = rangeForShortcut('week', dateFromYmd(value));
+        if (!weekRange) return;
+        setRange(weekRange.start, weekRange.end);
+        close();
+        return;
+      }
+      if (!state.draftStart) {
+        state.draftStart = value;
+        startEl.value = value;
+        endEl.value = value;
+        sync();
+        state.previewRange = normalizedRange(value, value);
+        state.suppressSelectedRange = false;
+        applyClasses();
+        return;
+      }
+      var customRange = normalizedRange(state.draftStart, value);
+      state.draftStart = '';
+      setRange(customRange.start, customRange.end);
+      close();
+    }
+
+    function bind() {
+      input.addEventListener('focus', open);
+      input.addEventListener('click', open);
+      if (trigger) trigger.addEventListener('click', open);
+      if (prev) prev.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); shift(-1); });
+      if (next) next.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); shift(1); });
+      input.addEventListener('change', function() {
+        parse();
+        sync();
+        render();
+        if (typeof config.onChange === 'function') config.onChange(getRange());
+      });
+      root.querySelectorAll('[data-month-shift]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var shiftValue = Number(btn.dataset.monthShift);
+          if (state.mode === 'month') shiftValue = shiftValue < 0 ? -12 : 12;
+          state.calendarMonth = new Date(state.calendarMonth.getFullYear(), state.calendarMonth.getMonth() + shiftValue, 1);
+          render();
+        });
+      });
+      if (grid) {
+        ['pointerdown', 'mousedown', 'click'].forEach(function(eventName) {
+          grid.addEventListener(eventName, confirmGridPick, true);
+        });
+        grid.addEventListener('mouseover', function(e) {
+          var monthBtn = e.target.closest('[data-month]');
+          if (monthBtn && grid.contains(monthBtn)) {
+            state.previewRange = monthBtn.classList.contains('future') ? null : rangeForShortcut('month', new Date(state.calendarMonth.getFullYear(), Number(monthBtn.dataset.month), 1));
+            state.suppressSelectedRange = true;
+            applyClasses();
+            return;
+          }
+          var btn = e.target.closest('[data-date]');
+          if (!btn || !grid.contains(btn)) return;
+          var value = btn.dataset.date;
+          if (isFutureYmd(value)) {
+            state.previewRange = null;
+            state.suppressSelectedRange = true;
+            applyClasses();
+            return;
+          }
+          if (state.mode === 'day') state.previewRange = normalizedRange(value, value);
+          else if (state.mode === 'week') state.previewRange = rangeForShortcut('week', dateFromYmd(value));
+          else if (state.mode === 'custom' && state.draftStart) state.previewRange = normalizedRange(state.draftStart, value);
+          else state.previewRange = null;
+          state.suppressSelectedRange = !!state.previewRange;
+          applyClasses();
+        });
+      }
+      popover.addEventListener('click', function(e) {
+        var shortcut = e.target.closest('[data-date-shortcut]');
+        if (!shortcut || !popover.contains(shortcut)) return;
+        var kind = shortcut.dataset.dateShortcut;
+        if (kind === 'yesterday' || kind === '7' || kind === '30') {
+          var fixedRange = rangeForShortcut(kind);
+          if (!fixedRange) return;
+          state.calendarMonth = dateFromYmd(fixedRange.start) || state.calendarMonth;
+          setRange(fixedRange.start, fixedRange.end);
+          close();
+        } else {
+          setMode(kind === 'today' ? 'day' : kind);
+        }
+      });
+      popover.addEventListener('mouseover', function(e) {
+        var shortcut = e.target.closest('[data-date-shortcut]');
+        if (!shortcut || !popover.contains(shortcut)) return;
+        var kind = shortcut.dataset.dateShortcut;
+        if (kind === 'yesterday' || kind === '7' || kind === '30') {
+          state.previewRange = rangeForShortcut(kind);
+          state.suppressSelectedRange = true;
+          applyClasses();
+        } else {
+          setMode(kind === 'today' ? 'day' : kind);
+          state.suppressSelectedRange = true;
+        }
+      });
+      popover.addEventListener('mouseleave', function() {
+        state.previewRange = null;
+        state.suppressSelectedRange = false;
+        applyClasses();
+      });
+      document.addEventListener('click', function(e) {
+        if (!popover.classList.contains('open')) return;
+        if (root.contains(e.target)) return;
+        close();
+      });
+    }
+
+    bind();
+    sync();
+    return {
+      sync: sync,
+      parse: parse,
+      render: render,
+      open: open,
+      close: close,
+      setRange: setRange,
+      getRange: getRange,
+      shift: shift,
+      updateStepButtons: updateStepButtons,
+      setCalendarMonth: function(date) {
+        if (date) state.calendarMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+      }
+    };
+  }
+
+  function syncAnalyzedDateInput() {
+    if (datePickers.analyzed) datePickers.analyzed.sync();
+  }
+
+  function parseAnalyzedDateInput() {
+    if (datePickers.analyzed) datePickers.analyzed.parse();
+  }
+
+  function openAnalyzedDatePicker() {
+    if (datePickers.analyzed) datePickers.analyzed.open();
+  }
+
+  function closeAnalyzedDatePicker() {
+    if (datePickers.analyzed) datePickers.analyzed.close();
+  }
+
+  function setAnalyzedRange(start, end) {
+    if (datePickers.analyzed) datePickers.analyzed.setRange(start, end);
+  }
+
+  function getAnalyzedCurrentRange() {
+    return datePickers.analyzed ? datePickers.analyzed.getRange() : null;
+  }
+
+  function updateAnalyzedDateStepButtons() {
+    if (datePickers.analyzed) datePickers.analyzed.updateStepButtons();
+  }
+
+  function shiftAnalyzedDateRange(direction) {
+    if (datePickers.analyzed) datePickers.analyzed.shift(direction);
   }
 
   function renderAnalyzedDatePicker() {
-    var year = analyzedCalendarMonth.getFullYear();
-    var month = analyzedCalendarMonth.getMonth();
-    $('datePickerMonth').textContent = analyzedPickerMode === 'month' ? String(year) : year + '-' + String(month + 1).padStart(2, '0');
-    document.querySelector('.date-week').style.display = analyzedPickerMode === 'month' ? 'none' : '';
-    if (analyzedPickerMode === 'month') {
-      var selectedStart = $('analyzedStartDate').value;
-      var selectedEnd = $('analyzedEndDate').value || selectedStart;
-      var preview = analyzedPreviewRange;
-      $('datePickerGrid').className = 'date-grid month-grid';
-      $('datePickerGrid').innerHTML = Array.from({ length: 12 }).map(function(_, index) {
-        var start = ymd(new Date(year, index, 1));
-        var end = ymd(new Date(year, index + 1, 0));
-        var classes = ['date-month'];
-        var isFuture = start > today();
-        if (isFuture) classes.push('future');
-        if (!isFuture && preview && start <= preview.end && end >= preview.start) classes.push('preview-range');
-        if (!isFuture && !analyzedSuppressSelectedRange && selectedStart && selectedEnd && start <= selectedEnd && end >= selectedStart) classes.push('selected');
-        return '<button type="button" class="' + classes.join(' ') + '" data-month="' + index + '">' + (index + 1) + '\u6708</button>';
-        return '<button type="button" class="' + classes.join(' ') + '" data-month="' + index + '">' + (index + 1) + '月</button>';
-      }).join('');
-      applyAnalyzedDateClasses();
-      return;
-    }
-    $('datePickerGrid').className = 'date-grid';
-    var first = new Date(year, month, 1);
-    var startOffset = (first.getDay() + 6) % 7;
-    var gridStart = new Date(year, month, 1 - startOffset);
-    var selectedStart = $('analyzedStartDate').value;
-    var selectedEnd = $('analyzedEndDate').value || selectedStart;
-    var previewRange = analyzedPreviewRange;
-    var html = '';
-    for (var i = 0; i < 42; i++) {
-      var date = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
-      var value = ymd(date);
-      var classes = ['date-day'];
-      var future = isFutureYmd(value);
-      if (date.getMonth() !== month) classes.push('muted');
-      if (future) classes.push('future');
-      if (!future && previewRange && value >= previewRange.start && value <= previewRange.end) classes.push('preview-range');
-      if (!future && !analyzedSuppressSelectedRange && selectedStart && selectedEnd && value >= selectedStart && value <= selectedEnd) classes.push('in-range');
-      if (!future && !analyzedSuppressSelectedRange && value === selectedStart && value === selectedEnd) classes.push('selected', 'single');
-      else if (!future && !analyzedSuppressSelectedRange && value === selectedStart) classes.push('selected', 'range-start');
-      else if (!future && !analyzedSuppressSelectedRange && value === selectedEnd) classes.push('selected', 'range-end');
-      html += '<button type="button" class="' + classes.join(' ') + '" data-date="' + value + '">' + String(date.getDate()).padStart(2, '0') + '</button>';
-    }
-    $('datePickerGrid').innerHTML = html;
-    applyAnalyzedDateClasses();
-  }
-
-  function applyAnalyzedDateClasses() {
-    var selectedStart = $('analyzedStartDate').value;
-    var selectedEnd = $('analyzedEndDate').value || selectedStart;
-    var preview = analyzedPreviewRange;
-    if (analyzedPickerMode === 'month') {
-      var year = analyzedCalendarMonth.getFullYear();
-      document.querySelectorAll('#datePickerGrid [data-month]').forEach(function(btn) {
-        var index = Number(btn.dataset.month);
-        var start = ymd(new Date(year, index, 1));
-        var end = ymd(new Date(year, index + 1, 0));
-        btn.className = 'date-month';
-        var isFuture = start > today();
-        if (isFuture) btn.classList.add('future');
-        if (!isFuture && preview && start <= preview.end && end >= preview.start) btn.classList.add('preview-range');
-        if (!isFuture && !analyzedSuppressSelectedRange && selectedStart && selectedEnd && start <= selectedEnd && end >= selectedStart) btn.classList.add('selected');
-      });
-      return;
-    }
-    document.querySelectorAll('#datePickerGrid [data-date]').forEach(function(btn) {
-      var value = btn.dataset.date;
-      var muted = btn.classList.contains('muted');
-      var future = isFutureYmd(value);
-      btn.className = 'date-day';
-      if (muted) btn.classList.add('muted');
-      if (future) btn.classList.add('future');
-      if (!future && preview && value >= preview.start && value <= preview.end) btn.classList.add('preview-range');
-      if (!future && !analyzedSuppressSelectedRange && selectedStart && selectedEnd && value >= selectedStart && value <= selectedEnd) btn.classList.add('in-range');
-      if (!future && !analyzedSuppressSelectedRange && value === selectedStart && value === selectedEnd) btn.classList.add('selected', 'single');
-      else if (!future && !analyzedSuppressSelectedRange && value === selectedStart) btn.classList.add('selected', 'range-start');
-      else if (!future && !analyzedSuppressSelectedRange && value === selectedEnd) btn.classList.add('selected', 'range-end');
-    });
+    if (datePickers.analyzed) datePickers.analyzed.render();
   }
 
   function openDb() {
@@ -1356,6 +1766,9 @@
           estimates.createIndex('periodType', 'periodType', { unique: false });
           estimates.createIndex('startDate', 'startDate', { unique: false });
         }
+        if (!database.objectStoreNames.contains('app_settings')) {
+          database.createObjectStore('app_settings', { keyPath: 'key' });
+        }
       };
       req.onsuccess = function() { db = req.result; resolve(db); };
       req.onerror = function() { reject(req.error); };
@@ -1367,6 +1780,13 @@
     return new Promise(function(resolve, reject) {
       var req = tx(store).getAll();
       req.onsuccess = function() { resolve(req.result || []); };
+      req.onerror = function() { reject(req.error); };
+    });
+  }
+  function getOne(store, key) {
+    return new Promise(function(resolve, reject) {
+      var req = tx(store).get(key);
+      req.onsuccess = function() { resolve(req.result || null); };
       req.onerror = function() { reject(req.error); };
     });
   }
@@ -1893,10 +2313,11 @@
     var rows = await getAll('raw_snapshots');
     rows.sort(function(a, b) { return String(b.importedAt).localeCompare(String(a.importedAt)); });
     if (!rows.length) {
-      $('snapshotBody').innerHTML = '<tr><td class="empty-row" colspan="6">暂无原始快照</td></tr>';
+      $('snapshotBody').innerHTML = '<tr><td class="empty-row" colspan="7">&#26242;&#26080;&#23548;&#20837;&#35760;&#24405;</td></tr>';
       return;
     }
     $('snapshotBody').innerHTML = rows.map(function(row) {
+      var status = importStatusMeta(row);
       return '<tr>' +
         '<td>' + esc((row.importedAt || '').slice(0, 19).replace('T', ' ')) + '</td>' +
         '<td>' + esc(labels.sourceType[row.sourceType] || row.sourceType) + '</td>' +
@@ -1904,8 +2325,31 @@
         '<td>' + esc(rangeText(row)) + '</td>' +
         '<td>' + esc(row.fileName) + '</td>' +
         '<td>' + esc(row.rowCount || 0) + '</td>' +
+        '<td><span class="import-status ' + esc(status.className) + '" title="' + esc(row.statusNote || row.detectNote || '') + '">' + esc(status.label) + '</span></td>' +
       '</tr>';
     }).join('');
+  }
+
+  function importStatusMeta(row) {
+    var status = row && row.importStatus ? row.importStatus : '';
+    var map = {
+      success: { label: '\u6210\u529f', className: '' },
+      failed: { label: '\u5931\u8d25', className: 'warn' },
+      pending: { label: '\u5f85\u786e\u8ba4', className: 'info' },
+      recorded: { label: '\u5df2\u8bb0\u5f55', className: 'info' },
+      processing: { label: '\u5904\u7406\u4e2d', className: 'info' }
+    };
+    if (map[status]) return map[status];
+    if (row && row.sourceType && row.sourceType !== 'unknown') return map.recorded;
+    return map.pending;
+  }
+
+  function metricImportStatus(sourceType, result) {
+    if (sourceType === 'unknown') return 'pending';
+    if (sourceType === 'sales_detail' || sourceType === 'onsite_cost' || sourceType === 'offsite_cps_cost') {
+      return result && result.saved > 0 ? 'success' : 'failed';
+    }
+    return 'recorded';
   }
 
   async function renderRankingRaw() {
@@ -1990,23 +2434,16 @@
     var skuRows = await getAll('sku_profiles');
     var skuMap = {};
     skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
-    $('managedSkuOnlyCheck').checked = hideUnmanagedAnalyzed;
     var start = $('analyzedStartDate').value;
     var end = $('analyzedEndDate').value || start;
     $('analyzedStartLabel').textContent = '日期范围';
     syncAnalyzedDateInput();
     rows = rows.filter(function(row) {
-      if (row.sourceType && row.sourceType !== 'sales_detail') return false;
+      if (row.sourceType && ['sales_detail', 'onsite_cost', 'offsite_cps_cost'].indexOf(row.sourceType) === -1) return false;
       var profile = skuMap[normalizeSkuValue(row.sku)];
-      var isManagedOwnSku = profile && profile.itemType !== 'competitor' && String(profile.shortName || '').trim();
-      if (hideUnmanagedAnalyzed) return !!isManagedOwnSku;
       return !profile || profile.itemType !== 'competitor';
     });
-    rows = rows.filter(function(row) {
-      if (start && (row.endDate || row.startDate) < start) return false;
-      if (end && (row.startDate || row.endDate) > end) return false;
-      return true;
-    });
+    rows = filterMetricRowsByDateRange(rows, { start: start, end: end });
     if (!rows.length) {
       $('analyzedDbBody').innerHTML = '<tr><td class="empty-row" colspan="8">暂无已分析数据</td></tr>';
       return;
@@ -2066,14 +2503,11 @@
       if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item;
     });
     var targets = rows.filter(function(row) {
-      if (row.sourceType && row.sourceType !== 'sales_detail') return false;
+      if (row.sourceType && ['sales_detail', 'onsite_cost', 'offsite_cps_cost'].indexOf(row.sourceType) === -1) return false;
       if (start && (row.endDate || row.startDate) < start) return false;
       if (end && (row.startDate || row.endDate) > end) return false;
       var profile = skuMap[normalizeSkuValue(row.sku)];
       if (profile && profile.itemType === 'competitor') return false;
-      if (hideUnmanagedAnalyzed) {
-        return !!(profile && String(profile.shortName || '').trim());
-      }
       return true;
     });
     for (var i = 0; i < targets.length; i++) {
@@ -2085,24 +2519,52 @@
   }
 
   function renderImportMappings() {
-    var mappings = getImportMappings('sales_detail');
-    $('mappingBody').innerHTML = mappings.map(function(item, index) {
-      return '<tr data-index="' + index + '">' +
-        '<td>' + (item.locked
-          ? '<strong>' + esc(item.label) + '</strong>'
-          : '<input class="input mapping-key" value="' + esc(item.label || item.key) + '">') + '</td>' +
-        '<td><input class="input mapping-column" value="' + esc(item.column || '') + '" placeholder="必须完全等于表头"></td>' +
-        '<td>' + esc(item.note || '自定义追踪字段') + '</td>' +
-        '<td>' + (item.locked ? '' : '<button class="icon-btn row-delete-btn mapping-delete" title="删除对照项">' + iconTrash() + '</button>') + '</td>' +
-      '</tr>';
+    $('mappingSections').innerHTML = mappingSections.map(function(section) {
+      var mappings = getImportMappings(section.type);
+      var rule = getImportRuleConfig(section.type);
+      var patternRows = (rule.filePatterns.length ? rule.filePatterns : ['']).map(function(pattern, index) {
+        return '<div class="mapping-rule-row" data-rule-type="' + esc(section.type) + '" data-rule-index="' + index + '">' +
+          '<span class="mapping-rule-label">' + (index === 0 ? '文件名匹配规则' : '') + '</span>' +
+          '<input class="input mapping-file-pattern" value="' + esc(pattern) + '" placeholder="例如：营销概况.*SKU维度">' +
+          '<button class="mapping-rule-action mapping-rule-delete" title="删除规则" type="button">' + iconTrash() + '</button>' +
+          (index === 0 ? '<button class="mapping-rule-action add" data-add-file-rule="' + esc(section.type) + '" title="新增规则" type="button">+</button>' : '<span></span>') +
+        '</div>';
+      }).join('');
+      var options = section.type === 'onsite_cost'
+        ? '<label class="check-pill"><input type="checkbox" class="mapping-include-comparison" data-rule-type="' + esc(section.type) + '"' + (rule.includeComparison ? ' checked' : '') + '>导入对比时间数据</label><span class="mapping-section-note">仅影响是否读取对比时间段，不影响日期归档和统计口径。</span>'
+        : '';
+      var rows = mappings.map(function(item, index) {
+        return '<tr data-type="' + esc(section.type) + '" data-index="' + index + '">' +
+          '<td>' + (item.locked
+            ? '<strong>' + esc(item.label) + '</strong>'
+            : '<input class="input mapping-key" value="' + esc(item.label || item.key) + '">') + '</td>' +
+          '<td><input class="input mapping-column" value="' + esc(item.column || '') + '" placeholder="必须完全等于表头"></td>' +
+          '<td>' + esc(item.note || '自定义追踪字段') + '</td>' +
+          '<td>' + (item.locked ? '' : '<button class="icon-btn row-delete-btn mapping-delete" title="删除对照项">' + iconTrash() + '</button>') + '</td>' +
+        '</tr>';
+      }).join('');
+      return '<div class="mapping-section ' + (section.open ? 'open' : '') + '" data-mapping-section="' + esc(section.type) + '">' +
+        '<button class="mapping-section-head" type="button" data-toggle-mapping="' + esc(section.type) + '">' +
+          '<span class="mapping-section-title"><strong>' + esc(section.title) + '</strong><span>' + esc(section.desc) + '</span><a class="mapping-source-link" href="' + esc(section.sourceUrl) + '" target="_blank" rel="noopener" data-mapping-link>' + '数据来源：' + esc(section.sourceName) + '</a></span>' +
+          '<span class="mapping-section-toggle">' + (section.open ? '收起' : '展开') + '</span>' +
+        '</button>' +
+        '<div class="mapping-section-body">' +
+          '<div class="mapping-rule-box">' +
+            patternRows +
+            (options ? '<div class="mapping-option-row">' + options + '</div>' : '') +
+          '</div>' +
+          '<div class="table-wrap"><table class="data-table"><thead><tr><th>系统数据库字段名</th><th>导入表格字段名</th><th>说明</th><th class="mapping-add-head"><button class="mapping-add-btn" data-add-mapping="' + esc(section.type) + '">新增对照项</button></th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+        '</div>' +
+      '</div>';
     }).join('');
-    $('mappingMsg').textContent = '已保存字段对照，导入商品明细时会优先使用这里的列名。';
+    $('mappingMsg').textContent = '字段对照已保存，导入时会优先使用这里的列名。';
     $('mappingMsg').className = 'msg ok';
   }
 
   function updateMappingFromRow(row) {
+    var type = row.dataset.type || 'sales_detail';
     var index = Number(row.dataset.index);
-    var mappings = getImportMappings('sales_detail');
+    var mappings = getImportMappings(type);
     var item = mappings[index];
     if (!item) return;
     var keyInput = row.querySelector('.mapping-key');
@@ -2117,26 +2579,29 @@
     $('mappingMsg').className = 'msg ok';
   }
 
+
   function parseWorkbook(file) {
     return new Promise(function(resolve, reject) {
       if (!window.XLSX) {
-        reject(new Error('Excel 解析组件还没加载完成，请稍等几秒后重试'));
+        reject(new Error('\u8868\u683c\u89e3\u6790\u7ec4\u4ef6\u8fd8\u6ca1\u52a0\u8f7d\u5b8c\u6210\uff0c\u8bf7\u7a0d\u7b49\u51e0\u79d2\u540e\u91cd\u8bd5'));
         return;
       }
       var reader = new FileReader();
       reader.onload = function() {
         try {
-          var wb;
+          var matrix;
+          var sheetNames = [];
           if (/\.csv$/i.test(file.name)) {
-            wb = XLSX.read(reader.result, { type: 'string' });
+            matrix = parseCsvMatrix(reader.result);
           } else {
-            wb = XLSX.read(reader.result, { type: 'array' });
+            var wb = XLSX.read(reader.result, { type: 'array' });
+            sheetNames = wb.SheetNames || [];
+            var ws = wb.Sheets[wb.SheetNames[0]];
+            matrix = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', raw: false });
           }
-          var ws = wb.Sheets[wb.SheetNames[0]];
-          var matrix = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', raw: false });
           var parsedRows = matrixToObjects(matrix);
           parsedRows.__debug = {
-            sheetNames: wb.SheetNames || [],
+            sheetNames: sheetNames,
             matrixRows: matrix.length,
             matrixPreview: matrix.slice(0, 5).map(function(row) {
               return (row || []).slice(0, 8).map(function(cell) {
@@ -2155,30 +2620,104 @@
     });
   }
 
+  function parseCsvMatrix(text) {
+    return String(text || '').replace(/^\uFEFF/, '').split(/\r?\n/).filter(function(line) {
+      return line.trim() !== '';
+    }).map(function(line) {
+      var cells = [];
+      var current = '';
+      var quoted = false;
+      for (var i = 0; i < line.length; i++) {
+        var char = line[i];
+        if (char === '"') {
+          if (quoted && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            quoted = !quoted;
+          }
+        } else if (char === ',' && !quoted) {
+          cells.push(current);
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      cells.push(current);
+      return cells;
+    });
+  }
+
   function matrixToObjects(matrix) {
     matrix = (matrix || []).filter(function(row) {
       return row && row.some(function(cell) { return String(cell == null ? '' : cell).trim() !== ''; });
     });
     if (!matrix.length) return [];
+    function isStrongHeaderRow(row) {
+      var normalized = (row || []).map(normalizeHeader);
+      return normalized.indexOf('skuid') !== -1 && normalized.indexOf('\u70b9\u51fb\u65f6\u95f4') !== -1 && normalized.indexOf('\u82b1\u8d39') !== -1;
+    }
+    function headerScore(row) {
+      var normalized = (row || []).map(normalizeHeader);
+      var score = 0;
+      var strong = [
+        'sku', 'skuid', '\u5546\u54c1id', '\u5546\u54c1\u7f16\u53f7', 'sku\u540d\u79f0',
+        '\u5546\u54c1\u540d\u79f0', '\u7b80\u79f0', '\u5546\u54c1\u7b80\u79f0',
+        '\u70b9\u51fb\u65f6\u95f4', '\u82b1\u8d39', '\u6295\u4ea7\u6bd4',
+        '\u6210\u4ea4\u91d1\u989d', '\u6210\u4ea4\u5546\u54c1\u4ef6\u6570', '\u5546\u54c1\u8bbf\u5ba2\u6570',
+        '\u5b8c\u6210\u65e5\u671f', '\u603b\u4f63\u91d1', '\u8ba2\u5355\u7f16\u53f7', '\u63a8\u5ba2pin', '\u4e0b\u5355\u65e5\u671f'
+      ];
+      strong.forEach(function(key) { if (normalized.indexOf(key) !== -1) score += 4; });
+      var nonEmpty = normalized.filter(Boolean).length;
+      if (nonEmpty >= 3) score += 1;
+      if (nonEmpty >= 6) score += 2;
+      if (normalized.indexOf('\u67e5\u8be2\u6761\u4ef6') !== -1) score -= 8;
+      return score;
+    }
+    function makeHeaders(row) {
+      return (row || []).map(function(cell, index) {
+        var text = String(cell == null ? '' : cell).trim();
+        return text || ('\u672a\u547d\u540d\u5217' + (index + 1));
+      });
+    }
     var headerIndex = 0;
-    for (var i = 0; i < Math.min(matrix.length, 8); i++) {
-      var normalized = matrix[i].map(normalizeHeader);
-      if (normalized.indexOf('sku') !== -1 || normalized.indexOf('简称') !== -1 || normalized.indexOf('商品简称') !== -1) {
+    var bestScore = -Infinity;
+    for (var i = 0; i < Math.min(matrix.length, 12); i++) {
+      if (isStrongHeaderRow(matrix[i])) {
         headerIndex = i;
+        bestScore = 999;
         break;
       }
+      var score = headerScore(matrix[i]);
+      if (score > bestScore) {
+        bestScore = score;
+        headerIndex = i;
+      }
     }
-    var headers = matrix[headerIndex].map(function(cell, index) {
-      var text = String(cell == null ? '' : cell).trim();
-      return text || ('未命名列' + (index + 1));
-    });
-    return matrix.slice(headerIndex + 1).map(function(row) {
+    if (bestScore <= 0) headerIndex = 0;
+    var headers = makeHeaders(matrix[headerIndex]);
+    var rows = [];
+    var currentHeaders = headers;
+    var repeatedHeaderRows = [];
+    for (var r = headerIndex + 1; r < matrix.length; r++) {
+      var row = matrix[r];
+      var rowScore = headerScore(row);
+      if (isStrongHeaderRow(row) || rowScore >= Math.max(8, bestScore - 4)) {
+        currentHeaders = makeHeaders(row);
+        repeatedHeaderRows.push(r);
+        continue;
+      }
       var obj = {};
-      headers.forEach(function(header, index) {
+      currentHeaders.forEach(function(header, index) {
         obj[header] = row[index] == null ? '' : row[index];
       });
-      return obj;
-    });
+      rows.push(obj);
+    }
+    rows.__headerIndex = headerIndex;
+    rows.__headerScore = bestScore;
+    rows.__headers = headers;
+    rows.__repeatedHeaderRows = repeatedHeaderRows;
+    return rows;
   }
 
   function normalizeDetectText(value) {
@@ -2200,14 +2739,34 @@
       return total + (normalized.indexOf(normalizeDetectText(word)) !== -1 ? 1 : 0);
     }, 0);
   }
+  function matchesFilePattern(fileName, pattern) {
+    pattern = String(pattern || '').trim();
+    if (!pattern) return false;
+    try {
+      return new RegExp(pattern, 'i').test(fileName);
+    } catch (err) {
+      return fileName.toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
+    }
+  }
+  function detectSourceTypeByFileRules(file) {
+    var fileName = file && file.name ? file.name : '';
+    var matched = Object.keys(importRules).find(function(type) {
+      return getImportRuleConfig(type).filePatterns.some(function(pattern) {
+        return matchesFilePattern(fileName, pattern);
+      });
+    });
+    return matched || '';
+  }
 
   function detectSourceType(file, rows) {
+    var ruleType = detectSourceTypeByFileRules(file);
+    if (ruleType) return ruleType;
     var text = collectDetectText(file, rows);
     var scores = {
       sales_detail: scoreText(text, ['销售明细', '成交金额', '成交件数', '访客', '浏览量', '商品明细', '下单件数']),
       onsite_cost: scoreText(text, ['站内', '投放', '京准通', '快车', '海投', '展现', '点击', '花费']),
-      offsite_cps_cost: scoreText(text, ['站外', 'CPS', 'cps', '佣金', '服务费', '订单', '达人']),
-      industry_ranking: scoreText(text, ['行业', '榜单', '排行榜', '排名', '金额区间', '件数区间', '涨幅', '销售榜'])
+      offsite_cps_cost: scoreText(text, ['\u7ad9\u5916', 'CPS', 'cps', '\u4f63\u91d1', '\u670d\u52a1\u8d39', '\u8ba2\u5355', '\u8fbe\u4eba', '\u5b8c\u6210\u65e5\u671f', '\u603b\u4f63\u91d1', '\u4e0b\u5355\u8ba2\u5355\u660e\u7ec6']),
+      industry_ranking: scoreText(text, ['\u884c\u4e1a', '\u5546\u54c1\u699c\u5355', '\u699c\u5355', '\u6392\u884c\u699c', '\u6392\u540d', '\u5546\u54c1\u7f16\u53f7', '\u91d1\u989d\u533a\u95f4', '\u4ef6\u6570\u533a\u95f4', '\u8bbf\u5ba2\u533a\u95f4', '\u5ba2\u5355\u4ef7\u533a\u95f4', '\u6da8\u5e45', '\u9500\u552e\u699c'])
     };
     var best = Object.keys(scores).sort(function(a, b) { return scores[b] - scores[a]; })[0];
     return scores[best] > 0 ? best : 'unknown';
@@ -2233,7 +2792,7 @@
         dates.push(date);
       }
     }
-    String(text || '').replace(/(20\d{2})[-/.年](\d{1,2})[-/.月](\d{1,2})日?/g, function(_, y, m, d) {
+    String(text || '').replace(/(20\d{2})[-/.\u5e74](\d{1,2})[-/.\u6708](\d{1,2})\u65e5?/g, function(_, y, m, d) {
       push(normalizeDateValue(y, m, d));
     });
     String(text || '').replace(/(?<!\d)(20\d{2})(\d{2})(\d{2})(?!\d)/g, function(_, y, m, d) {
@@ -2242,28 +2801,29 @@
     return dates.sort();
   }
 
-  function inferPeriodType(startDate, endDate, text) {
-    var normalized = normalizeDetectText(text);
-    if (normalized.indexOf('分天') !== -1 || normalized.indexOf('分日') !== -1 || normalized.indexOf('按日') !== -1) return 'day';
-    if (normalized.indexOf('月') !== -1 || normalized.indexOf('month') !== -1) return 'month';
-    if (normalized.indexOf('周') !== -1 || normalized.indexOf('week') !== -1) return 'week';
-    if (!startDate || !endDate) return 'unknown';
-    var start = new Date(startDate);
-    var end = new Date(endDate);
-    var days = Math.round((end - start) / 86400000) + 1;
-    if (days <= 1) return 'day';
-    if (days <= 10) return 'week';
-    if (days <= 35) return 'month';
-    return 'unknown';
+  function normalizeImportedDateRange(value) {
+    if (value instanceof Date && !isNaN(value.getTime())) {
+      var single = ymd(value);
+      return { startDate: single, endDate: single };
+    }
+    var dates = extractDatesFromText(value);
+    if (dates.length) {
+      return { startDate: dates[0], endDate: dates[dates.length - 1] || dates[0] };
+    }
+    var date = normalizeImportedDate(value);
+    return date ? { startDate: date, endDate: date } : { startDate: '', endDate: '' };
   }
-
+  function inferPeriodType(startDate, endDate) {
+    if (!startDate || !endDate) return 'unknown';
+    return startDate === endDate ? 'day' : 'period';
+  }
   function detectImportMeta(file, rows) {
     var text = collectDetectText(file, rows);
     var dates = extractDatesFromText(text);
     var startDate = dates[0] || '';
     var endDate = dates[dates.length - 1] || startDate;
     var sourceType = detectSourceType(file, rows);
-    var periodType = inferPeriodType(startDate, endDate, text);
+    var periodType = inferPeriodType(startDate, endDate);
     var notes = [];
     if (sourceType === 'unknown') notes.push('表类型待确认');
     if (periodType === 'unknown' || !startDate || !endDate) notes.push('日期待确认');
@@ -2280,6 +2840,20 @@
   function exactRowValue(row, columnName) {
     if (!columnName) return '';
     return Object.prototype.hasOwnProperty.call(row, columnName) ? row[columnName] : '';
+  }
+  function resolveImportColumn(headers, preferred, aliases) {
+    headers = headers || [];
+    if (preferred && headers.indexOf(preferred) !== -1) return preferred;
+    aliases = aliases || [];
+    for (var i = 0; i < aliases.length; i++) {
+      if (headers.indexOf(aliases[i]) !== -1) return aliases[i];
+    }
+    return preferred || '';
+  }
+  function isComparisonTimeRow(row) {
+    return Object.keys(row || {}).some(function(key) {
+      return String(key || '').indexOf('\u5bf9\u6bd4\u65f6\u95f4') !== -1 || String(row[key] || '').indexOf('\u5bf9\u6bd4\u65f6\u95f4') !== -1;
+    });
   }
 
   function normalizeSkuValue(value) {
@@ -2346,32 +2920,42 @@
     var existing = await getAll('analyzed_metrics');
     var saved = 0;
     var skipped = 0;
+    var dayCount = 0;
+    var periodCount = 0;
+    var replaced = 0;
     for (var i = 0; i < rows.length; i++) {
       var row = rows[i];
       var sku = normalizeSkuValue(exactRowValue(row, skuMap.column));
-      if (!sku || sku === '合计') {
+      if (!sku || sku === '合计' || sku === '汇总' || sku === 'SKU ID' || sku === '0') {
         skipped++;
         continue;
       }
-      var date = normalizeImportedDate(exactRowValue(row, dateMap.column));
-      if (!date) {
+      var range = normalizeImportedDateRange(exactRowValue(row, dateMap.column));
+      var startDate = range.startDate;
+      var endDate = range.endDate || startDate;
+      if (!startDate || !endDate) {
         skipped++;
         continue;
       }
+      var periodType = inferPeriodType(startDate, endDate);
+      if (periodType === 'day') dayCount++;
+      else if (periodType === 'period') periodCount++;
       var record = {
         sourceType: 'sales_detail',
-        periodType: 'day',
-        startDate: date,
-        endDate: date,
+        periodType: periodType,
+        startDate: startDate,
+        endDate: endDate,
         sku: sku,
         skuName: exactRowValue(row, 'SKU名称'),
         importedAt: new Date().toISOString(),
         snapshotId: snapshotId,
         fileName: file.name,
+        timeLabel: exactRowValue(row, dateMap.column),
         extraMetrics: {}
       };
       mappings.forEach(function(item) {
         if (item.key === 'date' || item.key === 'sku') return;
+        if (!item.column || headers.indexOf(item.column) === -1) return;
         var value = parseMetricNumber(exactRowValue(row, item.column));
         if (item.key && Object.prototype.hasOwnProperty.call(record, item.key) === false) {
           record[item.key] = value;
@@ -2380,25 +2964,230 @@
         }
       });
       var duplicates = existing.filter(function(item) {
-        return item.sourceType === 'sales_detail' && item.periodType === 'day' && item.startDate === date && item.sku === sku;
+        return item.sourceType === 'sales_detail' && item.periodType === periodType && item.startDate === startDate && item.endDate === endDate && item.sku === sku;
       });
+      replaced += duplicates.length;
       for (var d = 0; d < duplicates.length; d++) await remove('analyzed_metrics', duplicates[d].id);
       await put('analyzed_metrics', record);
       saved++;
     }
-    var noteParts = ['写入 ' + saved + ' 条日数据'];
+    var noteParts = ['写入 ' + saved + ' 条数据'];
+    if (dayCount) noteParts.push('单日 ' + dayCount + ' 条');
+    if (periodCount) noteParts.push('跨期 ' + periodCount + ' 条');
+    if (replaced) noteParts.push('覆盖 ' + replaced + ' 条旧数据');
     if (skipped) noteParts.push('跳过 ' + skipped + ' 行');
     if (missing.length) noteParts.push('缺少列：' + missing.join('、'));
-    return { saved: saved, skipped: skipped, note: noteParts.join('；') };
+    return { saved: saved, skipped: skipped, replaced: replaced, dayCount: dayCount, periodCount: periodCount, note: noteParts.join('；') };
   }
 
+  async function saveOnsiteCostMetrics(rows, file, snapshotId) {
+    var mappings = getImportMappings('onsite_cost').filter(function(item) { return item.key !== 'timeType'; });
+    var rule = getImportRuleConfig('onsite_cost');
+    var dateMap = mappings.find(function(item) { return item.key === 'date'; });
+    var skuMap = mappings.find(function(item) { return item.key === 'sku'; });
+    var sample = rows[0] || {};
+    var headers = Object.keys(sample);
+    var resolvedColumns = {
+      date: resolveImportColumn(headers, dateMap && dateMap.column, ['\u70b9\u51fb\u65f6\u95f4', '\u65f6\u95f4', '\u65e5\u671f']),
+      sku: resolveImportColumn(headers, skuMap && skuMap.column, ['SKU ID', 'SKU', 'sku', 'sku id'])
+    };
+    mappings.forEach(function(item) {
+      if (!item || !item.key) return;
+      if (item.key === 'date' || item.key === 'sku') return;
+      if (item.key === 'onsiteCost') resolvedColumns[item.key] = resolveImportColumn(headers, item.column, ['\u82b1\u8d39', '\u7ad9\u5185\u82b1\u8d39']);
+      else if (item.key === 'roi') resolvedColumns[item.key] = resolveImportColumn(headers, item.column, ['\u6295\u4ea7\u6bd4']);
+      else resolvedColumns[item.key] = resolveImportColumn(headers, item.column, []);
+    });
+    var missing = mappings.filter(function(item) {
+      return item.column && headers.indexOf(item.column) === -1 && headers.indexOf(resolvedColumns[item.key]) === -1;
+    }).map(function(item) { return item.column; });
+    if (!resolvedColumns.date || headers.indexOf(resolvedColumns.date) === -1) {
+      return { saved: 0, skipped: rows.length, note: '\u6ca1\u6709\u5339\u914d\u5230\u70b9\u51fb\u65f6\u95f4\u5217\uff1b\u8bc6\u522b\u5230\u7684\u8868\u5934\uff1a' + headers.slice(0, 8).join('\u3001') };
+    }
+    if (!resolvedColumns.sku || headers.indexOf(resolvedColumns.sku) === -1) {
+      return { saved: 0, skipped: rows.length, note: '\u6ca1\u6709\u5339\u914d\u5230 SKU \u5217\uff1b\u8bc6\u522b\u5230\u7684\u8868\u5934\uff1a' + headers.slice(0, 8).join('\u3001') };
+    }
+    var existing = await getAll('analyzed_metrics');
+    var saved = 0;
+    var skipped = 0;
+    var dayCount = 0;
+    var periodCount = 0;
+    var compareSkipped = 0;
+    var replaced = 0;
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      if (!rule.includeComparison && isComparisonTimeRow(row)) {
+        compareSkipped++;
+        skipped++;
+        continue;
+      }
+      var sku = normalizeSkuValue(exactRowValue(row, resolvedColumns.sku));
+      if (!sku || sku === '\u5408\u8ba1' || sku === '\u6c47\u603b' || sku === 'SKU ID' || sku === '0') {
+        skipped++;
+        continue;
+      }
+      var range = normalizeImportedDateRange(exactRowValue(row, resolvedColumns.date));
+      var startDate = range.startDate;
+      var endDate = range.endDate || startDate;
+      if (!startDate || !endDate) {
+        skipped++;
+        continue;
+      }
+      var periodType = inferPeriodType(startDate, endDate);
+      if (periodType === 'day') dayCount++;
+      else if (periodType === 'period') periodCount++;
+      var record = {
+        sourceType: 'onsite_cost',
+        periodType: periodType,
+        startDate: startDate,
+        endDate: endDate,
+        sku: sku,
+        skuName: exactRowValue(row, 'SKU \u540d\u79f0'),
+        importedAt: new Date().toISOString(),
+        snapshotId: snapshotId,
+        fileName: file.name,
+        timeLabel: exactRowValue(row, resolvedColumns.date),
+        extraMetrics: {}
+      };
+      mappings.forEach(function(item) {
+        if (item.key === 'date' || item.key === 'sku') return;
+        var column = resolvedColumns[item.key] || item.column;
+        if (!column || headers.indexOf(column) === -1) return;
+        var value = parseMetricNumber(exactRowValue(row, column));
+        if (item.key && Object.prototype.hasOwnProperty.call(record, item.key) === false) {
+          record[item.key] = value;
+        } else {
+          record.extraMetrics[item.label || item.key] = value;
+        }
+      });
+      var duplicates = existing.filter(function(item) {
+        return item.sourceType === 'onsite_cost' && item.periodType === periodType && item.startDate === startDate && item.endDate === endDate && item.sku === sku;
+      });
+      replaced += duplicates.length;
+      for (var d = 0; d < duplicates.length; d++) await remove('analyzed_metrics', duplicates[d].id);
+      await put('analyzed_metrics', record);
+      saved++;
+    }
+    var noteParts = ['\u5199\u5165 ' + saved + ' \u6761\u7ad9\u5185\u82b1\u8d39'];
+    if (dayCount) noteParts.push('\u5355\u65e5 ' + dayCount + ' \u6761');
+    if (periodCount) noteParts.push('\u8de8\u671f ' + periodCount + ' \u6761');
+    if (replaced) noteParts.push('\u8986\u76d6 ' + replaced + ' \u6761\u65e7\u6570\u636e');
+    if (compareSkipped) noteParts.push('\u8df3\u8fc7\u5bf9\u6bd4\u65f6\u95f4 ' + compareSkipped + ' \u884c');
+    if (skipped && skipped !== compareSkipped) noteParts.push('\u8df3\u8fc7 ' + (skipped - compareSkipped) + ' \u884c');
+    if (missing.length) noteParts.push('\u7f3a\u5c11\u5217\uff1a' + missing.join('\u3001'));
+    return { saved: saved, skipped: skipped, replaced: replaced, dayCount: dayCount, periodCount: periodCount, note: noteParts.join('\uff1b') };
+  }
+
+  async function saveOffsiteCpsCostMetrics(rows, file, snapshotId) {
+    var mappings = getImportMappings('offsite_cps_cost');
+    var sample = rows[0] || {};
+    var headers = Object.keys(sample);
+    var resolvedColumns = {};
+    mappings.forEach(function(item) {
+      if (!item || !item.key) return;
+      if (item.key === 'date') resolvedColumns.date = resolveImportColumn(headers, item.column, ['\u5b8c\u6210\u65e5\u671f']);
+      else if (item.key === 'sku') resolvedColumns.sku = resolveImportColumn(headers, item.column, ['\u5546\u54c1\u7f16\u53f7', 'SKU', 'sku']);
+      else if (item.key === 'offsiteCost') resolvedColumns.offsiteCost = resolveImportColumn(headers, item.column, ['\u603b\u4f63\u91d1', '\u4f63\u91d1', '\u7ad9\u5916\u82b1\u8d39']);
+      else if (item.key === 'campaignPlan') resolvedColumns.campaignPlan = resolveImportColumn(headers, item.column, ['\u6240\u5c5e\u8ba1\u5212/\u6d3b\u52a8', '\u6240\u5c5e\u8ba1\u5212', '\u6240\u5c5e\u6d3b\u52a8']);
+      else if (item.key === 'affiliatePin') resolvedColumns.affiliatePin = resolveImportColumn(headers, item.column, ['\u63a8\u5ba2pin', '\u63a8\u5ba2 PIN', '\u63a8\u5ba2PIN']);
+      else if (item.key === 'orderId') resolvedColumns.orderId = resolveImportColumn(headers, item.column, ['\u8ba2\u5355\u7f16\u53f7', '\u8ba2\u5355\u53f7']);
+      else resolvedColumns[item.key] = resolveImportColumn(headers, item.column, []);
+    });
+    if (!resolvedColumns.date || headers.indexOf(resolvedColumns.date) === -1) {
+      return { saved: 0, skipped: rows.length, note: '\u6ca1\u6709\u5339\u914d\u5230\u5b8c\u6210\u65e5\u671f\u5217\uff1b\u8bc6\u522b\u5230\u7684\u8868\u5934\uff1a' + headers.slice(0, 8).join('\u3001') };
+    }
+    if (!resolvedColumns.sku || headers.indexOf(resolvedColumns.sku) === -1) {
+      return { saved: 0, skipped: rows.length, note: '\u6ca1\u6709\u5339\u914d\u5230\u5546\u54c1\u7f16\u53f7\u5217\uff1b\u8bc6\u522b\u5230\u7684\u8868\u5934\uff1a' + headers.slice(0, 8).join('\u3001') };
+    }
+    if (!resolvedColumns.offsiteCost || headers.indexOf(resolvedColumns.offsiteCost) === -1) {
+      return { saved: 0, skipped: rows.length, note: '\u6ca1\u6709\u5339\u914d\u5230\u603b\u4f63\u91d1\u5217\uff1b\u8bc6\u522b\u5230\u7684\u8868\u5934\uff1a' + headers.slice(0, 8).join('\u3001') };
+    }
+    var groups = {};
+    var dateMap = {};
+    var skipped = 0;
+    rows.forEach(function(row) {
+      var sku = normalizeSkuValue(exactRowValue(row, resolvedColumns.sku));
+      var range = normalizeImportedDateRange(exactRowValue(row, resolvedColumns.date));
+      var date = range.startDate;
+      var orderId = resolvedColumns.orderId ? String(exactRowValue(row, resolvedColumns.orderId) || '').trim() : '';
+      if (!sku || sku === '\u5408\u8ba1' || sku === '\u6c47\u603b' || sku === '0' || !date) {
+        skipped++;
+        return;
+      }
+      var key = date + '|' + sku;
+      if (!groups[key]) {
+        groups[key] = {
+          sourceType: 'offsite_cps_cost',
+          periodType: 'day',
+          startDate: date,
+          endDate: date,
+          sku: sku,
+          importedAt: new Date().toISOString(),
+          snapshotId: snapshotId,
+          fileName: file.name,
+          offsiteCost: 0,
+          extraMetrics: {
+            orderCount: 0,
+            orderIds: [],
+            campaignPlans: [],
+            affiliatePins: [],
+            orders: []
+          }
+        };
+      }
+      var cost = parseMetricNumber(exactRowValue(row, resolvedColumns.offsiteCost));
+      groups[key].offsiteCost += isFinite(Number(cost)) ? Number(cost) : 0;
+      groups[key].extraMetrics.orderCount++;
+      if (orderId) groups[key].extraMetrics.orderIds.push(orderId);
+      var plan = resolvedColumns.campaignPlan ? String(exactRowValue(row, resolvedColumns.campaignPlan) || '').trim() : '';
+      if (plan && groups[key].extraMetrics.campaignPlans.indexOf(plan) === -1) groups[key].extraMetrics.campaignPlans.push(plan);
+      var pin = resolvedColumns.affiliatePin ? String(exactRowValue(row, resolvedColumns.affiliatePin) || '').trim() : '';
+      if (pin && groups[key].extraMetrics.affiliatePins.indexOf(pin) === -1) groups[key].extraMetrics.affiliatePins.push(pin);
+      groups[key].extraMetrics.orders.push({
+        orderId: orderId,
+        campaignPlan: plan,
+        affiliatePin: pin,
+        offsiteCost: isFinite(Number(cost)) ? Number(cost) : 0,
+        sourceDate: exactRowValue(row, resolvedColumns.date)
+      });
+      dateMap[date] = true;
+    });
+    var dates = Object.keys(dateMap).sort();
+    var existing = await getAll('analyzed_metrics');
+    var replaced = 0;
+    for (var e = 0; e < existing.length; e++) {
+      var item = existing[e];
+      if (item.sourceType === 'offsite_cps_cost' && dates.indexOf(item.startDate) !== -1 && item.periodType === 'day') {
+        await remove('analyzed_metrics', item.id);
+        replaced++;
+      }
+    }
+    var groupRows = Object.keys(groups).map(function(key) { return groups[key]; });
+    for (var i = 0; i < groupRows.length; i++) {
+      await put('analyzed_metrics', groupRows[i]);
+    }
+    var noteParts = ['\u5199\u5165 ' + groupRows.length + ' \u6761\u7ad9\u5916 CPS \u82b1\u8d39'];
+    if (dates.length) noteParts.push('\u8986\u76d6\u65e5\u671f\uff1a' + dates.join('\u3001'));
+    if (replaced) noteParts.push('\u5220\u9664\u65e7\u6570\u636e ' + replaced + ' \u6761');
+    if (skipped) noteParts.push('\u8df3\u8fc7 ' + skipped + ' \u884c');
+    return {
+      saved: groupRows.length,
+      skipped: skipped,
+      replaced: replaced,
+      dayCount: groupRows.length,
+      periodCount: 0,
+      startDate: dates[0] || '',
+      endDate: dates[dates.length - 1] || dates[0] || '',
+      note: noteParts.join('\uff1b')
+    };
+  }
   function renderImportPreview(results) {
     if (!results.length) {
       $('importPreviewBody').innerHTML = '<tr><td class="empty-row" colspan="6">还没有导入文件</td></tr>';
       return;
     }
     $('importPreviewBody').innerHTML = results.map(function(item) {
-      var ok = item.ok && item.meta && item.meta.sourceType !== 'unknown' && item.meta.startDate && item.meta.endDate;
+      var status = importStatusMeta({ importStatus: item.importStatus || (item.ok ? 'recorded' : 'failed') });
       var typeLabel = item.meta ? (labels.sourceType[item.meta.sourceType] || item.meta.sourceType) : '-';
       var periodLabel = item.meta ? (labels.periodType[item.meta.periodType] || item.meta.periodType) : '-';
       var range = item.meta ? rangeText(item.meta) : '-';
@@ -2409,23 +3198,24 @@
         '<td>' + esc(periodLabel) + '</td>' +
         '<td>' + esc(range) + '</td>' +
         '<td>' + esc(item.rowCount || 0) + '</td>' +
-        '<td><span class="import-status ' + (ok ? '' : 'warn') + '">' + esc(note) + '</span></td>' +
+        '<td><span class="import-status ' + esc(status.className) + '" title="' + esc(note) + '">' + esc(status.label) + '</span><span class="import-note">' + esc(note || '-') + '</span></td>' +
       '</tr>';
     }).join('');
   }
+
 
   async function handleImportFiles(files) {
     files = Array.prototype.slice.call(files || []).filter(Boolean);
     if (!files.length) return;
     var results = [];
-    $('importMsg').textContent = '正在读取 ' + files.length + ' 个文件...';
+    $('importMsg').textContent = '\u6b63\u5728\u8bfb\u53d6 ' + files.length + ' \u4e2a\u6587\u4ef6...';
     $('importMsg').className = 'msg';
     for (var i = 0; i < files.length; i++) {
       var file = files[i];
       try {
         var rows = await parseWorkbook(file);
         var meta = detectImportMeta(file, rows);
-        var snapshotId = await put('raw_snapshots', {
+        var snapshotRecord = {
           sourceType: meta.sourceType,
           periodType: meta.periodType,
           startDate: meta.startDate,
@@ -2434,29 +3224,82 @@
           importedAt: new Date().toISOString(),
           rowCount: rows.length,
           rows: rows,
-          detectNote: meta.note
-        });
+          detectNote: meta.note,
+          importStatus: 'processing',
+          statusNote: meta.note
+        };
+        var snapshotId = await put('raw_snapshots', snapshotRecord);
+        snapshotRecord.id = snapshotId;
+        var finalStatus = metricImportStatus(meta.sourceType);
         if (meta.sourceType === 'sales_detail') {
           var metricResult = await saveSalesDetailMetrics(rows, file, snapshotId);
-          meta.periodType = 'day';
+          meta.periodType = metricResult.periodCount && !metricResult.dayCount ? 'period' : 'day';
           meta.note = metricResult.note;
+          finalStatus = metricImportStatus(meta.sourceType, metricResult);
+        } else if (meta.sourceType === 'onsite_cost') {
+          var onsiteResult = await saveOnsiteCostMetrics(rows, file, snapshotId);
+          meta.periodType = onsiteResult.periodCount && !onsiteResult.dayCount ? 'period' : 'day';
+          meta.note = onsiteResult.note;
+          finalStatus = metricImportStatus(meta.sourceType, onsiteResult);
+        } else if (meta.sourceType === 'offsite_cps_cost') {
+          var offsiteResult = await saveOffsiteCpsCostMetrics(rows, file, snapshotId);
+          meta.periodType = offsiteResult.startDate === offsiteResult.endDate ? 'day' : 'period';
+          meta.startDate = offsiteResult.startDate || meta.startDate;
+          meta.endDate = offsiteResult.endDate || meta.endDate;
+          meta.note = offsiteResult.note;
+          finalStatus = metricImportStatus(meta.sourceType, offsiteResult);
         }
-        results.push({ ok: true, fileName: file.name, rowCount: rows.length, meta: meta });
+        snapshotRecord.sourceType = meta.sourceType;
+        snapshotRecord.periodType = meta.periodType;
+        snapshotRecord.startDate = meta.startDate;
+        snapshotRecord.endDate = meta.endDate;
+        snapshotRecord.detectNote = meta.note;
+        snapshotRecord.statusNote = meta.note;
+        snapshotRecord.importStatus = finalStatus;
+        await put('raw_snapshots', snapshotRecord);
+        results.push({ ok: finalStatus !== 'failed', importStatus: finalStatus, fileName: file.name, rowCount: rows.length, meta: meta });
       } catch (err) {
-        results.push({ ok: false, fileName: file.name, rowCount: 0, error: '导入失败：' + err.message });
+        var failedMeta = { sourceType: 'unknown', periodType: 'unknown', startDate: '', endDate: '', note: err.message };
+        await put('raw_snapshots', {
+          sourceType: failedMeta.sourceType,
+          periodType: failedMeta.periodType,
+          startDate: '',
+          endDate: '',
+          fileName: file.name,
+          importedAt: new Date().toISOString(),
+          rowCount: 0,
+          rows: [],
+          detectNote: err.message,
+          importStatus: 'failed',
+          statusNote: err.message
+        });
+        results.push({ ok: false, importStatus: 'failed', fileName: file.name, rowCount: 0, meta: failedMeta, error: '\u5bfc\u5165\u5931\u8d25\uff1a' + err.message });
       }
       renderImportPreview(results);
     }
-    var successCount = results.filter(function(item) { return item.ok; }).length;
-    $('importMsg').textContent = '已处理 ' + files.length + ' 个文件，保存 ' + successCount + ' 个原始快照记录。';
+    var successCount = results.filter(function(item) { return item.importStatus === 'success' || item.importStatus === 'recorded'; }).length;
+    $('importMsg').textContent = '\u5df2\u5904\u7406 ' + files.length + ' \u4e2a\u6587\u4ef6\uff0c\u4fdd\u5b58 ' + results.length + ' \u6761\u5bfc\u5165\u8bb0\u5f55\uff0c\u5176\u4e2d\u6210\u529f ' + successCount + ' \u6761\u3002';
     $('importMsg').className = successCount ? 'msg ok' : 'msg err';
     await renderSnapshots();
     await refreshCounts();
   }
 
+  function filterMetricRowsByDateRange(rows, range) {
+    range = range || {};
+    var start = range.start || '';
+    var end = range.end || start;
+    return (rows || []).filter(function(row) {
+      if (start && (row.endDate || row.startDate) < start) return false;
+      if (end && (row.startDate || row.endDate) > end) return false;
+      return true;
+    });
+  }
+
   async function renderDashboard() {
     var rows = await getAll('analyzed_metrics');
     var skus = await getAll('sku_profiles');
+    var range = datePickers.dashboard ? datePickers.dashboard.getRange() : normalizedRange($('dashboardStartDate').value, $('dashboardEndDate').value || $('dashboardStartDate').value);
+    rows = filterMetricRowsByDateRange(rows, range);
     await renderMonitorTracks(rows, skus);
   }
 
@@ -2465,12 +3308,16 @@
     skus.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
     if (!dims.length) dims = ['sku'];
     var groups = {};
-    rows.forEach(function(row) {
+    function dimensionValue(row, skuProfile, dim) {
+      if (dim === 'sku') return row.sku || '-';
+      if (dim === 'campaignPlan') return row.campaignPlan || '\u672a\u5f52\u7c7b';
+      if (dim === 'affiliatePin') return row.affiliatePin || '\u672a\u5f52\u7c7b';
+      if (dim === 'orderId') return row.orderId || '\u672a\u5f52\u7c7b';
+      return skuProfile[dim] || '\u672a\u5f52\u7c7b';
+    }
+    function addMetricRow(row) {
       var skuProfile = skuMap[normalizeSkuValue(row.sku)] || {};
-      var dimValues = dims.map(function(dim) {
-        if (dim === 'sku') return row.sku || '-';
-        return skuProfile[dim] || (dim === 'shortName' ? row.sku : '未归类');
-      });
+      var dimValues = dims.map(function(dim) { return dimensionValue(row, skuProfile, dim); });
       var key = [row.periodType || '', row.startDate || '', row.endDate || '', dimValues.join(' / ')].join('|');
       if (!groups[key]) {
         groups[key] = {
@@ -2492,6 +3339,25 @@
       groups[key].onsiteCost += Number(row.onsiteCost || 0);
       groups[key].offsiteCost += Number(row.offsiteCost || 0);
       if (row.rank) groups[key].rank = row.rank;
+    }
+    rows.forEach(function(row) {
+      if (enableOrderDimension && row.sourceType === 'offsite_cps_cost' && row.extraMetrics && Array.isArray(row.extraMetrics.orders) && row.extraMetrics.orders.length) {
+        row.extraMetrics.orders.forEach(function(order) {
+          addMetricRow({
+            sourceType: row.sourceType,
+            periodType: row.periodType,
+            startDate: row.startDate,
+            endDate: row.endDate,
+            sku: row.sku,
+            offsiteCost: order.offsiteCost,
+            campaignPlan: order.campaignPlan,
+            affiliatePin: order.affiliatePin,
+            orderId: order.orderId
+          });
+        });
+        return;
+      }
+      addMetricRow(row);
     });
     return Object.values(groups).sort(function(a, b) {
       return String(b.startDate || '').localeCompare(String(a.startDate || '')) || String(a.dimensionName || '').localeCompare(String(b.dimensionName || ''), 'zh-Hans-CN', { numeric: true });
@@ -2512,13 +3378,27 @@
     analyzedRows = analyzedRows || await getAll('analyzed_metrics');
     skuRows = skuRows || await getAll('sku_profiles');
     if (!monitorTracks.length) {
-      $('monitorBody').innerHTML = '<tr><td class="empty-row" colspan="8">暂无追踪项</td></tr>';
+      $('monitorBody').innerHTML = '<tr><td class="empty-row" colspan="11">暂无追踪项</td></tr>';
       $('monitorMsg').textContent = '';
       return;
     }
     var skuMap = {};
     skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
+    function monitorValueOptions(dim) {
+      var map = {};
+      analyzedRows.forEach(function(row) {
+        var sku = normalizeSkuValue(row.sku);
+        var profile = skuMap[sku] || {};
+        var value = dim === 'sku' ? sku : (profile[dim] || '');
+        if (value) map[String(value)] = true;
+      });
+      return Object.keys(map).sort(function(a, b) {
+        return a.localeCompare(b, 'zh-Hans-CN', { numeric: true });
+      });
+    }
     $('monitorBody').innerHTML = monitorTracks.map(function(track, index) {
+      var options = monitorValueOptions(track.dimension || 'subSeries');
+      var datalistId = 'monitorTargetOptions' + index;
       var matchedSku = {};
       analyzedRows.forEach(function(row) {
         var sku = normalizeSkuValue(row.sku);
@@ -2526,30 +3406,37 @@
         var value = track.dimension === 'sku' ? sku : (profile[track.dimension] || '');
         if (String(value) === String(track.target || '')) matchedSku[sku] = true;
       });
-      var total = { qty: 0, amount: 0, visitors: 0 };
+      var total = { qty: 0, amount: 0, visitors: 0, onsiteCost: 0, offsiteCost: 0 };
       analyzedRows.forEach(function(row) {
         var sku = normalizeSkuValue(row.sku);
         if (!matchedSku[sku]) return;
         total.qty += Number(row.salesQty || 0);
         total.amount += Number(row.salesAmount || 0);
         total.visitors += Number(row.visitorCount || row.clickCount || 0);
+        total.onsiteCost += Number(row.onsiteCost || 0);
+        total.offsiteCost += Number(row.offsiteCost || 0);
       });
+      var conversion = total.visitors ? total.qty / total.visitors : '';
       return '<tr data-index="' + index + '">' +
-        '<td><input class="input monitor-name" value="' + esc(track.name || '') + '" placeholder="例如 鲲鹏70"></td>' +
         '<td><select class="select monitor-dim">' +
           ['subSeries', 'mainSeries', 'shortName', 'sku', 'brand'].map(function(dim) {
             return '<option value="' + dim + '"' + (track.dimension === dim ? ' selected' : '') + '>' + monitorDimensionLabel(dim) + '</option>';
           }).join('') +
         '</select></td>' +
-        '<td><input class="input monitor-target" value="' + esc(track.target || '') + '" placeholder="完全等于档案中的值"></td>' +
+        '<td><input class="input monitor-target" list="' + datalistId + '" value="' + esc(track.target || track.name || '') + '" placeholder="搜索或选择' + esc(monitorDimensionLabel(track.dimension || 'subSeries')) + '">' +
+          '<datalist id="' + datalistId + '">' + options.map(function(value) { return '<option value="' + esc(value) + '"></option>'; }).join('') + '</datalist></td>' +
         '<td>' + esc(Object.keys(matchedSku).length) + '</td>' +
         '<td>' + esc(formatMetric(total.qty, 0)) + '</td>' +
+        '<td></td>' +
         '<td>' + esc(formatMetric(total.amount, 2)) + '</td>' +
         '<td>' + esc(formatMetric(total.visitors, 0)) + '</td>' +
+        '<td>' + esc(formatPercent(conversion)) + '</td>' +
+        '<td>' + esc(formatMetric(total.onsiteCost, 2)) + '</td>' +
+        '<td>' + esc(formatMetric(total.offsiteCost, 2)) + '</td>' +
         '<td><button class="icon-btn row-delete-btn monitor-delete" title="删除追踪项">' + iconTrash() + '</button></td>' +
       '</tr>';
     }).join('');
-    $('monitorMsg').textContent = '每条追踪项单独设置维度；追踪目标需要和 SKU 档案里的字段值完全一致。';
+    $('monitorMsg').textContent = '追踪名称按所选维度从当前日期范围内出现过的条目中选择，也可以输入后搜索。';
     $('monitorMsg').className = 'msg';
   }
 
@@ -2557,9 +3444,9 @@
     var index = Number(row.dataset.index);
     var track = monitorTracks[index];
     if (!track) return;
-    track.name = (row.querySelector('.monitor-name') || {}).value || '';
     track.dimension = (row.querySelector('.monitor-dim') || {}).value || 'subSeries';
     track.target = (row.querySelector('.monitor-target') || {}).value || '';
+    track.name = track.target;
     saveMonitorTracks();
   }
 
@@ -2573,29 +3460,47 @@
     $('dimensionHint').textContent = text;
   }
 
+  function saveAnalyzedSelectedDimensions() {
+    localStorage.setItem('jdAnalyzedSelectedDimensions', JSON.stringify(analyzedSelectedDimensions));
+  }
+
+  function rememberAnalyzedDimensionSelection() {
+    analyzedSelectedDimensions = Array.from(document.querySelectorAll('.analyzed-dim-check:checked')).map(function(input) { return input.value; });
+    if (!analyzedSelectedDimensions.length) analyzedSelectedDimensions = ['subSeries'];
+    saveAnalyzedSelectedDimensions();
+  }
+
+  function applyAnalyzedDimensionSelection() {
+    var selected = analyzedSelectedDimensions && analyzedSelectedDimensions.length ? analyzedSelectedDimensions : ['subSeries'];
+    document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
+      input.checked = selected.indexOf(input.value) !== -1;
+    });
+  }
+
   function updateAnalyzedDimensionHint() {
-    var checked = getSelectedAnalyzedDims();
-    var text = '当前最小维度：';
-    if (checked.indexOf('shortName') !== -1) text += '商品简称。';
-    else if (checked.indexOf('subSeries') !== -1) text += '小系列，数据显示该小系列求和。';
-    else if (checked.indexOf('mainSeries') !== -1) text += '大系列，数据显示该大系列求和。';
-    else if (checked.length) text += analyzedDimensionLabel(checked[checked.length - 1]) + '。';
-    else text += '未选择，请至少保留一个维度。';
-    $('analyzedDimensionHint').textContent = text;
     renderAnalyzedDbHead();
   }
 
   function analyzedDimensionLabel(key) {
-    var builtin = { mainSeries: '大系列', subSeries: '小系列', shortName: '商品简称' };
+    var builtin = {
+      mainSeries: '\u5927\u7cfb\u5217',
+      subSeries: '\u5c0f\u7cfb\u5217',
+      shortName: '\u5546\u54c1\u7b80\u79f0',
+      campaignPlan: '\u6240\u5c5e\u8ba1\u5212/\u6d3b\u52a8',
+      affiliatePin: '\u63a8\u5ba2 pin',
+      orderId: '\u8ba2\u5355\u7f16\u53f7'
+    };
     return builtin[key] || skuColumnLabels[key] || key;
   }
 
   function getSelectedAnalyzedDims() {
-    return Array.from(document.querySelectorAll('.analyzed-dim-check:checked')).map(function(input) { return input.value; });
+    var selected = Array.from(document.querySelectorAll('.analyzed-dim-check:checked')).map(function(input) { return input.value; });
+    if (!enableOrderDimension) selected = selected.filter(function(key) { return ['campaignPlan', 'affiliatePin', 'orderId'].indexOf(key) === -1; });
+    return selected.length ? selected : ['subSeries'];
   }
 
   function renderAnalyzedDbHead() {
-    var labelsText = getSelectedAnalyzedDims().map(analyzedDimensionLabel).join(' / ') || '未选择';
+    var labelsText = getSelectedAnalyzedDims().map(analyzedDimensionLabel).join(' / ') || '小系列';
     $('analyzedDbHead').innerHTML = '<tr><th>日期</th><th>维度（' + esc(labelsText) + '）</th><th>销售数量</th><th>销售金额</th><th>访客/点击</th><th>站内花费</th><th>站外花费</th><th>排名</th></tr>';
   }
 
@@ -2607,15 +3512,33 @@
     var addBtn = $('addAnalyzedDimBtn');
     if (!addBtn) return;
     document.querySelectorAll('.analyzed-extra-dim-pill').forEach(function(node) { node.remove(); });
+    document.querySelectorAll('.analyzed-order-dim-pill').forEach(function(node) { node.remove(); });
+    if ($('enableOrderDimensionCheck')) $('enableOrderDimensionCheck').checked = enableOrderDimension;
+    if (enableOrderDimension) {
+      ['campaignPlan', 'affiliatePin', 'orderId'].forEach(function(key) {
+        var pill = document.createElement('label');
+        pill.className = 'check-pill analyzed-order-dim-pill';
+        var checked = analyzedSelectedDimensions.indexOf(key) !== -1 ? ' checked' : '';
+        pill.innerHTML = '<input type="checkbox" class="analyzed-dim-check analyzed-order-dim" value="' + esc(key) + '"' + checked + '> ' + esc(analyzedDimensionLabel(key));
+        addBtn.parentNode.insertBefore(pill, addBtn);
+        pill.querySelector('input').addEventListener('change', function() {
+          rememberAnalyzedDimensionSelection();
+          updateAnalyzedDimensionHint();
+          renderAnalyzedDb();
+        });
+      });
+    }
     analyzedExtraDimensions = analyzedExtraDimensions.filter(function(key, index, arr) {
       return arr.indexOf(key) === index && skuDimensionColumns.indexOf(key) !== -1 && ['mainSeries', 'subSeries', 'shortName', 'brand'].indexOf(key) === -1;
     });
     analyzedExtraDimensions.forEach(function(key) {
       var pill = document.createElement('span');
       pill.className = 'check-pill analyzed-extra-dim-pill';
-      pill.innerHTML = '<label style="display:inline-flex;align-items:center;gap:7px;"><input type="checkbox" class="analyzed-dim-check analyzed-extra-dim" value="' + esc(key) + '" checked> ' + esc(analyzedDimensionLabel(key)) + '</label><button class="dim-remove-btn" type="button" data-remove-analyzed-dim="' + esc(key) + '" title="移除此维度" aria-label="移除此维度">×</button>';
+      var checked = analyzedSelectedDimensions.indexOf(key) !== -1 ? ' checked' : '';
+      pill.innerHTML = '<label style="display:inline-flex;align-items:center;gap:7px;"><input type="checkbox" class="analyzed-dim-check analyzed-extra-dim" value="' + esc(key) + '"' + checked + '> ' + esc(analyzedDimensionLabel(key)) + '</label><button class="dim-remove-btn" type="button" data-remove-analyzed-dim="' + esc(key) + '" title="移除此维度" aria-label="移除此维度">&times;</button>';
       addBtn.parentNode.insertBefore(pill, addBtn);
       pill.querySelector('input').addEventListener('change', function() {
+        rememberAnalyzedDimensionSelection();
         updateAnalyzedDimensionHint();
         renderAnalyzedDb();
       });
@@ -2626,11 +3549,15 @@
       });
     });
     saveAnalyzedExtraDimensions();
+    applyAnalyzedDimensionSelection();
   }
 
   function removeAnalyzedDimension(key) {
     analyzedExtraDimensions = analyzedExtraDimensions.filter(function(item) { return item !== key; });
+    analyzedSelectedDimensions = analyzedSelectedDimensions.filter(function(item) { return item !== key; });
+    if (!analyzedSelectedDimensions.length) analyzedSelectedDimensions = ['subSeries'];
     saveAnalyzedExtraDimensions();
+    saveAnalyzedSelectedDimensions();
     renderAnalyzedDimensionControls();
     updateAnalyzedDimensionHint();
     renderAnalyzedDb();
@@ -2641,10 +3568,7 @@
     var available = skuDimensionColumns.filter(function(key) {
       return base.indexOf(key) === -1 && analyzedExtraDimensions.indexOf(key) === -1;
     });
-    if (!available.length) {
-      $('analyzedDimensionHint').textContent = '暂无可添加的自定义维度；可以先在 SKU 档案里导入或新增维度列。';
-      return;
-    }
+    if (!available.length) return;
     analyzedExtraDimensions.push(available[0]);
     renderAnalyzedDimensionControls();
     updateAnalyzedDimensionHint();
@@ -2707,6 +3631,7 @@
     return keys;
   }
 
+
   async function renderCleanupSnapshots() {
     var rows = await getAll('raw_snapshots');
     rows.sort(function(a, b) { return String(b.importedAt || '').localeCompare(String(a.importedAt || '')); });
@@ -2716,13 +3641,14 @@
       if (!validIds[id]) cleanupSelectedSnapshotIds.delete(id);
     });
     if (!rows.length) {
-      $('cleanupSnapshotBody').innerHTML = '<tr><td class="empty-row" colspan="7">暂无原始快照记录</td></tr>';
+      $('cleanupSnapshotBody').innerHTML = '<tr><td class="empty-row" colspan="8">&#26242;&#26080;&#23548;&#20837;&#35760;&#24405;</td></tr>';
       $('cleanupSelectAll').checked = false;
       $('cleanupMsg').textContent = '';
       return;
     }
     $('cleanupSnapshotBody').innerHTML = rows.map(function(row) {
       var checked = cleanupSelectedSnapshotIds.has(row.id) ? ' checked' : '';
+      var status = importStatusMeta(row);
       return '<tr>' +
         '<td><input type="checkbox" class="cleanup-row-check" data-id="' + row.id + '"' + checked + '></td>' +
         '<td>' + esc(labels.sourceType[row.sourceType] || row.sourceType || '-') + '</td>' +
@@ -2730,11 +3656,12 @@
         '<td>' + esc(row.fileName || '-') + '</td>' +
         '<td>' + esc((row.importedAt || '').slice(0, 19).replace('T', ' ')) + '</td>' +
         '<td>' + esc(row.rowCount || 0) + '</td>' +
-        '<td><button class="btn danger cleanup-delete-one" data-id="' + row.id + '">删除</button></td>' +
+        '<td><span class="import-status ' + esc(status.className) + '" title="' + esc(row.statusNote || row.detectNote || '') + '">' + esc(status.label) + '</span></td>' +
+        '<td><button class="btn danger cleanup-delete-one" data-id="' + row.id + '">\u5220\u9664</button></td>' +
       '</tr>';
     }).join('');
     $('cleanupSelectAll').checked = rows.every(function(row) { return cleanupSelectedSnapshotIds.has(row.id); });
-    $('cleanupMsg').textContent = '当前选中 ' + cleanupSelectedSnapshotIds.size + ' 条原始快照记录。';
+    $('cleanupMsg').textContent = '\u5f53\u524d\u9009\u4e2d ' + cleanupSelectedSnapshotIds.size + ' \u6761\u5bfc\u5165\u8bb0\u5f55\u3002';
     $('cleanupMsg').className = 'msg';
   }
 
@@ -2747,10 +3674,11 @@
     await renderCleanupSnapshots();
   }
 
+
   async function deleteSelectedSnapshots() {
     var ids = Array.from(cleanupSelectedSnapshotIds);
     if (!ids.length) {
-      $('cleanupMsg').textContent = '请先勾选要删除的原始快照记录。';
+      $('cleanupMsg').textContent = '\u8bf7\u5148\u52fe\u9009\u8981\u5220\u9664\u7684\u5bfc\u5165\u8bb0\u5f55\u3002';
       $('cleanupMsg').className = 'msg err';
       return;
     }
@@ -2761,7 +3689,7 @@
     for (var i = 0; i < ids.length; i++) await remove('raw_snapshots', ids[i]);
     for (var j = 0; j < matchedAnalyzed.length; j++) await remove('analyzed_metrics', matchedAnalyzed[j].id);
     cleanupSelectedSnapshotIds.clear();
-    $('cleanupMsg').textContent = '已删除 ' + ids.length + ' 条原始快照记录、' + matchedAnalyzed.length + ' 条已分析数据。';
+    $('cleanupMsg').textContent = '\u5df2\u5220\u9664 ' + ids.length + ' \u6761\u5bfc\u5165\u8bb0\u5f55\u3001' + matchedAnalyzed.length + ' \u6761\u5df2\u5206\u6790\u6570\u636e\u3002';
     $('cleanupMsg').className = 'msg ok';
     await renderCleanupSnapshots();
     await renderSnapshots();
@@ -2769,6 +3697,7 @@
     await renderDashboard();
     await refreshCounts();
   }
+
 
   document.querySelectorAll('.tab-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
@@ -2794,156 +3723,48 @@
   if ($('refreshSkuDbBtn')) $('refreshSkuDbBtn').addEventListener('click', renderSkuDb);
   $('refreshAnalyzedDbBtn').addEventListener('click', renderAnalyzedDb);
   $('refreshEstimatesDbBtn').addEventListener('click', renderEstimatesDb);
-  $('managedSkuOnlyCheck').addEventListener('change', async function(e) {
-    hideUnmanagedAnalyzed = e.target.checked;
-    localStorage.setItem('jdHideUnmanagedAnalyzed', hideUnmanagedAnalyzed ? 'true' : 'false');
-    await renderAnalyzedDb();
+  datePickers.dashboard = createDateRangePicker({
+    rootId: 'dashboardDatePickerField',
+    inputId: 'dashboardDateInput',
+    startId: 'dashboardStartDate',
+    endId: 'dashboardEndDate',
+    prevId: 'dashboardDatePrev',
+    nextId: 'dashboardDateNext',
+    triggerId: 'dashboardDateTrigger',
+    popoverId: 'dashboardDatePopover',
+    onChange: function() { renderDashboard(); }
   });
-  $('analyzedDateInput').addEventListener('focus', openAnalyzedDatePicker);
-  $('analyzedDateInput').addEventListener('click', openAnalyzedDatePicker);
-  $('analyzedDateTrigger').addEventListener('click', openAnalyzedDatePicker);
-  $('analyzedDatePrev').addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    shiftAnalyzedDateRange(-1);
+  datePickers.analyzed = createDateRangePicker({
+    rootId: 'analyzedDatePickerField',
+    inputId: 'analyzedDateInput',
+    startId: 'analyzedStartDate',
+    endId: 'analyzedEndDate',
+    prevId: 'analyzedDatePrev',
+    nextId: 'analyzedDateNext',
+    triggerId: 'analyzedDateTrigger',
+    popoverId: 'analyzedDatePopover',
+    onChange: function() { renderAnalyzedDb(); }
   });
-  $('analyzedDateNext').addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    shiftAnalyzedDateRange(1);
-  });
-  $('analyzedDateInput').addEventListener('change', function() {
-    parseAnalyzedDateInput();
-    syncAnalyzedDateInput();
-    renderAnalyzedDatePicker();
-    renderAnalyzedDb();
-  });
-  document.querySelectorAll('[data-month-shift]').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var shift = Number(btn.dataset.monthShift);
-      if (analyzedPickerMode === 'month') shift = shift < 0 ? -12 : 12;
-      analyzedCalendarMonth = new Date(analyzedCalendarMonth.getFullYear(), analyzedCalendarMonth.getMonth() + shift, 1);
-      renderAnalyzedDatePicker();
-    });
-  });
-  function confirmDateGridPick(e) {
-    if (e.type === 'click' && Date.now() - analyzedLastGridPickAt < 350) return;
-    if ((e.type === 'mousedown' || e.type === 'pointerdown') && e.button != null && e.button !== 0) return;
-    var monthBtn = e.target.closest('[data-month]');
-    if (monthBtn) {
-      analyzedLastGridPickAt = Date.now();
-      e.preventDefault();
-      e.stopPropagation();
-      var monthIndex = Number(monthBtn.dataset.month);
-      var range = rangeForShortcut('month', new Date(analyzedCalendarMonth.getFullYear(), monthIndex, 1));
-      if (!range) return;
-      setAnalyzedRange(range.start, range.end);
-      closeAnalyzedDatePicker();
-      return;
-    }
-    var btn = e.target.closest('[data-date]');
-    if (!btn) return;
-    analyzedLastGridPickAt = Date.now();
-    e.preventDefault();
-    e.stopPropagation();
-    var value = btn.dataset.date;
-    if (isFutureYmd(value)) return;
-    if (analyzedPickerMode === 'day') {
-      setAnalyzedRange(value, value);
-      closeAnalyzedDatePicker();
-      return;
-    }
-    if (analyzedPickerMode === 'week') {
-      var weekRange = rangeForShortcut('week', dateFromYmd(value));
-      if (!weekRange) return;
-      setAnalyzedRange(weekRange.start, weekRange.end);
-      closeAnalyzedDatePicker();
-      return;
-    }
-    if (!analyzedRangeDraftStart) {
-      analyzedRangeDraftStart = value;
-      $('analyzedStartDate').value = value;
-      $('analyzedEndDate').value = value;
-      syncAnalyzedDateInput();
-      analyzedPreviewRange = normalizedRange(value, value);
-      analyzedSuppressSelectedRange = false;
-      applyAnalyzedDateClasses();
-      return;
-    }
-    var customRange = normalizedRange(analyzedRangeDraftStart, value);
-    analyzedRangeDraftStart = '';
-    setAnalyzedRange(customRange.start, customRange.end);
-    closeAnalyzedDatePicker();
-  }
-  ['pointerdown', 'mousedown', 'click'].forEach(function(eventName) {
-    $('datePickerGrid').addEventListener(eventName, confirmDateGridPick, true);
-  });
-  $('datePickerGrid').addEventListener('mouseover', function(e) {
-    var monthBtn = e.target.closest('[data-month]');
-    if (monthBtn) {
-      analyzedPreviewRange = monthBtn.classList.contains('future') ? null : rangeForShortcut('month', new Date(analyzedCalendarMonth.getFullYear(), Number(monthBtn.dataset.month), 1));
-      analyzedSuppressSelectedRange = true;
-      applyAnalyzedDateClasses();
-      return;
-    }
-    var btn = e.target.closest('[data-date]');
-    if (!btn) return;
-    var value = btn.dataset.date;
-    if (isFutureYmd(value)) {
-      analyzedPreviewRange = null;
-      analyzedSuppressSelectedRange = true;
-      applyAnalyzedDateClasses();
-      return;
-    }
-    if (analyzedPickerMode === 'day') analyzedPreviewRange = normalizedRange(value, value);
-    else if (analyzedPickerMode === 'week') analyzedPreviewRange = rangeForShortcut('week', dateFromYmd(value));
-    else if (analyzedPickerMode === 'custom' && analyzedRangeDraftStart) analyzedPreviewRange = normalizedRange(analyzedRangeDraftStart, value);
-    else analyzedPreviewRange = null;
-    analyzedSuppressSelectedRange = !!analyzedPreviewRange;
-    applyAnalyzedDateClasses();
-  });
-  $('analyzedDatePopover').addEventListener('click', function(e) {
-    var shortcut = e.target.closest('[data-date-shortcut]');
-    if (!shortcut) return;
-    var kind = shortcut.dataset.dateShortcut;
-    if (kind === 'yesterday' || kind === '7' || kind === '30') {
-      var fixedRange = rangeForShortcut(kind);
-      analyzedCalendarMonth = dateFromYmd(fixedRange.start);
-      setAnalyzedRange(fixedRange.start, fixedRange.end);
-      closeAnalyzedDatePicker();
-    } else {
-      setDatePickerMode(kind === 'today' ? 'day' : kind);
-    }
-  });
-  $('analyzedDatePopover').addEventListener('mouseover', function(e) {
-    var shortcut = e.target.closest('[data-date-shortcut]');
-    if (!shortcut) return;
-    var kind = shortcut.dataset.dateShortcut;
-    if (kind === 'yesterday' || kind === '7' || kind === '30') {
-      analyzedPreviewRange = rangeForShortcut(kind);
-      analyzedSuppressSelectedRange = true;
-      applyAnalyzedDateClasses();
-    } else {
-      setDatePickerMode(kind === 'today' ? 'day' : kind);
-      analyzedSuppressSelectedRange = true;
-    }
-  });
-  $('analyzedDatePopover').addEventListener('mouseleave', function() {
-    analyzedPreviewRange = null;
-    analyzedSuppressSelectedRange = false;
-    applyAnalyzedDateClasses();
-  });
-  document.addEventListener('click', function(e) {
-    if (!$('analyzedDatePopover').classList.contains('open')) return;
-    if (e.target.closest('.date-picker-field')) return;
-    closeAnalyzedDatePicker();
-  });
-  document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
+document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     input.addEventListener('change', function() {
+      rememberAnalyzedDimensionSelection();
       updateAnalyzedDimensionHint();
       renderAnalyzedDb();
     });
   });
+  if ($('enableOrderDimensionCheck')) {
+    $('enableOrderDimensionCheck').addEventListener('change', function(e) {
+      enableOrderDimension = e.target.checked;
+      localStorage.setItem('jdEnableOrderDimension', enableOrderDimension ? 'true' : 'false');
+      if (!enableOrderDimension) {
+        analyzedSelectedDimensions = analyzedSelectedDimensions.filter(function(key) { return ['campaignPlan', 'affiliatePin', 'orderId'].indexOf(key) === -1; });
+        saveAnalyzedSelectedDimensions();
+      }
+      renderAnalyzedDimensionControls();
+      updateAnalyzedDimensionHint();
+      renderAnalyzedDb();
+    });
+  }
   $('addAnalyzedDimBtn').addEventListener('click', function(e) {
     e.preventDefault();
     addAnalyzedDimension();
@@ -2953,33 +3774,85 @@
   if ($('clearSkuDbBtn')) $('clearSkuDbBtn').addEventListener('click', function() { clearDbTable('sku_profiles', renderSkuDb); });
   $('clearAnalyzedDbBtn').addEventListener('click', clearCurrentAnalyzedRows);
   $('clearEstimatesDbBtn').addEventListener('click', function() { clearDbTable('competitor_estimates', renderEstimatesDb); });
-  $('addMappingBtn').addEventListener('click', function() {
-    var mappings = getImportMappings('sales_detail');
-    var next = mappings.length + 1;
-    mappings.push({ key: 'customMetric' + next, label: '自定义字段' + next, column: '', locked: false, note: '自定义追踪字段' });
-    saveImportMappings();
-    renderImportMappings();
-  });
-  $('mappingBody').addEventListener('input', function(e) {
-    var row = e.target.closest('tr[data-index]');
-    if (row) updateMappingFromRow(row);
-  });
-  $('mappingBody').addEventListener('click', function(e) {
+  $('mappingSections').addEventListener('click', function(e) {
+    if (e.target.closest('[data-mapping-link]')) return;
+    var toggle = e.target.closest('[data-toggle-mapping]');
+    if (toggle) {
+      var type = toggle.getAttribute('data-toggle-mapping');
+      mappingSections.forEach(function(section) {
+        if (section.type === type) section.open = !section.open;
+      });
+      renderImportMappings();
+      return;
+    }
+    var add = e.target.closest('[data-add-mapping]');
+    if (add) {
+      var addType = add.getAttribute('data-add-mapping') || 'sales_detail';
+      var mappings = getImportMappings(addType);
+      var next = mappings.length + 1;
+      mappings.push({ key: 'customMetric' + next, label: '自定义字段' + next, column: '', locked: false, note: '自定义追踪字段' });
+      saveImportMappings();
+      renderImportMappings();
+      return;
+    }
+    var addRule = e.target.closest('[data-add-file-rule]');
+    if (addRule) {
+      var ruleType = addRule.getAttribute('data-add-file-rule') || 'sales_detail';
+      getImportRuleConfig(ruleType).filePatterns.push('');
+      saveImportRules();
+      renderImportMappings();
+      return;
+    }
+    var ruleDel = e.target.closest('.mapping-rule-delete');
+    if (ruleDel) {
+      var ruleRow = ruleDel.closest('[data-rule-type]');
+      var deleteType = ruleRow.dataset.ruleType;
+      var deleteIndex = Number(ruleRow.dataset.ruleIndex);
+      var rule = getImportRuleConfig(deleteType);
+      rule.filePatterns.splice(deleteIndex, 1);
+      if (!rule.filePatterns.length) rule.filePatterns.push('');
+      saveImportRules();
+      renderImportMappings();
+      return;
+    }
     var del = e.target.closest('.mapping-delete');
     if (!del) return;
     var row = del.closest('tr[data-index]');
+    var type = row.dataset.type || 'sales_detail';
     var index = Number(row.dataset.index);
-    var mappings = getImportMappings('sales_detail');
+    var mappings = getImportMappings(type);
     if (mappings[index] && !mappings[index].locked) {
       mappings.splice(index, 1);
       saveImportMappings();
       renderImportMappings();
     }
   });
+  $('mappingSections').addEventListener('input', function(e) {
+    var patternRow = e.target.closest('[data-rule-type]');
+    if (e.target.classList.contains('mapping-file-pattern') && patternRow) {
+      var rule = getImportRuleConfig(patternRow.dataset.ruleType);
+      rule.filePatterns[Number(patternRow.dataset.ruleIndex)] = e.target.value.trim();
+      saveImportRules();
+      $('mappingMsg').textContent = '文件名匹配规则已保存。';
+      $('mappingMsg').className = 'msg ok';
+      return;
+    }
+    var row = e.target.closest('tr[data-index]');
+    if (row) updateMappingFromRow(row);
+  });
+  $('mappingSections').addEventListener('change', function(e) {
+    if (e.target.classList.contains('mapping-include-comparison')) {
+      var rule = getImportRuleConfig(e.target.dataset.ruleType);
+      rule.includeComparison = e.target.checked;
+      saveImportRules();
+      $('mappingMsg').textContent = '导入选项已保存。';
+      $('mappingMsg').className = 'msg ok';
+    }
+  });
   $('addMonitorBtn').addEventListener('click', async function() {
     monitorTracks.push({ name: '', dimension: 'subSeries', target: '' });
     saveMonitorTracks();
-    await renderMonitorTracks();
+    await renderDashboard();
   });
   $('monitorBody').addEventListener('input', function(e) {
     var row = e.target.closest('tr[data-index]');
@@ -2989,8 +3862,17 @@
   $('monitorBody').addEventListener('change', async function(e) {
     var row = e.target.closest('tr[data-index]');
     if (!row) return;
+    if (e.target.classList.contains('monitor-dim')) {
+      var track = monitorTracks[Number(row.dataset.index)];
+      var targetInput = row.querySelector('.monitor-target');
+      if (targetInput) targetInput.value = '';
+      if (track) {
+        track.target = '';
+        track.name = '';
+      }
+    }
     updateMonitorTrackFromRow(row);
-    await renderMonitorTracks();
+    await renderDashboard();
   });
   $('monitorBody').addEventListener('click', async function(e) {
     var del = e.target.closest('.monitor-delete');
@@ -2998,7 +3880,7 @@
     var row = del.closest('tr[data-index]');
     monitorTracks.splice(Number(row.dataset.index), 1);
     saveMonitorTracks();
-    await renderMonitorTracks();
+    await renderDashboard();
   });
   $('refreshCleanupSnapshotsBtn').addEventListener('click', renderCleanupSnapshots);
   $('clearCleanupSelectionBtn').addEventListener('click', async function() {
@@ -3176,21 +4058,33 @@
     $('fileInput').value = '';
   });
 
-  $('viewStart').value = today();
-  $('viewEnd').value = today();
   var defaultAnalyzedDate = yesterday();
+  $('dashboardStartDate').value = defaultAnalyzedDate;
+  $('dashboardEndDate').value = defaultAnalyzedDate;
+  $('dashboardDateInput').value = defaultAnalyzedDate;
   $('analyzedStartDate').value = defaultAnalyzedDate;
   $('analyzedEndDate').value = defaultAnalyzedDate;
   $('analyzedDateInput').value = defaultAnalyzedDate;
-  analyzedCalendarMonth = dateFromYmd(defaultAnalyzedDate) || new Date();
+  if (datePickers.dashboard) {
+    datePickers.dashboard.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
+    datePickers.dashboard.sync();
+    datePickers.dashboard.render();
+  }
+  if (datePickers.analyzed) {
+    datePickers.analyzed.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
+    datePickers.analyzed.sync();
+    datePickers.analyzed.render();
+  }
+  migrateImportConfig();
   switchPage(location.hash.slice(1) || 'dashboard');
   updateDimensionHint();
+  renderImportMappings();
   renderAnalyzedDimensionControls();
   updateAnalyzedDimensionHint();
-  renderAnalyzedDatePicker();
 
   openDb().then(async function() {
     $('dbStatus').textContent = '本地库准备中';
+    await loadMonitorTracksFromDb();
     await mergeDuplicateSeriesColumns();
     renderAnalyzedDimensionControls();
     updateAnalyzedDimensionHint();
