@@ -50,7 +50,7 @@
 .tab-btn {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   width: 100%; padding: 13px 17px; border: none; background: none;
-  border-left: 2px solid transparent; color: var(--text-secondary);
+  border-left: 2px solid transparent; color: var(--text);
   font-size: 0.8rem; text-align: left; font-family: inherit;
   transition: all 0.15s;
 }
@@ -67,6 +67,12 @@
 }
 .tool-page { display: none; }
 .tool-page.active { display: block; }
+
+[data-theme="light"] .tool-shell {
+  --text: #15161c;
+  --text-secondary: #242630;
+  --text-tertiary: #686b74;
+}
 
 .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 20px; }
 .page-title h1 { margin: 0 0 7px; color: var(--text); font-size: 1.35rem; letter-spacing: 0; }
@@ -100,7 +106,18 @@
 
 .form-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; }
 .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.field label { color: var(--text-secondary); font-size: 0.75rem; }
+.field label { color: var(--text); font-size: 0.75rem; }
+.manual-ranking-toolbar {
+  display: grid; grid-template-columns: minmax(220px, 320px) 1fr; gap: 12px;
+  align-items: end; margin-top: 10px;
+}
+.manual-ranking-actions {
+  display: flex; justify-content: flex-end; align-items: end; gap: 10px; flex-wrap: wrap;
+}
+.manual-ranking-actions .field { width: auto; min-width: 0; }
+.manual-ranking-actions .check-pill { min-height: 34px; box-sizing: border-box; }
+.manual-ranking-actions .attr-select { width: 170px; min-width: 150px; }
+.manual-date-wrap .input { min-width: 220px; padding-left: 34px; padding-right: 42px; }
 .input, .select, .textarea {
   width: 100%; box-sizing: border-box; border: 1px solid var(--card-border);
   border-radius: 7px; padding: 9px 10px; color: var(--text); background: var(--search-bg);
@@ -137,7 +154,7 @@
 [data-theme="dark"] .date-shortcuts { background: #2b2c35; }
 .date-shortcuts button {
   width: 100%; border: none; background: transparent; padding: 11px 18px; text-align: left;
-  color: var(--text-secondary); font-family: inherit; font-size: 0.78rem;
+  color: var(--text); font-family: inherit; font-size: 0.78rem;
 }
 .date-shortcuts button:hover, .date-shortcuts button.active { background: var(--link-item-hover); color: var(--link-color); }
 .date-calendar { padding: 16px 18px 18px; }
@@ -151,7 +168,7 @@
 .date-week, .date-grid { display: grid; grid-template-columns: repeat(7, 38px); gap: 0; justify-content: center; }
 .date-week span { text-align: center; color: var(--text-tertiary); font-size: 0.74rem; padding: 8px 0; }
 .date-day {
-  height: 32px; border: none; background: transparent; color: var(--text-secondary);
+  height: 32px; border: none; background: transparent; color: var(--text);
   font-family: inherit; font-size: 0.78rem; font-weight: 600; pointer-events: auto;
 }
 .date-day.muted { color: rgba(150, 150, 150, 0.42); }
@@ -169,7 +186,7 @@
 .date-grid.month-grid { grid-template-columns: repeat(3, 78px); gap: 10px; padding-top: 12px; }
 .date-month {
   height: 42px; border: 1px solid var(--card-border); border-radius: 7px;
-  background: var(--search-bg); color: var(--text-secondary); font-family: inherit; font-weight: 700; pointer-events: auto;
+  background: var(--search-bg); color: var(--text); font-family: inherit; font-weight: 700; pointer-events: auto;
 }
 .date-month.preview-range,
 .date-month.selected { background: rgba(251, 114, 153, 0.22); color: var(--link-color); border-color: rgba(251, 114, 153, 0.42); }
@@ -247,7 +264,7 @@
 .mapping-rule-action:hover { background: rgba(222, 115, 158, 0.14); border-color: rgba(222, 115, 158, 0.42); }
 .mapping-rule-action.add { color: #9a9a9a; border-color: var(--card-border); background: var(--search-bg); font-weight: 700; }
 .mapping-rule-action.add:hover { color: #c84f83; border-color: rgba(222, 115, 158, 0.32); background: rgba(222, 115, 158, 0.08); }
-.mapping-option-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; color: var(--text-secondary); font-size: 0.74rem; }
+.mapping-option-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; color: var(--text); font-size: 0.74rem; }
 .mapping-add-head { text-align: right; width: 92px; }
 .mapping-add-btn {
   min-height: 30px; padding: 0 11px; border-radius: 8px;
@@ -273,10 +290,14 @@
 .data-table { width: 100%; border-collapse: collapse; min-width: 720px; font-size: 0.78rem; }
 .sku-table { table-layout: fixed; min-width: 0; }
 .sku-table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.data-table th, .data-table td { padding: 9px 10px; border-bottom: 1px solid var(--card-border); text-align: left; vertical-align: middle; }
-.data-table th { color: var(--text-tertiary); background: var(--search-bg); font-weight: 700; white-space: nowrap; }
-.data-table td { color: var(--text-secondary); }
+.data-table th, .data-table td { padding: 7px 10px; border-bottom: 1px solid var(--card-border); text-align: left; vertical-align: middle; }
+.data-table th { color: var(--text); background: var(--search-bg); font-weight: 700; white-space: nowrap; }
+.data-table td { color: var(--text); }
 .data-table tr:last-child td { border-bottom: none; }
+.data-table .input, .data-table .select { min-height: 30px; padding-top: 5px; padding-bottom: 5px; }
+.data-table.resizable-table { table-layout: fixed; min-width: 0; }
+.data-table.resizable-table th { position: relative; }
+.data-table.resizable-table th.is-resizing { color: #c84f83; }
 .sku-table th, .sku-table td { padding: 5px 10px; height: 34px; line-height: 1.25; }
 .sku-table .check-pill { padding: 4px 8px; }
 .empty-row { text-align: center; color: var(--text-tertiary); padding: 24px !important; }
@@ -294,6 +315,13 @@
   display: block; margin-top: 5px; max-width: 520px;
   color: var(--text-tertiary); font-size: 0.68rem; line-height: 1.45;
 }
+.ranking-cell-main { line-height: 1.35; }
+.ranking-growth {
+  margin-top: 3px; font-size: 0.66rem; line-height: 1.25; font-weight: 700;
+}
+.ranking-growth.positive { color: #d94368; }
+.ranking-growth.negative { color: #2f9b62; }
+.ranking-growth.neutral { color: var(--text-tertiary); }
 .tag.good { background: rgba(86, 180, 125, 0.13); color: #56b47d; }
 .tag.warn { background: rgba(216, 151, 64, 0.14); color: #d89740; }
 .tag.info { background: rgba(72, 135, 190, 0.14); color: #4d98cf; }
@@ -315,9 +343,13 @@
   color: var(--text-tertiary); font-size: 0; margin-right: 2px;
 }
 .filter-dim-label::before { content: "\9009\53d6\6570\636e\67e5\770b\7ef4\5ea6"; font-size: 0.74rem; }
+.filter-attr-label {
+  color: var(--text-tertiary); font-size: 0; margin-right: 2px;
+}
+.filter-attr-label::before { content: "\67e5\770b\5c5e\6027\5217"; font-size: 0.74rem; }
 .check-pill {
   display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px;
-  border: 1px solid var(--card-border); border-radius: 999px; color: var(--text-secondary);
+  border: 1px solid var(--card-border); border-radius: 999px; color: var(--text);
   background: var(--search-bg); font-size: 0.76rem;
 }
 .check-pill input { accent-color: var(--link-color); }
@@ -332,6 +364,12 @@
   background: var(--search-bg); color: var(--text-tertiary); font: 700 1rem/1 inherit;
 }
 .add-dim-pill:hover { border-color: rgba(222, 115, 158, 0.42); color: #c84f83; background: rgba(222, 115, 158, 0.08); }
+.attr-select {
+  height: 34px; min-width: 138px; max-width: 210px; border: 1px solid var(--card-border);
+  border-radius: 999px; padding: 0 30px 0 12px; color: var(--text);
+  background: var(--search-bg); font-family: inherit; font-size: 0.76rem;
+}
+.attr-select[hidden] { display: none; }
 .filter-note { margin: 0 0 10px; color: var(--text-tertiary); font-size: 0.74rem; text-align: left; }
 .note {
   padding: 12px 14px; border-radius: 8px; background: var(--search-bg);
@@ -406,7 +444,9 @@
   background: rgba(200, 79, 131, 0.42);
 }
 .sku-table th:hover .col-resizer,
-.sku-table th.is-resizing .col-resizer { opacity: 1; }
+.sku-table th.is-resizing .col-resizer,
+.data-table.resizable-table th:hover .col-resizer,
+.data-table.resizable-table th.is-resizing .col-resizer { opacity: 1; }
 .sku-table th.drop-before::before,
 .sku-table th.drop-after::after {
   content: ""; position: absolute; top: 9px; bottom: 9px; width: 3px;
@@ -485,6 +525,8 @@
   .filter-left { max-width: none; }
   .filter-right, .filter-actions { align-items: flex-start; justify-content: flex-start; }
   .grid-2, .grid-3, .metric-row, .form-grid { grid-template-columns: 1fr; }
+  .manual-ranking-toolbar { grid-template-columns: 1fr; }
+  .manual-ranking-actions { justify-content: flex-start; }
 }
 </style>
 </head>
@@ -613,10 +655,10 @@
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>维度</th><th>追踪名称</th><th>匹配 SKU</th><th>销售数量</th><th>销量排名</th><th>销售金额</th><th>访客</th><th>转化率</th><th>站内花费</th><th>站外花费</th><th>操作</th>
+                  <th>维度</th><th>追踪名称</th><th>销量排名</th><th>销售数量</th><th>销售金额</th><th>访客</th><th>转化率</th><th>站内花费</th><th>站外花费</th><th>操作</th>
                 </tr>
               </thead>
-              <tbody id="monitorBody"><tr><td class="empty-row" colspan="11">暂无追踪项</td></tr></tbody>
+              <tbody id="monitorBody"><tr><td class="empty-row" colspan="10">暂无追踪项</td></tr></tbody>
             </table>
           </div>
           <div class="msg" id="monitorMsg"></div>
@@ -649,6 +691,48 @@
 
         <div class="panel" style="margin-top:14px;">
           <div class="panel-title">
+            <span>&#25163;&#21160;&#25968;&#25454;&#24405;&#20837;</span>
+          </div>
+          <p class="hint">&#29992;&#20110;&#34917;&#20805;&#27036;&#21333;&#26080;&#27861;&#30452;&#25509;&#23548;&#20986;&#30340;&#25163;&#21160;&#25351;&#26631;&#12290;&#40664;&#35748;&#32500;&#24230;&#65306;<strong>&#31454;&#21697;</strong>&#65292;&#20445;&#23384;&#26102;&#20250;&#25353;&#26085;&#26399;&#21644;&#31454;&#21697; SKU &#20889;&#20837;&#27036;&#21333;&#21407;&#22987;&#25351;&#26631;&#30340;&#21516;&#19968;&#26465;&#35760;&#24405;&#12290;</p>
+          <div class="manual-ranking-toolbar">
+            <div class="field">
+              <label>&#26085;&#26399;</label>
+              <div class="date-input-wrap manual-date-wrap">
+                <button class="date-step-btn date-step-prev" id="manualRankingDatePrev" type="button" title="&#21069;&#19968;&#22825;" aria-label="&#21069;&#19968;&#22825;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+                <input class="input" type="date" id="manualRankingDate">
+                <button class="date-step-btn date-step-next" id="manualRankingDateNext" type="button" title="&#21518;&#19968;&#22825;" aria-label="&#21518;&#19968;&#22825;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="manual-ranking-actions">
+              <div class="field">
+                <label>&#26174;&#31034;&#33539;&#22260;</label>
+                <label class="check-pill"><input type="checkbox" id="manualRankingTrackedOnlyCheck" checked>&#21482;&#30475;&#36861;&#36394;&#31454;&#21697;</label>
+              </div>
+              <div class="field">
+                <label>&#22686;&#21152;&#21487;&#22635;&#39033;</label>
+                <select class="attr-select" id="manualRankingFieldSelect" aria-label="&#36873;&#25321;&#25163;&#21160;&#25351;&#26631;"></select>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table class="data-table">
+              <thead id="manualRankingHead"></thead>
+              <tbody id="manualRankingBody"></tbody>
+            </table>
+          </div>
+          <div class="msg" id="manualRankingMsg"></div>
+        </div>
+
+        <div class="panel" style="margin-top:14px;">
+          <div class="panel-title">
             <span>导入字段对照</span>
           </div>
           <p class="hint">按不同导入表维护数据抓取规则。左侧为系统内的数据名称，右侧为导入表格内该名称实际的表头名称。</p>
@@ -661,7 +745,7 @@
         <div class="page-head">
           <div class="page-title">
             <h1>&#23548;&#20837;&#35760;&#24405;</h1>
-            <p>&#36825;&#37324;&#20445;&#23384;&#27599;&#27425;&#23548;&#20837;&#30340;&#25991;&#20214;&#35760;&#24405;&#65292;&#29992;&#26469;&#22797;&#26680;&#25991;&#20214;&#35782;&#21035;&#12289;&#26085;&#26399;&#33539;&#22260;&#12289;&#34892;&#25968;&#21644;&#23548;&#20837;&#29366;&#24577;&#12290;</p>
+            <p>&#36825;&#37324;&#21482;&#20445;&#23384;&#27599;&#27425;&#23548;&#20837;&#30340;&#35782;&#21035;&#20449;&#24687;&#21644;&#23548;&#20837;&#29366;&#24577;&#65292;&#19981;&#20877;&#20445;&#23384;&#35299;&#26512;&#21518;&#30340;&#21407;&#22987;&#34920;&#26684;&#34892;&#12290;</p>
           </div>
         </div>
 
@@ -817,6 +901,10 @@
 
                 <button class="add-dim-pill" id="addAnalyzedDimBtn" type="button" title="增加展示维度">+</button>
               </div>
+              <div class="filter-dims" id="analyzedAttrList">
+                <span class="filter-attr-label">查看属性列</span>
+                <select class="attr-select" id="analyzedAttrSelect" aria-label="&#36873;&#25321;&#23646;&#24615;&#21015;"></select>
+              </div>
           </div>
           <template id="legacyAnalyzedFilterDisabled">
             <div class="btn-row">
@@ -893,23 +981,81 @@
       <section class="tool-page" id="ranking-raw">
         <div class="page-head">
           <div class="page-title">
-            <h1>榜单原始指标</h1>
-            <p>这里放行业销售榜单解析后的中间层：排名、金额区间、件数区间、涨幅等，后续再用于竞品估算。</p>
+            <h1>&#27036;&#21333;&#21407;&#22987;&#25351;&#26631;</h1>
+            <p>&#36825;&#37324;&#25918;&#34892;&#19994;&#38144;&#21806;&#27036;&#21333;&#35299;&#26512;&#21518;&#30340;&#20013;&#38388;&#23618;&#65306;&#25490;&#21517;&#12289;&#37329;&#39069;&#21306;&#38388;&#12289;&#20214;&#25968;&#21306;&#38388;&#12289;&#35775;&#23458;&#21306;&#38388;&#31561;&#65292;&#21518;&#32493;&#20877;&#29992;&#20110;&#31454;&#21697;&#20272;&#31639;&#12290;</p>
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-title">
-            <span>竞品榜单中间层</span>
+            <span>&#31579;&#36873;&#21475;&#24452;</span>
             <div class="btn-row">
-              <button class="btn" id="refreshRankingRawBtn">刷新</button>
-              <button class="btn danger" id="clearRankingRawBtn">清表</button>
+              <button class="btn" id="refreshRankingRawBtn">&#21047;&#26032;</button>
+              <button class="btn danger" id="clearRankingRawBtn">&#28165;&#34920;</button>
+            </div>
+          </div>
+          <div class="filter-strip">
+            <div class="filter-left">
+              <div class="field date-picker-field" id="rankingDatePickerField">
+                <label>&#26085;&#26399;&#33539;&#22260;</label>
+                <div class="date-input-wrap">
+                  <button class="date-step-btn date-step-prev" id="rankingDatePrev" type="button" title="&#21069;&#19968;&#22825;" aria-label="&#21069;&#19968;&#22825;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </button>
+                  <input class="input" type="text" id="rankingDateInput" placeholder="YYYY-MM-DD">
+                  <button class="date-step-btn date-step-next" id="rankingDateNext" type="button" title="&#21518;&#19968;&#22825;" aria-label="&#21518;&#19968;&#22825;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </button>
+                  <button class="date-trigger" id="rankingDateTrigger" type="button" title="&#36873;&#25321;&#26085;&#26399;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
+                      <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+                    </svg>
+                  </button>
+                  <input type="hidden" id="rankingStartDate">
+                  <input type="hidden" id="rankingEndDate">
+                </div>
+                <div class="date-popover" id="rankingDatePopover">
+                  <div class="date-shortcuts">
+                    <button type="button" data-date-shortcut="yesterday">&#26152;&#26085;</button>
+                    <button type="button" data-date-shortcut="7">&#36817;7&#26085;</button>
+                    <button type="button" data-date-shortcut="30">&#36817;30&#26085;</button>
+                    <button type="button" data-date-shortcut="day">&#33258;&#28982;&#26085;</button>
+                    <button type="button" data-date-shortcut="week">&#33258;&#28982;&#21608;</button>
+                    <button type="button" data-date-shortcut="month">&#33258;&#28982;&#26376;</button>
+                    <button type="button" data-date-shortcut="custom">&#33258;&#23450;&#20041;</button>
+                  </div>
+                  <div class="date-calendar">
+                    <div class="date-cal-head">
+                      <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
+                      <strong class="date-picker-month">2026-06</strong>
+                      <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
+                    </div>
+                    <div class="date-week"><span>&#19968;</span><span>&#20108;</span><span>&#19977;</span><span>&#22235;</span><span>&#20116;</span><span>&#20845;</span><span>&#26085;</span></div>
+                    <div class="date-grid"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="filter-dim-row">
+            <div class="filter-dims" id="rankingDimList">
+              <span class="filter-dim-label">&#36873;&#21462;&#25968;&#25454;&#26597;&#30475;&#32500;&#24230;</span>
+              <label class="check-pill"><input type="checkbox" class="ranking-dim-check" value="mainSeries">&#22823;&#31995;&#21015;</label>
+              <label class="check-pill"><input type="checkbox" class="ranking-dim-check" value="subSeries">&#23567;&#31995;&#21015;</label>
+              <label class="check-pill"><input type="checkbox" class="ranking-dim-check" value="shortName" checked>&#21830;&#21697;&#31616;&#31216;</label>
+              <label class="check-pill"><input type="checkbox" id="rankingShowTrackedCompetitorsCheck" checked>&#21482;&#30475;&#36861;&#36394;&#31454;&#21697;</label>
+              <button class="add-dim-pill" id="addRankingDimBtn" type="button" title="&#22686;&#21152;&#23637;&#31034;&#32500;&#24230;">+</button>
             </div>
           </div>
           <div class="table-wrap">
             <table class="data-table">
-              <thead><tr><th>周期</th><th>SKU</th><th>排名</th><th>金额区间</th><th>件数区间</th><th>涨幅</th><th>来源</th></tr></thead>
-              <tbody id="rankingRawBody"><tr><td class="empty-row" colspan="7">暂无榜单原始指标</td></tr></tbody>
+              <thead id="rankingRawHead"><tr><th>&#26085;&#26399;</th><th>&#32500;&#24230;&#65288;&#21830;&#21697;&#31616;&#31216;&#65289;</th><th>&#25490;&#21517;</th><th>&#37329;&#39069;&#21306;&#38388;</th><th>&#20214;&#25968;&#21306;&#38388;</th><th>&#35775;&#23458;&#21306;&#38388;</th><th>&#36716;&#21270;&#29575;&#21306;&#38388;</th><th>&#23458;&#21333;&#20215;&#21306;&#38388;</th></tr></thead>
+              <tbody id="rankingRawBody"><tr><td class="empty-row" colspan="8">&#26242;&#26080;&#27036;&#21333;&#21407;&#22987;&#25351;&#26631;</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -990,7 +1136,7 @@
         <div class="page-head">
           <div class="page-title">
             <h1>数据清理与备份</h1>
-            <p>&#20687;&#31649;&#29702;&#25991;&#20214;&#19968;&#26679;&#31649;&#29702;&#23548;&#20837;&#35760;&#24405;&#12290;&#21024;&#38500;&#35760;&#24405;&#26102;&#65292;&#20250;&#21516;&#27493;&#21024;&#38500;&#30001;&#23427;&#29983;&#25104;&#30340;&#24050;&#20998;&#26512;&#25968;&#25454;&#12290;</p>
+            <p>&#31649;&#29702;&#23548;&#20837;&#26085;&#24535;&#35760;&#24405;&#12290;&#21024;&#38500;&#35760;&#24405;&#21482;&#20250;&#21024;&#38500;&#26085;&#24535;&#65292;&#19981;&#20250;&#21024;&#38500;&#24050;&#20998;&#26512;&#25968;&#25454;&#25110;&#27036;&#21333;&#21407;&#22987;&#25351;&#26631;&#12290;</p>
           </div>
         </div>
 
@@ -1086,18 +1232,18 @@
       { key: 'date', label: '\u65e5\u671f', column: '\u65e5\u671f', locked: true, note: '\u699c\u5355\u5f52\u6863\u65e5\u671f' },
       { key: 'rank', label: '\u6392\u540d', column: '\u6392\u540d', locked: true, note: '\u5546\u54c1\u5728\u699c\u5355\u4e2d\u7684\u6392\u540d' },
       { key: 'sku', label: 'SKU', column: '\u5546\u54c1\u7f16\u53f7', locked: true, note: '\u5bf9\u5e94 SKU' },
-      { key: 'amountRange', label: '\u6210\u4ea4\u91d1\u989d\u533a\u95f4', column: '\u6210\u4ea4\u91d1\u989d\u533a\u95f4', locked: true, note: '\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4' },
-      { key: 'qtyRange', label: '\u6210\u4ea4\u4ef6\u6570\u533a\u95f4', column: '\u6210\u4ea4\u4ef6\u6570\u533a\u95f4', locked: true, note: '\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4' },
-      { key: 'visitorRange', label: '\u8bbf\u5ba2\u533a\u95f4', column: '\u8bbf\u5ba2\u533a\u95f4', locked: true, note: '\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4' },
-      { key: 'conversionRange', label: '\u8f6c\u5316\u7387\u533a\u95f4', column: '\u8f6c\u5316\u7387\u533a\u95f4', locked: true, note: '\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4' },
-      { key: 'customerPriceRange', label: '\u5ba2\u5355\u4ef7\u533a\u95f4', column: '\u5ba2\u5355\u4ef7\u533a\u95f4', locked: true, note: '\u7ade\u54c1\u4f30\u7b97\u539f\u59cb\u533a\u95f4' }
+      { key: 'amountRange', label: '\u6210\u4ea4\u91d1\u989d\u533a\u95f4', column: '\u6210\u4ea4\u91d1\u989d', locked: true, note: '\u539f\u8868\u5217\u540d\u4e3a\u6210\u4ea4\u91d1\u989d\uff0c\u5bfc\u5165\u65f6\u62c6\u5206\u6700\u5c0f\u503c\u548c\u6700\u5927\u503c' },
+      { key: 'qtyRange', label: '\u6210\u4ea4\u4ef6\u6570\u533a\u95f4', column: '\u6210\u4ea4\u5546\u54c1\u4ef6\u6570', locked: true, note: '\u5bfc\u5165\u65f6\u62c6\u5206\u6700\u5c0f\u503c\u548c\u6700\u5927\u503c' },
+      { key: 'visitorRange', label: '\u8bbf\u5ba2\u533a\u95f4', column: '\u8bbf\u5ba2\u6570', locked: true, note: '\u5bfc\u5165\u65f6\u62c6\u5206\u6700\u5c0f\u503c\u548c\u6700\u5927\u503c' },
+      { key: 'conversionRange', label: '\u8f6c\u5316\u7387\u533a\u95f4', column: '\u6210\u4ea4\u8f6c\u5316\u7387', locked: true, note: '\u5bfc\u5165\u65f6\u62c6\u5206\u6700\u5c0f\u503c\u548c\u6700\u5927\u503c' },
+      { key: 'customerPriceRange', label: '\u5ba2\u5355\u4ef7\u533a\u95f4', column: '\u6210\u4ea4\u5ba2\u5355\u4ef7', locked: true, note: '\u5bfc\u5165\u65f6\u62c6\u5206\u6700\u5c0f\u503c\u548c\u6700\u5927\u503c' }
     ]
   };
   var DEFAULT_IMPORT_RULES = {
     sales_detail: { filePatterns: ['商品明细'], includeComparison: false },
     onsite_cost: { filePatterns: ['营销概况.*SKU维度'], includeComparison: true },
     offsite_cps_cost: { filePatterns: ['CPS|\u7ad9\u5916|\u4e0b\u5355\u8ba2\u5355\u660e\u7ec6|\u8ba2\u5355\u660e\u7ec6'], includeComparison: false },
-    industry_ranking: { filePatterns: ['\u5546\u54c1\u699c\u5355|\u699c\u5355|\u6392\u884c\u699c|\u884c\u4e1a\u9500\u552e'], includeComparison: false }
+    industry_ranking: { filePatterns: ['\u70ed\u9500\u5546\u54c1\u699c|\u5546\u54c1\u699c\u5355|\u699c\u5355|\u6392\u884c\u699c|\u884c\u4e1a\u9500\u552e'], includeComparison: false }
   };
   var importMappings = JSON.parse(localStorage.getItem('jdImportMappings') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_MAPPINGS));
   var importRules = JSON.parse(localStorage.getItem('jdImportRules') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_RULES));
@@ -1110,11 +1256,24 @@
   var monitorTracks = JSON.parse(localStorage.getItem('jdMonitorTracks') || '[]');
   var analyzedExtraDimensions = JSON.parse(localStorage.getItem('jdAnalyzedExtraDimensions') || '[]');
   var analyzedSelectedDimensions = JSON.parse(localStorage.getItem('jdAnalyzedSelectedDimensions') || '["subSeries"]');
+  var rankingExtraDimensions = JSON.parse(localStorage.getItem('jdRankingExtraDimensions') || '[]');
+  var rankingSelectedDimensionsRaw = localStorage.getItem('jdRankingSelectedDimensions');
+  var rankingSelectedDimensions = JSON.parse(rankingSelectedDimensionsRaw || '["shortName"]');
+  if (!localStorage.getItem('jdRankingDimensionDefaultMigrated') && (!rankingSelectedDimensionsRaw || JSON.stringify(rankingSelectedDimensions) === '["subSeries"]')) {
+    rankingSelectedDimensions = ['shortName'];
+    localStorage.setItem('jdRankingSelectedDimensions', JSON.stringify(rankingSelectedDimensions));
+    localStorage.setItem('jdRankingDimensionDefaultMigrated', 'true');
+  }
+  var rankingShowTrackedCompetitors = localStorage.getItem('jdRankingShowTrackedCompetitors') !== 'false';
+  var analyzedAttributeColumns = JSON.parse(localStorage.getItem('jdAnalyzedAttributeColumns') || '[]');
+  var manualRankingExtraFields = JSON.parse(localStorage.getItem('jdManualRankingExtraFields') || '[]');
+  var manualRankingTrackedOnly = localStorage.getItem('jdManualRankingTrackedOnly') !== 'false';
   var enableOrderDimension = localStorage.getItem('jdEnableOrderDimension') === 'true';
   var cleanupSelectedSnapshotIds = new Set();
   var skuColumnLabels = JSON.parse(localStorage.getItem('jdSkuColumnLabels') || '{}');
   var skuDimensionColumns = JSON.parse(localStorage.getItem('jdSkuDimensionColumns') || '["mainSeries","subSeries"]');
   var skuColumnWidths = JSON.parse(localStorage.getItem('jdSkuColumnWidths') || '{}');
+  var genericColumnWidths = JSON.parse(localStorage.getItem('jdGenericColumnWidths') || '{}');
   Object.keys(skuColumnWidths).forEach(function(key) {
     var value = Number(skuColumnWidths[key]);
     if (key.indexOf(':shortName') !== -1) {
@@ -1208,6 +1367,13 @@
             item.label = '当前/对比标记';
             item.note = '仅用于判断是否跳过对比段，不参与日期筛选';
           }
+        }
+        if (type === 'industry_ranking') {
+          if (item.key === 'amountRange' && item.column === '\u6210\u4ea4\u91d1\u989d\u533a\u95f4') item.column = '\u6210\u4ea4\u91d1\u989d';
+          if (item.key === 'qtyRange' && item.column === '\u6210\u4ea4\u4ef6\u6570\u533a\u95f4') item.column = '\u6210\u4ea4\u5546\u54c1\u4ef6\u6570';
+          if (item.key === 'visitorRange' && item.column === '\u8bbf\u5ba2\u533a\u95f4') item.column = '\u8bbf\u5ba2\u6570';
+          if (item.key === 'conversionRange' && item.column === '\u8f6c\u5316\u7387\u533a\u95f4') item.column = '\u6210\u4ea4\u8f6c\u5316\u7387';
+          if (item.key === 'customerPriceRange' && item.column === '\u5ba2\u5355\u4ef7\u533a\u95f4') item.column = '\u6210\u4ea4\u5ba2\u5355\u4ef7';
         }
       });
       if (type === 'onsite_cost') {
@@ -1858,8 +2024,8 @@
     ];
     if (type === 'competitor') {
       columns = columns.concat([
-        { key: 'brand', label: '鍝佺墝' },
-        { key: 'isTrackedCompetitor', label: '閲嶇偣璺熻釜' }
+        { key: 'brand', label: '\u54c1\u724c' },
+        { key: 'isTrackedCompetitor', label: '\u662f\u5426\u8ffd\u8e2a' }
       ]);
     }
     columns = columns.concat(skuDimensionColumns.map(function(key) {
@@ -2091,16 +2257,21 @@
     e.stopPropagation();
     var th = handle.closest('th');
     var type = handle.getAttribute('data-resize-type');
+    var scope = handle.getAttribute('data-resize-scope') || '';
     var key = handle.getAttribute('data-resize-col');
-    freezeTableColumnWidths(table, type);
+    freezeTableColumnWidths(table, type, scope);
     var startX = e.clientX;
     var startWidth = th.getBoundingClientRect().width;
     th.classList.add('is-resizing');
-    resizingColumn = { table: table, th: th, type: type, key: key, startX: startX, startWidth: startWidth };
+    resizingColumn = { table: table, th: th, type: type, scope: scope, key: key, startX: startX, startWidth: startWidth };
     return true;
   }
 
-  function freezeTableColumnWidths(table, type) {
+  function saveGenericColumnWidths() {
+    localStorage.setItem('jdGenericColumnWidths', JSON.stringify(genericColumnWidths));
+  }
+
+  function freezeTableColumnWidths(table, type, scope) {
     var cols = Array.from(table.querySelectorAll('col'));
     var ths = Array.from(table.querySelectorAll('thead th'));
     var total = 0;
@@ -2109,17 +2280,20 @@
       if (!key || !cols[index]) return;
       var width = Math.max(48, Math.round(th.getBoundingClientRect().width));
       cols[index].style.width = width + 'px';
-      skuColumnWidths[type + ':' + key] = width;
+      if (scope) genericColumnWidths[scope + ':' + key] = width;
+      else skuColumnWidths[type + ':' + key] = width;
       total += width;
     });
     if (total > 0) table.style.width = total + 'px';
-    saveSkuColumnWidths();
+    if (scope) saveGenericColumnWidths();
+    else saveSkuColumnWidths();
   }
 
   function moveColumnResize(e) {
     if (!resizingColumn) return;
     var width = Math.max(48, Math.round(resizingColumn.startWidth + e.clientX - resizingColumn.startX));
-    skuColumnWidths[resizingColumn.type + ':' + resizingColumn.key] = width;
+    if (resizingColumn.scope) genericColumnWidths[resizingColumn.scope + ':' + resizingColumn.key] = width;
+    else skuColumnWidths[resizingColumn.type + ':' + resizingColumn.key] = width;
     var colIndex = Array.from(resizingColumn.th.parentElement.children).indexOf(resizingColumn.th);
     var col = resizingColumn.table.querySelectorAll('col')[colIndex];
     if (col) col.style.width = width + 'px';
@@ -2132,8 +2306,71 @@
   function finishColumnResize() {
     if (!resizingColumn) return;
     resizingColumn.th.classList.remove('is-resizing');
-    saveSkuColumnWidths();
+    if (resizingColumn.scope) saveGenericColumnWidths();
+    else saveSkuColumnWidths();
     resizingColumn = null;
+  }
+
+  function genericResizeHandle(scope, key) {
+    return '<span class="col-resizer" data-resize-col="' + esc(key) + '" data-resize-scope="' + esc(scope) + '" aria-hidden="true"></span>';
+  }
+
+  function enhanceResizableTableByBody(bodyId, scope) {
+    var body = $(bodyId);
+    if (!body) return;
+    enhanceResizableTable(body.closest('table'), scope || bodyId);
+  }
+
+  function enhanceResizableTable(table, scope) {
+    if (!table || table.classList.contains('sku-table')) return;
+    var ths = Array.from(table.querySelectorAll('thead th'));
+    if (!ths.length) return;
+    table.classList.add('resizable-table');
+    var total = 0;
+    ths.forEach(function(th, index) {
+      var key = th.getAttribute('data-col-key') || ('col' + index);
+      th.setAttribute('data-col-key', key);
+      if (!th.querySelector('.col-resizer')) th.insertAdjacentHTML('beforeend', genericResizeHandle(scope, key));
+    });
+    var oldColgroup = table.querySelector('colgroup');
+    if (oldColgroup) oldColgroup.remove();
+    var colgroup = document.createElement('colgroup');
+    ths.forEach(function(th, index) {
+      var key = th.getAttribute('data-col-key') || ('col' + index);
+      var width = Math.max(58, Number(genericColumnWidths[scope + ':' + key] || Math.round(th.getBoundingClientRect().width) || 116));
+      total += width;
+      var col = document.createElement('col');
+      col.style.width = width + 'px';
+      colgroup.appendChild(col);
+    });
+    table.insertBefore(colgroup, table.firstChild);
+    if (total > 0) table.style.width = total + 'px';
+    if (!table.dataset.genericResizeBound) {
+      table.dataset.genericResizeBound = '1';
+      table.addEventListener('mousedown', function(e) {
+        startColumnResize(e, table);
+      });
+    }
+  }
+
+  function enhanceAllResizableTables() {
+    [
+      ['importPreviewBody', 'importPreview'],
+      ['manualRankingBody', 'manualRanking'],
+      ['snapshotBody', 'snapshotRecords'],
+      ['skuDbBody', 'skuDatabase'],
+      ['analyzedDbBody', 'analyzedDb'],
+      ['rankingRawBody', 'rankingRaw'],
+      ['estimatesDbBody', 'estimatesDb'],
+      ['cleanupSnapshotBody', 'cleanupSnapshots'],
+      ['monitorBody', 'monitorTracks'],
+      ['trackedCompetitorBody', 'trackedCompetitors']
+    ].forEach(function(pair) {
+      enhanceResizableTableByBody(pair[0], pair[1]);
+    });
+    document.querySelectorAll('#mappingSections table.data-table').forEach(function(table, index) {
+      enhanceResizableTable(table, 'mapping' + index);
+    });
   }
 
   async function addSkuRow(type) {
@@ -2154,6 +2391,7 @@
     var checked = tr.querySelector('[data-sku-check="isTrackedCompetitor"]');
     if (checked) row.isTrackedCompetitor = checked.checked;
     if (row.itemType !== 'competitor') row.isTrackedCompetitor = false;
+    if (row.itemType === 'competitor' && !row.brand) row.brand = '\u7ade\u54c1';
     return row;
   }
 
@@ -2238,6 +2476,7 @@
           item[col.key] = String(src[col.header] == null ? '' : src[col.header]).trim();
         });
         item.isTrackedCompetitor = type === 'competitor' && /^(true|是|1|yes)$/i.test(String(item.isTrackedCompetitor || ''));
+        if (type === 'competitor' && !item.brand) item.brand = '\u7ade\u54c1';
         if (!item.sku || !item.shortName) {
           if (skipped.length < 5) skipped.push({ row: i + 2, sku: item.sku || '', shortName: item.shortName || '' });
           continue;
@@ -2314,6 +2553,7 @@
     rows.sort(function(a, b) { return String(b.importedAt).localeCompare(String(a.importedAt)); });
     if (!rows.length) {
       $('snapshotBody').innerHTML = '<tr><td class="empty-row" colspan="7">&#26242;&#26080;&#23548;&#20837;&#35760;&#24405;</td></tr>';
+      enhanceAllResizableTables();
       return;
     }
     $('snapshotBody').innerHTML = rows.map(function(row) {
@@ -2328,6 +2568,7 @@
         '<td><span class="import-status ' + esc(status.className) + '" title="' + esc(row.statusNote || row.detectNote || '') + '">' + esc(status.label) + '</span></td>' +
       '</tr>';
     }).join('');
+    enhanceAllResizableTables();
   }
 
   function importStatusMeta(row) {
@@ -2344,34 +2585,415 @@
     return map.pending;
   }
 
+  async function stripRawSnapshotRows() {
+    var rows = await getAll('raw_snapshots');
+    for (var i = 0; i < rows.length; i++) {
+      if (Object.prototype.hasOwnProperty.call(rows[i], 'rows')) {
+        delete rows[i].rows;
+        await put('raw_snapshots', rows[i]);
+      }
+    }
+  }
+
+  async function normalizeCompetitorSkuDefaults() {
+    var rows = await getAll('sku_profiles');
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i].itemType === 'competitor' && !rows[i].brand) {
+        rows[i].brand = '\u7ade\u54c1';
+        rows[i].updatedAt = rows[i].updatedAt || new Date().toISOString();
+        await put('sku_profiles', rows[i]);
+      }
+    }
+  }
+
   function metricImportStatus(sourceType, result) {
     if (sourceType === 'unknown') return 'pending';
-    if (sourceType === 'sales_detail' || sourceType === 'onsite_cost' || sourceType === 'offsite_cps_cost') {
+    if (sourceType === 'sales_detail' || sourceType === 'onsite_cost' || sourceType === 'offsite_cps_cost' || sourceType === 'industry_ranking') {
       return result && result.saved > 0 ? 'success' : 'failed';
     }
     return 'recorded';
   }
 
+  function getSelectedRankingDims() {
+    var selected = Array.from(document.querySelectorAll('.ranking-dim-check:checked')).map(function(input) { return input.value; });
+    return selected.length ? selected : ['subSeries'];
+  }
+
+  function rememberRankingDimensionSelection() {
+    rankingSelectedDimensions = getSelectedRankingDims();
+    localStorage.setItem('jdRankingSelectedDimensions', JSON.stringify(rankingSelectedDimensions));
+  }
+
+  function saveRankingExtraDimensions() {
+    localStorage.setItem('jdRankingExtraDimensions', JSON.stringify(rankingExtraDimensions));
+  }
+
+  function applyRankingDimensionSelection() {
+    renderRankingDimensionControls();
+    if ($('rankingShowTrackedCompetitorsCheck')) $('rankingShowTrackedCompetitorsCheck').checked = rankingShowTrackedCompetitors;
+    document.querySelectorAll('.ranking-dim-check').forEach(function(input) {
+      input.checked = rankingSelectedDimensions.indexOf(input.value) !== -1;
+    });
+    if (!document.querySelectorAll('.ranking-dim-check:checked').length) {
+      var fallback = document.querySelector('.ranking-dim-check[value="shortName"]');
+      if (fallback) fallback.checked = true;
+    }
+    renderRankingRawHead();
+  }
+
+  function renderRankingDimensionControls() {
+    var addBtn = $('addRankingDimBtn');
+    if (!addBtn) return;
+    document.querySelectorAll('.ranking-extra-dim-pill').forEach(function(node) { node.remove(); });
+    rankingExtraDimensions = rankingExtraDimensions.filter(function(key, index, arr) {
+      return arr.indexOf(key) === index && skuDimensionColumns.indexOf(key) !== -1 && ['mainSeries', 'subSeries', 'shortName', 'brand'].indexOf(key) === -1;
+    });
+    rankingExtraDimensions.forEach(function(key) {
+      var pill = document.createElement('span');
+      pill.className = 'check-pill ranking-extra-dim-pill';
+      var checked = rankingSelectedDimensions.indexOf(key) !== -1 ? ' checked' : '';
+      pill.innerHTML = '<label style="display:inline-flex;align-items:center;gap:7px;"><input type="checkbox" class="ranking-dim-check ranking-extra-dim" value="' + esc(key) + '"' + checked + '> ' + esc(analyzedDimensionLabel(key)) + '</label><button class="dim-remove-btn" type="button" data-remove-ranking-dim="' + esc(key) + '" title="移除此维度" aria-label="移除此维度">&times;</button>';
+      addBtn.parentNode.insertBefore(pill, addBtn);
+      pill.querySelector('input').addEventListener('change', function() {
+        rememberRankingDimensionSelection();
+        renderRankingRaw();
+      });
+      pill.querySelector('[data-remove-ranking-dim]').addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        removeRankingDimension(key);
+      });
+    });
+    saveRankingExtraDimensions();
+  }
+
+  function addRankingDimension() {
+    var base = ['mainSeries', 'subSeries', 'shortName', 'brand'];
+    var available = skuDimensionColumns.filter(function(key) {
+      return base.indexOf(key) === -1 && rankingExtraDimensions.indexOf(key) === -1;
+    });
+    if (!available.length) return;
+    rankingExtraDimensions.push(available[0]);
+    saveRankingExtraDimensions();
+    applyRankingDimensionSelection();
+    renderRankingRaw();
+  }
+
+  function removeRankingDimension(key) {
+    rankingExtraDimensions = rankingExtraDimensions.filter(function(item) { return item !== key; });
+    rankingSelectedDimensions = rankingSelectedDimensions.filter(function(item) { return item !== key; });
+    if (!rankingSelectedDimensions.length) rankingSelectedDimensions = ['shortName'];
+    saveRankingExtraDimensions();
+    localStorage.setItem('jdRankingSelectedDimensions', JSON.stringify(rankingSelectedDimensions));
+    applyRankingDimensionSelection();
+    renderRankingRaw();
+  }
+
+  function renderRankingRawHead() {
+    var labelsText = getSelectedRankingDims().map(analyzedDimensionLabel).join(' / ') || '商品简称';
+    $('rankingRawHead').innerHTML = '<tr><th>日期</th><th>维度（' + esc(labelsText) + '）</th><th>排名</th><th>金额区间</th><th>件数区间</th><th>访客区间</th><th>转化率区间</th><th>客单价区间</th></tr>';
+  }
+
+  function rankingRangeText(min, max, decimals, isPercent) {
+    var hasMin = min !== '' && min != null && isFinite(Number(min));
+    var hasMax = max !== '' && max != null && isFinite(Number(max));
+    if (!hasMin && !hasMax) return '-';
+    var left = isPercent ? formatPercent(min) : formatMetric(min, decimals);
+    var right = isPercent ? formatPercent(max) : formatMetric(max, decimals);
+    return left === right ? left : left + ' ~ ' + right;
+  }
+
+  function rankingGrowthValue(row, valueKey, rawKey) {
+    if (row[rawKey]) return row[rawKey];
+    if (row[valueKey] !== '' && row[valueKey] != null) return formatPercent(row[valueKey]);
+    return '';
+  }
+
+  function rankingRangeCell(row, minKey, maxKey, decimals, growthValueKey, growthRawKey, isPercent) {
+    var main = rankingRangeText(row[minKey], row[maxKey], decimals, isPercent);
+    var growth = rankingGrowthValue(row, growthValueKey, growthRawKey);
+    if (!growth) return '<div class="ranking-cell-main">' + esc(main) + '</div>';
+    var number = parseMetricNumber(growth);
+    var cls = Number(number) > 0 ? 'positive' : Number(number) < 0 ? 'negative' : 'neutral';
+    return '<div class="ranking-cell-main">' + esc(main) + '</div><div class="ranking-growth ' + cls + '">' + esc(growth) + '</div>';
+  }
+
   async function renderRankingRaw() {
     var rows = await getAll('ranking_raw_metrics');
-    rows.sort(function(a, b) {
-      return String(b.startDate || '').localeCompare(String(a.startDate || '')) || Number(a.rank || 0) - Number(b.rank || 0);
-    });
+    var skuRows = await getAll('sku_profiles');
+    var range = datePickers.ranking ? datePickers.ranking.getRange() : normalizedRange($('rankingStartDate').value, $('rankingEndDate').value || $('rankingStartDate').value);
+    rows = filterMetricRowsByDateRange(rows, range);
+    renderRankingRawHead();
+    var dims = getSelectedRankingDims();
+    var skuMap = {};
+    skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
+    if (rankingShowTrackedCompetitors) {
+      rows = rows.filter(function(row) {
+        var profile = skuMap[normalizeSkuValue(row.sku)] || {};
+        return profile.itemType === 'competitor' && profile.isTrackedCompetitor;
+      });
+    }
     if (!rows.length) {
-      $('rankingRawBody').innerHTML = '<tr><td class="empty-row" colspan="7">暂无榜单原始指标</td></tr>';
+      $('rankingRawBody').innerHTML = '<tr><td class="empty-row" colspan="8">' + (rankingShowTrackedCompetitors ? '\u6682\u65e0\u8ffd\u8e2a\u7ade\u54c1\u7684\u699c\u5355\u539f\u59cb\u6307\u6807' : '\u6682\u65e0\u699c\u5355\u539f\u59cb\u6307\u6807') + '</td></tr>';
+      enhanceAllResizableTables();
       return;
     }
-    $('rankingRawBody').innerHTML = rows.slice(0, 200).map(function(row) {
+    var groups = {};
+    function dimValue(row, profile, dim) {
+      if (dim === 'sku') return normalizeSkuValue(row.sku) || '-';
+      return profile[dim] || '未归类';
+    }
+    function addMinMax(group, row, minKey, maxKey, mode) {
+      var min = row[minKey];
+      var max = row[maxKey];
+      if (min !== '' && min != null && isFinite(Number(min))) {
+        group[minKey] = mode === 'sum' ? Number(group[minKey] || 0) + Number(min) : (group[minKey] === '' || group[minKey] == null ? Number(min) : Math.min(Number(group[minKey]), Number(min)));
+      }
+      if (max !== '' && max != null && isFinite(Number(max))) {
+        group[maxKey] = mode === 'sum' ? Number(group[maxKey] || 0) + Number(max) : (group[maxKey] === '' || group[maxKey] == null ? Number(max) : Math.max(Number(group[maxKey]), Number(max)));
+      }
+    }
+    rows.forEach(function(row) {
+      var profile = skuMap[normalizeSkuValue(row.sku)] || {};
+      var dimName = dims.map(function(dim) { return dimValue(row, profile, dim); }).join(' / ');
+      var key = [row.startDate || '', row.endDate || '', dimName].join('|');
+      if (!groups[key]) {
+        groups[key] = {
+          startDate: row.startDate,
+          endDate: row.endDate,
+          dimensionName: dimName,
+          rank: '',
+          amountMin: '',
+          amountMax: '',
+          qtyMin: '',
+          qtyMax: '',
+          visitorMin: '',
+          visitorMax: '',
+          conversionMin: '',
+          conversionMax: '',
+          customerPriceMin: '',
+          customerPriceMax: '',
+          amountGrowthRate: '',
+          amountGrowthRateRaw: '',
+          qtyGrowthRate: '',
+          qtyGrowthRateRaw: '',
+          visitorGrowthRate: '',
+          visitorGrowthRateRaw: '',
+          conversionGrowthRate: '',
+          conversionGrowthRateRaw: '',
+          customerPriceGrowthRate: '',
+          customerPriceGrowthRateRaw: ''
+        };
+      }
+      var group = groups[key];
+      if (row.rank && (!group.rank || Number(row.rank) < Number(group.rank))) group.rank = row.rank;
+      addMinMax(group, row, 'amountMin', 'amountMax', 'sum');
+      addMinMax(group, row, 'qtyMin', 'qtyMax', 'sum');
+      addMinMax(group, row, 'visitorMin', 'visitorMax', 'sum');
+      addMinMax(group, row, 'conversionMin', 'conversionMax', 'envelope');
+      addMinMax(group, row, 'customerPriceMin', 'customerPriceMax', 'envelope');
+      ['amountGrowthRate', 'qtyGrowthRate', 'visitorGrowthRate', 'conversionGrowthRate', 'customerPriceGrowthRate'].forEach(function(key) {
+        var rawKey = key + 'Raw';
+        if (!group[rawKey] && row[rawKey]) group[rawKey] = row[rawKey];
+        if ((group[key] === '' || group[key] == null) && row[key] !== '' && row[key] != null) group[key] = row[key];
+      });
+    });
+    var grouped = Object.keys(groups).map(function(key) { return groups[key]; }).sort(function(a, b) {
+      return String(b.startDate || '').localeCompare(String(a.startDate || '')) || Number(a.rank || 999999) - Number(b.rank || 999999);
+    });
+    $('rankingRawBody').innerHTML = grouped.slice(0, 200).map(function(row) {
       return '<tr>' +
-        '<td>' + esc(labels.periodType[row.periodType] || row.periodType || '-') + '<br>' + esc(rangeText(row)) + '</td>' +
-        '<td>' + esc(row.sku || row.productId || '-') + '</td>' +
+        '<td>' + esc(rangeText(row)) + '</td>' +
+        '<td>' + esc(row.dimensionName || '-') + '</td>' +
         '<td>' + esc(row.rank || '-') + '</td>' +
-        '<td>' + esc(row.amountRange || row.salesAmountRange || '-') + '</td>' +
-        '<td>' + esc(row.qtyRange || row.salesQtyRange || '-') + '</td>' +
-        '<td>' + esc(row.growthRange || row.growth || '-') + '</td>' +
-        '<td>' + esc(row.fileName || row.sourceFile || '-') + '</td>' +
+        '<td>' + rankingRangeCell(row, 'amountMin', 'amountMax', 0, 'amountGrowthRate', 'amountGrowthRateRaw') + '</td>' +
+        '<td>' + rankingRangeCell(row, 'qtyMin', 'qtyMax', 0, 'qtyGrowthRate', 'qtyGrowthRateRaw') + '</td>' +
+        '<td>' + rankingRangeCell(row, 'visitorMin', 'visitorMax', 0, 'visitorGrowthRate', 'visitorGrowthRateRaw') + '</td>' +
+        '<td>' + rankingRangeCell(row, 'conversionMin', 'conversionMax', 2, 'conversionGrowthRate', 'conversionGrowthRateRaw', true) + '</td>' +
+        '<td>' + rankingRangeCell(row, 'customerPriceMin', 'customerPriceMax', 0, 'customerPriceGrowthRate', 'customerPriceGrowthRateRaw') + '</td>' +
       '</tr>';
     }).join('');
+    enhanceAllResizableTables();
+  }
+
+  var MANUAL_RANKING_FIELDS = {
+    amountGrowth: { label: '\u6210\u4ea4\u91d1\u989d\u589e\u957f\u7387', rawKey: 'amountGrowthRateRaw', valueKey: 'amountGrowthRate' },
+    qtyRange: { label: '\u4ef6\u6570\u533a\u95f4', readonly: true },
+    qtyGrowth: { label: '\u6210\u4ea4\u4ef6\u6570\u589e\u957f\u7387', rawKey: 'qtyGrowthRateRaw', valueKey: 'qtyGrowthRate' },
+    visitorGrowth: { label: '\u8bbf\u5ba2\u589e\u957f\u7387', rawKey: 'visitorGrowthRateRaw', valueKey: 'visitorGrowthRate' },
+    conversionGrowth: { label: '\u8f6c\u5316\u7387\u589e\u957f\u7387', rawKey: 'conversionGrowthRateRaw', valueKey: 'conversionGrowthRate' },
+    customerPriceGrowth: { label: '\u5ba2\u5355\u4ef7\u589e\u957f\u7387', rawKey: 'customerPriceGrowthRateRaw', valueKey: 'customerPriceGrowthRate' }
+  };
+  var DEFAULT_MANUAL_RANKING_FIELDS = ['amountGrowth', 'qtyGrowth'];
+
+  function visibleManualRankingFields() {
+    return DEFAULT_MANUAL_RANKING_FIELDS.concat(manualRankingExtraFields).filter(function(key, index, arr) {
+      return MANUAL_RANKING_FIELDS[key] && arr.indexOf(key) === index && key !== 'qtyRange';
+    });
+  }
+
+  function saveManualRankingExtraFields() {
+    localStorage.setItem('jdManualRankingExtraFields', JSON.stringify(manualRankingExtraFields));
+  }
+
+  function manualGrowthOptionLabel(start) {
+    return start + '%~' + (start + 2) + '%';
+  }
+
+  function allManualGrowthOptions() {
+    var list = [];
+    for (var i = -100; i <= 98; i += 2) list.push(manualGrowthOptionLabel(i));
+    return list;
+  }
+
+  function ensureManualGrowthDatalist() {
+    var list = $('manualGrowthOptions');
+    if (list) return list;
+    list = document.createElement('datalist');
+    list.id = 'manualGrowthOptions';
+    document.body.appendChild(list);
+    return list;
+  }
+
+  function updateManualGrowthOptions(value) {
+    var list = ensureManualGrowthDatalist();
+    var text = String(value || '').trim().replace(/\s/g, '').replace(/%/g, '');
+    var options = allManualGrowthOptions();
+    if (text === '-') {
+      options = options.filter(function(option) { return option.charAt(0) === '-'; });
+    } else if (text) {
+      options = options.filter(function(option) {
+        return option.replace(/\s/g, '').replace(/%/g, '').indexOf(text) === 0;
+      });
+      if (!options.length && text.charAt(0) !== '-') {
+        options = allManualGrowthOptions().filter(function(option) {
+          var start = option.split('%')[0];
+          return start.charAt(0) !== '-' && start.indexOf(text) === 0;
+        });
+      }
+    }
+    list.innerHTML = options.slice(0, 24).map(function(option) {
+      return '<option value="' + esc(option) + '"></option>';
+    }).join('');
+  }
+
+  async function renderManualRankingEntry() {
+    if (!$('manualRankingHead')) return;
+    updateManualGrowthOptions('');
+    var fields = visibleManualRankingFields();
+    if ($('manualRankingTrackedOnlyCheck')) $('manualRankingTrackedOnlyCheck').checked = manualRankingTrackedOnly;
+    $('manualRankingHead').innerHTML = '<tr><th>\u7ef4\u5ea6\uff08\u5546\u54c1\u7b80\u79f0\uff09</th>' +
+      fields.map(function(key) { return '<th>' + esc(MANUAL_RANKING_FIELDS[key].label) + '</th>'; }).join('') +
+      '<th>\u64cd\u4f5c</th></tr>';
+    var skus = await getAll('sku_profiles');
+    var records = await getAll('ranking_raw_metrics');
+    var date = $('manualRankingDate').value || yesterday();
+    var competitors = skus.filter(function(row) {
+      return row.itemType === 'competitor' && (row.shortName || row.sku) && (!manualRankingTrackedOnly || row.isTrackedCompetitor);
+    }).sort(function(a, b) {
+      return String(a.shortName || a.sku || '').localeCompare(String(b.shortName || b.sku || ''), 'zh-Hans-CN', { numeric: true });
+    });
+    if (!competitors.length) {
+      $('manualRankingBody').innerHTML = '<tr><td class="empty-row" colspan="' + (fields.length + 2) + '">\u6682\u65e0\u53ef\u5f55\u5165\u7684\u7ade\u54c1</td></tr>';
+      renderManualRankingFieldSelect();
+      enhanceAllResizableTables();
+      return;
+    }
+    $('manualRankingBody').innerHTML = competitors.map(function(profile) {
+      var sku = normalizeSkuValue(profile.sku);
+      var record = records.find(function(item) {
+        return normalizeSkuValue(item.sku) === sku && item.startDate === date && (item.endDate || item.startDate) === date;
+      }) || {};
+      return '<tr data-manual-ranking-sku="' + esc(sku) + '">' +
+        '<td>' + esc(profile.shortName || sku) + '</td>' +
+        fields.map(function(key) {
+          var config = MANUAL_RANKING_FIELDS[key];
+          var remove = DEFAULT_MANUAL_RANKING_FIELDS.indexOf(key) === -1
+            ? '<button class="dim-remove-btn" type="button" data-remove-manual-ranking-field="' + esc(key) + '" title="\u79fb\u9664\u6b64\u6307\u6807" aria-label="\u79fb\u9664\u6b64\u6307\u6807">&times;</button>'
+            : '';
+          if (key === 'qtyRange') return '<td>' + esc(rankingRangeText(record.qtyMin, record.qtyMax, 0)) + '</td>';
+          return '<td><div style="display:flex;align-items:center;gap:7px;"><input class="input manual-ranking-field" data-manual-ranking-field="' + esc(key) + '" list="manualGrowthOptions" value="' + esc(record[config.rawKey] || '') + '" placeholder="例如：0%~2%">' + remove + '</div></td>';
+        }).join('') +
+        '<td><button class="btn save-manual-ranking-row" type="button">\u4fdd\u5b58</button></td></tr>';
+    }).join('');
+    renderManualRankingFieldSelect();
+    enhanceAllResizableTables();
+  }
+
+  function renderManualRankingFieldSelect() {
+    var select = $('manualRankingFieldSelect');
+    if (!select) return;
+    var visible = visibleManualRankingFields();
+    var available = Object.keys(MANUAL_RANKING_FIELDS).filter(function(key) {
+      return visible.indexOf(key) === -1 && !MANUAL_RANKING_FIELDS[key].readonly && key !== 'qtyRange';
+    });
+    select.innerHTML = '<option value="">\u9009\u62e9\u6307\u6807</option>' + available.map(function(key) {
+      return '<option value="' + esc(key) + '">' + esc(MANUAL_RANKING_FIELDS[key].label) + '</option>';
+    }).join('');
+    select.disabled = !available.length;
+    select.hidden = false;
+    select.value = '';
+  }
+
+  function setManualRankingMsg(text, isErr) {
+    if (!$('manualRankingMsg')) return;
+    $('manualRankingMsg').textContent = text || '';
+    $('manualRankingMsg').className = 'msg ' + (isErr ? 'err' : 'ok');
+  }
+
+  function shiftManualRankingDate(days) {
+    var current = dateFromYmd($('manualRankingDate').value || yesterday()) || dateFromYmd(yesterday());
+    if (!current) return;
+    $('manualRankingDate').value = ymd(addDays(current, days));
+    renderManualRankingEntry();
+  }
+
+  async function saveManualRankingEntry(tr) {
+    var date = $('manualRankingDate').value || yesterday();
+    var sku = normalizeSkuValue(tr && tr.getAttribute('data-manual-ranking-sku'));
+    if (!date) {
+      setManualRankingMsg('\u8bf7\u5148\u586b\u5199\u26085\u671f\u3002', true);
+      return;
+    }
+    var skus = await getAll('sku_profiles');
+    var profile = skus.find(function(row) {
+      return row.itemType === 'competitor' && normalizeSkuValue(row.sku) === sku;
+    });
+    if (!profile || !profile.sku) {
+      setManualRankingMsg('\u6ca1\u6709\u627e\u5230\u5bf9\u5e94\u7684\u7ade\u54c1 SKU\uff0c\u8bf7\u5148\u5728 SKU \u6863\u6848\u91cc\u7ef4\u62a4\u3002', true);
+      return;
+    }
+    var rows = await getAll('ranking_raw_metrics');
+    var row = rows.find(function(item) {
+      return normalizeSkuValue(item.sku) === sku && item.startDate === date && (item.endDate || item.startDate) === date;
+    });
+    if (!row) {
+      row = {
+        periodType: 'day',
+        startDate: date,
+        endDate: date,
+        sku: sku,
+        fileName: '\u624b\u52a8\u5f55\u5165',
+        importedAt: new Date().toISOString()
+      };
+    }
+    row.manualMetrics = true;
+    row.manualUpdatedAt = new Date().toISOString();
+    tr.querySelectorAll('.manual-ranking-field').forEach(function(input) {
+      var config = MANUAL_RANKING_FIELDS[input.getAttribute('data-manual-ranking-field')];
+      if (!config) return;
+      var raw = String(input.value || '').trim();
+      if (raw) {
+        row[config.rawKey] = raw;
+        row[config.valueKey] = parseMetricNumber(raw);
+      } else {
+        delete row[config.rawKey];
+        delete row[config.valueKey];
+      }
+    });
+    await put('ranking_raw_metrics', row);
+    setManualRankingMsg('\u5df2\u4fdd\u5b58\uff1a' + (profile.shortName || sku) + ' / ' + date);
+    await renderRankingRaw();
   }
 
   function otherData(row, knownKeys) {
@@ -2419,6 +3041,7 @@
     $('skuDbHead').innerHTML = '<tr>' + columns.map(function(col) { return '<th>' + esc(col.label) + '</th>'; }).join('') + '</tr>';
     if (!rows.length) {
       $('skuDbBody').innerHTML = '<tr><td class="empty-row" colspan="' + columns.length + '">暂无 SKU 档案</td></tr>';
+      enhanceAllResizableTables();
       return;
     }
     $('skuDbBody').innerHTML = rows.map(function(row) {
@@ -2427,6 +3050,7 @@
         return '<td>' + esc(value == null || value === '' ? '-' : value) + '</td>';
       }).join('') + '</tr>';
     }).join('');
+    enhanceAllResizableTables();
   }
 
   async function renderAnalyzedDb() {
@@ -2445,15 +3069,21 @@
     });
     rows = filterMetricRowsByDateRange(rows, { start: start, end: end });
     if (!rows.length) {
-      $('analyzedDbBody').innerHTML = '<tr><td class="empty-row" colspan="8">暂无已分析数据</td></tr>';
+      $('analyzedDbBody').innerHTML = '<tr><td class="empty-row" colspan="' + (8 + getSelectedAnalyzedAttributes().length) + '">暂无已分析数据</td></tr>';
+      enhanceAllResizableTables();
       return;
     }
     var dims = getSelectedAnalyzedDims();
     renderAnalyzedDbHead();
     var groupedRows = buildAnalyzedGroups(rows, skuRows, dims);
+    var attrs = getSelectedAnalyzedAttributes();
     $('analyzedDbBody').innerHTML = groupedRows.slice(0, 200).map(function(row) {
+      var attrCells = attrs.map(function(key) {
+        return '<td>' + esc(resolveAnalyzedAttributeValue(row, skuRows, key)) + '</td>';
+      }).join('');
       return '<tr><td>' + esc(rangeText(row)) + '</td>' +
         '<td>' + esc(row.dimensionName || '-') + '</td>' +
+        attrCells +
         '<td>' + esc(formatMetric(row.salesQty, 0)) + '</td>' +
         '<td>' + esc(formatMetric(row.salesAmount, 2)) + '</td>' +
         '<td>' + esc(formatMetric(row.visitorCount, 0)) + '</td>' +
@@ -2461,6 +3091,7 @@
         '<td>' + esc(formatMetric(row.offsiteCost, 2)) + '</td>' +
         '<td>' + esc(row.rank || '') + '</td></tr>';
     }).join('');
+    enhanceAllResizableTables();
   }
 
   async function renderEstimatesDb() {
@@ -2470,6 +3101,7 @@
     });
     if (!rows.length) {
       $('estimatesDbBody').innerHTML = '<tr><td class="empty-row" colspan="7">暂无竞品估算结果</td></tr>';
+      enhanceAllResizableTables();
       return;
     }
     var known = ['periodType', 'startDate', 'endDate', 'sku', 'amountRange', 'salesAmountRange', 'qtyRange', 'salesQtyRange', 'note', 'estimateNote', 'fileName', 'sourceFile'];
@@ -2484,6 +3116,7 @@
         '<td>' + esc(otherData(row, known)) + '</td>' +
       '</tr>';
     }).join('');
+    enhanceAllResizableTables();
   }
 
   async function clearDbTable(store, renderFn) {
@@ -2559,6 +3192,7 @@
     }).join('');
     $('mappingMsg').textContent = '字段对照已保存，导入时会优先使用这里的列名。';
     $('mappingMsg').className = 'msg ok';
+    enhanceAllResizableTables();
   }
 
   function updateMappingFromRow(row) {
@@ -2597,7 +3231,7 @@
             var wb = XLSX.read(reader.result, { type: 'array' });
             sheetNames = wb.SheetNames || [];
             var ws = wb.Sheets[wb.SheetNames[0]];
-            matrix = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', raw: false });
+            matrix = worksheetToMatrix(ws);
           }
           var parsedRows = matrixToObjects(matrix);
           parsedRows.__debug = {
@@ -2618,6 +3252,35 @@
       if (/\.csv$/i.test(file.name)) reader.readAsText(file, 'utf-8');
       else reader.readAsArrayBuffer(file);
     });
+  }
+
+  function worksheetToMatrix(ws) {
+    var cells = Object.keys(ws || {}).filter(function(key) { return key.charAt(0) !== '!'; });
+    if (!cells.length) return [];
+    var minRow = Infinity;
+    var maxRow = -1;
+    var minCol = Infinity;
+    var maxCol = -1;
+    cells.forEach(function(address) {
+      var decoded = XLSX.utils.decode_cell(address);
+      minRow = Math.min(minRow, decoded.r);
+      maxRow = Math.max(maxRow, decoded.r);
+      minCol = Math.min(minCol, decoded.c);
+      maxCol = Math.max(maxCol, decoded.c);
+    });
+    var matrix = [];
+    for (var r = minRow; r <= maxRow; r++) {
+      var row = [];
+      var hasValue = false;
+      for (var c = minCol; c <= maxCol; c++) {
+        var cell = ws[XLSX.utils.encode_cell({ r: r, c: c })];
+        var value = cell ? (cell.w != null ? cell.w : cell.v) : '';
+        if (value != null && String(value).trim() !== '') hasValue = true;
+        row.push(value == null ? '' : value);
+      }
+      if (hasValue) matrix.push(row);
+    }
+    return matrix;
   }
 
   function parseCsvMatrix(text) {
@@ -2879,10 +3542,38 @@
     if (typeof value === 'number') return value;
     var text = String(value).trim();
     if (!text) return '';
+    var rangeMatch = text.match(/^\s*(-?\d+(?:\.\d+)?)\s*%?\s*(?:~|～|至|—|–)\s*(-?\d+(?:\.\d+)?)\s*%?\s*$/);
+    if (rangeMatch) {
+      var rangeNumber = (Number(rangeMatch[1]) + Number(rangeMatch[2])) / 2;
+      return text.indexOf('%') !== -1 ? rangeNumber / 100 : rangeNumber;
+    }
     var isPercent = text.indexOf('%') !== -1;
     var number = Number(text.replace(/,/g, '').replace(/%/g, ''));
     if (!isFinite(number)) return text;
     return isPercent ? number / 100 : number;
+  }
+
+  function parseRangeNumberPart(value, isPercent) {
+    var text = String(value == null ? '' : value).trim();
+    if (!text) return '';
+    var multiplier = 1;
+    if (text.indexOf('\u4e07') !== -1) multiplier = 10000;
+    if (text.indexOf('\u4ebf') !== -1) multiplier = 100000000;
+    var number = Number(text.replace(/,/g, '').replace(/[%￥¥元人件次个\s]/g, '').replace(/万/g, '').replace(/亿/g, ''));
+    if (!isFinite(number)) return '';
+    number = number * multiplier;
+    return isPercent ? number / 100 : number;
+  }
+
+  function parseRangeMetric(value) {
+    var raw = String(value == null ? '' : value).trim();
+    if (!raw) return { raw: '', min: '', max: '' };
+    var isPercent = raw.indexOf('%') !== -1;
+    var parts = raw.split(/\s*(?:~|～|至|-|—|–)\s*/).filter(Boolean);
+    if (parts.length < 2) parts = [raw, raw];
+    var min = parseRangeNumberPart(parts[0], isPercent);
+    var max = parseRangeNumberPart(parts[parts.length - 1], isPercent);
+    return { raw: raw, min: min, max: max };
   }
 
   function formatMetric(value, decimals) {
@@ -3181,9 +3872,107 @@
       note: noteParts.join('\uff1b')
     };
   }
+
+  async function saveIndustryRankingMetrics(rows, file, snapshotId) {
+    var mappings = getImportMappings('industry_ranking');
+    var sample = rows[0] || {};
+    var headers = Object.keys(sample);
+    var resolvedColumns = {};
+    mappings.forEach(function(item) {
+      if (!item || !item.key) return;
+      if (item.key === 'date') resolvedColumns.date = resolveImportColumn(headers, item.column, ['\u65e5\u671f']);
+      else if (item.key === 'rank') resolvedColumns.rank = resolveImportColumn(headers, item.column, ['\u6392\u540d']);
+      else if (item.key === 'sku') resolvedColumns.sku = resolveImportColumn(headers, item.column, ['\u5546\u54c1\u7f16\u53f7', 'SKU', 'sku']);
+      else if (item.key === 'amountRange') resolvedColumns.amountRange = resolveImportColumn(headers, item.column, ['\u6210\u4ea4\u91d1\u989d']);
+      else if (item.key === 'qtyRange') resolvedColumns.qtyRange = resolveImportColumn(headers, item.column, ['\u6210\u4ea4\u5546\u54c1\u4ef6\u6570']);
+      else if (item.key === 'visitorRange') resolvedColumns.visitorRange = resolveImportColumn(headers, item.column, ['\u8bbf\u5ba2\u6570', '\u8bbf\u5ba2']);
+      else if (item.key === 'conversionRange') resolvedColumns.conversionRange = resolveImportColumn(headers, item.column, ['\u6210\u4ea4\u8f6c\u5316\u7387', '\u8f6c\u5316\u7387']);
+      else if (item.key === 'customerPriceRange') resolvedColumns.customerPriceRange = resolveImportColumn(headers, item.column, ['\u6210\u4ea4\u5ba2\u5355\u4ef7', '\u5ba2\u5355\u4ef7']);
+      else resolvedColumns[item.key] = resolveImportColumn(headers, item.column, []);
+    });
+    var required = [
+      { key: 'date', label: '\u65e5\u671f' },
+      { key: 'rank', label: '\u6392\u540d' },
+      { key: 'sku', label: 'SKU' }
+    ];
+    var missing = required.filter(function(item) {
+      return !resolvedColumns[item.key] || headers.indexOf(resolvedColumns[item.key]) === -1;
+    }).map(function(item) { return item.label; });
+    if (missing.length) {
+      return { saved: 0, skipped: rows.length, replaced: 0, note: '\u7f3a\u5c11\u5217\uff1a' + missing.join('\u3001') + '\uff1b\u8bc6\u522b\u5230\u7684\u8868\u5934\uff1a' + headers.slice(0, 12).join('\u3001') };
+    }
+    var parsedRows = [];
+    var skipped = 0;
+    rows.forEach(function(row) {
+      var dateRange = normalizeImportedDateRange(exactRowValue(row, resolvedColumns.date));
+      var sku = normalizeSkuValue(exactRowValue(row, resolvedColumns.sku));
+      var rank = parseMetricNumber(exactRowValue(row, resolvedColumns.rank));
+      if (!sku || !dateRange.startDate || !rank) {
+        skipped++;
+        return;
+      }
+      var amount = parseRangeMetric(exactRowValue(row, resolvedColumns.amountRange));
+      var qty = parseRangeMetric(exactRowValue(row, resolvedColumns.qtyRange));
+      var visitor = parseRangeMetric(exactRowValue(row, resolvedColumns.visitorRange));
+      var conversion = parseRangeMetric(exactRowValue(row, resolvedColumns.conversionRange));
+      var customerPrice = parseRangeMetric(exactRowValue(row, resolvedColumns.customerPriceRange));
+      parsedRows.push({
+        periodType: inferPeriodType(dateRange.startDate, dateRange.endDate),
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+        sku: sku,
+        rank: rank,
+        amountRange: amount.raw,
+        amountMin: amount.min,
+        amountMax: amount.max,
+        qtyRange: qty.raw,
+        qtyMin: qty.min,
+        qtyMax: qty.max,
+        visitorRange: visitor.raw,
+        visitorMin: visitor.min,
+        visitorMax: visitor.max,
+        conversionRange: conversion.raw,
+        conversionMin: conversion.min,
+        conversionMax: conversion.max,
+        customerPriceRange: customerPrice.raw,
+        customerPriceMin: customerPrice.min,
+        customerPriceMax: customerPrice.max,
+        fileName: file.name,
+        snapshotId: snapshotId,
+        importedAt: new Date().toISOString()
+      });
+    });
+    var existing = await getAll('ranking_raw_metrics');
+    var replaceKeys = {};
+    parsedRows.forEach(function(row) {
+      replaceKeys[[row.periodType, row.startDate, row.endDate, row.sku].join('|')] = true;
+    });
+    var replaced = 0;
+    for (var i = 0; i < existing.length; i++) {
+      var item = existing[i];
+      var key = [item.periodType, item.startDate, item.endDate, normalizeSkuValue(item.sku)].join('|');
+      if (replaceKeys[key]) {
+        await remove('ranking_raw_metrics', item.id);
+        replaced++;
+      }
+    }
+    for (var j = 0; j < parsedRows.length; j++) await put('ranking_raw_metrics', parsedRows[j]);
+    var noteParts = ['\u5199\u5165 ' + parsedRows.length + ' \u6761\u5546\u54c1\u699c\u5355'];
+    if (replaced) noteParts.push('\u8986\u76d6 ' + replaced + ' \u6761\u65e7\u699c\u5355');
+    if (skipped) noteParts.push('\u8df3\u8fc7 ' + skipped + ' \u884c');
+    return {
+      saved: parsedRows.length,
+      skipped: skipped,
+      replaced: replaced,
+      startDate: parsedRows[0] ? parsedRows[0].startDate : '',
+      endDate: parsedRows[parsedRows.length - 1] ? parsedRows[parsedRows.length - 1].endDate : '',
+      note: noteParts.join('\uff1b')
+    };
+  }
   function renderImportPreview(results) {
     if (!results.length) {
       $('importPreviewBody').innerHTML = '<tr><td class="empty-row" colspan="6">还没有导入文件</td></tr>';
+      enhanceAllResizableTables();
       return;
     }
     $('importPreviewBody').innerHTML = results.map(function(item) {
@@ -3201,6 +3990,7 @@
         '<td><span class="import-status ' + esc(status.className) + '" title="' + esc(note) + '">' + esc(status.label) + '</span><span class="import-note">' + esc(note || '-') + '</span></td>' +
       '</tr>';
     }).join('');
+    enhanceAllResizableTables();
   }
 
 
@@ -3223,7 +4013,6 @@
           fileName: file.name,
           importedAt: new Date().toISOString(),
           rowCount: rows.length,
-          rows: rows,
           detectNote: meta.note,
           importStatus: 'processing',
           statusNote: meta.note
@@ -3248,6 +4037,13 @@
           meta.endDate = offsiteResult.endDate || meta.endDate;
           meta.note = offsiteResult.note;
           finalStatus = metricImportStatus(meta.sourceType, offsiteResult);
+        } else if (meta.sourceType === 'industry_ranking') {
+          var rankingResult = await saveIndustryRankingMetrics(rows, file, snapshotId);
+          meta.periodType = inferPeriodType(rankingResult.startDate || meta.startDate, rankingResult.endDate || meta.endDate);
+          meta.startDate = rankingResult.startDate || meta.startDate;
+          meta.endDate = rankingResult.endDate || meta.endDate;
+          meta.note = rankingResult.note;
+          finalStatus = metricImportStatus(meta.sourceType, rankingResult);
         }
         snapshotRecord.sourceType = meta.sourceType;
         snapshotRecord.periodType = meta.periodType;
@@ -3268,7 +4064,6 @@
           fileName: file.name,
           importedAt: new Date().toISOString(),
           rowCount: 0,
-          rows: [],
           detectNote: err.message,
           importStatus: 'failed',
           statusNote: err.message
@@ -3281,6 +4076,7 @@
     $('importMsg').textContent = '\u5df2\u5904\u7406 ' + files.length + ' \u4e2a\u6587\u4ef6\uff0c\u4fdd\u5b58 ' + results.length + ' \u6761\u5bfc\u5165\u8bb0\u5f55\uff0c\u5176\u4e2d\u6210\u529f ' + successCount + ' \u6761\u3002';
     $('importMsg').className = successCount ? 'msg ok' : 'msg err';
     await renderSnapshots();
+    await renderRankingRaw();
     await refreshCounts();
   }
 
@@ -3330,9 +4126,12 @@
           visitorCount: 0,
           onsiteCost: 0,
           offsiteCost: 0,
-          rank: ''
+          rank: '',
+          skus: []
         };
       }
+      var normalizedSku = normalizeSkuValue(row.sku);
+      if (normalizedSku && groups[key].skus.indexOf(normalizedSku) === -1) groups[key].skus.push(normalizedSku);
       groups[key].salesQty += Number(row.salesQty || 0);
       groups[key].salesAmount += Number(row.salesAmount || 0);
       groups[key].visitorCount += Number(row.visitorCount || row.clickCount || 0);
@@ -3370,7 +4169,7 @@
       shortName: '商品简称',
       mainSeries: '大系列',
       subSeries: '小系列',
-      brand: '品牌'
+      brand: '竞品'
     }[dim] || dim;
   }
 
@@ -3378,18 +4177,35 @@
     analyzedRows = analyzedRows || await getAll('analyzed_metrics');
     skuRows = skuRows || await getAll('sku_profiles');
     if (!monitorTracks.length) {
-      $('monitorBody').innerHTML = '<tr><td class="empty-row" colspan="11">暂无追踪项</td></tr>';
+      $('monitorBody').innerHTML = '<tr><td class="empty-row" colspan="10">暂无追踪项</td></tr>';
       $('monitorMsg').textContent = '';
+      enhanceAllResizableTables();
       return;
     }
     var skuMap = {};
     skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
+    function monitorComparableValue(dim, sku, profile) {
+      if (dim === 'sku') return sku;
+      if (dim === 'brand') return profile && profile.itemType === 'competitor' ? (profile.shortName || profile.sku || '') : '';
+      return profile ? (profile[dim] || '') : '';
+    }
     function monitorValueOptions(dim) {
       var map = {};
+      if (dim === 'brand') {
+        skuRows.forEach(function(profile) {
+          if (profile && profile.itemType === 'competitor') {
+            var value = profile.shortName || profile.sku || '';
+            if (value) map[String(value)] = true;
+          }
+        });
+        return Object.keys(map).sort(function(a, b) {
+          return a.localeCompare(b, 'zh-Hans-CN', { numeric: true });
+        });
+      }
       analyzedRows.forEach(function(row) {
         var sku = normalizeSkuValue(row.sku);
         var profile = skuMap[sku] || {};
-        var value = dim === 'sku' ? sku : (profile[dim] || '');
+        var value = monitorComparableValue(dim, sku, profile);
         if (value) map[String(value)] = true;
       });
       return Object.keys(map).sort(function(a, b) {
@@ -3400,12 +4216,20 @@
       var options = monitorValueOptions(track.dimension || 'subSeries');
       var datalistId = 'monitorTargetOptions' + index;
       var matchedSku = {};
-      analyzedRows.forEach(function(row) {
-        var sku = normalizeSkuValue(row.sku);
-        var profile = skuMap[sku] || {};
-        var value = track.dimension === 'sku' ? sku : (profile[track.dimension] || '');
-        if (String(value) === String(track.target || '')) matchedSku[sku] = true;
-      });
+      if (track.dimension === 'brand') {
+        skuRows.forEach(function(profile) {
+          var sku = normalizeSkuValue(profile.sku);
+          var value = monitorComparableValue(track.dimension, sku, profile);
+          if (sku && String(value) === String(track.target || '')) matchedSku[sku] = true;
+        });
+      } else {
+        analyzedRows.forEach(function(row) {
+          var sku = normalizeSkuValue(row.sku);
+          var profile = skuMap[sku] || {};
+          var value = monitorComparableValue(track.dimension, sku, profile);
+          if (String(value) === String(track.target || '')) matchedSku[sku] = true;
+        });
+      }
       var total = { qty: 0, amount: 0, visitors: 0, onsiteCost: 0, offsiteCost: 0 };
       analyzedRows.forEach(function(row) {
         var sku = normalizeSkuValue(row.sku);
@@ -3425,9 +4249,8 @@
         '</select></td>' +
         '<td><input class="input monitor-target" list="' + datalistId + '" value="' + esc(track.target || track.name || '') + '" placeholder="搜索或选择' + esc(monitorDimensionLabel(track.dimension || 'subSeries')) + '">' +
           '<datalist id="' + datalistId + '">' + options.map(function(value) { return '<option value="' + esc(value) + '"></option>'; }).join('') + '</datalist></td>' +
-        '<td>' + esc(Object.keys(matchedSku).length) + '</td>' +
-        '<td>' + esc(formatMetric(total.qty, 0)) + '</td>' +
         '<td></td>' +
+        '<td>' + esc(formatMetric(total.qty, 0)) + '</td>' +
         '<td>' + esc(formatMetric(total.amount, 2)) + '</td>' +
         '<td>' + esc(formatMetric(total.visitors, 0)) + '</td>' +
         '<td>' + esc(formatPercent(conversion)) + '</td>' +
@@ -3438,6 +4261,7 @@
     }).join('');
     $('monitorMsg').textContent = '追踪名称按所选维度从当前日期范围内出现过的条目中选择，也可以输入后搜索。';
     $('monitorMsg').className = 'msg';
+    enhanceAllResizableTables();
   }
 
   function updateMonitorTrackFromRow(row) {
@@ -3501,11 +4325,49 @@
 
   function renderAnalyzedDbHead() {
     var labelsText = getSelectedAnalyzedDims().map(analyzedDimensionLabel).join(' / ') || '小系列';
-    $('analyzedDbHead').innerHTML = '<tr><th>日期</th><th>维度（' + esc(labelsText) + '）</th><th>销售数量</th><th>销售金额</th><th>访客/点击</th><th>站内花费</th><th>站外花费</th><th>排名</th></tr>';
+    var attrHeads = getSelectedAnalyzedAttributes().map(function(key) { return '<th>' + esc(analyzedDimensionLabel(key)) + '</th>'; }).join('');
+    $('analyzedDbHead').innerHTML = '<tr><th>日期</th><th>维度（' + esc(labelsText) + '）</th>' + attrHeads + '<th>销售数量</th><th>销售金额</th><th>访客/点击</th><th>站内花费</th><th>站外花费</th><th>排名</th></tr>';
   }
 
   function saveAnalyzedExtraDimensions() {
     localStorage.setItem('jdAnalyzedExtraDimensions', JSON.stringify(analyzedExtraDimensions));
+  }
+
+  function saveAnalyzedAttributeColumns() {
+    localStorage.setItem('jdAnalyzedAttributeColumns', JSON.stringify(analyzedAttributeColumns));
+  }
+
+  function getAnalyzedAttributeCandidates() {
+    var base = ['mainSeries', 'subSeries', 'shortName', 'brand', 'sku'];
+    var extras = skuDimensionColumns.filter(function(key) {
+      return base.indexOf(key) === -1;
+    });
+    return base.concat(extras).filter(function(key, index, arr) {
+      return arr.indexOf(key) === index;
+    });
+  }
+
+  function getSelectedAnalyzedAttributes() {
+    analyzedAttributeColumns = analyzedAttributeColumns.filter(function(key, index, arr) {
+      return arr.indexOf(key) === index && getAnalyzedAttributeCandidates().indexOf(key) !== -1;
+    });
+    saveAnalyzedAttributeColumns();
+    return analyzedAttributeColumns.slice();
+  }
+
+  function resolveAnalyzedAttributeValue(row, skuRows, key) {
+    var skuMap = {};
+    skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
+    var values = {};
+    (row.skus || []).forEach(function(sku) {
+      var profile = skuMap[normalizeSkuValue(sku)] || {};
+      var value = key === 'sku' ? normalizeSkuValue(sku) : profile[key];
+      if (value != null && value !== '') values[String(value)] = true;
+    });
+    var list = Object.keys(values);
+    if (!list.length) return '-';
+    if (list.length === 1) return list[0];
+    return '\u591a\u4e2a';
   }
 
   function renderAnalyzedDimensionControls() {
@@ -3550,6 +4412,43 @@
     });
     saveAnalyzedExtraDimensions();
     applyAnalyzedDimensionSelection();
+    renderAnalyzedAttributeControls();
+  }
+
+  function renderAnalyzedAttributeControls() {
+    var select = $('analyzedAttrSelect');
+    if (!select) return;
+    document.querySelectorAll('.analyzed-attr-pill').forEach(function(node) { node.remove(); });
+    analyzedAttributeColumns = getSelectedAnalyzedAttributes();
+    analyzedAttributeColumns.forEach(function(key) {
+      var pill = document.createElement('span');
+      pill.className = 'check-pill analyzed-attr-pill';
+      pill.innerHTML = '<label style="display:inline-flex;align-items:center;gap:7px;"><input type="checkbox" class="analyzed-attr-check" value="' + esc(key) + '" checked> ' + esc(analyzedDimensionLabel(key)) + '</label><button class="dim-remove-btn" type="button" data-remove-analyzed-attr="' + esc(key) + '" title="移除此属性列" aria-label="移除此属性列">&times;</button>';
+      select.parentNode.insertBefore(pill, select);
+      pill.querySelector('input').addEventListener('change', function(e) {
+        if (!e.target.checked) removeAnalyzedAttribute(key);
+      });
+      pill.querySelector('[data-remove-analyzed-attr]').addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        removeAnalyzedAttribute(key);
+      });
+    });
+    renderAnalyzedAttributeSelect();
+  }
+
+  function renderAnalyzedAttributeSelect() {
+    var select = $('analyzedAttrSelect');
+    if (!select) return;
+    var available = getAnalyzedAttributeCandidates().filter(function(key) {
+      return analyzedAttributeColumns.indexOf(key) === -1;
+    });
+    select.innerHTML = '<option value="">' + '\u9009\u62e9\u5c5e\u6027\u5217' + '</option>' + available.map(function(key) {
+      return '<option value="' + esc(key) + '">' + esc(analyzedDimensionLabel(key)) + '</option>';
+    }).join('');
+    select.disabled = !available.length;
+    select.hidden = false;
+    select.value = '';
   }
 
   function removeAnalyzedDimension(key) {
@@ -3563,6 +4462,13 @@
     renderAnalyzedDb();
   }
 
+  function removeAnalyzedAttribute(key) {
+    analyzedAttributeColumns = analyzedAttributeColumns.filter(function(item) { return item !== key; });
+    saveAnalyzedAttributeColumns();
+    renderAnalyzedAttributeControls();
+    renderAnalyzedDb();
+  }
+
   function addAnalyzedDimension() {
     var base = ['mainSeries', 'subSeries', 'shortName', 'brand'];
     var available = skuDimensionColumns.filter(function(key) {
@@ -3572,6 +4478,14 @@
     analyzedExtraDimensions.push(available[0]);
     renderAnalyzedDimensionControls();
     updateAnalyzedDimensionHint();
+    renderAnalyzedDb();
+  }
+
+  function addAnalyzedAttribute(key) {
+    if (!key || getAnalyzedAttributeCandidates().indexOf(key) === -1 || analyzedAttributeColumns.indexOf(key) !== -1) return;
+    analyzedAttributeColumns.push(key);
+    saveAnalyzedAttributeColumns();
+    renderAnalyzedAttributeControls();
     renderAnalyzedDb();
   }
 
@@ -3589,8 +4503,8 @@
     ];
     if (type === 'competitor') {
       columns = columns.concat([
-        { key: 'brand', label: '鍝佺墝' },
-        { key: 'isTrackedCompetitor', label: '閲嶇偣璺熻釜' }
+        { key: 'brand', label: '\u54c1\u724c' },
+        { key: 'isTrackedCompetitor', label: '\u662f\u5426\u8ffd\u8e2a' }
       ]);
     }
     return columns.concat(skuDimensionColumns.map(function(key) {
@@ -3644,6 +4558,7 @@
       $('cleanupSnapshotBody').innerHTML = '<tr><td class="empty-row" colspan="8">&#26242;&#26080;&#23548;&#20837;&#35760;&#24405;</td></tr>';
       $('cleanupSelectAll').checked = false;
       $('cleanupMsg').textContent = '';
+      enhanceAllResizableTables();
       return;
     }
     $('cleanupSnapshotBody').innerHTML = rows.map(function(row) {
@@ -3663,6 +4578,7 @@
     $('cleanupSelectAll').checked = rows.every(function(row) { return cleanupSelectedSnapshotIds.has(row.id); });
     $('cleanupMsg').textContent = '\u5f53\u524d\u9009\u4e2d ' + cleanupSelectedSnapshotIds.size + ' \u6761\u5bfc\u5165\u8bb0\u5f55\u3002';
     $('cleanupMsg').className = 'msg';
+    enhanceAllResizableTables();
   }
 
   async function selectCleanupMonths(count) {
@@ -3682,14 +4598,9 @@
       $('cleanupMsg').className = 'msg err';
       return;
     }
-    var idMap = {};
-    ids.forEach(function(id) { idMap[id] = true; });
-    var analyzed = await getAll('analyzed_metrics');
-    var matchedAnalyzed = analyzed.filter(function(row) { return row.snapshotId && idMap[row.snapshotId]; });
     for (var i = 0; i < ids.length; i++) await remove('raw_snapshots', ids[i]);
-    for (var j = 0; j < matchedAnalyzed.length; j++) await remove('analyzed_metrics', matchedAnalyzed[j].id);
     cleanupSelectedSnapshotIds.clear();
-    $('cleanupMsg').textContent = '\u5df2\u5220\u9664 ' + ids.length + ' \u6761\u5bfc\u5165\u8bb0\u5f55\u3001' + matchedAnalyzed.length + ' \u6761\u5df2\u5206\u6790\u6570\u636e\u3002';
+    $('cleanupMsg').textContent = '\u5df2\u5220\u9664 ' + ids.length + ' \u6761\u5bfc\u5165\u8bb0\u5f55\u3002\u5df2\u5206\u6790\u6570\u636e\u548c\u699c\u5355\u539f\u59cb\u6307\u6807\u672a\u53d8\u52a8\u3002';
     $('cleanupMsg').className = 'msg ok';
     await renderCleanupSnapshots();
     await renderSnapshots();
@@ -3709,6 +4620,7 @@
     switchPage(page);
     if (page === 'import') {
       renderImportMappings();
+      renderManualRankingEntry();
     }
     if (page === 'db-sku' || page === 'sku') renderSkus();
     if (page === 'raw-snapshots') renderSnapshots();
@@ -3745,6 +4657,17 @@
     popoverId: 'analyzedDatePopover',
     onChange: function() { renderAnalyzedDb(); }
   });
+  datePickers.ranking = createDateRangePicker({
+    rootId: 'rankingDatePickerField',
+    inputId: 'rankingDateInput',
+    startId: 'rankingStartDate',
+    endId: 'rankingEndDate',
+    prevId: 'rankingDatePrev',
+    nextId: 'rankingDateNext',
+    triggerId: 'rankingDateTrigger',
+    popoverId: 'rankingDatePopover',
+    onChange: function() { renderRankingRaw(); }
+  });
 document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     input.addEventListener('change', function() {
       rememberAnalyzedDimensionSelection();
@@ -3768,6 +4691,67 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
   $('addAnalyzedDimBtn').addEventListener('click', function(e) {
     e.preventDefault();
     addAnalyzedDimension();
+  });
+  $('analyzedAttrSelect').addEventListener('change', function(e) {
+    addAnalyzedAttribute(e.target.value);
+  });
+  document.querySelectorAll('.ranking-dim-check').forEach(function(input) {
+    input.addEventListener('change', function() {
+      rememberRankingDimensionSelection();
+      renderRankingRaw();
+    });
+  });
+  $('rankingShowTrackedCompetitorsCheck').addEventListener('change', function(e) {
+    rankingShowTrackedCompetitors = e.target.checked;
+    localStorage.setItem('jdRankingShowTrackedCompetitors', rankingShowTrackedCompetitors ? 'true' : 'false');
+    renderRankingRaw();
+  });
+  $('addRankingDimBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    addRankingDimension();
+  });
+  $('manualRankingFieldSelect').addEventListener('change', function(e) {
+    var key = e.target.value;
+    if (key && manualRankingExtraFields.indexOf(key) === -1 && MANUAL_RANKING_FIELDS[key] && !MANUAL_RANKING_FIELDS[key].readonly) {
+      manualRankingExtraFields.push(key);
+      saveManualRankingExtraFields();
+      renderManualRankingEntry();
+    }
+  });
+  $('manualRankingTrackedOnlyCheck').addEventListener('change', function(e) {
+    manualRankingTrackedOnly = e.target.checked;
+    localStorage.setItem('jdManualRankingTrackedOnly', manualRankingTrackedOnly ? 'true' : 'false');
+    renderManualRankingEntry();
+  });
+  $('manualRankingDate').addEventListener('change', renderManualRankingEntry);
+  $('manualRankingDatePrev').addEventListener('click', function(e) {
+    e.preventDefault();
+    shiftManualRankingDate(-1);
+  });
+  $('manualRankingDateNext').addEventListener('click', function(e) {
+    e.preventDefault();
+    shiftManualRankingDate(1);
+  });
+  $('manualRankingBody').addEventListener('click', function(e) {
+    var saveBtn = e.target.closest('.save-manual-ranking-row');
+    if (saveBtn) {
+      e.preventDefault();
+      saveManualRankingEntry(saveBtn.closest('tr'));
+      return;
+    }
+    var remove = e.target.closest('[data-remove-manual-ranking-field]');
+    if (remove) {
+      e.preventDefault();
+      manualRankingExtraFields = manualRankingExtraFields.filter(function(key) { return key !== remove.getAttribute('data-remove-manual-ranking-field'); });
+      saveManualRankingExtraFields();
+      renderManualRankingEntry();
+    }
+  });
+  $('manualRankingBody').addEventListener('input', function(e) {
+    if (e.target.classList.contains('manual-ranking-field')) updateManualGrowthOptions(e.target.value);
+  });
+  $('manualRankingBody').addEventListener('focusin', function(e) {
+    if (e.target.classList.contains('manual-ranking-field')) updateManualGrowthOptions(e.target.value);
   });
   $('clearSnapshotsBtn').addEventListener('click', function() { clearDbTable('raw_snapshots', renderSnapshots); });
   $('clearRankingRawBtn').addEventListener('click', function() { clearDbTable('ranking_raw_metrics', renderRankingRaw); });
@@ -4065,6 +5049,10 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
   $('analyzedStartDate').value = defaultAnalyzedDate;
   $('analyzedEndDate').value = defaultAnalyzedDate;
   $('analyzedDateInput').value = defaultAnalyzedDate;
+  $('rankingStartDate').value = defaultAnalyzedDate;
+  $('rankingEndDate').value = defaultAnalyzedDate;
+  $('rankingDateInput').value = defaultAnalyzedDate;
+  $('manualRankingDate').value = defaultAnalyzedDate;
   if (datePickers.dashboard) {
     datePickers.dashboard.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
     datePickers.dashboard.sync();
@@ -4075,16 +5063,25 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     datePickers.analyzed.sync();
     datePickers.analyzed.render();
   }
+  if (datePickers.ranking) {
+    datePickers.ranking.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
+    datePickers.ranking.sync();
+    datePickers.ranking.render();
+  }
   migrateImportConfig();
   switchPage(location.hash.slice(1) || 'dashboard');
   updateDimensionHint();
   renderImportMappings();
   renderAnalyzedDimensionControls();
   updateAnalyzedDimensionHint();
+  applyRankingDimensionSelection();
+  enhanceAllResizableTables();
 
   openDb().then(async function() {
     $('dbStatus').textContent = '本地库准备中';
     await loadMonitorTracksFromDb();
+    await stripRawSnapshotRows();
+    await normalizeCompetitorSkuDefaults();
     await mergeDuplicateSeriesColumns();
     renderAnalyzedDimensionControls();
     updateAnalyzedDimensionHint();
@@ -4095,6 +5092,7 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     var currentPage = location.hash.slice(1) || 'dashboard';
     if (currentPage === 'import') {
       renderImportMappings();
+      await renderManualRankingEntry();
     }
     if (currentPage === 'db-sku' || currentPage === 'sku') await renderSkus();
     if (currentPage === 'raw-snapshots') await renderSnapshots();
