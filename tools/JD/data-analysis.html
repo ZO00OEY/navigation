@@ -192,6 +192,23 @@
   align-items: center;
   margin-bottom: 12px;
 }
+.report-data-alert {
+  display: none;
+  margin: 0 0 12px;
+  border: 1px solid rgba(222, 115, 158, 0.28);
+  background: rgba(222, 115, 158, 0.08);
+  color: var(--text);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  padding: 8px 12px;
+}
+.report-data-alert.ok {
+  display: block;
+  border-color: rgba(86, 180, 125, 0.26);
+  background: rgba(86, 180, 125, 0.08);
+}
+.report-data-alert.warn { display: block; }
+.report-data-alert strong { color: var(--link-color); }
 .report-template-preview {
   min-height: 120px;
   border: 1px solid var(--line-medium, var(--card-border));
@@ -873,6 +890,7 @@
         <button class="tab-btn" data-page="db-analyzed">商品明细数据<span class="tab-kicker">D3</span></button>
         <button class="tab-btn" data-page="ranking-raw">商品榜单数据<span class="tab-kicker">D4</span></button>
         <button class="tab-btn" data-page="db-estimates">竞品估算数据<span class="tab-kicker">D5</span></button>
+        <button class="tab-btn" data-page="db-backup">数据库备份<span class="tab-kicker">D6</span></button>
       </div>
     </nav>
 
@@ -1164,6 +1182,7 @@
           <div class="report-template-actions">
             <span class="hint">导入修改后的 Excel 后，这里会优先展示“模板”标签页；没有公式缓存时，需要先在 Excel 中保存一次。</span>
           </div>
+          <div class="report-data-alert" id="reportDataAlert"></div>
           <div class="report-output" id="reportOutput">
             <div class="report-template-empty">还没有导入日报模板。请先导出模板，在 Excel 的“模板”页制作日报样式后再导入预览。</div>
           </div>
@@ -1676,6 +1695,28 @@
           <div class="msg" id="cleanupMsg"></div>
         </div>
       </section>
+
+      <section class="tool-page" id="db-backup">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>数据库备份</h1>
+            <p>导出或导入当前工具使用的本地数据库，包含 SKU 档案、商品明细数据、榜单数据、竞品估算、导入记录、设置项和日报模板。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>整库导入导出</span>
+          </div>
+          <div class="btn-row" style="margin-top:10px;">
+            <button class="btn" id="exportDbBackupBtn" type="button">导出数据库备份</button>
+            <button class="btn" id="importDbBackupBtn" type="button">导入数据库备份</button>
+          </div>
+          <input class="ghost-file" type="file" id="dbBackupInput" accept=".json">
+          <div class="note" style="margin-top:12px;">导入会用备份文件覆盖当前本地数据库。建议先导出一份当前备份，再导入新的备份文件。</div>
+          <div class="msg" id="dbBackupMsg"></div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -1705,6 +1746,14 @@
     periodType: { unknown: '待确认', day: '单日', period: '跨期' },
     itemType: { own: '本品', competitor: '竞品' }
   };
+  var BACKUP_STORES = [
+    'sku_profiles',
+    'raw_snapshots',
+    'analyzed_metrics',
+    'ranking_raw_metrics',
+    'competitor_estimates',
+    'app_settings'
+  ];
   var DEFAULT_IMPORT_MAPPINGS = {
     sales_detail: [
       { key: 'date', label: '时间', column: '时间', locked: true, note: '按原表时间保存，单日与跨期分开入库' },
@@ -1776,11 +1825,13 @@
   var reportMode = localStorage.getItem('jdReportMode') || 'daily';
   var reportOutputDimensions = JSON.parse(localStorage.getItem('jdReportOutputDimensions') || 'null') || ['mainSeries', 'subSeries'];
   var reportTemplateWorkbook = null;
+  var reportTemplateOriginalBase64 = '';
   var reportTemplatePreviewWorkbook = null;
   var reportTemplateActiveSheet = '';
   var estimateSavedRange = JSON.parse(localStorage.getItem('jdEstimateDateRange') || 'null');
   var estimateAutoGenerating = false;
   var estimateAutoAttemptedKeys = {};
+  var reportEstimateAutoAttemptedKeys = {};
   var enableOrderDimension = localStorage.getItem('jdEnableOrderDimension') === 'true';
   var cleanupSelectedSnapshotIds = new Set();
   var skuColumnLabels = JSON.parse(localStorage.getItem('jdSkuColumnLabels') || '{}');
@@ -1941,6 +1992,57 @@
       return;
     }
     saveMonitorTracks();
+  }
+
+  async function saveReportTemplateWorkbook() {
+    if (!window.XLSX || !reportTemplateWorkbook) return false;
+    try {
+      var base64 = reportTemplateOriginalBase64 || XLSX.write(reportTemplateWorkbook, { bookType: 'xlsx', type: 'base64', cellStyles: true });
+      var activeSheet = reportTemplateActiveSheet || '模板';
+      var savedToDb = false;
+      if (db && db.objectStoreNames.contains('app_settings')) {
+        await put('app_settings', {
+          key: 'reportTemplateWorkbook',
+          value: base64,
+          valueType: 'base64',
+          activeSheet: activeSheet,
+          updatedAt: new Date().toISOString()
+        });
+        savedToDb = true;
+      }
+      try {
+        localStorage.setItem('jdReportTemplateWorkbookBase64', base64);
+        localStorage.setItem('jdReportTemplateActiveSheet', activeSheet);
+      } catch (storageErr) {
+        console.warn(storageErr);
+      }
+      return savedToDb || !!localStorage.getItem('jdReportTemplateWorkbookBase64');
+    } catch (err) {
+      console.warn(err);
+      if ($('reportMsg')) $('reportMsg').textContent = '模板保存失败：' + (err && err.message ? err.message : String(err));
+      return false;
+    }
+  }
+
+  async function loadReportTemplateWorkbookFromDb() {
+    if (!window.XLSX || reportTemplateWorkbook) return;
+    try {
+      var saved = db && db.objectStoreNames.contains('app_settings') ? await getOne('app_settings', 'reportTemplateWorkbook') : null;
+      var value = saved && saved.value ? saved.value : localStorage.getItem('jdReportTemplateWorkbookBase64');
+      var activeSheet = saved && saved.activeSheet ? saved.activeSheet : localStorage.getItem('jdReportTemplateActiveSheet');
+      if (!value) return;
+      reportTemplateWorkbook = typeof value === 'string'
+        ? XLSX.read(value, { type: 'base64', cellDates: true, cellFormula: true, cellStyles: true, cellNF: true })
+        : XLSX.read(value, { type: 'array', cellDates: true, cellFormula: true, cellStyles: true, cellNF: true });
+      reportTemplateOriginalBase64 = typeof value === 'string' ? value : '';
+      reportTemplateActiveSheet = activeSheet || (reportTemplateWorkbook.SheetNames.indexOf('模板') !== -1 ? '模板' : reportTemplateWorkbook.SheetNames[0]);
+      await refreshReportTemplatePreviewWorkbook();
+      renderReportTemplatePreview(reportTemplateActiveSheet);
+      if ($('reportMsg')) $('reportMsg').textContent = '已加载本地保存的日报模板。';
+    } catch (err) {
+      console.warn(err);
+      if ($('reportMsg')) $('reportMsg').textContent = '本地模板读取失败：' + (err && err.message ? err.message : String(err));
+    }
   }
 
   var datePickers = {};
@@ -2505,6 +2607,90 @@
       req.onsuccess = function() { resolve(); };
       req.onerror = function() { reject(req.error); };
     });
+  }
+
+  function setDbBackupMsg(text, isErr) {
+    if (!$('dbBackupMsg')) return;
+    $('dbBackupMsg').textContent = text || '';
+    $('dbBackupMsg').className = 'msg ' + (isErr ? 'err' : 'ok');
+  }
+
+  function collectBackupLocalStorage() {
+    var data = {};
+    for (var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+      if (key && key.indexOf('jd') === 0) data[key] = localStorage.getItem(key);
+    }
+    return data;
+  }
+
+  async function exportDatabaseBackup() {
+    if (!db) {
+      setDbBackupMsg('本地数据库还没准备好，请稍后再试。', true);
+      return;
+    }
+    if (reportTemplateWorkbook) await saveReportTemplateWorkbook();
+    var payload = {
+      app: 'jd-data-analysis-tool',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      dbName: DB_NAME,
+      dbVersion: DB_VERSION,
+      stores: {},
+      localStorage: collectBackupLocalStorage()
+    };
+    for (var i = 0; i < BACKUP_STORES.length; i++) {
+      var store = BACKUP_STORES[i];
+      if (db.objectStoreNames.contains(store)) payload.stores[store] = await getAll(store);
+    }
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '京东数据分析工具_数据库备份_' + today() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setDbBackupMsg('已导出数据库备份。', false);
+  }
+
+  async function importDatabaseBackup(file) {
+    if (!file || !db) return;
+    try {
+      var text = await file.text();
+      var payload = JSON.parse(text);
+      if (!payload || payload.app !== 'jd-data-analysis-tool' || !payload.stores) {
+        setDbBackupMsg('备份文件格式不正确。', true);
+        return;
+      }
+      for (var i = 0; i < BACKUP_STORES.length; i++) {
+        var store = BACKUP_STORES[i];
+        if (!db.objectStoreNames.contains(store)) continue;
+        await clearStore(store);
+        var rows = Array.isArray(payload.stores[store]) ? payload.stores[store] : [];
+        for (var r = 0; r < rows.length; r++) await put(store, rows[r]);
+      }
+      Object.keys(payload.localStorage || {}).forEach(function(key) {
+        if (key && key.indexOf('jd') === 0) {
+          try { localStorage.setItem(key, payload.localStorage[key]); } catch (err) { console.warn(err); }
+        }
+      });
+      reportTemplateWorkbook = null;
+      reportTemplatePreviewWorkbook = null;
+      reportTemplateOriginalBase64 = '';
+      await loadReportTemplateWorkbookFromDb();
+      await refreshCounts();
+      await renderSkus();
+      await renderDashboard();
+      await renderAnalyzedDb();
+      if ((location.hash.slice(1) || 'dashboard') === 'report') await renderReportOutput();
+      setDbBackupMsg('已导入数据库备份。', false);
+      setTimeout(function() { location.reload(); }, 700);
+    } catch (err) {
+      console.warn(err);
+      setDbBackupMsg('导入失败：' + (err && err.message ? err.message : String(err)), true);
+    }
   }
 
   function switchPage(id) {
@@ -4114,6 +4300,45 @@
     }
   }
 
+  async function autoGenerateMissingEstimatesForReport(range) {
+    var normalized = normalizedRange(range && range.start, range && (range.end || range.start));
+    if (!db || !normalized || estimateAutoGenerating) return 0;
+    var autoKey = ['report', normalized.start, normalized.end].join('|');
+    if (reportEstimateAutoAttemptedKeys[autoKey]) return 0;
+    reportEstimateAutoAttemptedKeys[autoKey] = true;
+    estimateAutoGenerating = true;
+    try {
+      var dates = datesInRange(normalized.start, normalized.end || normalized.start);
+      var estimates = await getAll('competitor_estimates');
+      var rankings = await getAll('ranking_raw_metrics');
+      var skuRows = await getAll('sku_profiles');
+      var trackedSkus = skuRows.filter(function(row) {
+        return row.itemType === 'competitor' && row.isTrackedCompetitor && normalizeSkuValue(row.sku);
+      }).map(function(row) { return normalizeSkuValue(row.sku); });
+      var rankingSkus = rankings.map(function(row) { return normalizeSkuValue(row.sku); }).filter(Boolean);
+      var skus = Array.from(new Set(trackedSkus.concat(rankingSkus)));
+      var maps = buildEstimateRowMaps(estimates, rankings);
+      var touched = {};
+      dates.forEach(function(date) {
+        skus.forEach(function(sku) {
+          var existing = maps.estimateMap[estimateDateKey(sku, date)];
+          if (estimateRowComplete(existing)) return;
+          estimateMetricConfigs().forEach(function(config) {
+            if (metricRangeFromEstimate(existing, config)) return;
+            var generated = generateEstimateForDate(sku, date, config, maps, touched);
+            if (generated) existing = generated;
+          });
+        });
+      });
+      var rows = Object.values(touched);
+      for (var i = 0; i < rows.length; i++) await put('competitor_estimates', rows[i]);
+      if (rows.length) await refreshCounts();
+      return rows.length;
+    } finally {
+      estimateAutoGenerating = false;
+    }
+  }
+
   async function renderEstimatesDb() {
     var rows = await getAll('competitor_estimates');
     var skuRows = await getAll('sku_profiles');
@@ -5512,16 +5737,29 @@
     return { workbook: wb, range: range };
   }
 
+  async function buildReportWorkbookForExport() {
+    if (!reportTemplateWorkbook) return buildReportDataWorkbook(true);
+    var built = await buildReportDataWorkbook(false);
+    if (!built) return null;
+    var wb = cloneWorkbookForPreview(reportTemplateWorkbook);
+    (built.workbook.SheetNames || []).forEach(function(name) {
+      upsertPreviewSheet(wb, name, built.workbook.Sheets[name]);
+    });
+    return { workbook: wb, range: built.range };
+  }
+
   async function exportReportTemplate() {
-    var built = await buildReportDataWorkbook(true);
+    var built = await buildReportWorkbookForExport();
     if (!built) return;
     var wb = built.workbook;
     var range = built.range;
     var issue = String($('reportIssueInput') ? $('reportIssueInput').value || '' : '').trim();
     var suffix = (range.start || today()) + (range.end && range.end !== range.start ? '_' + range.end : '');
     var prefix = reportMode === 'period' ? '周期报模板_' : '日报模板_';
-    XLSX.writeFile(wb, prefix + (issue ? issue + '_' : '') + suffix + '.xlsx');
-    if ($('reportMsg')) $('reportMsg').textContent = '已导出模板，建议在 Excel 的“模板”页制作报表样式后再导入预览。';
+    XLSX.writeFile(wb, prefix + (issue ? issue + '_' : '') + suffix + '.xlsx', { cellStyles: true });
+    if ($('reportMsg')) $('reportMsg').textContent = reportTemplateWorkbook
+      ? '已导出当前模板，并按所选日期刷新大系列、小系列和竞品数据页。'
+      : '已导出模板，建议在 Excel 的“模板”页制作报表样式后再导入预览。';
   }
 
   function cloneWorkbookForPreview(workbook) {
@@ -5561,9 +5799,15 @@
     return '';
   }
 
-  function worksheetRangeAddresses(rangeText) {
+  function worksheetRangeAddresses(rangeText, sheet) {
     try {
-      var range = XLSX.utils.decode_range(String(rangeText || '').replace(/\$/g, ''));
+      var cleanRange = String(rangeText || '').replace(/\$/g, '');
+      if (/^[A-Z]+:[A-Z]+$/i.test(cleanRange) && sheet && sheet['!ref']) {
+        var bounds = XLSX.utils.decode_range(sheet['!ref']);
+        var cols = cleanRange.split(':').map(function(col) { return XLSX.utils.decode_col(col); });
+        cleanRange = XLSX.utils.encode_cell({ r: bounds.s.r, c: cols[0] }) + ':' + XLSX.utils.encode_cell({ r: bounds.e.r, c: cols[1] });
+      }
+      var range = XLSX.utils.decode_range(cleanRange);
       var list = [];
       for (var r = range.s.r; r <= range.e.r; r++) {
         for (var c = range.s.c; c <= range.e.c; c++) {
@@ -5576,22 +5820,181 @@
     }
   }
 
-  function evaluateReportFormula(formula, workbook) {
+  function splitFormulaArgs(text) {
+    var args = [];
+    var current = '';
+    var depth = 0;
+    var quote = '';
+    String(text || '').split('').forEach(function(ch) {
+      if (quote) {
+        current += ch;
+        if (ch === quote) quote = '';
+        return;
+      }
+      if (ch === '"' || ch === "'") {
+        quote = ch;
+        current += ch;
+        return;
+      }
+      if (ch === '(') depth++;
+      if (ch === ')') depth = Math.max(0, depth - 1);
+      if ((ch === ',' || ch === '，') && depth === 0) {
+        args.push(current.trim());
+        current = '';
+        return;
+      }
+      current += ch;
+    });
+    if (current || text) args.push(current.trim());
+    return args;
+  }
+
+  function splitFormulaByTopLevelPlus(text) {
+    var parts = [];
+    var current = '';
+    var depth = 0;
+    var quote = '';
+    String(text || '').split('').forEach(function(ch) {
+      if (quote) {
+        current += ch;
+        if (ch === quote) quote = '';
+        return;
+      }
+      if (ch === '"' || ch === "'") {
+        quote = ch;
+        current += ch;
+        return;
+      }
+      if (ch === '(') depth++;
+      if (ch === ')') depth = Math.max(0, depth - 1);
+      if (ch === '+' && depth === 0) {
+        parts.push(current.trim());
+        current = '';
+        return;
+      }
+      current += ch;
+    });
+    if (current || text) parts.push(current.trim());
+    return parts;
+  }
+
+  function parseSheetRangeRef(refText, defaultSheetName) {
+    var clean = String(refText || '').trim().replace(/\$/g, '');
+    var quoted = clean.match(/^'([^']+)'!([A-Z]+\d*(?::[A-Z]+\d*)?)$/i);
+    if (quoted) return { sheetName: quoted[1], rangeText: quoted[2].toUpperCase() };
+    var plain = clean.match(/^([^!]+)!([A-Z]+\d*(?::[A-Z]+\d*)?)$/i);
+    if (plain) return { sheetName: plain[1].trim(), rangeText: plain[2].toUpperCase() };
+    if (/^[A-Z]+\d*(?::[A-Z]+\d*)?$/i.test(clean)) return { sheetName: defaultSheetName, rangeText: clean.toUpperCase() };
+    return null;
+  }
+
+  function rangeValues(workbook, refText, defaultSheetName) {
+    var parsed = parseSheetRangeRef(refText, defaultSheetName);
+    if (!parsed) return [];
+    var sheet = workbook && workbook.Sheets ? workbook.Sheets[parsed.sheetName] : null;
+    return worksheetRangeAddresses(parsed.rangeText, sheet).map(function(address) {
+      return sheetCellValue(workbook, parsed.sheetName, address);
+    });
+  }
+
+  function normalizeLookupValue(value) {
+    return String(value == null ? '' : value).trim();
+  }
+
+  function evaluateReportFormula(formula, workbook, currentSheetName) {
     var expr = String(formula || '').replace(/^=/, '').trim();
     if (!expr) return '';
-    var sumMatch = expr.match(/^SUM\((?:'([^']+)'|([^!]+))!([A-Z]+\d+:[A-Z]+\d+)\)$/i);
-    if (sumMatch) {
-      var sumSheet = (sumMatch[1] || sumMatch[2] || '').trim();
-      return worksheetRangeAddresses(sumMatch[3]).reduce(function(total, address) {
-        var value = sheetCellValue(workbook, sumSheet, address);
-        var number = typeof value === 'number' ? value : Number(String(value).replace(/,/g, ''));
-        return total + (isFinite(number) ? number : 0);
+    function numberValue(value) {
+      if (typeof value === 'number') return value;
+      var number = Number(String(value == null ? '' : value).replace(/,/g, '').replace(/%/g, ''));
+      if (!isFinite(number)) return 0;
+      return String(value).indexOf('%') !== -1 ? number / 100 : number;
+    }
+    function jsLiteral(value) {
+      return typeof value === 'number' ? String(value) : JSON.stringify(value == null ? '' : value);
+    }
+    function sumRange(sheetName, rangeText) {
+      var sheet = workbook && workbook.Sheets ? workbook.Sheets[sheetName] : null;
+      return worksheetRangeAddresses(rangeText, sheet).reduce(function(total, address) {
+        return total + numberValue(sheetCellValue(workbook, sheetName, address));
       }, 0);
     }
-    var directMatch = expr.match(/^(?:'([^']+)'|([^!]+))!([A-Z]+\d+)$/i);
-    if (directMatch) {
-      return sheetCellValue(workbook, (directMatch[1] || directMatch[2] || '').trim(), directMatch[3]);
+    function operandValue(text) {
+      var raw = String(text || '').trim();
+      if (/^".*"$/.test(raw)) return raw.slice(1, -1);
+      if (/^-?\d+(\.\d+)?%?$/.test(raw)) return raw.indexOf('%') !== -1 ? Number(raw.replace('%', '')) / 100 : Number(raw);
+      if (/^[A-Z]+\d+$/i.test(raw)) return sheetCellValue(workbook, currentSheetName, raw);
+      var ref = parseSheetRangeRef(raw, currentSheetName);
+      if (ref && /^[A-Z]+\d+$/i.test(ref.rangeText)) return sheetCellValue(workbook, ref.sheetName, ref.rangeText);
+      var nested = evaluateReportFormula(raw, workbook, currentSheetName);
+      return nested == null ? raw : nested;
     }
+    function xlookupValue(args) {
+      if (!args || args.length < 3) return args && args.length > 3 ? operandValue(args[3]) : 0;
+      var needle = normalizeLookupValue(operandValue(args[0]));
+      var lookupValues = rangeValues(workbook, args[1], currentSheetName);
+      var returnValues = rangeValues(workbook, args[2], currentSheetName);
+      for (var i = 0; i < lookupValues.length; i++) {
+        if (normalizeLookupValue(lookupValues[i]) === needle) return returnValues[i] == null ? '' : returnValues[i];
+      }
+      return args.length > 3 ? operandValue(args[3]) : 0;
+    }
+    var ifErrorMatch = expr.match(/^IFERROR\(([\s\S]+)\)$/i);
+    if (ifErrorMatch) {
+      var ifArgs = splitFormulaArgs(ifErrorMatch[1]);
+      try {
+        var mainValue = evaluateReportFormula(ifArgs[0], workbook, currentSheetName);
+        return mainValue == null ? operandValue(ifArgs[1]) : mainValue;
+      } catch (err) {
+        return operandValue(ifArgs[1]);
+      }
+    }
+    var xlookupMatch = expr.match(/^(?:_xlfn\.)?XLOOKUP\(([\s\S]+)\)$/i);
+    if (xlookupMatch) return xlookupValue(splitFormulaArgs(xlookupMatch[1]));
+    var roundMatch = expr.match(/^ROUND\(([\s\S]+)\)$/i);
+    if (roundMatch) {
+      var roundArgs = splitFormulaArgs(roundMatch[1]);
+      var digits = Number(roundArgs[1] || 0);
+      var multiplier = Math.pow(10, isFinite(digits) ? digits : 0);
+      return Math.round(numberValue(operandValue(roundArgs[0])) * multiplier) / multiplier;
+    }
+    if (expr.indexOf('+') !== -1) {
+      var plusParts = splitFormulaByTopLevelPlus(expr);
+      if (plusParts.length > 1) {
+        var allCalculated = true;
+        var total = plusParts.reduce(function(sum, part) {
+          var value = evaluateReportFormula(part, workbook, currentSheetName);
+          if (value == null) {
+            allCalculated = false;
+            return sum;
+          }
+          return sum + numberValue(value);
+        }, 0);
+        if (allCalculated) return total;
+      }
+    }
+    var transformed = expr
+      .replace(/(?:_xlfn\.)?XLOOKUP\(([^()]+)\)/gi, function(_, argsText) {
+        return jsLiteral(xlookupValue(splitFormulaArgs(argsText)));
+      })
+      .replace(/SUM\(\s*(?:'([^']+)'|([^!(),]+))!([A-Z]+\d+:[A-Z]+\d+)\s*\)/gi, function(_, quotedSheet, plainSheet, rangeText) {
+        return String(sumRange((quotedSheet || plainSheet || '').trim(), rangeText));
+      })
+      .replace(/(?:'([^']+)'|([A-Za-z0-9_\u4e00-\u9fa5 ]+))!([A-Z]+\d+)/g, function(_, quotedSheet, plainSheet, address) {
+        return jsLiteral(sheetCellValue(workbook, (quotedSheet || plainSheet || '').trim(), address));
+      })
+      .replace(/\b([A-Z]+\d+)\b/g, function(_, address) {
+        return jsLiteral(sheetCellValue(workbook, currentSheetName, address));
+      });
+    if (/^[0-9+\-*/().,\s"'_\u4e00-\u9fa5]+$/.test(transformed)) {
+      try {
+        /* eslint-disable no-new-func */
+        var result = Function('return (' + transformed + ');')();
+        return result == null ? '' : result;
+      } catch (err) {}
+    }
+    var directMatch = expr.match(/^(?:'([^']+)'|([^!]+))!([A-Z]+\d+)$/i);
+    if (directMatch) return sheetCellValue(workbook, (directMatch[1] || directMatch[2] || '').trim(), directMatch[3]);
     return null;
   }
 
@@ -5601,12 +6004,17 @@
     Object.keys(sheet).forEach(function(address) {
       if (address.charAt(0) === '!') return;
       var cell = sheet[address];
-      if (!cell || !cell.f) return;
-      var value = evaluateReportFormula(cell.f, workbook);
+      if (!cell) return;
+      var formulaText = cell.f || (typeof cell.v === 'string' && cell.v.trim().charAt(0) === '=' ? cell.v.trim().slice(1) : '');
+      if (!formulaText) return;
+      var value = evaluateReportFormula(formulaText, workbook, sheetName);
       if (value == null) return;
       cell.v = value;
       cell.w = String(value);
       cell.t = typeof value === 'number' ? 'n' : 's';
+      delete cell.f;
+      delete cell.h;
+      delete cell.r;
     });
   }
 
@@ -5647,11 +6055,18 @@
 
   async function importReportTemplate(file) {
     if (!file || !window.XLSX) return;
-    var workbook = await new Promise(function(resolve, reject) {
+    var loaded = await new Promise(function(resolve, reject) {
       var reader = new FileReader();
       reader.onload = function() {
         try {
-          resolve(XLSX.read(reader.result, { type: 'array', cellDates: true, cellFormula: true }));
+          var bytes = new Uint8Array(reader.result);
+          var binary = '';
+          for (var i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+          var base64 = btoa(binary);
+          resolve({
+            base64: base64,
+            workbook: XLSX.read(reader.result, { type: 'array', cellDates: true, cellFormula: true, cellStyles: true, cellNF: true })
+          });
         } catch (err) {
           reject(err);
         }
@@ -5659,11 +6074,67 @@
       reader.onerror = function() { reject(reader.error); };
       reader.readAsArrayBuffer(file);
     });
+    var workbook = loaded.workbook;
     reportTemplateWorkbook = workbook;
+    reportTemplateOriginalBase64 = loaded.base64 || '';
     reportTemplateActiveSheet = workbook.SheetNames.indexOf('模板') !== -1 ? '模板' : workbook.SheetNames[0];
+    var saved = await saveReportTemplateWorkbook();
     await refreshReportTemplatePreviewWorkbook();
     renderReportTemplatePreview(reportTemplateActiveSheet);
-    if ($('reportMsg')) $('reportMsg').textContent = '已导入模板：' + file.name;
+    if ($('reportMsg')) $('reportMsg').textContent = saved ? '已导入并保存模板：' + file.name : '已导入模板，但本地保存失败：' + file.name;
+  }
+
+  function currentReportRange() {
+    return datePickers.report
+      ? datePickers.report.getRange()
+      : normalizedRange($('reportStartDate').value, $('reportEndDate').value || $('reportStartDate').value);
+  }
+
+  function hasRowsForSource(rows, range, sourceType) {
+    return filterMetricRowsByDateRange(rows || [], range).some(function(row) {
+      return row.sourceType === sourceType;
+    });
+  }
+
+  async function renderReportDataAlert(range) {
+    var box = $('reportDataAlert');
+    if (!box || !db) return;
+    range = normalizedRange(range && range.start, range && (range.end || range.start));
+    if (!range) {
+      box.className = 'report-data-alert';
+      box.innerHTML = '';
+      return;
+    }
+    var analyzedRows = await getAll('analyzed_metrics');
+    var rankingRows = await getAll('ranking_raw_metrics');
+    var estimateRows = await getAll('competitor_estimates');
+    var skuRows = await getAll('sku_profiles');
+    var trackedSkus = skuRows.filter(function(row) {
+      return row.itemType === 'competitor' && row.isTrackedCompetitor && normalizeSkuValue(row.sku);
+    }).map(function(row) { return normalizeSkuValue(row.sku); });
+    var trackedMap = {};
+    trackedSkus.forEach(function(sku) { trackedMap[sku] = true; });
+    var warnings = [];
+    if (!hasRowsForSource(analyzedRows, range, 'sales_detail')) warnings.push('缺销售金额/件数/访客：需要导入<strong>商品明细</strong>');
+    if (!hasRowsForSource(analyzedRows, range, 'onsite_cost')) warnings.push('缺站内花费：需要导入<strong>站内花费</strong>');
+    if (!hasRowsForSource(analyzedRows, range, 'offsite_cps_cost')) warnings.push('缺站外花费：需要导入<strong>站外 CPS 花费</strong>');
+    if (trackedSkus.length) {
+      var rankingInRange = filterMetricRowsByDateRange(rankingRows, range).some(function(row) {
+        return trackedMap[normalizeSkuValue(row.sku)] && Number(row.rank || 0);
+      });
+      if (!rankingInRange) warnings.push('缺竞品排名：需要导入<strong>商品榜单数据</strong>');
+      var estimateInRange = filterMetricRowsByDateRange(estimateRows, range).some(function(row) {
+        return trackedMap[normalizeSkuValue(row.sku)] && estimateRowComplete(row);
+      });
+      if (!estimateInRange) warnings.push('缺竞品金额/件数估算：需要录入<strong>竞品增长率</strong>');
+    }
+    if (!warnings.length) {
+      box.className = 'report-data-alert ok';
+      box.innerHTML = '当前日期范围的报表基础数据已检查：商品明细、站内外花费和竞品数据暂无明显缺口。';
+      return;
+    }
+    box.className = 'report-data-alert warn';
+    box.innerHTML = '数据导入提醒：' + warnings.join('；') + '。';
   }
 
   async function renderReportOutput() {
@@ -5673,8 +6144,12 @@
     document.querySelectorAll('[data-report-mode]').forEach(function(btn) {
       btn.classList.toggle('active', btn.getAttribute('data-report-mode') === reportMode);
     });
+    var range = currentReportRange();
+    await autoGenerateMissingEstimatesForReport(range);
+    if (!reportTemplateWorkbook) await loadReportTemplateWorkbookFromDb();
     if (reportTemplateWorkbook) await refreshReportTemplatePreviewWorkbook();
     renderReportTemplatePreview(reportTemplateActiveSheet);
+    await renderReportDataAlert(range);
   }
 
   async function copyText(text) {
@@ -6365,6 +6840,22 @@
       renderReportTemplatePreview(tab.getAttribute('data-report-sheet'));
     });
   }
+  if ($('exportDbBackupBtn')) {
+    $('exportDbBackupBtn').addEventListener('click', exportDatabaseBackup);
+  }
+  if ($('importDbBackupBtn')) {
+    $('importDbBackupBtn').addEventListener('click', function() {
+      $('dbBackupInput').click();
+    });
+  }
+  if ($('dbBackupInput')) {
+    $('dbBackupInput').addEventListener('change', async function(e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      await importDatabaseBackup(file);
+      e.target.value = '';
+    });
+  }
   datePickers.dashboard = createDateRangePicker({
     rootId: 'dashboardDatePickerField',
     inputId: 'dashboardDateInput',
@@ -6903,6 +7394,8 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
   openDb().then(async function() {
     $('dbStatus').textContent = '本地库准备中';
     await loadMonitorTracksFromDb();
+    if (reportTemplateWorkbook) await saveReportTemplateWorkbook();
+    await loadReportTemplateWorkbookFromDb();
     await stripRawSnapshotRows();
     await normalizeCompetitorSkuDefaults();
     await mergeDuplicateSeriesColumns();
