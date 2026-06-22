@@ -1831,7 +1831,6 @@
   var estimateSavedRange = JSON.parse(localStorage.getItem('jdEstimateDateRange') || 'null');
   var estimateAutoGenerating = false;
   var estimateAutoAttemptedKeys = {};
-  var reportEstimateAutoAttemptedKeys = {};
   var enableOrderDimension = localStorage.getItem('jdEnableOrderDimension') === 'true';
   var cleanupSelectedSnapshotIds = new Set();
   var skuColumnLabels = JSON.parse(localStorage.getItem('jdSkuColumnLabels') || '{}');
@@ -4303,9 +4302,6 @@
   async function autoGenerateMissingEstimatesForReport(range) {
     var normalized = normalizedRange(range && range.start, range && (range.end || range.start));
     if (!db || !normalized || estimateAutoGenerating) return 0;
-    var autoKey = ['report', normalized.start, normalized.end].join('|');
-    if (reportEstimateAutoAttemptedKeys[autoKey]) return 0;
-    reportEstimateAutoAttemptedKeys[autoKey] = true;
     estimateAutoGenerating = true;
     try {
       var dates = datesInRange(normalized.start, normalized.end || normalized.start);
@@ -4315,8 +4311,7 @@
       var trackedSkus = skuRows.filter(function(row) {
         return row.itemType === 'competitor' && row.isTrackedCompetitor && normalizeSkuValue(row.sku);
       }).map(function(row) { return normalizeSkuValue(row.sku); });
-      var rankingSkus = rankings.map(function(row) { return normalizeSkuValue(row.sku); }).filter(Boolean);
-      var skus = Array.from(new Set(trackedSkus.concat(rankingSkus)));
+      var skus = Array.from(new Set(trackedSkus));
       var maps = buildEstimateRowMaps(estimates, rankings);
       var touched = {};
       dates.forEach(function(date) {
@@ -4337,6 +4332,35 @@
     } finally {
       estimateAutoGenerating = false;
     }
+  }
+
+  function collectMissingEstimateGrowthWarnings(skuRows, estimateRows, rankingRows, range) {
+    var normalized = normalizedRange(range && range.start, range && (range.end || range.start));
+    if (!normalized) return [];
+    var dates = datesInRange(normalized.start, normalized.end || normalized.start);
+    var trackedProfiles = (skuRows || []).filter(function(row) {
+      return row.itemType === 'competitor' && row.isTrackedCompetitor && normalizeSkuValue(row.sku);
+    });
+    var maps = buildEstimateRowMaps(estimateRows || [], rankingRows || []);
+    var missing = {};
+    dates.forEach(function(date) {
+      trackedProfiles.forEach(function(profile) {
+        var sku = normalizeSkuValue(profile.sku);
+        if (!sku) return;
+        var estimate = maps.estimateMap[estimateDateKey(sku, date)];
+        var ranking = maps.rankingMap[estimateDateKey(sku, date)];
+        if (!ranking) return;
+        estimateMetricConfigs().forEach(function(config) {
+          if (metricRangeFromEstimate(estimate, config)) return;
+          if (!metricRangeFromRanking(ranking, config)) return;
+          if (growthCoefficientRange(ranking, config)) return;
+          var name = profile.shortName || sku;
+          var key = date + '|' + config.key + '|' + sku;
+          missing[key] = date + ' ' + name + config.label + '增长率';
+        });
+      });
+    });
+    return Object.keys(missing).sort().map(function(key) { return missing[key]; });
   }
 
   async function renderEstimatesDb() {
@@ -4652,7 +4676,8 @@
     if (!matrix.length) return [];
     function isStrongHeaderRow(row) {
       var normalized = (row || []).map(normalizeHeader);
-      return normalized.indexOf('skuid') !== -1 && normalized.indexOf('\u70b9\u51fb\u65f6\u95f4') !== -1 && normalized.indexOf('\u82b1\u8d39') !== -1;
+      var hasMarketingDate = normalized.indexOf('\u70b9\u51fb\u65f6\u95f4') !== -1 || normalized.indexOf('\u4e0b\u5355\u65f6\u95f4') !== -1;
+      return normalized.indexOf('skuid') !== -1 && hasMarketingDate && normalized.indexOf('\u82b1\u8d39') !== -1;
     }
     function headerScore(row) {
       var normalized = (row || []).map(normalizeHeader);
@@ -4660,7 +4685,7 @@
       var strong = [
         'sku', 'skuid', '\u5546\u54c1id', '\u5546\u54c1\u7f16\u53f7', 'sku\u540d\u79f0',
         '\u5546\u54c1\u540d\u79f0', '\u7b80\u79f0', '\u5546\u54c1\u7b80\u79f0',
-        '\u70b9\u51fb\u65f6\u95f4', '\u82b1\u8d39', '\u6295\u4ea7\u6bd4',
+        '\u70b9\u51fb\u65f6\u95f4', '\u4e0b\u5355\u65f6\u95f4', '\u82b1\u8d39', '\u6295\u4ea7\u6bd4',
         '\u6210\u4ea4\u91d1\u989d', '\u6210\u4ea4\u5546\u54c1\u4ef6\u6570', '\u5546\u54c1\u8bbf\u5ba2\u6570',
         '\u5b8c\u6210\u65e5\u671f', '\u603b\u4f63\u91d1', '\u8ba2\u5355\u7f16\u53f7', '\u63a8\u5ba2pin', '\u4e0b\u5355\u65e5\u671f'
       ];
@@ -5026,7 +5051,7 @@
     var sample = rows[0] || {};
     var headers = Object.keys(sample);
     var resolvedColumns = {
-      date: resolveImportColumn(headers, dateMap && dateMap.column, ['\u70b9\u51fb\u65f6\u95f4', '\u65f6\u95f4', '\u65e5\u671f']),
+      date: resolveImportColumn(headers, dateMap && dateMap.column, ['\u70b9\u51fb\u65f6\u95f4', '\u4e0b\u5355\u65f6\u95f4', '\u7edf\u8ba1\u65f6\u95f4', '\u6295\u653e\u65f6\u95f4', '\u65f6\u95f4', '\u65e5\u671f']),
       sku: resolveImportColumn(headers, skuMap && skuMap.column, ['SKU ID', 'SKU', 'sku', 'sku id'])
     };
     mappings.forEach(function(item) {
@@ -5040,7 +5065,7 @@
       return item.column && headers.indexOf(item.column) === -1 && headers.indexOf(resolvedColumns[item.key]) === -1;
     }).map(function(item) { return item.column; });
     if (!resolvedColumns.date || headers.indexOf(resolvedColumns.date) === -1) {
-      return { saved: 0, skipped: rows.length, note: '\u6ca1\u6709\u5339\u914d\u5230\u70b9\u51fb\u65f6\u95f4\u5217\uff1b\u8bc6\u522b\u5230\u7684\u8868\u5934\uff1a' + headers.slice(0, 8).join('\u3001') };
+      return { saved: 0, skipped: rows.length, note: '\u6ca1\u6709\u5339\u914d\u5230\u65f6\u95f4\u5217\uff08\u70b9\u51fb\u65f6\u95f4/\u4e0b\u5355\u65f6\u95f4/\u7edf\u8ba1\u65f6\u95f4\uff09\uff1b\u8bc6\u522b\u5230\u7684\u8868\u5934\uff1a' + headers.slice(0, 8).join('\u3001') };
     }
     if (!resolvedColumns.sku || headers.indexOf(resolvedColumns.sku) === -1) {
       return { saved: 0, skipped: rows.length, note: '\u6ca1\u6709\u5339\u914d\u5230 SKU \u5217\uff1b\u8bc6\u522b\u5230\u7684\u8868\u5934\uff1a' + headers.slice(0, 8).join('\u3001') };
@@ -5655,6 +5680,7 @@
         var sku = normalizeSkuValue(row.sku);
         if (!sku) return;
         var profile = skuMap[sku] || {};
+        if (!profile.isTrackedCompetitor) return;
         var name = profile.shortName || row.sourceSheet || sku;
         if (!groups[sku]) {
           groups[sku] = { name: name, amountMin: 0, amountMax: 0, qtyMin: 0, qtyMax: 0, rank: '' };
@@ -5684,6 +5710,10 @@
       });
       return output;
     }
+    rows = rows.filter(function(row) {
+      var profile = skuMap[normalizeSkuValue(row.sku)] || {};
+      return !!profile.isTrackedCompetitor;
+    });
     rows.sort(function(a, b) {
       return String(a.startDate || '').localeCompare(String(b.startDate || '')) || String(a.sourceSheet || a.sku || '').localeCompare(String(b.sourceSheet || b.sku || ''), 'zh-Hans-CN', { numeric: true });
     }).forEach(function(row) {
@@ -5713,10 +5743,11 @@
       if ($('reportMsg')) $('reportMsg').textContent = '表格组件还没加载完成，请稍后重试。';
       return null;
     }
+    var range = datePickers.report ? datePickers.report.getRange() : normalizedRange($('reportStartDate').value, $('reportEndDate').value || $('reportStartDate').value);
+    await autoGenerateMissingEstimatesForReport(range);
     var source = await loadReportSourceRows();
     var estimateRows = await getAll('competitor_estimates');
     var rankingRows = await getAll('ranking_raw_metrics');
-    var range = datePickers.report ? datePickers.report.getRange() : normalizedRange($('reportStartDate').value, $('reportEndDate').value || $('reportStartDate').value);
     var wb = XLSX.utils.book_new();
     getSelectedReportDimensions().forEach(function(dim) {
       var aoa = buildReportDimensionRows(source.rows, source.skuMap, dim, range, source.rankingRows);
@@ -6123,10 +6154,12 @@
         return trackedMap[normalizeSkuValue(row.sku)] && Number(row.rank || 0);
       });
       if (!rankingInRange) warnings.push('缺竞品排名：需要导入<strong>商品榜单数据</strong>');
-      var estimateInRange = filterMetricRowsByDateRange(estimateRows, range).some(function(row) {
-        return trackedMap[normalizeSkuValue(row.sku)] && estimateRowComplete(row);
-      });
-      if (!estimateInRange) warnings.push('缺竞品金额/件数估算：需要录入<strong>竞品增长率</strong>');
+      var missingGrowth = collectMissingEstimateGrowthWarnings(skuRows, estimateRows, rankingRows, range);
+      if (missingGrowth.length) {
+        var visible = missingGrowth.slice(0, 8).map(function(text) { return '<strong>缺' + esc(text) + '</strong>'; });
+        if (missingGrowth.length > visible.length) visible.push('另有 ' + (missingGrowth.length - visible.length) + ' 项增长率缺口');
+        warnings.push(visible.join('、'));
+      }
     }
     if (!warnings.length) {
       box.className = 'report-data-alert ok';
