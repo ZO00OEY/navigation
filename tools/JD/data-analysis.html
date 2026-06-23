@@ -46,7 +46,7 @@
   display: flex; flex-direction: column;
   position: fixed; left: 0; top: 0; z-index: 15;
   height: 100vh; min-height: 0;
-  border-right: 1px solid #dde1e8;
+  border-right: 3px solid var(--link-color);
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
 }
@@ -120,6 +120,139 @@
   border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; background: var(--card-bg);
   padding: 18px; min-width: 0; box-shadow: 0 2px 8px rgba(40, 46, 56, 0.035);
 }
+.management-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.management-group {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+.management-link {
+  width: 100%;
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 3px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.shortcut-link {
+  width: min(360px, 100%);
+  margin-top: 14px;
+}
+.management-link:hover {
+  border-color: rgba(222, 115, 158, 0.42);
+  background: rgba(222, 115, 158, 0.05);
+}
+.management-link.danger-soft {
+  border-color: rgba(220, 58, 58, 0.34);
+  background: rgba(220, 58, 58, 0.1);
+}
+.management-link.danger-soft:hover {
+  border-color: rgba(220, 58, 58, 0.54);
+  background: rgba(220, 58, 58, 0.16);
+}
+.management-link strong {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--text);
+  font-size: 0.82rem;
+}
+.management-link span {
+  display: block;
+  color: var(--text-tertiary);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.management-link::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border: solid var(--text-tertiary);
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(-45deg);
+}
+.db-browser-toolbar {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(220px, 1fr) minmax(120px, 150px) max-content;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.db-json-cell {
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 0.72rem;
+}
+.db-browser-meta {
+  margin: -4px 0 10px;
+  color: var(--text-tertiary);
+  font-size: 0.74rem;
+}
+.db-browser-detail {
+  margin-top: 12px;
+  border: 1px solid var(--line-medium, var(--card-border));
+  background: #fff;
+  color: var(--text);
+  padding: 12px;
+  max-height: 320px;
+  overflow: auto;
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 0.73rem;
+  line-height: 1.55;
+}
+.sku-panel.is-hidden { display: none; }
+.danger-zone {
+  margin-top: 14px;
+  border-color: rgba(220, 58, 58, 0.38);
+  background: rgba(220, 58, 58, 0.09);
+}
+.danger-zone .panel-title { color: #c73535; }
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: none;
+  place-items: center;
+  padding: 24px;
+  background: rgba(26, 24, 30, 0.36);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.modal-backdrop.open { display: grid; }
+.confirm-modal {
+  width: min(520px, 100%);
+  border: 1px solid rgba(220, 58, 58, 0.34);
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 22px 70px rgba(45, 34, 42, 0.24);
+  padding: 18px;
+}
+.confirm-modal h2 {
+  margin: 0 0 8px;
+  color: #c73535;
+  font-size: 1rem;
+}
+.confirm-modal p {
+  margin: 0 0 12px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+.confirm-modal .btn-row { justify-content: flex-end; }
 .import-rule-card {
   margin: 10px 0 12px;
   border: 1px solid var(--line-medium, var(--card-border));
@@ -584,6 +717,54 @@
   font-size: 0.72rem; font-weight: 700;
 }
 .mapping-add-btn:hover { background: rgba(222, 115, 158, 0.16); }
+.tool-data-table,
+.mapping-table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 940px;
+}
+.tool-data-table th,
+.tool-data-table td {
+  padding: 8px 13px;
+  height: 38px;
+  line-height: 1.3;
+}
+.tool-data-table th {
+  background: #ffffff;
+  color: #141820;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.tool-data-table td {
+  background: #ffffff;
+  color: var(--text);
+}
+.tool-data-table tbody tr:hover td { background: rgba(222, 115, 158, 0.025); }
+.mapping-table code {
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+.mapping-table .input {
+  width: 100%;
+  min-height: 30px;
+  padding: 4px 9px;
+  border-color: transparent;
+  background: transparent;
+}
+.mapping-table .input:hover {
+  border-color: rgba(222, 115, 158, 0.22);
+  background: rgba(222, 115, 158, 0.025);
+}
+.mapping-table .input:focus {
+  border-color: rgba(222, 115, 158, 0.72);
+  background: rgba(222, 115, 158, 0.045);
+}
+.mapping-table td:nth-child(4) {
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
 
 .table-wrap { overflow: auto; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; background: #ffffff; }
 .sku-table-wrap { max-height: 690px; background: #ffffff; }
@@ -601,9 +782,10 @@
 .data-table { width: 100%; border-collapse: collapse; min-width: 720px; font-size: 0.78rem; }
 .sku-table { table-layout: fixed; min-width: 0; }
 .sku-table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.data-table th, .data-table td { padding: 7px 10px; border-bottom: 1px solid var(--line-soft, var(--card-border)); text-align: left; vertical-align: middle; }
+.data-table th, .data-table td { padding: 7px 10px; height: 36px; border-bottom: 1px solid var(--line-soft, var(--card-border)); text-align: left; vertical-align: middle; }
 .data-table th { color: var(--text); background: #fafafa; font-weight: 700; white-space: nowrap; }
 .data-table td { color: var(--text); }
+.data-table:not(.sku-table):not(.manual-entry-table) td { white-space: nowrap; }
 .data-table tr:last-child td { border-bottom: none; }
 .data-table .input, .data-table .select { min-height: 30px; padding: 5px 10px; }
 .data-table.resizable-table { table-layout: fixed; min-width: 0; }
@@ -828,18 +1010,101 @@
 .footer span { color: var(--text-tertiary); opacity: 0.65; font-size: 0.72rem; }
 
 @media (max-width: 860px) {
-  .tool-shell { grid-template-columns: 1fr; min-height: 680px; overflow: hidden; }
-  .tool-sidebar { grid-column: 1; grid-row: 1; position: static; height: auto; min-height: 0; width: 100%; display: flex; overflow-x: auto; padding: 0; border-right: none; border-bottom: 1px solid var(--line-medium, var(--card-border)); }
+  .tool-shell { grid-template-columns: 92px minmax(0, 1fr); min-height: 680px; overflow: visible; }
+  .tool-sidebar {
+    grid-column: 1;
+    grid-row: 1;
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 92px;
+    height: 100svh;
+    min-height: 0;
+    padding: 66px 8px 14px;
+  border-right: 3px solid var(--link-color);
+    border-bottom: none;
+    background: rgba(255, 247, 250, 0.82);
+    box-shadow: 10px 0 28px rgba(49, 35, 39, 0.035);
+    backdrop-filter: blur(12px) saturate(1.03);
+    -webkit-backdrop-filter: blur(12px) saturate(1.03);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .tool-sidebar::after {
+    content: "";
+    position: absolute;
+    inset: 0 -10px 0 auto;
+    width: 10px;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(222, 115, 158, 0.16), rgba(222, 115, 158, 0.05) 48%, transparent);
+  }
+  [data-theme="dark"] .tool-sidebar {
+    border-right-color: var(--link-color);
+    background: rgba(19, 20, 28, 0.84);
+    box-shadow: 10px 0 28px rgba(0, 0, 0, 0.16);
+  }
+  [data-theme="dark"] .tool-sidebar::after {
+    background: linear-gradient(to right, rgba(222, 115, 158, 0.18), rgba(222, 115, 158, 0.06) 48%, transparent);
+  }
+  .sidebar-main {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
   .sidebar-section-title { display: none; }
-  .back-link { position: static; display: inline-flex; margin: 14px 18px 0; }
-  .tab-btn { white-space: nowrap; border-left: none; border-bottom: 2px solid transparent; justify-content: center; }
-  .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--link-color); }
-  .tool-main { grid-column: 1; grid-row: 2; padding: 22px 18px; }
+  .back-link {
+    position: fixed;
+    left: 22px;
+    top: 12px;
+    z-index: 24;
+    width: 48px;
+    height: 42px;
+    margin: 0;
+    padding: 0;
+    border-radius: 14px;
+    justify-content: center;
+    color: #b85f78;
+    background: transparent;
+    font-size: 0;
+  }
+  .back-link::before {
+    content: "\2190";
+    font-size: 1rem;
+    line-height: 1;
+  }
+  .back-link:hover {
+    background: rgba(218, 104, 150, 0.12);
+    color: #b85f78;
+  }
+  .tab-btn {
+    min-height: 58px;
+    padding: 8px 6px;
+    border-left: 2px solid transparent;
+    border-bottom: none;
+    border-radius: 14px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+    white-space: normal;
+    font-size: 0.78rem;
+    line-height: 1.2;
+  }
+  .tab-btn:hover { background: rgba(218, 104, 150, 0.08); }
+  .tab-btn.active {
+    border-left-color: var(--link-color);
+    border-bottom-color: transparent;
+    background: rgba(222, 115, 158, 0.12);
+  }
+  .tab-kicker {
+    font-size: 0.64rem;
+    line-height: 1;
+  }
+  .tool-main { grid-column: 2; grid-row: 1; padding: 22px 14px 28px; }
   .page-head { flex-direction: column; }
   .filter-strip { grid-template-columns: 1fr; }
   .filter-left { max-width: none; }
   .filter-right, .filter-actions { align-items: flex-start; justify-content: flex-start; }
-  .grid-2, .grid-3, .metric-row, .form-grid { grid-template-columns: 1fr; }
+  .grid-2, .grid-3, .metric-row, .form-grid, .management-grid, .db-browser-toolbar { grid-template-columns: 1fr; }
   .field, .manual-control { grid-template-columns: 1fr; gap: 6px; align-items: stretch; }
   .field > .input,
   .field > .select,
@@ -850,23 +1115,16 @@
   .manual-ranking-toolbar { flex-direction: column; align-items: stretch; }
   .manual-control-box, .manual-field-trigger, .manual-date-wrap .input { width: 100%; min-width: 0; }
 }
+
+@media (max-width: 420px) {
+  .tool-shell { grid-template-columns: 84px minmax(0, 1fr); }
+  .tool-sidebar { width: 84px; padding-inline: 7px; }
+  .back-link { left: 18px; }
+  .tab-btn { font-size: 0.76rem; }
+}
 </style>
 </head>
 <body>
-
-<div class="float-wrapper" id="floatWrapper">
-  <div class="float-stack open" id="floatStack">
-    <div class="bookmark-strip">
-      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
-      <div class="bookmark-buttons">
-        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜模式"></button>
-        <a href="../../index.html" class="float-btn" title="返回导航">&larr;</a>
-        <button class="float-btn" id="backToTop" title="回到顶部">&uarr;</button>
-      </div>
-    </div>
-  </div>
-  <div class="float-w"></div>
-</div>
 
 <div class="bg-decor"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
 
@@ -876,26 +1134,14 @@
   <div class="tool-shell">
     <nav class="tool-sidebar">
       <div class="sidebar-main">
-        <button class="tab-btn active" data-page="dashboard">看板<span class="tab-kicker">01</span></button>
-        <button class="tab-btn" data-page="import">导入<span class="tab-kicker">02</span></button>
-        <button class="tab-btn" data-page="report">报表<span class="tab-kicker">03</span></button>
-        <button class="tab-btn" data-page="cost">花费<span class="tab-kicker">04</span></button>
-        <button class="tab-btn" data-page="competitor">竞品<span class="tab-kicker">05</span></button>
-        <button class="tab-btn" data-page="cleanup">清理<span class="tab-kicker">06</span></button>
-      </div>
-      <div class="sidebar-archive">
-        <div class="sidebar-section-title">数据管理</div>
-        <button class="tab-btn" data-page="db-sku">SKU 档案<span class="tab-kicker">D1</span></button>
-        <button class="tab-btn" data-page="raw-snapshots">&#23548;&#20837;&#35760;&#24405;<span class="tab-kicker">D2</span></button>
-        <button class="tab-btn" data-page="db-analyzed">商品明细数据<span class="tab-kicker">D3</span></button>
-        <button class="tab-btn" data-page="ranking-raw">商品榜单数据<span class="tab-kicker">D4</span></button>
-        <button class="tab-btn" data-page="db-estimates">竞品估算数据<span class="tab-kicker">D5</span></button>
-        <button class="tab-btn" data-page="db-backup">数据库备份<span class="tab-kicker">D6</span></button>
+        <button class="tab-btn active" data-page="import">导入<span class="tab-kicker">01</span></button>
+        <button class="tab-btn" data-page="report">报表<span class="tab-kicker">02</span></button>
+        <button class="tab-btn" data-page="data-management">功能导航<span class="tab-kicker">03</span></button>
       </div>
     </nav>
 
     <main class="tool-main">
-      <section class="tool-page active" id="dashboard">
+      <section class="tool-page" id="dashboard">
         <div class="page-head">
           <div class="page-title">
             <h1>经营数据看板</h1>
@@ -990,7 +1236,7 @@
         </div>
       </section>
 
-      <section class="tool-page" id="import">
+      <section class="tool-page active" id="import">
         <div class="page-head">
           <div class="page-title">
             <h1>数据导入中心</h1>
@@ -1082,14 +1328,10 @@
           <div class="msg" id="manualRankingMsg"></div>
         </div>
 
-        <div class="panel" style="margin-top:14px;">
-          <div class="panel-title">
-            <span>导入字段对照</span>
-          </div>
-          <p class="hint">按不同导入表维护数据抓取规则。左侧为系统内的数据名称，右侧为导入表格内该名称实际的表头名称。</p>
-          <div class="mapping-accordion" id="mappingSections"></div>
-          <div class="msg" id="mappingMsg"></div>
-        </div>
+        <button class="management-link shortcut-link" type="button" data-management-link="import-settings">
+          <span><strong>自定义导入规则</strong>设置日常原始数据的文件识别、导入选项和表头字段匹配。</span>
+        </button>
+
       </section>
 
       <section class="tool-page" id="report">
@@ -1190,6 +1432,101 @@
         </div>
       </section>
 
+      <section class="tool-page" id="data-management">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>数据管理</h1>
+            <p>把底层档案、看板数据和数据库维护入口集中到这里，左侧只保留日常主流程。</p>
+          </div>
+        </div>
+
+        <div class="management-grid">
+          <div class="panel management-group">
+            <div class="panel-title">交易数据</div>
+            <button class="management-link" type="button" data-management-link="db-analyzed">
+              <span><strong>本店商品</strong>查看由商品销售明细、站内外花费整理出的商品明细数据。</span>
+            </button>
+            <button class="management-link" type="button" data-management-link="ranking-raw">
+              <span><strong>行业商品榜单</strong>查看行业商品榜单解析后的榜单数据。</span>
+            </button>
+            <button class="management-link" type="button" data-management-link="db-estimates">
+              <span><strong>竞品追踪</strong>查看竞品数据估算结果和估算区间。</span>
+            </button>
+          </div>
+
+          <div class="panel management-group">
+            <div class="panel-title">档案管理</div>
+            <button class="management-link" type="button" data-management-link="db-sku" data-focus-target="ownSkuTable" data-sku-view="own">
+              <span><strong>本品 SKU 档案</strong>维护本店商品 SKU、简称、系列和品牌等基础信息。</span>
+            </button>
+            <button class="management-link" type="button" data-management-link="db-sku" data-focus-target="competitorSkuTable" data-sku-view="competitor">
+              <span><strong>竞品 SKU 档案</strong>维护竞品 SKU、品牌和重点跟踪标记。</span>
+            </button>
+          </div>
+
+          <div class="panel management-group">
+            <div class="panel-title">数据库管理</div>
+            <button class="management-link" type="button" data-management-link="raw-snapshots">
+              <span><strong>文件导入记录</strong>查看每次导入的识别信息、文件名、行数和状态。</span>
+            </button>
+            <button class="management-link" type="button" data-management-link="db-browser">
+              <span><strong>数据库浏览</strong>直接浏览当前 IndexedDB 中各数据表的原始记录。</span>
+            </button>
+            <button class="management-link danger-soft" type="button" data-management-link="db-backup">
+              <span><strong>数据库备份</strong>导出整库备份，或用备份文件恢复当前数据库。</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="import-settings">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>自定义导入规则</h1>
+            <p>自定义日常原始数据导入规则，包括文件名识别、导入选项和表头字段匹配。这里后续也可以继续扩展其他导入设置项。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>表格识别与字段匹配</span>
+          </div>
+          <p class="hint">按不同导入表维护数据抓取规则。数据库字段名会对应数据库浏览里看到的实际字段；原始表格表头必须和日常导入文件中的列名一致。</p>
+          <div class="mapping-accordion" id="mappingSections"></div>
+          <div class="msg" id="mappingMsg"></div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="db-browser">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>数据库浏览</h1>
+            <p>直接读取当前浏览器 IndexedDB 中的本地数据表，适合快速核对整库内容和原始字段。</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>当前数据库</span>
+            <button class="btn" id="refreshDbBrowserBtn" type="button">刷新</button>
+          </div>
+          <div class="db-browser-toolbar">
+            <select class="select" id="dbBrowserStoreSelect"></select>
+            <input class="input" type="search" id="dbBrowserSearch" placeholder="搜索当前表">
+            <input class="input" type="number" id="dbBrowserLimit" min="10" max="1000" step="10" value="100" title="显示行数">
+            <button class="btn" id="dbBrowserExportBtn" type="button">导出当前表</button>
+          </div>
+          <div class="db-browser-meta" id="dbBrowserMeta">本地库准备中。</div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead id="dbBrowserHead"><tr><th>表</th><th>记录</th></tr></thead>
+              <tbody id="dbBrowserBody"><tr><td class="empty-row" colspan="2">请选择数据表</td></tr></tbody>
+            </table>
+          </div>
+          <pre class="db-browser-detail" id="dbBrowserDetail">点击任意行查看完整 JSON。</pre>
+        </div>
+      </section>
+
       <section class="tool-page" id="raw-snapshots">
         <div class="page-head">
           <div class="page-title">
@@ -1232,7 +1569,7 @@
         </div>
 
         <div class="sku-board">
-          <div class="panel sku-panel">
+          <div class="panel sku-panel" data-sku-section="own">
             <div class="sku-titlebar">
               <div>
                 <h2>&#26412;&#21697; SKU &#21015;&#34920;</h2>
@@ -1251,7 +1588,7 @@
             <div class="sku-msg-line" id="ownSkuMsg"></div>
           </div>
 
-          <div class="panel sku-panel">
+          <div class="panel sku-panel" data-sku-section="competitor">
             <div class="sku-titlebar">
               <div>
                 <h2>&#31454;&#21697; SKU &#21015;&#34920;</h2>
@@ -1716,11 +2053,46 @@
           <div class="note" style="margin-top:12px;">导入会用备份文件覆盖当前本地数据库。建议先导出一份当前备份，再导入新的备份文件。</div>
           <div class="msg" id="dbBackupMsg"></div>
         </div>
+
+        <div class="panel danger-zone">
+          <div class="panel-title">
+            <span>全部数据清除</span>
+          </div>
+          <p class="note">会清空当前 IndexedDB 数据表，并清除本工具缓存的设置状态。建议先导出数据库备份。</p>
+          <div class="btn-row" style="margin-top:10px;">
+            <button class="btn danger" id="openClearDatabaseModalBtn" type="button">清除全部数据</button>
+          </div>
+        </div>
       </section>
     </main>
   </div>
 
   <footer class="footer"><span>数据分析小工具</span></footer>
+</div>
+
+<div class="modal-backdrop" id="clearDatabaseModal" aria-hidden="true">
+  <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="clearDatabaseTitle">
+    <h2 id="clearDatabaseTitle">确认清除全部数据？</h2>
+    <p>这会清空 SKU 档案、导入记录、商品明细数据、商品榜单数据、竞品估算数据、应用设置和本工具缓存的设置状态。建议清除前先导出当前数据库备份。</p>
+    <div class="btn-row">
+      <button class="btn" id="exportBeforeClearDbBtn" type="button">先导出当前数据库</button>
+      <button class="btn" id="cancelClearDatabaseBtn" type="button">取消</button>
+      <button class="btn danger" id="confirmClearDatabaseBtn" type="button">确认清除</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="customFieldConflictModal" aria-hidden="true">
+  <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="customFieldConflictTitle">
+    <h2 id="customFieldConflictTitle">这个字段名之前使用过</h2>
+    <p id="customFieldConflictText">当前字段名对应的数据库字段曾经被删除过，可能仍有历史数据。</p>
+    <div class="btn-row">
+      <button class="btn" id="cancelCustomFieldConflictBtn" type="button">取消</button>
+      <button class="btn" id="newCustomFieldKeyBtn" type="button">作为新字段启用</button>
+      <button class="btn" id="reuseCustomFieldKeyBtn" type="button">继承历史数据</button>
+      <button class="btn danger" id="clearReuseCustomFieldKeyBtn" type="button">清空旧值并复用</button>
+    </div>
+  </div>
 </div>
 
 <script src="../../guides/shared.js"></script>
@@ -1733,6 +2105,8 @@
   var draggingColumnKey = null;
   var dropColumnSide = 'before';
   var resizingColumn = null;
+  var dbBrowserRows = [];
+  var skuArchiveView = 'all';
   var skuSortState = JSON.parse(localStorage.getItem('jdSkuSortState') || '{"own":null,"competitor":null}');
 
   var labels = {
@@ -1754,6 +2128,14 @@
     'competitor_estimates',
     'app_settings'
   ];
+  var DB_STORE_LABELS = {
+    sku_profiles: 'SKU 档案',
+    raw_snapshots: '导入记录',
+    analyzed_metrics: '商品明细数据',
+    ranking_raw_metrics: '商品榜单数据',
+    competitor_estimates: '竞品估算数据',
+    app_settings: '应用设置'
+  };
   var DEFAULT_IMPORT_MAPPINGS = {
     sales_detail: [
       { key: 'date', label: '时间', column: '时间', locked: true, note: '按原表时间保存，单日与跨期分开入库' },
@@ -1800,6 +2182,7 @@
   };
   var importMappings = JSON.parse(localStorage.getItem('jdImportMappings') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_MAPPINGS));
   var importRules = JSON.parse(localStorage.getItem('jdImportRules') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_RULES));
+  var importCustomFieldRegistry = JSON.parse(localStorage.getItem('jdImportCustomFieldRegistry') || '{}');
   var mappingSections = [
     { type: 'sales_detail', title: '商品明细表', sourceName: '商品明细数据', sourceUrl: 'https://jdsz.jd.com/szweb/view/product/productDetail.html', desc: '用于导入 SKU 粒度的成交、访客、转化和价格等商品明细数据。', open: false },
     { type: 'onsite_cost', title: '站内花费', sourceName: '营销概况', sourceUrl: 'https://jzt.jd.com/custom-report/#/overview', desc: '用于导入京准通营销概况里的站内投放花费数据。', open: false },
@@ -1911,6 +2294,9 @@
   }
   function saveImportRules() {
     localStorage.setItem('jdImportRules', JSON.stringify(importRules));
+  }
+  function saveImportCustomFieldRegistry() {
+    localStorage.setItem('jdImportCustomFieldRegistry', JSON.stringify(importCustomFieldRegistry));
   }
   function getImportMappings(type) {
     if (!importMappings[type]) importMappings[type] = JSON.parse(JSON.stringify(DEFAULT_IMPORT_MAPPINGS[type] || []));
@@ -2623,6 +3009,15 @@
     return data;
   }
 
+  function clearBackupLocalStorage() {
+    var keys = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+      if (key && key.indexOf('jd') === 0) keys.push(key);
+    }
+    keys.forEach(function(key) { localStorage.removeItem(key); });
+  }
+
   async function exportDatabaseBackup() {
     if (!db) {
       setDbBackupMsg('本地数据库还没准备好，请稍后再试。', true);
@@ -2683,7 +3078,7 @@
       await renderSkus();
       await renderDashboard();
       await renderAnalyzedDb();
-      if ((location.hash.slice(1) || 'dashboard') === 'report') await renderReportOutput();
+      if ((location.hash.slice(1) || 'import') === 'report') await renderReportOutput();
       setDbBackupMsg('已导入数据库备份。', false);
       setTimeout(function() { location.reload(); }, 700);
     } catch (err) {
@@ -2697,7 +3092,17 @@
     document.querySelectorAll('.tool-page').forEach(function(page) { page.classList.remove('active'); });
     document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
     var page = $(id);
+    if (!page) {
+      id = 'import';
+      page = $(id);
+    }
     var btn = document.querySelector('.tab-btn[data-page="' + id + '"]');
+    if (!btn && id === 'import-settings') {
+      btn = document.querySelector('.tab-btn[data-page="import"]');
+    }
+    if (!btn && ['db-browser', 'db-sku', 'raw-snapshots', 'db-analyzed', 'ranking-raw', 'db-estimates', 'db-backup'].indexOf(id) !== -1) {
+      btn = document.querySelector('.tab-btn[data-page="data-management"]');
+    }
     if (page) page.classList.add('active');
     if (btn) btn.classList.add('active');
   }
@@ -2714,12 +3119,121 @@
     renderTrackedCompetitors(skus);
   }
 
+  function getDbBrowserStores() {
+    if (!db) return [];
+    var stores = Array.prototype.slice.call(db.objectStoreNames || []);
+    return stores.sort(function(a, b) {
+      var ai = BACKUP_STORES.indexOf(a);
+      var bi = BACKUP_STORES.indexOf(b);
+      if (ai === -1) ai = 999;
+      if (bi === -1) bi = 999;
+      return ai === bi ? a.localeCompare(b) : ai - bi;
+    });
+  }
+
+  function renderDbBrowserStoreOptions() {
+    var select = $('dbBrowserStoreSelect');
+    if (!select) return;
+    var current = select.value;
+    var stores = getDbBrowserStores();
+    select.innerHTML = stores.map(function(store) {
+      var label = DB_STORE_LABELS[store] || store;
+      return '<option value="' + esc(store) + '">' + esc(label + ' / ' + store) + '</option>';
+    }).join('');
+    if (current && stores.indexOf(current) !== -1) select.value = current;
+    else if (stores.length) select.value = stores[0];
+  }
+
+  function stringifyDbValue(value) {
+    if (value == null) return '';
+    if (typeof value === 'object') {
+      try { return JSON.stringify(value); } catch (err) { return String(value); }
+    }
+    return String(value);
+  }
+
+  function getDbBrowserColumns(rows) {
+    var preferred = ['id', 'key', 'sku', 'itemType', 'shortName', 'sourceType', 'periodType', 'startDate', 'endDate', 'fileName', 'importedAt'];
+    var seen = {};
+    var columns = [];
+    preferred.forEach(function(key) {
+      if (rows.some(function(row) { return row && Object.prototype.hasOwnProperty.call(row, key); })) {
+        seen[key] = true;
+        columns.push(key);
+      }
+    });
+    rows.forEach(function(row) {
+      Object.keys(row || {}).forEach(function(key) {
+        if (!seen[key]) {
+          seen[key] = true;
+          columns.push(key);
+        }
+      });
+    });
+    return columns.length ? columns : ['记录'];
+  }
+
+  async function renderDbBrowser() {
+    if (!$('dbBrowserStoreSelect')) return;
+    if (!db) {
+      $('dbBrowserMeta').textContent = '本地库还没准备好，请稍后刷新。';
+      return;
+    }
+    renderDbBrowserStoreOptions();
+    var store = $('dbBrowserStoreSelect').value;
+    if (!store) {
+      $('dbBrowserHead').innerHTML = '<tr><th>表</th><th>记录</th></tr>';
+      $('dbBrowserBody').innerHTML = '<tr><td class="empty-row" colspan="2">当前数据库没有可浏览的数据表</td></tr>';
+      $('dbBrowserMeta').textContent = '没有数据表。';
+      return;
+    }
+    var rows = await getAll(store);
+    var keyword = ($('dbBrowserSearch').value || '').trim().toLowerCase();
+    var filtered = keyword ? rows.filter(function(row) {
+      return stringifyDbValue(row).toLowerCase().indexOf(keyword) !== -1;
+    }) : rows;
+    var limit = Math.max(10, Math.min(1000, Number($('dbBrowserLimit').value) || 100));
+    dbBrowserRows = filtered.slice(0, limit);
+    var columns = getDbBrowserColumns(dbBrowserRows);
+    $('dbBrowserHead').innerHTML = '<tr>' + columns.map(function(key) { return '<th>' + esc(key) + '</th>'; }).join('') + '</tr>';
+    if (!dbBrowserRows.length) {
+      $('dbBrowserBody').innerHTML = '<tr><td class="empty-row" colspan="' + columns.length + '">暂无匹配记录</td></tr>';
+    } else {
+      $('dbBrowserBody').innerHTML = dbBrowserRows.map(function(row, index) {
+        return '<tr data-db-row="' + index + '">' + columns.map(function(key) {
+          var value = key === '记录' ? row : row[key];
+          return '<td class="db-json-cell" title="' + esc(stringifyDbValue(value)) + '">' + esc(stringifyDbValue(value)) + '</td>';
+        }).join('') + '</tr>';
+      }).join('');
+    }
+    var storeLabel = DB_STORE_LABELS[store] || store;
+    $('dbBrowserMeta').textContent = storeLabel + '：共 ' + rows.length + ' 条，当前显示 ' + dbBrowserRows.length + ' 条。';
+    $('dbBrowserDetail').textContent = dbBrowserRows.length ? '点击任意行查看完整 JSON。' : '暂无可预览记录。';
+  }
+
   async function renderSkus() {
     var rows = await getAll('sku_profiles');
     rows.sort(function(a, b) { return String(a.sku).localeCompare(String(b.sku)); });
     renderSkuTable('own', rows.filter(function(row) { return row.itemType !== 'competitor'; }));
     renderSkuTable('competitor', rows.filter(function(row) { return row.itemType === 'competitor'; }));
     renderTrackedCompetitors(rows);
+    applySkuArchiveView();
+  }
+
+  function setSkuArchiveView(view) {
+    skuArchiveView = view === 'own' || view === 'competitor' ? view : 'all';
+    applySkuArchiveView();
+  }
+
+  function applySkuArchiveView() {
+    document.querySelectorAll('[data-sku-section]').forEach(function(panel) {
+      var type = panel.getAttribute('data-sku-section');
+      panel.classList.toggle('is-hidden', skuArchiveView !== 'all' && skuArchiveView !== type);
+    });
+    var title = document.querySelector('#db-sku .page-title h1');
+    if (title) {
+      title.textContent = skuArchiveView === 'own' ? '本品 SKU 档案' : skuArchiveView === 'competitor' ? '竞品 SKU 档案' : '本品竞品 SKU 档案';
+    }
   }
 
   function renderSkuTable(type, rows) {
@@ -2897,18 +3411,72 @@
     localStorage.setItem('jdSkuDimensionColumns', JSON.stringify(skuDimensionColumns));
   }
 
+  function sanitizeSkuColumnLabel(label) {
+    return String(label || '').trim().replace(/\s+/g, '_').replace(/[^\w\u4e00-\u9fa5]/g, '').slice(0, 24) || '新维度';
+  }
+
+  function uniqueSkuColumnKey(label, oldKey) {
+    var base = 'custom_' + sanitizeSkuColumnLabel(label);
+    var finalKey = base;
+    var i = 2;
+    while ((skuDimensionColumns.indexOf(finalKey) !== -1 && finalKey !== oldKey) || finalKey === 'sku' || finalKey === 'shortName' || finalKey === 'brand') {
+      finalKey = base + '_' + i++;
+    }
+    return finalKey;
+  }
+
   function makeColumnKey(label) {
     var base = String(label || '').trim() || '新维度';
     var existing = Object.keys(skuColumnLabels).find(function(key) { return skuColumnLabels[key] === base; });
     if (existing) return existing;
-    var key = 'custom_' + base.replace(/\s+/g, '_').replace(/[^\w\u4e00-\u9fa5]/g, '').slice(0, 24);
-    var finalKey = key;
-    var i = 2;
-    while (skuDimensionColumns.indexOf(finalKey) !== -1 || finalKey === 'sku' || finalKey === 'shortName' || finalKey === 'brand') {
-      finalKey = key + '_' + i++;
-    }
+    var finalKey = uniqueSkuColumnKey(base);
     skuColumnLabels[finalKey] = base;
     return finalKey;
+  }
+
+  async function renameSkuColumnKey(oldKey, label) {
+    var nextKey = uniqueSkuColumnKey(label, oldKey);
+    if (!oldKey || !label || nextKey === oldKey) return oldKey;
+    var oldLabel = skuColumnLabels[oldKey] || '';
+    if (oldKey.indexOf('custom_') !== 0) return oldKey;
+    delete skuColumnLabels[oldKey];
+    skuColumnLabels[nextKey] = label;
+    skuDimensionColumns = skuDimensionColumns.map(function(key) { return key === oldKey ? nextKey : key; });
+    Object.keys(skuColumnWidths || {}).forEach(function(widthKey) {
+      var suffix = ':' + oldKey;
+      if (widthKey.slice(-suffix.length) === suffix) {
+        skuColumnWidths[widthKey.slice(0, -oldKey.length) + nextKey] = skuColumnWidths[widthKey];
+        delete skuColumnWidths[widthKey];
+      }
+    });
+    ['own', 'competitor'].forEach(function(type) {
+      var state = skuSortState[type];
+      if (state && state.key === oldKey) state.key = nextKey;
+    });
+    var rows = await getAll('sku_profiles');
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      if (Object.prototype.hasOwnProperty.call(row, oldKey)) {
+        if (!Object.prototype.hasOwnProperty.call(row, nextKey) || row[nextKey] === '' || row[nextKey] == null) row[nextKey] = row[oldKey];
+        delete row[oldKey];
+        await put('sku_profiles', row);
+      }
+    }
+    saveSkuColumnWidths();
+    localStorage.setItem('jdSkuSortState', JSON.stringify(skuSortState));
+    saveSkuColumnState();
+    return nextKey;
+  }
+
+  async function normalizeSkuCustomColumnKeys() {
+    var keys = skuDimensionColumns.slice();
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      var label = skuColumnLabels[key];
+      if (!label || key.indexOf('custom_') !== 0) continue;
+      var expected = uniqueSkuColumnKey(label, key);
+      if (expected !== key && /^custom_\u65b0\u7ef4\u5ea6(?:_\d+)?$/.test(key)) await renameSkuColumnKey(key, label);
+    }
   }
 
   async function addSkuColumn(type) {
@@ -2944,7 +3512,10 @@
   async function finishRenameColumn(labelEl) {
     var key = labelEl.getAttribute('data-col-label');
     var next = labelEl.textContent.trim() || skuColumnLabels[key] || key;
-    skuColumnLabels[key] = next;
+    var finalKey = key;
+    if (/^custom_\u65b0\u7ef4\u5ea6(?:_\d+)?$/.test(key)) finalKey = await renameSkuColumnKey(key, next);
+    else skuColumnLabels[key] = next;
+    labelEl.setAttribute('data-col-label', finalKey);
     labelEl.textContent = next;
     labelEl.removeAttribute('contenteditable');
     saveSkuColumnState();
@@ -3028,6 +3599,41 @@
     enhanceResizableTable(body.closest('table'), scope || bodyId);
   }
 
+  function textPixelEstimate(text) {
+    text = String(text == null ? '' : text).trim();
+    var width = 0;
+    for (var i = 0; i < text.length; i++) {
+      width += /[^\x00-\xff]/.test(text.charAt(i)) ? 14 : 7;
+    }
+    return width;
+  }
+
+  function cellPlainText(cell) {
+    if (!cell) return '';
+    var input = cell.querySelector && cell.querySelector('input, select, textarea');
+    if (input) return input.value || input.textContent || '';
+    return cell.innerText || cell.textContent || '';
+  }
+
+  function estimateAutoColumnWidth(table, index, scope) {
+    var values = [];
+    var th = table.querySelectorAll('thead th')[index];
+    if (th) values.push(cellPlainText(th).replace(/\s*[+×-]\s*$/, ''));
+    Array.from(table.querySelectorAll('tbody tr')).slice(0, 200).forEach(function(tr) {
+      var cell = tr.children[index];
+      if (!cell || Number(cell.getAttribute('colspan') || 1) > 1) return;
+      values.push(cellPlainText(cell));
+    });
+    var textWidth = values.reduce(function(max, value) {
+      return Math.max(max, textPixelEstimate(value));
+    }, 0);
+    var width = Math.ceil(textWidth + 30);
+    var minWidth = scope === 'rankingRaw' && index >= 3 ? 118 : 64;
+    var maxWidth = scope === 'rankingRaw' ? 260 : 360;
+    if (scope === 'snapshotRecords' || scope === 'cleanupSnapshots') maxWidth = 320;
+    return Math.max(minWidth, Math.min(maxWidth, width || 116));
+  }
+
   function enhanceResizableTable(table, scope) {
     if (!table || table.classList.contains('sku-table')) return;
     var ths = Array.from(table.querySelectorAll('thead th'));
@@ -3045,8 +3651,8 @@
     ths.forEach(function(th, index) {
       var key = th.getAttribute('data-col-key') || ('col' + index);
       var storedWidth = Number(genericColumnWidths[scope + ':' + key] || 0);
-      var measuredWidth = Math.round(th.getBoundingClientRect().width) || 116;
-      var defaultWidth = scope === 'manualRanking' ? (index === 0 ? 190 : 220) : measuredWidth;
+      var autoWidth = estimateAutoColumnWidth(table, index, scope);
+      var defaultWidth = scope === 'manualRanking' ? (index === 0 ? 190 : 220) : autoWidth;
       var width = Math.max(58, storedWidth || defaultWidth);
       if (scope === 'manualRanking') width = Math.min(width, index === 0 ? 220 : 260);
       total += width;
@@ -3143,6 +3749,170 @@
       .replace(/[\s　:：]/g, '')
       .trim()
       .toLowerCase();
+  }
+
+  function makeCustomImportFieldKey(label, mappings, currentIndex) {
+    var baseLabel = String(label || '').trim() || '自定义字段';
+    var base = 'custom_' + baseLabel.replace(/\s+/g, '_').replace(/[^\w\u4e00-\u9fa5]/g, '').slice(0, 24);
+    if (base === 'custom_') base = 'custom_field';
+    var existing = {};
+    (mappings || []).forEach(function(item, index) {
+      if (index !== currentIndex && item && item.key) existing[item.key] = true;
+    });
+    var key = base;
+    var i = 2;
+    while (existing[key]) key = base + '_' + i++;
+    return key;
+  }
+
+  function makeCustomImportFieldBaseKey(label) {
+    var baseLabel = String(label || '').trim() || '自定义字段';
+    var base = 'custom_' + baseLabel.replace(/\s+/g, '_').replace(/[^\w\u4e00-\u9fa5]/g, '').slice(0, 24);
+    return base === 'custom_' ? 'custom_field' : base;
+  }
+
+  function importCustomRegistryId(type, key) {
+    return type + ':' + key;
+  }
+
+  function importMappingStore(type) {
+    return type === 'industry_ranking' ? 'ranking_raw_metrics' : 'analyzed_metrics';
+  }
+
+  function rememberCustomImportField(type, key, label, status) {
+    if (!key || key.indexOf('custom_') !== 0) return;
+    var id = importCustomRegistryId(type, key);
+    var previous = importCustomFieldRegistry[id] || {};
+    importCustomFieldRegistry[id] = {
+      type: type,
+      key: key,
+      label: label || previous.label || key.replace(/^custom_/, ''),
+      createdAt: previous.createdAt || new Date().toISOString(),
+      deletedAt: status === 'deleted' ? new Date().toISOString() : (status === 'active' ? '' : previous.deletedAt || ''),
+      lastUsedAt: new Date().toISOString()
+    };
+    saveImportCustomFieldRegistry();
+  }
+
+  function nextFreshCustomImportFieldKey(type, baseKey, mappings, currentIndex) {
+    var existing = {};
+    (mappings || []).forEach(function(item, index) {
+      if (index !== currentIndex && item && item.key) existing[item.key] = true;
+    });
+    var key = baseKey;
+    var i = 2;
+    while (existing[key] || importCustomFieldRegistry[importCustomRegistryId(type, key)]) key = baseKey + '_' + i++;
+    return key;
+  }
+
+  async function customImportFieldHasData(type, key) {
+    if (!db || !key) return false;
+    var store = importMappingStore(type);
+    if (!db.objectStoreNames.contains(store)) return false;
+    var rows = await getAll(store);
+    return rows.some(function(row) {
+      return row && Object.prototype.hasOwnProperty.call(row, key) && row[key] !== '' && row[key] != null;
+    });
+  }
+
+  async function clearCustomImportFieldValues(type, key) {
+    if (!db || !key) return 0;
+    var store = importMappingStore(type);
+    if (!db.objectStoreNames.contains(store)) return 0;
+    var rows = await getAll(store);
+    var changed = 0;
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i] && Object.prototype.hasOwnProperty.call(rows[i], key)) {
+        delete rows[i][key];
+        changed++;
+        await put(store, rows[i]);
+      }
+    }
+    return changed;
+  }
+
+  function showCustomFieldConflictModal(context) {
+    return new Promise(function(resolve) {
+      var modal = $('customFieldConflictModal');
+      if (!modal) {
+        resolve('reuse');
+        return;
+      }
+      var text = $('customFieldConflictText');
+      if (text) {
+        text.textContent = '“' + context.label + '”对应的数据库字段 ' + context.key + ' 曾经被删除过'
+          + (context.hasData ? '，并且检测到这个字段仍有历史数据。' : '。')
+          + '你可以继承旧数据，作为全新字段启用，或清空旧值后复用这个字段名。';
+      }
+      function close(action) {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        cleanup();
+        resolve(action);
+      }
+      function onBackdrop(e) {
+        if (e.target === modal) close('cancel');
+      }
+      function cleanup() {
+        modal.removeEventListener('click', onBackdrop);
+        $('cancelCustomFieldConflictBtn').removeEventListener('click', cancel);
+        $('newCustomFieldKeyBtn').removeEventListener('click', fresh);
+        $('reuseCustomFieldKeyBtn').removeEventListener('click', reuse);
+        $('clearReuseCustomFieldKeyBtn').removeEventListener('click', clearReuse);
+      }
+      function cancel() { close('cancel'); }
+      function fresh() { close('fresh'); }
+      function reuse() { close('reuse'); }
+      function clearReuse() { close('clear-reuse'); }
+      modal.addEventListener('click', onBackdrop);
+      $('cancelCustomFieldConflictBtn').addEventListener('click', cancel);
+      $('newCustomFieldKeyBtn').addEventListener('click', fresh);
+      $('reuseCustomFieldKeyBtn').addEventListener('click', reuse);
+      $('clearReuseCustomFieldKeyBtn').addEventListener('click', clearReuse);
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+    });
+  }
+
+  async function finalizeCustomImportFieldKey(row) {
+    var type = row.dataset.type || 'sales_detail';
+    var index = Number(row.dataset.index);
+    var mappings = getImportMappings(type);
+    var item = mappings[index];
+    var labelInput = row.querySelector('.mapping-label');
+    if (!item || item.locked || !labelInput) return;
+    item.label = labelInput.value.trim() || item.label || item.key;
+    var shouldAssignKey = item.pendingKey || /^customMetric\d+$/.test(item.key || '');
+    if (!shouldAssignKey) {
+      rememberCustomImportField(type, item.key, item.label, 'active');
+      saveImportMappings();
+      return;
+    }
+    var desiredKey = makeCustomImportFieldKey(item.label, mappings, index);
+    var baseKey = makeCustomImportFieldBaseKey(item.label);
+    if (desiredKey === baseKey) {
+      var history = importCustomFieldRegistry[importCustomRegistryId(type, desiredKey)];
+      var hasData = await customImportFieldHasData(type, desiredKey);
+      if ((history && history.deletedAt) || hasData) {
+        var action = await showCustomFieldConflictModal({
+          type: type,
+          key: desiredKey,
+          label: item.label,
+          hasData: hasData
+        });
+        if (action === 'cancel') {
+          renderImportMappings();
+          return;
+        }
+        if (action === 'fresh') desiredKey = nextFreshCustomImportFieldKey(type, baseKey, mappings, index);
+        if (action === 'clear-reuse') await clearCustomImportFieldValues(type, desiredKey);
+      }
+    }
+    item.key = desiredKey;
+    item.pendingKey = false;
+    rememberCustomImportField(type, item.key, item.label, 'active');
+    saveImportMappings();
+    renderImportMappings();
   }
 
   function isSkuDimensionKey(key) {
@@ -4334,6 +5104,31 @@
     }
   }
 
+  async function clearAllDatabaseData() {
+    if (!db) {
+      setDbBackupMsg('本地数据库还没准备好，请稍后再试。', true);
+      return;
+    }
+    for (var i = 0; i < BACKUP_STORES.length; i++) {
+      var store = BACKUP_STORES[i];
+      if (db.objectStoreNames.contains(store)) await clearStore(store);
+    }
+    clearBackupLocalStorage();
+    reportTemplateWorkbook = null;
+    reportTemplatePreviewWorkbook = null;
+    reportTemplateOriginalBase64 = '';
+    await refreshCounts();
+    await renderSkus();
+    await renderDashboard();
+    await renderAnalyzedDb();
+    await renderRankingRaw();
+    await renderEstimatesDb();
+    await renderSnapshots();
+    await renderDbBrowser();
+    setDbBackupMsg('已清除全部数据库数据和本工具缓存设置。页面即将刷新。', false);
+    setTimeout(function() { location.reload(); }, 700);
+  }
+
   function collectMissingEstimateGrowthWarnings(skuRows, estimateRows, rankingRows, range) {
     var normalized = normalizedRange(range && range.start, range && (range.end || range.start));
     if (!normalized) return [];
@@ -4485,7 +5280,39 @@
     await refreshCounts();
   }
 
+  function renderToolDataTable(config) {
+    var columns = config.columns || [];
+    var rows = config.rows || [];
+    var className = config.className || '';
+    var minWidth = config.minWidth || columns.reduce(function(sum, col) { return sum + Number(col.width || 120); }, 0);
+    var colgroup = columns.map(function(col) {
+      return '<col style="width:' + Number(col.width || 120) + 'px">';
+    }).join('');
+    var head = columns.map(function(col) {
+      return '<th' + (col.className ? ' class="' + esc(col.className) + '"' : '') + '>' + (col.headHtml || esc(col.label || '')) + '</th>';
+    }).join('');
+    var body = rows.length ? rows.join('') : '<tr><td class="empty-row" colspan="' + columns.length + '">' + esc(config.emptyText || '暂无数据') + '</td></tr>';
+    return '<table class="data-table tool-data-table ' + esc(className) + '" style="min-width:' + minWidth + 'px">' +
+      '<colgroup>' + colgroup + '</colgroup><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table>';
+  }
+
   function renderImportMappings() {
+    if (!$('mappingSections')) return;
+    var migrated = false;
+    Object.keys(importMappings || {}).forEach(function(type) {
+      var mappings = getImportMappings(type);
+      mappings.forEach(function(item, index) {
+        if (item && !item.locked && /^customMetric\d+$/.test(item.key || '')) {
+          item.key = makeCustomImportFieldKey(item.label, mappings, index);
+          item.pendingKey = false;
+          migrated = true;
+        }
+        if (item && !item.locked && !item.pendingKey && item.key && item.key.indexOf('custom_') === 0) {
+          rememberCustomImportField(type, item.key, item.label, 'active');
+        }
+      });
+    });
+    if (migrated) saveImportMappings();
     $('mappingSections').innerHTML = mappingSections.map(function(section) {
       var mappings = getImportMappings(section.type);
       var rule = getImportRuleConfig(section.type);
@@ -4502,14 +5329,28 @@
         : '';
       var rows = mappings.map(function(item, index) {
         return '<tr data-type="' + esc(section.type) + '" data-index="' + index + '">' +
+          '<td><code>' + esc(item.key || '') + '</code></td>' +
           '<td>' + (item.locked
-            ? '<strong>' + esc(item.label) + '</strong>'
-            : '<input class="input mapping-key" value="' + esc(item.label || item.key) + '">') + '</td>' +
-          '<td><input class="input mapping-column" value="' + esc(item.column || '') + '" placeholder="必须完全等于表头"></td>' +
-          '<td>' + esc(item.note || '自定义追踪字段') + '</td>' +
+            ? '<strong>' + esc(item.label || item.key) + '</strong>'
+            : '<input class="input mapping-label" value="' + esc(item.label || item.key) + '">') + '</td>' +
+          '<td><input class="input mapping-column" value="' + esc(item.column || '') + '" placeholder="必须完全等于原始表头"></td>' +
+          '<td>' + esc(item.note || '自定义导入字段；会按数据库字段名写入对应数据表') + '</td>' +
           '<td>' + (item.locked ? '' : '<button class="icon-btn row-delete-btn mapping-delete" title="删除对照项">' + iconTrash() + '</button>') + '</td>' +
         '</tr>';
-      }).join('');
+      });
+      var tableHtml = renderToolDataTable({
+        className: 'mapping-table',
+        minWidth: 940,
+        columns: [
+          { label: '数据库字段名', width: 190 },
+          { label: '字段含义', width: 170 },
+          { label: '原始表格表头', width: 260 },
+          { label: '说明', width: 260 },
+          { headHtml: '<button class="mapping-add-btn" data-add-mapping="' + esc(section.type) + '">新增规则</button>', className: 'mapping-add-head', width: 92 }
+        ],
+        rows: rows,
+        emptyText: '暂无字段规则'
+      });
       return '<div class="mapping-section ' + (section.open ? 'open' : '') + '" data-mapping-section="' + esc(section.type) + '">' +
         '<button class="mapping-section-head" type="button" data-toggle-mapping="' + esc(section.type) + '">' +
           '<span class="mapping-section-title"><strong>' + esc(section.title) + '</strong><span>' + esc(section.desc) + '</span><a class="mapping-source-link" href="' + esc(section.sourceUrl) + '" target="_blank" rel="noopener" data-mapping-link>' + '数据来源：' + esc(section.sourceName) + '</a></span>' +
@@ -4520,7 +5361,7 @@
             patternRows +
             (options ? '<div class="mapping-option-row">' + options + '</div>' : '') +
           '</div>' +
-          '<div class="table-wrap"><table class="data-table"><thead><tr><th>系统数据库字段名</th><th>导入表格字段名</th><th>说明</th><th class="mapping-add-head"><button class="mapping-add-btn" data-add-mapping="' + esc(section.type) + '">新增对照项</button></th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+          '<div class="table-wrap">' + tableHtml + '</div>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -4535,11 +5376,11 @@
     var mappings = getImportMappings(type);
     var item = mappings[index];
     if (!item) return;
-    var keyInput = row.querySelector('.mapping-key');
+    var labelInput = row.querySelector('.mapping-label');
     var columnInput = row.querySelector('.mapping-column');
-    if (keyInput && !item.locked) {
-      item.label = keyInput.value.trim() || item.label || item.key;
-      item.key = normalizeHeader(item.label) || item.key;
+    if (labelInput && !item.locked) {
+      item.label = labelInput.value.trim() || item.label || item.key;
+      if (item.key && item.key.indexOf('custom_') === 0 && !item.pendingKey) rememberCustomImportField(type, item.key, item.label, 'active');
     }
     if (columnInput) item.column = columnInput.value.trim();
     saveImportMappings();
@@ -6754,23 +7595,66 @@
       location.hash = btn.getAttribute('data-page');
     });
   });
+  document.querySelectorAll('[data-management-link]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var target = btn.getAttribute('data-focus-target') || '';
+      var skuView = btn.getAttribute('data-sku-view') || '';
+      if (target && !skuView) sessionStorage.setItem('jdDataManagementFocus', target);
+      if (skuView) sessionStorage.setItem('jdSkuArchiveView', skuView);
+      location.hash = btn.getAttribute('data-management-link');
+    });
+  });
+  function focusManagedTarget() {
+    var target = sessionStorage.getItem('jdDataManagementFocus');
+    if (!target) return;
+    sessionStorage.removeItem('jdDataManagementFocus');
+    setTimeout(function() {
+      var node = $(target);
+      if (node) {
+        var panel = node.closest('.sku-panel') || node;
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 120);
+  }
   window.addEventListener('hashchange', function() {
-    var page = location.hash.slice(1) || 'dashboard';
+    var page = location.hash.slice(1) || 'import';
     switchPage(page);
     if (page === 'import') {
-      renderImportMappings();
       renderManualRankingEntry();
     }
+    if (page === 'import-settings') renderImportMappings();
     if (page === 'report') {
       renderReportConfig();
       renderReportOutput();
     }
-    if (page === 'db-sku' || page === 'sku') renderSkus();
+    if (page === 'db-browser') renderDbBrowser();
+    if (page === 'db-sku' || page === 'sku') {
+      var nextSkuView = sessionStorage.getItem('jdSkuArchiveView');
+      sessionStorage.removeItem('jdSkuArchiveView');
+      setSkuArchiveView(nextSkuView || 'all');
+      renderSkus().then(function() { window.scrollTo({ top: 0, behavior: 'auto' }); });
+    }
     if (page === 'raw-snapshots') renderSnapshots();
     if (page === 'db-analyzed') renderAnalyzedDb();
     if (page === 'ranking-raw') renderRankingRaw();
     if (page === 'db-estimates') renderEstimatesDb();
     if (page === 'cleanup') renderCleanupSnapshots();
+  });
+
+  if ($('dbBrowserStoreSelect')) $('dbBrowserStoreSelect').addEventListener('change', renderDbBrowser);
+  if ($('dbBrowserSearch')) $('dbBrowserSearch').addEventListener('input', renderDbBrowser);
+  if ($('dbBrowserLimit')) $('dbBrowserLimit').addEventListener('change', renderDbBrowser);
+  if ($('refreshDbBrowserBtn')) $('refreshDbBrowserBtn').addEventListener('click', renderDbBrowser);
+  if ($('dbBrowserExportBtn')) $('dbBrowserExportBtn').addEventListener('click', async function() {
+    var store = $('dbBrowserStoreSelect').value;
+    if (!store) return;
+    exportRows('京东数据分析工具_' + (DB_STORE_LABELS[store] || store) + '_' + today() + '.xlsx', await getAll(store));
+  });
+  if ($('dbBrowserBody')) $('dbBrowserBody').addEventListener('click', function(e) {
+    var row = e.target.closest('[data-db-row]');
+    if (!row) return;
+    var record = dbBrowserRows[Number(row.getAttribute('data-db-row'))];
+    $('dbBrowserDetail').textContent = JSON.stringify(record, null, 2);
   });
 
   $('refreshSnapshotsBtn').addEventListener('click', renderSnapshots);
@@ -6887,6 +7771,35 @@
       if (!file) return;
       await importDatabaseBackup(file);
       e.target.value = '';
+    });
+  }
+  function setClearDatabaseModal(open) {
+    if (!$('clearDatabaseModal')) return;
+    $('clearDatabaseModal').classList.toggle('open', !!open);
+    $('clearDatabaseModal').setAttribute('aria-hidden', open ? 'false' : 'true');
+  }
+  if ($('openClearDatabaseModalBtn')) {
+    $('openClearDatabaseModalBtn').addEventListener('click', function() {
+      setClearDatabaseModal(true);
+    });
+  }
+  if ($('cancelClearDatabaseBtn')) {
+    $('cancelClearDatabaseBtn').addEventListener('click', function() {
+      setClearDatabaseModal(false);
+    });
+  }
+  if ($('clearDatabaseModal')) {
+    $('clearDatabaseModal').addEventListener('click', function(e) {
+      if (e.target === $('clearDatabaseModal')) setClearDatabaseModal(false);
+    });
+  }
+  if ($('exportBeforeClearDbBtn')) {
+    $('exportBeforeClearDbBtn').addEventListener('click', exportDatabaseBackup);
+  }
+  if ($('confirmClearDatabaseBtn')) {
+    $('confirmClearDatabaseBtn').addEventListener('click', async function() {
+      setClearDatabaseModal(false);
+      await clearAllDatabaseData();
     });
   }
   datePickers.dashboard = createDateRangePicker({
@@ -7089,7 +8002,8 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
       var addType = add.getAttribute('data-add-mapping') || 'sales_detail';
       var mappings = getImportMappings(addType);
       var next = mappings.length + 1;
-      mappings.push({ key: 'customMetric' + next, label: '自定义字段' + next, column: '', locked: false, note: '自定义追踪字段' });
+      var label = '自定义字段' + next;
+      mappings.push({ key: makeCustomImportFieldKey(label, mappings, -1), label: label, column: '', locked: false, pendingKey: true, note: '自定义追踪字段' });
       saveImportMappings();
       renderImportMappings();
       return;
@@ -7121,6 +8035,7 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     var index = Number(row.dataset.index);
     var mappings = getImportMappings(type);
     if (mappings[index] && !mappings[index].locked) {
+      rememberCustomImportField(type, mappings[index].key, mappings[index].label, 'deleted');
       mappings.splice(index, 1);
       saveImportMappings();
       renderImportMappings();
@@ -7146,6 +8061,11 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
       saveImportRules();
       $('mappingMsg').textContent = '导入选项已保存。';
       $('mappingMsg').className = 'msg ok';
+      return;
+    }
+    if (e.target.classList.contains('mapping-label')) {
+      var row = e.target.closest('tr[data-index]');
+      if (row) finalizeCustomImportFieldKey(row);
     }
   });
   $('addMonitorBtn').addEventListener('click', async function() {
@@ -7416,9 +8336,8 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     datePickers.manualRanking.render();
   }
   migrateImportConfig();
-  switchPage(location.hash.slice(1) || 'dashboard');
+  switchPage(location.hash.slice(1) || 'import');
   updateDimensionHint();
-  renderImportMappings();
   renderAnalyzedDimensionControls();
   updateAnalyzedDimensionHint();
   applyRankingDimensionSelection();
@@ -7432,22 +8351,28 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     await stripRawSnapshotRows();
     await normalizeCompetitorSkuDefaults();
     await mergeDuplicateSeriesColumns();
+    await normalizeSkuCustomColumnKeys();
     renderAnalyzedDimensionControls();
     updateAnalyzedDimensionHint();
     await renderSkus();
     await renderDashboard();
     await refreshCounts();
     await renderAnalyzedDb();
-    var currentPage = location.hash.slice(1) || 'dashboard';
-    if (currentPage === 'import') {
-      renderImportMappings();
-      await renderManualRankingEntry();
-    }
+    var currentPage = location.hash.slice(1) || 'import';
+    if (currentPage === 'import') await renderManualRankingEntry();
+    if (currentPage === 'import-settings') renderImportMappings();
     if (currentPage === 'report') {
       await renderReportConfig();
       await renderReportOutput();
     }
-    if (currentPage === 'db-sku' || currentPage === 'sku') await renderSkus();
+    if (currentPage === 'db-browser') await renderDbBrowser();
+    if (currentPage === 'db-sku' || currentPage === 'sku') {
+      var initialSkuView = sessionStorage.getItem('jdSkuArchiveView');
+      sessionStorage.removeItem('jdSkuArchiveView');
+      setSkuArchiveView(initialSkuView || 'all');
+      await renderSkus();
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
     if (currentPage === 'raw-snapshots') await renderSnapshots();
     if (currentPage === 'ranking-raw') await renderRankingRaw();
     if (currentPage === 'db-estimates') await renderEstimatesDb();
