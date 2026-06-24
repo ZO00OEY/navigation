@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap");
+
 :root {
   --page-bg: #f8f3f2;
   --surface: rgba(255, 253, 251, 0.88);
@@ -11,7 +13,7 @@
   --accent: #b85f78;
   --accent-soft: #efd1d9;
   --accent-wash: rgba(210, 123, 147, 0.13);
-  --sidebar-width: 226px;
+  --sidebar-width: 258px;
   --rail-width: 62px;
   --layout-nav-width: var(--rail-width);
   --layout-gutter: clamp(20px, 6vw, 96px);
@@ -42,11 +44,17 @@
 }
 
 html { scroll-behavior: smooth; }
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 body {
   background: var(--page-bg);
   color: var(--ink);
   overflow-x: hidden;
   font-family: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 body.sidebar-open {
   --layout-nav-width: var(--sidebar-width);
@@ -485,13 +493,13 @@ body.sidebar-open .nav-rail {
   position: fixed;
   inset: 0 auto 0 0;
   z-index: 42;
-  width: min(226px, calc(100vw - 18px));
+  width: min(var(--sidebar-width), calc(100vw - 18px));
   padding: 12px 10px 10px;
   border-right: 1px solid rgba(120, 88, 98, 0.08);
-  background: rgba(255, 247, 247, 0.24);
-  box-shadow: 12px 0 34px rgba(49, 35, 39, 0.035);
-  backdrop-filter: blur(5px) saturate(1.02);
-  -webkit-backdrop-filter: blur(5px) saturate(1.02);
+  background: rgba(255, 247, 247, 0.62);
+  box-shadow: 12px 0 38px rgba(49, 35, 39, 0.06);
+  backdrop-filter: blur(8px) saturate(1.04);
+  -webkit-backdrop-filter: blur(8px) saturate(1.04);
   transform: translateX(-102%);
   transition: transform 0.34s cubic-bezier(.22,.78,.25,1);
   display: flex;
@@ -617,8 +625,8 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
 .sidebar-setting span svg { width: 18px; height: 18px; }
 .sidebar-setting:hover { color: var(--accent); background: var(--accent-wash); }
 [data-theme="dark"] .sidebar {
-  background: rgba(13, 16, 28, 0.28);
-  box-shadow: 12px 0 34px rgba(0, 0, 0, 0.08);
+  background: rgba(13, 16, 28, 0.64);
+  box-shadow: 12px 0 38px rgba(0, 0, 0, 0.14);
 }
 [data-theme="dark"] .sidebar-link {
   text-shadow: 0 1px 5px rgba(8, 10, 20, 0.78);
@@ -920,8 +928,11 @@ body.sidebar-open .sidebar-title { opacity: 1; transform: none; }
 }
 .portal-card h3 {
   margin-top: 68px;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: clamp(1.55rem, 2.4vw, 2.5rem);
-  font-weight: 500;
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: 0;
 }
 .portal-card p {
   max-width: 470px;
@@ -1363,12 +1374,14 @@ body.sidebar-open .seabed-meta {
   }
   .hero-copy h1 {
     width: max-content;
-    max-width: none;
+    max-width: calc(100vw - var(--rail-width) - 42px);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
     white-space: nowrap;
   }
   .hero-copy h1 .title-line {
     width: max-content;
-    max-width: none;
+    max-width: 100%;
     white-space: nowrap;
   }
   .hero-copy p {
@@ -1394,7 +1407,8 @@ body.sidebar-open .seabed-meta {
   }
   .hero[data-layout="stacked"] .hero-eyebrow::before { width: 24px; }
   .hero[data-layout="stacked"] .hero-copy h1 {
-    line-height: 1;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
   }
   .hero[data-layout="stacked"] .hero-copy p {
     margin-top: 18px;
@@ -1410,6 +1424,14 @@ body.sidebar-open .seabed-meta {
       calc(var(--layout-gutter) + var(--layout-nav-width));
   }
   .portal-card { padding: 24px; border-radius: 22px; }
+  .portal-card h3 {
+    font-size: clamp(1.65rem, 8vw, 2rem);
+    line-height: 1.24;
+  }
+  .portal-card p {
+    line-height: 1.95;
+    letter-spacing: 0;
+  }
   .search-overlay { padding: 60px 12px 18px; }
   .search-dialog { width: 100%; border-radius: 22px; }
   .water-to-paper { height: 128px; }
@@ -1420,9 +1442,11 @@ body.sidebar-open .seabed-meta {
   }
   .seabed-art { object-position: 61% bottom; }
   .seabed-prayer {
-    top: 142px;
-    width: calc(100% - 88px);
+    top: auto;
+    bottom: 82px;
+    width: calc(100% - 96px);
     font-size: 0.7rem;
+    line-height: 1.9;
   }
   .shell-button {
     left: var(--shell-left, 30%);
@@ -1440,6 +1464,8 @@ body.sidebar-open .seabed-meta {
     align-items: flex-start;
     flex-direction: column;
     gap: 3px;
+    font-size: 0.62rem;
+    line-height: 1.55;
   }
   body.sidebar-open .seabed-meta {
     left: calc(var(--layout-nav-width) + 18px);
