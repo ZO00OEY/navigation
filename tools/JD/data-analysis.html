@@ -342,6 +342,44 @@
 }
 .report-data-alert.warn { display: block; }
 .report-data-alert strong { color: var(--link-color); }
+.data-alert-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.data-alert-list {
+  margin: 0;
+  padding-left: 18px;
+  max-height: 260px;
+  overflow: auto;
+}
+.data-alert-list li {
+  padding: 4px 0 4px 2px;
+  border-top: 1px solid rgba(222, 115, 158, 0.12);
+}
+.data-alert-list li:first-child { border-top: 0; }
+.data-alert-groups {
+  display: grid;
+  gap: 6px;
+  max-height: 300px;
+  overflow: auto;
+}
+.data-alert-group {
+  border-top: 1px solid rgba(222, 115, 158, 0.14);
+  padding-top: 6px;
+}
+.data-alert-group:first-child { border-top: 0; padding-top: 0; }
+.data-alert-group summary {
+  cursor: pointer;
+  font-weight: 700;
+  list-style-position: inside;
+}
+.data-alert-sublist {
+  margin: 6px 0 0;
+  padding-left: 26px;
+}
+.data-alert-sublist li {
+  padding: 3px 0;
+}
 .report-template-preview {
   min-height: 120px;
   border: 1px solid var(--line-medium, var(--card-border));
@@ -1761,6 +1799,7 @@
               <tbody id="analyzedDbBody"><tr><td class="empty-row" colspan="8">暂无商品明细数据</td></tr></tbody>
             </table>
           </div>
+          <div class="report-data-alert" id="analyzedDataAlert"></div>
         </div>
       </section>
 
@@ -4580,6 +4619,155 @@
     enhanceAllResizableTables();
   }
 
+  function compressDateRangesForText(dates) {
+    var sorted = Array.from(new Set(dates || [])).filter(Boolean).sort();
+    var parts = [];
+    var start = '';
+    var prev = '';
+    sorted.forEach(function(date) {
+      if (!start) {
+        start = date;
+        prev = date;
+        return;
+      }
+      var next = ymd(addDays(dateFromYmd(prev), 1));
+      if (date === next) {
+        prev = date;
+        return;
+      }
+      parts.push(start === prev ? start : start + ' 至 ' + prev);
+      start = date;
+      prev = date;
+    });
+    if (start) parts.push(start === prev ? start : start + ' 至 ' + prev);
+    return parts.join('、');
+  }
+
+  function analyzedAlertDimensionValue(row, skuMap, dims) {
+    var sku = normalizeSkuValue(row.sku);
+    var profile = skuMap[sku] || {};
+    return (dims && dims.length ? dims : ['subSeries']).map(function(dim) {
+      if (dim === 'sku') return sku || '-';
+      if (dim === 'campaignPlan') return row.campaignPlan || '未归类';
+      if (dim === 'affiliatePin') return row.affiliatePin || '未归类';
+      if (dim === 'orderId') return row.orderId || '未归类';
+      return profile[dim] || '未归类';
+    }).join(' / ');
+  }
+
+  function collectDailyCoverageWarnings(rows, range, sourceInfo, skuRows, dims) {
+    if (!range || !range.start || !range.end || range.start === range.end) return [];
+    var expectedDates = datesInRange(range.start, range.end);
+    if (!expectedDates.length) return [];
+    var skuMap = {};
+    (skuRows || []).forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
+    var warnings = [];
+    sourceInfo.forEach(function(info) {
+      var sourceRowsInRange = (rows || []).filter(function(row) {
+        if (row.sourceType !== info.type) return false;
+        var bounds = rowDateBounds(row);
+        return dateRangesOverlap(bounds.start, bounds.end, range.start, range.end);
+      });
+      var rowsForSource = (rows || []).filter(function(row) {
+        return row.sourceType === info.type && !isPeriodMetricRow(row);
+      });
+      if (!sourceRowsInRange.length) return;
+      var datesByDim = {};
+      rowsForSource.forEach(function(row) {
+        var date = canonicalYmd(row.startDate) || row.startDate || '';
+        if (!date || date < range.start || date > range.end) return;
+        var dimName = analyzedAlertDimensionValue(row, skuMap, dims);
+        if (!datesByDim[dimName]) datesByDim[dimName] = {};
+        datesByDim[dimName][date] = true;
+      });
+      sourceRowsInRange.forEach(function(row) {
+        var dimName = analyzedAlertDimensionValue(row, skuMap, dims);
+        if (!datesByDim[dimName]) datesByDim[dimName] = {};
+      });
+      Object.keys(datesByDim).sort(function(a, b) {
+        return String(a).localeCompare(String(b), 'zh-Hans-CN', { numeric: true });
+      }).slice(0, 12).forEach(function(dimName) {
+        var missing = expectedDates.filter(function(date) { return !datesByDim[dimName][date]; });
+        if (!missing.length) return;
+        warnings.push({
+          group: '缺' + info.metric,
+          detail: esc(dimName) + ' 缺 ' + esc(compressDateRangesForText(missing)) + ' 的日数据'
+        });
+      });
+    });
+    return warnings;
+  }
+
+  function renderGroupedDataWarnings(warnings) {
+    var groups = [];
+    var byGroup = {};
+    (warnings || []).forEach(function(item) {
+      var group = item.group || '其他提醒';
+      if (!byGroup[group]) {
+        byGroup[group] = [];
+        groups.push(group);
+      }
+      byGroup[group].push(item.detail || item.text || '');
+    });
+    return '<div class="data-alert-title">数据导入提醒</div><div class="data-alert-groups">' + groups.map(function(group, index) {
+      var details = byGroup[group].filter(Boolean);
+      return '<details class="data-alert-group"' + (index === 0 ? ' open' : '') + '>' +
+        '<summary>' + esc(group) + '（' + details.length + ' 项）</summary>' +
+        '<ul class="data-alert-sublist">' + details.map(function(detail) {
+          return '<li>' + detail + '</li>';
+        }).join('') + '</ul>' +
+      '</details>';
+    }).join('') + '</div>';
+  }
+
+  function renderAnalyzedDataAlert(activeRows, range, allRows, skuRows, dims) {
+    var box = $('analyzedDataAlert');
+    if (!box) return;
+    range = normalizedRange(range && range.start, range && (range.end || range.start));
+    if (!range) {
+      box.className = 'report-data-alert';
+      box.innerHTML = '';
+      return;
+    }
+    var sourceInfo = [
+      { type: 'sales_detail', metric: '销售金额/件数/访客', importName: '商品明细' },
+      { type: 'onsite_cost', metric: '站内花费', importName: '站内花费' },
+      { type: 'offsite_cps_cost', metric: '站外花费', importName: '站外 CPS 花费' }
+    ];
+    var warnings = [];
+    sourceInfo.forEach(function(info) {
+      var usable = (activeRows || []).some(function(row) { return row.sourceType === info.type; });
+      if (usable) return;
+      var mismatchedPeriods = (allRows || []).filter(function(row) {
+        if (row.sourceType !== info.type || !isPeriodMetricRow(row)) return false;
+        var bounds = rowDateBounds(row);
+        if (!dateRangesOverlap(bounds.start, bounds.end, range.start, range.end || range.start)) return false;
+        return !isExactRangeMetricRow(row, range.start, range.end || range.start);
+      });
+      if (mismatchedPeriods.length) {
+        var examples = {};
+        mismatchedPeriods.slice(0, 3).forEach(function(row) { examples[rangeText(row)] = true; });
+        warnings.push({
+          group: '缺' + info.metric,
+          detail: '已有 ' + esc(Object.keys(examples).join('、')) + ' 的跨期数据，但不能拆用于当前选择，需要导入<strong>' + esc(range.start === (range.end || range.start) ? range.start + ' 单日' : range.start + ' 至 ' + (range.end || range.start)) + '</strong>口径的<strong>' + esc(info.importName) + '</strong>'
+        });
+        return;
+      }
+      warnings.push({
+        group: '缺' + info.metric,
+        detail: '需要导入<strong>' + esc(info.importName) + '</strong>'
+      });
+    });
+    warnings = warnings.concat(collectDailyCoverageWarnings(allRows, range, sourceInfo, skuRows, dims));
+    if (!warnings.length) {
+      box.className = 'report-data-alert ok';
+      box.innerHTML = '当前日期范围的商品明细基础数据已检查：商品明细、站内外花费暂无明显缺口。';
+      return;
+    }
+    box.className = 'report-data-alert warn';
+    box.innerHTML = renderGroupedDataWarnings(warnings);
+  }
+
   async function renderAnalyzedDb() {
     var rows = await getAll('analyzed_metrics');
     var skuRows = await getAll('sku_profiles');
@@ -4595,15 +4783,19 @@
       var profile = skuMap[normalizeSkuValue(row.sku)];
       return !profile || profile.itemType !== 'competitor';
     });
-    rows = filterMetricRowsByDateRange(rows, { start: start, end: end });
+    var allOwnRows = rows.slice();
+    var queryRange = normalizedQueryRange({ start: start, end: end });
+    rows = preferExactPeriodRowsForRange(filterMetricRowsByDateRange(rows, queryRange), queryRange);
+    var dims = getSelectedAnalyzedDims();
+    renderAnalyzedDataAlert(rows, queryRange, allOwnRows, skuRows, dims);
     if (!rows.length) {
       $('analyzedDbBody').innerHTML = '<tr><td class="empty-row" colspan="' + (8 + getSelectedAnalyzedAttributes().length) + '">暂无商品明细数据</td></tr>';
       enhanceAllResizableTables();
       return;
     }
-    var dims = getSelectedAnalyzedDims();
     renderAnalyzedDbHead();
-    var groupedRows = buildAnalyzedGroups(rows, skuRows, dims);
+    var summaryRange = queryRange.start && queryRange.end && queryRange.start !== queryRange.end ? queryRange : null;
+    var groupedRows = buildAnalyzedGroups(rows, skuRows, dims, summaryRange);
     applyRankingToAnalyzedGroups(groupedRows, rankingRows);
     var attrs = getSelectedAnalyzedAttributes();
     $('analyzedDbBody').innerHTML = groupedRows.slice(0, 200).map(function(row) {
@@ -4926,9 +5118,9 @@
     });
     (rankings || []).forEach(function(row) {
       if (!row.sku || !row.startDate) return;
-      datesInRange(row.startDate, row.endDate || row.startDate).forEach(function(date) {
-        rankingMap[estimateDateKey(row.sku, date)] = row;
-      });
+      if (isPeriodMetricRow(row)) return;
+      var date = canonicalYmd(row.startDate) || row.startDate;
+      rankingMap[estimateDateKey(row.sku, date)] = row;
     });
     return { estimateMap: estimateMap, rankingMap: rankingMap };
   }
@@ -5218,9 +5410,9 @@
       var rankingSku = normalizeSkuValue(row.sku);
       var rank = Number(row.rank || 0);
       if (rankingSku !== selectedSku || !rank) return;
-      datesInRange(row.startDate, row.endDate || row.startDate).forEach(function(date) {
-        if (!rankByDate[date] || rank < Number(rankByDate[date])) rankByDate[date] = rank;
-      });
+      if (isPeriodMetricRow(row)) return;
+      var date = canonicalYmd(row.startDate) || row.startDate || '';
+      if (date && (!rankByDate[date] || rank < Number(rankByDate[date]))) rankByDate[date] = rank;
     });
     rows.sort(function(a, b) {
       return String(a.startDate || '').localeCompare(String(b.startDate || ''));
@@ -6301,14 +6493,59 @@
     await refreshCounts();
   }
 
-  function filterMetricRowsByDateRange(rows, range) {
+  function rowDateBounds(row) {
+    var rowStart = canonicalYmd(row.startDate) || row.startDate || '';
+    var rowEnd = canonicalYmd(row.endDate || row.startDate) || row.endDate || rowStart;
+    return { start: rowStart, end: rowEnd };
+  }
+
+  function isPeriodMetricRow(row) {
+    var bounds = rowDateBounds(row || {});
+    return row && (row.periodType === 'period' || (bounds.start && bounds.end && bounds.start !== bounds.end));
+  }
+
+  function isExactRangeMetricRow(row, start, end) {
+    var bounds = rowDateBounds(row || {});
+    return isPeriodMetricRow(row) && bounds.start === start && bounds.end === end;
+  }
+
+  function normalizedQueryRange(range) {
     range = range || {};
     var normalized = normalizedRange(range.start || '', range.end || range.start || '');
     var start = normalized ? normalized.start : (range.start || '');
     var end = normalized ? normalized.end : (range.end || start);
+    return { start: start, end: end || start };
+  }
+
+  function preferExactPeriodRowsForRange(rows, range) {
+    var query = normalizedQueryRange(range);
+    if (!query.start || !query.end || query.start === query.end) return rows || [];
+    var exactPeriodKeys = {};
+    (rows || []).forEach(function(row) {
+      if (!isExactRangeMetricRow(row, query.start, query.end)) return;
+      exactPeriodKeys[[row.sourceType || '', normalizeSkuValue(row.sku)].join('|')] = true;
+    });
     return (rows || []).filter(function(row) {
-      var rowStart = canonicalYmd(row.startDate) || row.startDate || '';
-      var rowEnd = canonicalYmd(row.endDate || row.startDate) || row.endDate || rowStart;
+      var key = [row.sourceType || '', normalizeSkuValue(row.sku)].join('|');
+      return !exactPeriodKeys[key] || isExactRangeMetricRow(row, query.start, query.end);
+    });
+  }
+
+  function filterMetricRowsByDateRange(rows, range) {
+    range = range || {};
+    var query = normalizedQueryRange(range);
+    var start = query.start;
+    var end = query.end;
+    return (rows || []).filter(function(row) {
+      var bounds = rowDateBounds(row);
+      var rowStart = bounds.start;
+      var rowEnd = bounds.end;
+      var rowIsPeriod = isPeriodMetricRow(row);
+      var queryIsSingleDay = start && end && start === end;
+      if (rowIsPeriod) {
+        if (queryIsSingleDay) return false;
+        return rowStart === start && rowEnd === end;
+      }
       if (start && rowEnd < start) return false;
       if (end && rowStart > end) return false;
       return true;
@@ -6393,7 +6630,9 @@
   function isReportMetricRowForDate(row, date) {
     var start = row.startDate || '';
     var end = row.endDate || start;
-    return start <= date && date <= end;
+    if (!start || !date) return false;
+    if (start !== end || row.periodType === 'period') return false;
+    return start === date;
   }
 
   async function loadReportSourceRows() {
@@ -6417,10 +6656,10 @@
       var sku = normalizeSkuValue(row.sku);
       var rank = Number(row.rank || 0);
       if (!sku || !rank) return;
-      datesInRange(row.startDate, row.endDate || row.startDate).forEach(function(date) {
-        var key = sku + '|' + date;
-        if (!rankMap[key] || rank < rankMap[key]) rankMap[key] = rank;
-      });
+      if (isPeriodMetricRow(row)) return;
+      var date = canonicalYmd(row.startDate) || row.startDate;
+      var key = sku + '|' + date;
+      if (!rankMap[key] || rank < rankMap[key]) rankMap[key] = rank;
     });
     return rankMap;
   }
@@ -6445,7 +6684,7 @@
     var output = [['日期', '星期', reportDimensionLabel(dim), '销售金额', '销售数量', '访客/点击', '转化率', '站内花费', '站外花费', '排名']];
     dates.forEach(function(date) {
       var dayRows = isRangeSummary
-        ? filterMetricRowsByDateRange(rows, range)
+        ? preferExactPeriodRowsForRange(filterMetricRowsByDateRange(rows, range), range)
         : rows.filter(function(row) { return isReportMetricRowForDate(row, date); });
       var groups = {};
       dayRows.forEach(function(row) {
@@ -6492,10 +6731,10 @@
       var sku = normalizeSkuValue(row.sku);
       var rank = Number(row.rank || 0);
       if (!sku || !rank) return;
-      datesInRange(row.startDate, row.endDate || row.startDate).forEach(function(date) {
-        var key = sku + '|' + date;
-        if (!rankMap[key] || rank < rankMap[key]) rankMap[key] = rank;
-      });
+      if (isPeriodMetricRow(row)) return;
+      var date = canonicalYmd(row.startDate) || row.startDate;
+      var key = sku + '|' + date;
+      if (!rankMap[key] || rank < rankMap[key]) rankMap[key] = rank;
     });
     return rankMap;
   }
@@ -6514,7 +6753,7 @@
     var label = range.start || '';
     if (range.end && range.end !== range.start) label = range.start + ' 至 ' + range.end;
     var output = [['日期', '竞品', '排名', '金额', '件数', '金额区间', '件数区间']];
-    var rows = filterMetricRowsByDateRange(estimateRows || [], range);
+    var rows = preferExactPeriodRowsForRange(filterMetricRowsByDateRange(estimateRows || [], range), range);
     if (isPeriod) {
       var groups = {};
       rows.forEach(function(row) {
@@ -6710,7 +6949,7 @@
       }
       if (ch === '(') depth++;
       if (ch === ')') depth = Math.max(0, depth - 1);
-      if ((ch === ',' || ch === '，') && depth === 0) {
+      if ((ch === ',' || ch === '，' || ch === ';' || ch === '；') && depth === 0) {
         args.push(current.trim());
         current = '';
         return;
@@ -6791,6 +7030,74 @@
         return total + numberValue(sheetCellValue(workbook, sheetName, address));
       }, 0);
     }
+    function criterionMatches(value, criterion) {
+      var expected = operandValue(criterion);
+      var actualText = normalizeLookupValue(value);
+      var expectedText = normalizeLookupValue(expected);
+      var compare = expectedText.match(/^(>=|<=|<>|>|<|=)([\s\S]*)$/);
+      if (compare) {
+        var op = compare[1];
+        var rightRaw = compare[2];
+        var leftNumber = numberValue(value);
+        var rightNumber = numberValue(rightRaw);
+        var numeric = isFinite(Number(String(value).replace(/,/g, '').replace(/%/g, ''))) && isFinite(Number(String(rightRaw).replace(/,/g, '').replace(/%/g, '')));
+        if (numeric) {
+          if (op === '>=') return leftNumber >= rightNumber;
+          if (op === '<=') return leftNumber <= rightNumber;
+          if (op === '>') return leftNumber > rightNumber;
+          if (op === '<') return leftNumber < rightNumber;
+          if (op === '<>') return leftNumber !== rightNumber;
+          return leftNumber === rightNumber;
+        }
+        if (op === '<>') return actualText !== rightRaw;
+        if (op === '=') return actualText === rightRaw;
+      }
+      if (expectedText.indexOf('*') !== -1 || expectedText.indexOf('?') !== -1) {
+        var pattern = '^' + expectedText.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.') + '$';
+        return new RegExp(pattern).test(actualText);
+      }
+      return actualText === expectedText;
+    }
+    function sumIfsValue(args) {
+      if (!args || args.length < 3) return 0;
+      var sumRef = parseSheetRangeRef(args[0], currentSheetName);
+      if (!sumRef) return 0;
+      var sumSheet = workbook && workbook.Sheets ? workbook.Sheets[sumRef.sheetName] : null;
+      var sumAddresses = worksheetRangeAddresses(sumRef.rangeText, sumSheet);
+      var criteria = [];
+      for (var i = 1; i + 1 < args.length; i += 2) {
+        var criteriaRef = parseSheetRangeRef(args[i], currentSheetName);
+        if (!criteriaRef) continue;
+        var criteriaSheet = workbook && workbook.Sheets ? workbook.Sheets[criteriaRef.sheetName] : null;
+        criteria.push({
+          addresses: worksheetRangeAddresses(criteriaRef.rangeText, criteriaSheet),
+          sheetName: criteriaRef.sheetName,
+          criterion: args[i + 1]
+        });
+      }
+      return sumAddresses.reduce(function(total, address, index) {
+        var matched = criteria.every(function(item) {
+          var criteriaAddress = item.addresses[index];
+          return criteriaAddress && criterionMatches(sheetCellValue(workbook, item.sheetName, criteriaAddress), item.criterion);
+        });
+        return matched ? total + numberValue(sheetCellValue(workbook, sumRef.sheetName, address)) : total;
+      }, 0);
+    }
+    function sumIfValue(args) {
+      if (!args || args.length < 2) return 0;
+      var criteriaRef = parseSheetRangeRef(args[0], currentSheetName);
+      if (!criteriaRef) return 0;
+      var sumRef = args.length > 2 ? parseSheetRangeRef(args[2], currentSheetName) : criteriaRef;
+      if (!sumRef) return 0;
+      var criteriaSheet = workbook && workbook.Sheets ? workbook.Sheets[criteriaRef.sheetName] : null;
+      var sumSheet = workbook && workbook.Sheets ? workbook.Sheets[sumRef.sheetName] : null;
+      var criteriaAddresses = worksheetRangeAddresses(criteriaRef.rangeText, criteriaSheet);
+      var sumAddresses = worksheetRangeAddresses(sumRef.rangeText, sumSheet);
+      return criteriaAddresses.reduce(function(total, address, index) {
+        if (!criterionMatches(sheetCellValue(workbook, criteriaRef.sheetName, address), args[1])) return total;
+        return total + numberValue(sheetCellValue(workbook, sumRef.sheetName, sumAddresses[index] || address));
+      }, 0);
+    }
     function operandValue(text) {
       var raw = String(text || '').trim();
       if (/^".*"$/.test(raw)) return raw.slice(1, -1);
@@ -6821,15 +7128,6 @@
         return operandValue(ifArgs[1]);
       }
     }
-    var xlookupMatch = expr.match(/^(?:_xlfn\.)?XLOOKUP\(([\s\S]+)\)$/i);
-    if (xlookupMatch) return xlookupValue(splitFormulaArgs(xlookupMatch[1]));
-    var roundMatch = expr.match(/^ROUND\(([\s\S]+)\)$/i);
-    if (roundMatch) {
-      var roundArgs = splitFormulaArgs(roundMatch[1]);
-      var digits = Number(roundArgs[1] || 0);
-      var multiplier = Math.pow(10, isFinite(digits) ? digits : 0);
-      return Math.round(numberValue(operandValue(roundArgs[0])) * multiplier) / multiplier;
-    }
     if (expr.indexOf('+') !== -1) {
       var plusParts = splitFormulaByTopLevelPlus(expr);
       if (plusParts.length > 1) {
@@ -6845,7 +7143,26 @@
         if (allCalculated) return total;
       }
     }
+    var xlookupMatch = expr.match(/^(?:_xlfn\.)?XLOOKUP\(([\s\S]+)\)$/i);
+    if (xlookupMatch) return xlookupValue(splitFormulaArgs(xlookupMatch[1]));
+    var sumifsMatch = expr.match(/^SUMIFS\(([\s\S]+)\)$/i);
+    if (sumifsMatch) return sumIfsValue(splitFormulaArgs(sumifsMatch[1]));
+    var sumifMatch = expr.match(/^SUMIF\(([\s\S]+)\)$/i);
+    if (sumifMatch) return sumIfValue(splitFormulaArgs(sumifMatch[1]));
+    var roundMatch = expr.match(/^ROUND\(([\s\S]+)\)$/i);
+    if (roundMatch) {
+      var roundArgs = splitFormulaArgs(roundMatch[1]);
+      var digits = Number(roundArgs[1] || 0);
+      var multiplier = Math.pow(10, isFinite(digits) ? digits : 0);
+      return Math.round(numberValue(operandValue(roundArgs[0])) * multiplier) / multiplier;
+    }
     var transformed = expr
+      .replace(/SUMIFS\(([^()]+)\)/gi, function(_, argsText) {
+        return String(sumIfsValue(splitFormulaArgs(argsText)));
+      })
+      .replace(/SUMIF\(([^()]+)\)/gi, function(_, argsText) {
+        return String(sumIfValue(splitFormulaArgs(argsText)));
+      })
       .replace(/(?:_xlfn\.)?XLOOKUP\(([^()]+)\)/gi, function(_, argsText) {
         return jsLiteral(xlookupValue(splitFormulaArgs(argsText)));
       })
@@ -7045,11 +7362,11 @@
     var rows = await getAll('analyzed_metrics');
     var skus = await getAll('sku_profiles');
     var range = datePickers.dashboard ? datePickers.dashboard.getRange() : normalizedRange($('dashboardStartDate').value, $('dashboardEndDate').value || $('dashboardStartDate').value);
-    rows = filterMetricRowsByDateRange(rows, range);
+    rows = preferExactPeriodRowsForRange(filterMetricRowsByDateRange(rows, range), range);
     await renderMonitorTracks(rows, skus);
   }
 
-  function buildAnalyzedGroups(rows, skus, dims) {
+  function buildAnalyzedGroups(rows, skus, dims, summaryRange) {
     var skuMap = {};
     skus.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
     if (!dims.length) dims = ['sku'];
@@ -7064,12 +7381,15 @@
     function addMetricRow(row) {
       var skuProfile = skuMap[normalizeSkuValue(row.sku)] || {};
       var dimValues = dims.map(function(dim) { return dimensionValue(row, skuProfile, dim); });
-      var key = [row.periodType || '', row.startDate || '', row.endDate || '', dimValues.join(' / ')].join('|');
+      var groupStart = summaryRange ? summaryRange.start : row.startDate;
+      var groupEnd = summaryRange ? summaryRange.end : row.endDate;
+      var groupPeriodType = summaryRange && summaryRange.start !== summaryRange.end ? 'period' : row.periodType;
+      var key = [groupPeriodType || '', groupStart || '', groupEnd || '', dimValues.join(' / ')].join('|');
       if (!groups[key]) {
         groups[key] = {
-          periodType: row.periodType,
-          startDate: row.startDate,
-          endDate: row.endDate,
+          periodType: groupPeriodType,
+          startDate: groupStart,
+          endDate: groupEnd,
           dimensionName: dimValues.join(' / '),
           salesQty: 0,
           salesAmount: 0,
@@ -7120,6 +7440,18 @@
     return aStart <= bEnd && bStart <= aEnd;
   }
 
+  function metricRowsShareExactDateScope(a, b) {
+    var aBounds = rowDateBounds(a || {});
+    var bBounds = rowDateBounds(b || {});
+    if (!aBounds.start || !bBounds.start) return false;
+    var aPeriod = isPeriodMetricRow(a);
+    var bPeriod = isPeriodMetricRow(b);
+    if (aPeriod || bPeriod) {
+      return aPeriod && bPeriod && aBounds.start === bBounds.start && aBounds.end === bBounds.end;
+    }
+    return aBounds.start === bBounds.start;
+  }
+
   function applyRankingToAnalyzedGroups(groups, rankingRows) {
     rankingRows = rankingRows || [];
     var rankBySku = {};
@@ -7134,7 +7466,7 @@
       var bestRank = Number(group.rank || 0) || 0;
       (group.skus || []).forEach(function(sku) {
         (rankBySku[normalizeSkuValue(sku)] || []).forEach(function(row) {
-          if (!dateRangesOverlap(group.startDate, group.endDate || group.startDate, row.startDate, row.endDate || row.startDate)) return;
+          if (!metricRowsShareExactDateScope(group, row)) return;
           var rank = Number(row.rank || 0);
           if (rank && (!bestRank || rank < bestRank)) bestRank = rank;
         });

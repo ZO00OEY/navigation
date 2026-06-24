@@ -83,14 +83,40 @@
     return Math.max(min, Math.min(max, value));
   }
 
+  function getShellDragLimits(sceneRect, shellRect) {
+    var width = sceneRect ? sceneRect.width : scene.getBoundingClientRect().width;
+    var height = sceneRect ? sceneRect.height : scene.getBoundingClientRect().height;
+    var shellWidth = shellRect ? shellRect.width : shell.getBoundingClientRect().width;
+    var shellHeight = shellRect ? shellRect.height : shell.getBoundingClientRect().height;
+    return {
+      minLeft: shellWidth * 0.5,
+      maxLeft: Math.max(shellWidth * 0.5, width - shellWidth * 0.5),
+      minBottom: 0,
+      maxBottom: Math.max(0, Math.min(height - shellHeight, height * 0.34))
+    };
+  }
+
+  function normalizeShellPosition(position, sceneRect, shellRect) {
+    if (!position || typeof position.leftPct !== 'number') return null;
+    sceneRect = sceneRect || scene.getBoundingClientRect();
+    shellRect = shellRect || shell.getBoundingClientRect();
+    var limits = getShellDragLimits(sceneRect, shellRect);
+    var nextLeft = clamp(position.leftPct / 100 * sceneRect.width, limits.minLeft, limits.maxLeft);
+    var rawBottom = typeof position.bottomPct === 'number'
+      ? position.bottomPct / 100 * sceneRect.height
+      : (typeof position.bottomPx === 'number' ? position.bottomPx : sceneRect.height * 0.08);
+    var nextBottom = clamp(rawBottom, limits.minBottom, limits.maxBottom);
+    return {
+      leftPct: nextLeft / sceneRect.width * 100,
+      bottomPct: nextBottom / sceneRect.height * 100
+    };
+  }
+
   function applyShellPosition(position) {
-    if (!position || typeof position.leftPct !== 'number') return;
+    position = normalizeShellPosition(position);
+    if (!position) return;
     shell.style.setProperty('--shell-left', position.leftPct.toFixed(3) + '%');
-    if (typeof position.bottomPct === 'number') {
-      shell.style.setProperty('--shell-bottom', position.bottomPct.toFixed(3) + '%');
-    } else if (typeof position.bottomPx === 'number') {
-      shell.style.setProperty('--shell-bottom', Math.round(position.bottomPx) + 'px');
-    }
+    shell.style.setProperty('--shell-bottom', position.bottomPct.toFixed(3) + '%');
   }
 
   applyShellPosition(readShellPosition());
@@ -340,10 +366,11 @@
     if (!shellDrag || event.pointerId !== shellDrag.pointerId) return;
     var sceneRect = scene.getBoundingClientRect();
     var shellRect = shell.getBoundingClientRect();
+    var limits = getShellDragLimits(sceneRect, shellRect);
     var dx = event.clientX - shellDrag.startX;
     var dy = event.clientY - shellDrag.startY;
-    var nextLeft = clamp(shellDrag.startLeft + dx, shellRect.width * 0.5, sceneRect.width - shellRect.width * 0.5);
-    var nextBottom = clamp(shellDrag.startBottom - dy, 0, Math.max(0, sceneRect.height - shellRect.height));
+    var nextLeft = clamp(shellDrag.startLeft + dx, limits.minLeft, limits.maxLeft);
+    var nextBottom = clamp(shellDrag.startBottom - dy, limits.minBottom, limits.maxBottom);
     shellDrag.moved = shellDrag.moved || Math.abs(dx) > 3 || Math.abs(dy) > 3;
     applyShellPosition({
       leftPct: nextLeft / sceneRect.width * 100,
@@ -354,10 +381,10 @@
     if (!shellDrag || event.pointerId !== shellDrag.pointerId) return;
     var sceneRect = scene.getBoundingClientRect();
     var shellRect = shell.getBoundingClientRect();
-    saveShellPosition({
+    saveShellPosition(normalizeShellPosition({
       leftPct: (shellRect.left - sceneRect.left + shellRect.width * 0.5) / sceneRect.width * 100,
       bottomPct: (sceneRect.bottom - shellRect.bottom) / sceneRect.height * 100
-    });
+    }, sceneRect, shellRect));
     shell.dataset.dragged = shellDrag.moved ? 'true' : 'false';
     shellDrag = null;
     shell.classList.remove('is-dragging');
