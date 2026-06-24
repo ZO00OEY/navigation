@@ -39,9 +39,7 @@
   var sceneLayout = {
     heroHeight: null,
     actionLeft: null,
-    actionTop: null,
-    noteLeft: null,
-    noteTop: null
+    actionTop: null
   };
   var SOURCE = HomeHeroLayout.source;
   var DOOR = HomeHeroLayout.door;
@@ -55,6 +53,7 @@
 
   function buildPortalCards() {
     var grid = document.getElementById('portalGrid');
+    var portalKinds = ['message-bottle', 'compass', 'anchor'];
     var blocks = ((typeof SITE_DATA !== 'undefined' && SITE_DATA.blocks) || []).filter(function (block) {
       return block.type !== 'profile';
     });
@@ -66,9 +65,11 @@
       links = links.concat(block.links || []);
       var href = block.page ? 'detail.html?page=' + encodeURIComponent(block.page) : (links[0] && links[0].url || '#');
       var desc = links.slice(0, 3).map(function (link) { return link.title; }).join(' · ');
-      return '<a class="portal-card" href="' + escapeHtml(href) + '">' +
+      var portalKind = portalKinds[index] || 'message-bottle';
+      return '<a class="portal-card" href="' + escapeHtml(href) + '" data-portal-kind="' + portalKind + '">' +
         '<span class="portal-index">0' + (index + 1) + ' / 0' + blocks.length + '</span>' +
         '<span class="card-arrow">↗</span>' +
+        '<span class="portal-deco" aria-hidden="true"></span>' +
         '<h3>' + escapeHtml(block.name) + '</h3>' +
         '<p>' + escapeHtml(desc || '内容正在慢慢浮出水面。') + '</p>' +
       '</a>';
@@ -330,12 +331,6 @@
     });
     setLayoutValue('actionTop', actionTop, function (value) {
       hero.style.setProperty('--hero-action-top', value.toFixed(2) + 'px');
-    });
-    setLayoutValue('noteLeft', safeLeft, function (value) {
-      hero.style.setProperty('--scroll-note-left', value.toFixed(2) + 'px');
-    });
-    setLayoutValue('noteTop', noteTop, function (value) {
-      hero.style.setProperty('--scroll-note-top', value.toFixed(2) + 'px');
     });
   }
 

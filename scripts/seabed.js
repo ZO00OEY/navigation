@@ -10,13 +10,18 @@
 
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var fishConfig = {
+    maxCount: 7,
+    ambientSize: [46, 66],
+    pearlSize: [50, 74]
+  };
   var fishSources = [
-    'concepts/fish/fish-1.png',
-    'concepts/fish/fish-2.png',
-    'concepts/fish/fish-3.png',
-    'concepts/fish/fish-4.png',
-    'concepts/fish/fish-5.png',
-    'concepts/fish/fish-6.png'
+    { src: 'concepts/fish/fish-1.png', head: 'right' },
+    { src: 'concepts/fish/fish-2.png', head: 'right' },
+    { src: 'concepts/fish/fish-3.png', head: 'right' },
+    { src: 'concepts/fish/fish-4.png', head: 'right' },
+    { src: 'concepts/fish/fish-5.png', head: 'right' },
+    { src: 'concepts/fish/fish-6.png', head: 'right' }
   ];
   var shellFrames = [
     'concepts/shell/web-frames/shell-web-frame-0.png?v=20260620-shell-trim',
@@ -37,12 +42,18 @@
   var oracleIndex = 0;
   var messageTimer = 0;
   var touchCloseTimer = 0;
+  var shellIdleTimer = 0;
   var animationFrame = 0;
   var lastTime = 0;
   var bounds = { width: 0, height: 0, upper: 0, lower: 0 };
   var pointer = { x: -9999, y: -9999, active: false };
-  var shellPositionStorageKey = 'seabedShellPositionShellPocketV4';
+  var seabedSource = { width: 1672, height: 941 };
+  var shellHomeAnchorSource = { x: 500, y: 788 };
+  var shellAnchorRatio = { x: 0.5, y: 0.56 };
+  var shellPositionStorageKey = 'seabedShellPositionAnchoredV2';
+  var hasCustomShellPosition = false;
   var shellDrag = null;
+  var shellHomeAnimation = 0;
   var fish = [];
   var shellFrameIndex = 0;
 
@@ -83,6 +94,38 @@
     return Math.max(min, Math.min(max, value));
   }
 
+  function parsePercent(value, fallback) {
+    var match = String(value || '').match(/-?[\d.]+%/);
+    if (!match) return fallback;
+    return clamp(parseFloat(match[0]) / 100, 0, 1);
+  }
+
+  function calculateShellHome(sceneRect, shellRect) {
+    sceneRect = sceneRect || scene.getBoundingClientRect();
+    shellRect = shellRect || shell.getBoundingClientRect();
+    var scale = Math.max(
+      sceneRect.width / seabedSource.width,
+      sceneRect.height / seabedSource.height
+    );
+    var renderedWidth = seabedSource.width * scale;
+    var renderedHeight = seabedSource.height * scale;
+    var objectPosition = getComputedStyle(shellFrame).objectPosition;
+    var art = document.querySelector('.seabed-art');
+    if (art) objectPosition = getComputedStyle(art).objectPosition;
+    var parts = objectPosition.split(/\s+/);
+    var xRatio = parsePercent(parts[0], 0.5);
+    var yRatio = parts[1] === 'bottom' ? 1 : parsePercent(parts[1], 1);
+    var offsetX = (sceneRect.width - renderedWidth) * xRatio;
+    var offsetY = (sceneRect.height - renderedHeight) * yRatio;
+    var anchorX = offsetX + shellHomeAnchorSource.x * scale;
+    var anchorY = offsetY + shellHomeAnchorSource.y * scale;
+    var bottomPx = sceneRect.height - anchorY - shellRect.height * (1 - shellAnchorRatio.y);
+    return normalizeShellPosition({
+      leftPct: anchorX / sceneRect.width * 100,
+      bottomPct: bottomPx / sceneRect.height * 100
+    }, sceneRect, shellRect);
+  }
+
   function getShellDragLimits(sceneRect, shellRect) {
     var width = sceneRect ? sceneRect.width : scene.getBoundingClientRect().width;
     var height = sceneRect ? sceneRect.height : scene.getBoundingClientRect().height;
@@ -104,7 +147,7 @@
     var nextLeft = clamp(position.leftPct / 100 * sceneRect.width, limits.minLeft, limits.maxLeft);
     var rawBottom = typeof position.bottomPct === 'number'
       ? position.bottomPct / 100 * sceneRect.height
-      : (typeof position.bottomPx === 'number' ? position.bottomPx : sceneRect.height * 0.08);
+      : (typeof position.bottomPx === 'number' ? position.bottomPx : sceneRect.height * 0.098);
     var nextBottom = clamp(rawBottom, limits.minBottom, limits.maxBottom);
     return {
       leftPct: nextLeft / sceneRect.width * 100,
@@ -119,7 +162,122 @@
     shell.style.setProperty('--shell-bottom', position.bottomPct.toFixed(3) + '%');
   }
 
-  applyShellPosition(readShellPosition());
+  function syncShellHome() {
+    if (hasCustomShellPosition || shellDrag || shellHomeAnimation) return;
+    applyShellPosition(calculateShellHome());
+  }
+
+  function clearShellPosition() {
+    try {
+      window.localStorage.removeItem(shellPositionStorageKey);
+    } catch (error) {}
+    hasCustomShellPosition = false;
+    shell.style.removeProperty('--shell-left');
+    shell.style.removeProperty('--shell-bottom');
+    applyShellPosition(calculateShellHome());
+  }
+
+  function readCurrentShellPosition(sceneRect, shellRect) {
+    sceneRect = sceneRect || scene.getBoundingClientRect();
+    shellRect = shellRect || shell.getBoundingClientRect();
+    return normalizeShellPosition({
+      leftPct: (shellRect.left - sceneRect.left + shellRect.width * 0.5) / sceneRect.width * 100,
+      bottomPct: (sceneRect.bottom - shellRect.bottom) / sceneRect.height * 100
+    }, sceneRect, shellRect);
+  }
+
+  function easeInOutSine(progress) {
+    return -(Math.cos(Math.PI * progress) - 1) / 2;
+  }
+
+  function animateShellHome() {
+    window.cancelAnimationFrame(shellHomeAnimation);
+    var sceneRect = scene.getBoundingClientRect();
+    var shellRect = shell.getBoundingClientRect();
+    var start = readCurrentShellPosition(sceneRect, shellRect);
+    var target = calculateShellHome(sceneRect, shellRect);
+    var distance = Math.hypot(
+      (target.leftPct - start.leftPct) / 100 * sceneRect.width,
+      (target.bottomPct - start.bottomPct) / 100 * sceneRect.height
+    );
+    var duration = reducedMotion ? 0 : clamp(760 + distance * 1.2, 920, 1320);
+    var wiggleLeft = clamp(distance / sceneRect.width * 4.2, 0.45, 2.6);
+    var wiggleBottom = clamp(distance / sceneRect.height * 2.8, 0.3, 1.9);
+    var phase = start.leftPct < target.leftPct ? 1 : -1;
+    var jitterSeed = Math.random() * Math.PI * 2;
+    var startTime = performance.now();
+    hasCustomShellPosition = false;
+    try {
+      window.localStorage.removeItem(shellPositionStorageKey);
+    } catch (error) {}
+
+    function step(now) {
+      var progress = duration ? clamp((now - startTime) / duration, 0, 1) : 1;
+      var eased = easeInOutSine(progress);
+      var envelope = Math.sin(progress * Math.PI);
+      var wander =
+        Math.sin(progress * Math.PI * 1.35 + jitterSeed) * 0.62 +
+        Math.sin(progress * Math.PI * 3.7 + jitterSeed * 0.43) * 0.26 +
+        Math.sin(progress * Math.PI * 6.1 + jitterSeed * 1.7) * 0.12;
+      var bob =
+        Math.sin(progress * Math.PI * 1.8 + jitterSeed * 0.7) * 0.5 +
+        Math.sin(progress * Math.PI * 4.6 + jitterSeed) * 0.22;
+      applyShellPosition({
+        leftPct: start.leftPct + (target.leftPct - start.leftPct) * eased + wander * envelope * wiggleLeft * phase,
+        bottomPct: start.bottomPct + (target.bottomPct - start.bottomPct) * eased + bob * envelope * wiggleBottom
+      });
+      if (progress < 1) {
+        shellHomeAnimation = window.requestAnimationFrame(step);
+        return;
+      }
+      shellHomeAnimation = 0;
+      shell.classList.remove('is-returning-home');
+      shell.classList.remove('is-resetting', 'is-idle-wiggle');
+      void shell.offsetWidth;
+      shell.classList.add('is-resetting');
+    }
+
+    shell.classList.add('is-returning-home');
+    shellHomeAnimation = window.requestAnimationFrame(step);
+  }
+
+  function resetShellHome() {
+    if (shellDrag) return;
+    scheduleShellIdleWiggle();
+    sequenceToken++;
+    window.clearTimeout(touchCloseTimer);
+    setShellState('closed');
+    setShellFrame(0);
+    animateShellHome();
+  }
+
+  function wiggleShellIdle() {
+    if (
+      reducedMotion ||
+      document.hidden ||
+      shellDrag ||
+      shellHomeAnimation ||
+      shell.dataset.shellState !== 'closed' ||
+      shell.classList.contains('is-resetting') ||
+      shell.matches(':hover')
+    ) {
+      scheduleShellIdleWiggle();
+      return;
+    }
+    shell.classList.remove('is-resetting', 'is-idle-wiggle');
+    void shell.offsetWidth;
+    shell.classList.add('is-idle-wiggle');
+  }
+
+  function scheduleShellIdleWiggle() {
+    window.clearTimeout(shellIdleTimer);
+    if (reducedMotion) return;
+    shellIdleTimer = window.setTimeout(wiggleShellIdle, randomBetween(10000, 15000));
+  }
+
+  var savedShellPosition = readShellPosition();
+  hasCustomShellPosition = !!savedShellPosition;
+  applyShellPosition(savedShellPosition || calculateShellHome());
 
   function wait(ms, token) {
     return new Promise(function (resolve) {
@@ -193,9 +351,11 @@
     var fromShell = options && options.fromShell;
     var origin = fromShell ? getShellOrigin() : null;
     var direction = Math.random() < 0.5 ? -1 : 1;
+    var source = fishSources[Math.floor(Math.random() * fishSources.length)];
+    var sizeRange = fromShell ? fishConfig.pearlSize : fishConfig.ambientSize;
     var node = document.createElement('span');
     var sprite = document.createElement('img');
-    var size = fromShell ? randomBetween(50, 70) : randomBetween(46, 66);
+    var size = randomBetween(sizeRange[0], sizeRange[1]);
     var y = origin ? origin.y + randomBetween(-10, 10) : randomBetween(bounds.upper, bounds.lower - 34);
     var x = origin ? origin.x + randomBetween(-16, 16) : randomBetween(40, bounds.width - 80);
     var cruiseSpeed = randomBetween(28, 48);
@@ -205,7 +365,7 @@
     node.style.setProperty('--fish-opacity', randomBetween(0.7, 0.88).toFixed(2));
 
     sprite.className = 'seabed-fish-sprite';
-    sprite.src = fishSources[Math.floor(Math.random() * fishSources.length)];
+    sprite.src = source.src;
     sprite.alt = '';
     sprite.decoding = 'async';
     node.appendChild(sprite);
@@ -219,6 +379,8 @@
       vx: direction * cruiseSpeed,
       vy: randomBetween(-4, 4),
       dir: direction,
+      face: direction,
+      headBias: source.head === 'left' ? -1 : 1,
       cruiseSpeed: cruiseSpeed,
       size: size,
       phase: Math.random() * Math.PI * 2
@@ -226,7 +388,7 @@
   }
 
   function addFish(fromShell) {
-    if (reducedMotion || fish.length >= 7) return;
+    if (reducedMotion || fish.length >= fishConfig.maxCount) return;
     fish.push(makeFish({ fromShell: fromShell }));
     fishCount = Math.max(fishCount, fish.length);
     ensureAnimation();
@@ -258,7 +420,7 @@
     item.vx *= 0.998;
     item.vy *= 0.992;
 
-    if (Math.random() < 0.0018) item.dir *= -1;
+    if (Math.random() < 0.0014) item.dir *= -1;
     if (item.x < -80) {
       item.x = bounds.width + 60;
       item.dir = -1;
@@ -281,12 +443,17 @@
     if (Math.abs(item.vx) < item.cruiseSpeed * 0.28) {
       item.vx = item.dir * item.cruiseSpeed * 0.28;
     }
-    var facing = item.dir > 0 ? -1 : 1;
+    if (Math.abs(item.vx) > 4) {
+      item.face = item.vx >= 0 ? 1 : -1;
+      item.dir = item.face;
+    }
+    var facing = item.face * item.headBias;
     var bob = Math.sin(now * 0.0022 + item.phase) * 5;
+    var swimAngle = Math.atan2(item.vy, Math.max(18, Math.abs(item.vx))) * 180 / Math.PI;
     item.sprite.style.setProperty('--fish-facing', String(facing));
     item.node.style.setProperty('--fish-x', item.x + 'px');
     item.node.style.setProperty('--fish-y', (item.y + bob) + 'px');
-    item.node.style.setProperty('--fish-rotate', Math.max(-10, Math.min(10, item.vy * 0.55)) + 'deg');
+    item.node.style.setProperty('--fish-rotate', Math.max(-12, Math.min(12, swimAngle)) + 'deg');
   }
 
   function animate(now) {
@@ -313,9 +480,9 @@
 
   async function summonFish() {
     await openShell();
-    if (fish.length < 7) {
+    if (fish.length < fishConfig.maxCount) {
       addFish(true);
-      if (fish.length === 7) {
+      if (fish.length === fishConfig.maxCount) {
         showMessage('第七条小鱼游过，摸鱼之神开始回应你了。');
       }
     } else {
@@ -349,6 +516,10 @@
   });
   shell.addEventListener('pointerdown', function (event) {
     if (event.button !== 0 || pearl.contains(event.target)) return;
+    scheduleShellIdleWiggle();
+    window.cancelAnimationFrame(shellHomeAnimation);
+    shellHomeAnimation = 0;
+    shell.classList.remove('is-returning-home');
     var sceneRect = scene.getBoundingClientRect();
     var shellRect = shell.getBoundingClientRect();
     shellDrag = {
@@ -385,6 +556,7 @@
       leftPct: (shellRect.left - sceneRect.left + shellRect.width * 0.5) / sceneRect.width * 100,
       bottomPct: (sceneRect.bottom - shellRect.bottom) / sceneRect.height * 100
     }, sceneRect, shellRect));
+    hasCustomShellPosition = true;
     shell.dataset.dragged = shellDrag.moved ? 'true' : 'false';
     shellDrag = null;
     shell.classList.remove('is-dragging');
@@ -405,6 +577,16 @@
     openShell();
     scheduleTouchClose();
   });
+  shell.addEventListener('contextmenu', function (event) {
+    event.preventDefault();
+    resetShellHome();
+  });
+  shell.addEventListener('animationend', function (event) {
+    if (event.animationName === 'shellWiggleHome' || event.animationName === 'shellIdleWiggle') {
+      shell.classList.remove('is-resetting', 'is-idle-wiggle');
+      scheduleShellIdleWiggle();
+    }
+  });
   shell.addEventListener('keydown', function (event) {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
@@ -416,8 +598,18 @@
   });
   fishGod.addEventListener('click', summonFish);
   window.addEventListener('blur', closeShell);
-  window.addEventListener('resize', updateBounds);
-  if ('ResizeObserver' in window) new ResizeObserver(updateBounds).observe(scene);
+  document.addEventListener('visibilitychange', scheduleShellIdleWiggle);
+  window.addEventListener('resize', function () {
+    updateBounds();
+    syncShellHome();
+  });
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(function () {
+      updateBounds();
+      syncShellHome();
+    }).observe(scene);
+  }
 
   seedFish();
+  scheduleShellIdleWiggle();
 })();

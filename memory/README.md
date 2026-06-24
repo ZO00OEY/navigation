@@ -11,6 +11,7 @@
 
 ## 当前记录
 
+- [导航项目结构参考](project-structure-reference.md)
 - [首页当前工作记忆](homepage-current-worklog.md)
 - [首页底部海底祈愿区](footer-seabed-design.md)
 
