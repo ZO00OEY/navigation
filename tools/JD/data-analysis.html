@@ -1982,6 +1982,7 @@
               <tbody id="estimatesDbBody"><tr><td class="empty-row" colspan="7">暂无竞品估算数据</td></tr></tbody>
             </table>
           </div>
+          <div class="report-data-alert" id="estimateDataAlert"></div>
         </div>
       </section>
 
@@ -2291,6 +2292,15 @@
   }
   function ymd(date) {
     return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+  }
+  function localDateTimeText(value) {
+    if (!value) return '';
+    var date = value instanceof Date ? value : new Date(value);
+    if (isNaN(date.getTime())) return String(value).slice(0, 19).replace('T', ' ');
+    return ymd(date) + ' ' +
+      String(date.getHours()).padStart(2, '0') + ':' +
+      String(date.getMinutes()).padStart(2, '0') + ':' +
+      String(date.getSeconds()).padStart(2, '0');
   }
   function canonicalYmd(value) {
     if (value instanceof Date && !isNaN(value.getTime())) return ymd(value);
@@ -4078,7 +4088,7 @@
     $('snapshotBody').innerHTML = rows.map(function(row) {
       var status = importStatusMeta(row);
       return '<tr>' +
-        '<td>' + esc((row.importedAt || '').slice(0, 19).replace('T', ' ')) + '</td>' +
+        '<td>' + esc(localDateTimeText(row.importedAt)) + '</td>' +
         '<td>' + esc(labels.sourceType[row.sourceType] || row.sourceType) + '</td>' +
         '<td>' + esc(labels.periodType[row.periodType] || row.periodType) + '</td>' +
         '<td>' + esc(rangeText(row)) + '</td>' +
@@ -5098,6 +5108,23 @@
     row[config.rangeKey] = rankingRangeText(range.min, range.max, config.key === 'qty' ? 0 : 2);
   }
 
+  function ensureEstimateRow(sku, date, maps) {
+    var key = estimateDateKey(sku, date);
+    var row = maps.estimateMap[key];
+    if (!row) {
+      row = {
+        periodType: 'day',
+        startDate: date,
+        endDate: date,
+        sku: sku,
+        generatedBy: 'estimate_algorithm',
+        importedAt: new Date().toISOString()
+      };
+      maps.estimateMap[key] = row;
+    }
+    return row;
+  }
+
   function predictedRangeFromPrevious(prevRange, coeffRange) {
     if (!prevRange || !coeffRange) return null;
     return numericRange(Number(prevRange.min) * Number(coeffRange.min), Number(prevRange.max) * Number(coeffRange.max));
@@ -5106,6 +5133,13 @@
   function previousAllowedRangeFromQuery(queryRange, coeffRange) {
     if (!queryRange || !coeffRange || !Number(coeffRange.min) || !Number(coeffRange.max)) return null;
     return numericRange(Number(queryRange.min) / Number(coeffRange.max), Number(queryRange.max) / Number(coeffRange.min));
+  }
+
+  function constrainEstimateRangeByRanking(sku, date, config, range, maps) {
+    if (!range) return null;
+    var ranking = maps.rankingMap[estimateDateKey(sku, date)];
+    var rankingRange = metricRangeFromRanking(ranking, config);
+    return rankingRange ? intersectRange(range, rankingRange) : range;
   }
 
   function buildEstimateRowMaps(estimates, rankings) {
@@ -5148,6 +5182,36 @@
     refinePreviousEstimate(sku, prevDate, config, maps, touched, depth + 1);
   }
 
+  function reverseRefinePreviousEstimate(sku, date, config, query, coeff, maps, touched, depth) {
+    if (depth > 40) return null;
+    var prevDate = ymd(addDays(dateFromYmd(date), -1));
+    var allowed = previousAllowedRangeFromQuery(query, coeff);
+    if (!allowed) return null;
+    var rankingConstrained = constrainEstimateRangeByRanking(sku, prevDate, config, allowed, maps);
+    if (!rankingConstrained) {
+      addEstimateNote(ensureEstimateRow(sku, date, maps), config.label + '倒算前日时与前日榜单区间无交集');
+      return null;
+    }
+    var prevRow = ensureEstimateRow(sku, prevDate, maps);
+    var prev = metricRangeFromEstimate(prevRow, config);
+    var refined = prev ? intersectRange(prev, rankingConstrained) : rankingConstrained;
+    if (!refined) {
+      refined = rankingConstrained;
+      addEstimateNote(prevRow, config.label + '原区间与后日倒算无交集，按倒算和榜单交集重置');
+    }
+    if (!prev || rangesDiffer(prev, refined)) {
+      setEstimateMetricRange(prevRow, config, refined);
+      addEstimateNote(prevRow, config.label + '由后日榜单区间倒算修正');
+      prevRow.updatedAt = new Date().toISOString();
+      touched[estimateDateKey(sku, prevDate)] = prevRow;
+      var prevRanking = maps.rankingMap[estimateDateKey(sku, prevDate)];
+      var prevCoeff = growthCoefficientRange(prevRanking, config);
+      var prevQuery = metricRangeFromRanking(prevRanking, config);
+      if (prevCoeff && prevQuery) reverseRefinePreviousEstimate(sku, prevDate, config, prevQuery, prevCoeff, maps, touched, depth + 1);
+    }
+    return refined;
+  }
+
   function generateEstimateForDate(sku, date, config, maps, touched) {
     var ranking = maps.rankingMap[estimateDateKey(sku, date)];
     var prevDate = ymd(addDays(dateFromYmd(date), -1));
@@ -5158,26 +5222,25 @@
     var query = metricRangeFromRanking(ranking, config);
     var predicted = predictedRangeFromPrevious(prev, coeff);
     var finalRange = intersectRange(predicted, query);
-    if (!prev || !coeff || !query || !predicted || !finalRange) return null;
+    if (!prev || !coeff || !query || !predicted) return null;
+    var usedRankingFallback = false;
+    if (!finalRange) {
+      finalRange = query;
+      usedRankingFallback = true;
+      reverseRefinePreviousEstimate(sku, date, config, query, coeff, maps, touched, 0);
+    }
     refinePreviousEstimate(sku, date, config, maps, touched, 0);
     prevRow = maps.estimateMap[estimateDateKey(sku, prevDate)] || prevRow;
     prev = metricRangeFromEstimate(prevRow, config);
     predicted = predictedRangeFromPrevious(prev, coeff);
     finalRange = intersectRange(predicted, query);
-    if (!finalRange) return null;
-    var row = maps.estimateMap[estimateDateKey(sku, date)];
-    if (!row) {
-      row = {
-        periodType: 'day',
-        startDate: date,
-        endDate: date,
-        sku: sku,
-        generatedBy: 'estimate_algorithm',
-        importedAt: new Date().toISOString()
-      };
-      maps.estimateMap[estimateDateKey(sku, date)] = row;
+    if (!finalRange) {
+      finalRange = query;
+      usedRankingFallback = true;
     }
+    var row = ensureEstimateRow(sku, date, maps);
     setEstimateMetricRange(row, config, finalRange);
+    if (usedRankingFallback) addEstimateNote(row, config.label + '推算区间与榜单区间无交集，按榜单区间启用并倒算前日');
     if (Math.abs(finalRange.min - query.min) < 0.000001) addEstimateNote(row, config.label + '下限由榜单交集收敛');
     if (Math.abs(finalRange.max - query.max) < 0.000001) addEstimateNote(row, config.label + '上限由榜单交集收敛');
     row.predictedRanges = row.predictedRanges || {};
@@ -5188,6 +5251,57 @@
     row.updatedAt = new Date().toISOString();
     touched[estimateDateKey(sku, date)] = row;
     return row;
+  }
+
+  function estimateFailureReason(sku, date, config, maps) {
+    var key = estimateDateKey(sku, date);
+    var estimate = maps.estimateMap[key];
+    if (metricRangeFromEstimate(estimate, config)) return '';
+    var ranking = maps.rankingMap[key];
+    if (!ranking) return '缺榜单数据';
+    var rankingRange = metricRangeFromRanking(ranking, config);
+    if (!rankingRange) return '榜单缺' + config.label + '区间';
+    var coeff = growthCoefficientRange(ranking, config);
+    if (!coeff) return '榜单缺' + config.label + '增长率';
+    var prevDate = ymd(addDays(dateFromYmd(date), -1));
+    var prevRow = maps.estimateMap[estimateDateKey(sku, prevDate)];
+    if (!prevRow) return '缺前一日 ' + prevDate + ' 的估算数据';
+    var prevRange = metricRangeFromEstimate(prevRow, config);
+    if (!prevRange) return '前一日 ' + prevDate + ' 缺' + config.label + '区间';
+    var predicted = predictedRangeFromPrevious(prevRange, coeff);
+    if (!predicted) return '无法用前一日区间和增长率推算';
+    var finalRange = intersectRange(predicted, rankingRange);
+    if (!finalRange) {
+      return config.label + '推算区间 ' + rankingRangeText(predicted.min, predicted.max, config.key === 'qty' ? 0 : 2) +
+        ' 与榜单区间 ' + rankingRangeText(rankingRange.min, rankingRange.max, config.key === 'qty' ? 0 : 2) + ' 无交集';
+    }
+    return '未知原因，未写入' + config.label + '区间';
+  }
+
+  function renderEstimateDataAlert(selectedSku, range, estimates, rankings) {
+    var box = $('estimateDataAlert');
+    if (!box) return;
+    var normalized = normalizedRange(range && range.start, range && (range.end || range.start));
+    if (!selectedSku || !normalized) {
+      box.className = 'report-data-alert';
+      box.innerHTML = '';
+      return;
+    }
+    var maps = buildEstimateRowMaps(estimates || [], rankings || []);
+    var warnings = [];
+    datesInRange(normalized.start, normalized.end || normalized.start).forEach(function(date) {
+      estimateMetricConfigs().forEach(function(config) {
+        var reason = estimateFailureReason(selectedSku, date, config, maps);
+        if (reason) warnings.push({ group: '缺' + config.label + '估算区间', detail: esc(date + '：' + reason) });
+      });
+    });
+    if (!warnings.length) {
+      box.className = 'report-data-alert ok';
+      box.innerHTML = '当前产品和日期范围的金额/件数估算区间暂无明显缺口。';
+      return;
+    }
+    box.className = 'report-data-alert warn';
+    box.innerHTML = renderGroupedDataWarnings(warnings);
   }
 
   async function generateCompetitorEstimates() {
@@ -5393,6 +5507,7 @@
     var selectedSku = normalizeSkuValue(productSelect ? productSelect.value : '');
     if (!selectedSku) {
       $('estimatesDbBody').innerHTML = '<tr><td class="empty-row" colspan="7">暂无竞品估算数据，请先导入竞品估算表</td></tr>';
+      renderEstimateDataAlert('', null, rows, rankingRows);
       enhanceAllResizableTables();
       return;
     }
@@ -5419,9 +5534,11 @@
     });
     if (!rows.length) {
       $('estimatesDbBody').innerHTML = '<tr><td class="empty-row" colspan="7">当前产品和日期范围内暂无竞品估算数据</td></tr>';
+      renderEstimateDataAlert(selectedSku, range, await getAll('competitor_estimates'), rankingRows);
       enhanceAllResizableTables();
       return;
     }
+    renderEstimateDataAlert(selectedSku, range, await getAll('competitor_estimates'), rankingRows);
     $('estimatesDbBody').innerHTML = rows.map(function(row) {
       var amount = estimateRange(row, ['estimatedAmountMin', 'amountMin', 'salesAmountMin'], ['estimatedAmountMax', 'amountMax', 'salesAmountMax'], ['estimatedAmountRange', 'amountRange', 'salesAmountRange']);
       var qty = estimateRange(row, ['estimatedQtyMin', 'qtyMin', 'salesQtyMin'], ['estimatedQtyMax', 'qtyMax', 'salesQtyMax'], ['estimatedQtyRange', 'qtyRange', 'salesQtyRange']);
@@ -6110,6 +6227,7 @@
     var periodCount = 0;
     var compareSkipped = 0;
     var replaced = 0;
+    var dateMap = {};
     for (var i = 0; i < rows.length; i++) {
       var row = rows[i];
       if (!rule.includeComparison && isComparisonTimeRow(row)) {
@@ -6132,6 +6250,8 @@
       var periodType = inferPeriodType(startDate, endDate);
       if (periodType === 'day') dayCount++;
       else if (periodType === 'period') periodCount++;
+      dateMap[startDate] = true;
+      dateMap[endDate] = true;
       var record = {
         sourceType: 'onsite_cost',
         periodType: periodType,
@@ -6171,7 +6291,8 @@
     if (compareSkipped) noteParts.push('\u8df3\u8fc7\u5bf9\u6bd4\u65f6\u95f4 ' + compareSkipped + ' \u884c');
     if (skipped && skipped !== compareSkipped) noteParts.push('\u8df3\u8fc7 ' + (skipped - compareSkipped) + ' \u884c');
     if (missing.length) noteParts.push('\u7f3a\u5c11\u5217\uff1a' + missing.join('\u3001'));
-    return { saved: saved, skipped: skipped, replaced: replaced, dayCount: dayCount, periodCount: periodCount, note: noteParts.join('\uff1b') };
+    var dates = Object.keys(dateMap).sort();
+    return { saved: saved, skipped: skipped, replaced: replaced, dayCount: dayCount, periodCount: periodCount, startDate: dates[0] || '', endDate: dates[dates.length - 1] || dates[0] || '', note: noteParts.join('\uff1b') };
   }
 
   async function saveOffsiteCpsCostMetrics(rows, file, snapshotId) {
@@ -6440,6 +6561,8 @@
         } else if (meta.sourceType === 'onsite_cost') {
           var onsiteResult = await saveOnsiteCostMetrics(rows, file, snapshotId);
           meta.periodType = onsiteResult.periodCount && !onsiteResult.dayCount ? 'period' : 'day';
+          meta.startDate = onsiteResult.startDate || meta.startDate;
+          meta.endDate = onsiteResult.endDate || meta.endDate;
           meta.note = onsiteResult.note;
           finalStatus = metricImportStatus(meta.sourceType, onsiteResult);
         } else if (meta.sourceType === 'offsite_cps_cost') {
@@ -7881,7 +8004,7 @@
         '<td>' + esc(labels.sourceType[row.sourceType] || row.sourceType || '-') + '</td>' +
         '<td>' + esc(labels.periodType[row.periodType] || row.periodType || '-') + '<br>' + esc(rangeText(row)) + '</td>' +
         '<td>' + esc(row.fileName || '-') + '</td>' +
-        '<td>' + esc((row.importedAt || '').slice(0, 19).replace('T', ' ')) + '</td>' +
+        '<td>' + esc(localDateTimeText(row.importedAt)) + '</td>' +
         '<td>' + esc(row.rowCount || 0) + '</td>' +
         '<td><span class="import-status ' + esc(status.className) + '" title="' + esc(row.statusNote || row.detectNote || '') + '">' + esc(status.label) + '</span></td>' +
         '<td><button class="btn danger cleanup-delete-one" data-id="' + row.id + '">\u5220\u9664</button></td>' +
