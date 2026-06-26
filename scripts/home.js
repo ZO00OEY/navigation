@@ -54,6 +54,7 @@
   function buildPortalCards() {
     var grid = document.getElementById('portalGrid');
     var portalKinds = ['message-bottle', 'compass', 'anchor'];
+    var portalTextStyle = '--portal-text-left: clamp(64px, 15cqw, 112px); --portal-text-right: clamp(52px, 18cqw, 128px);';
     var blocks = ((typeof SITE_DATA !== 'undefined' && SITE_DATA.blocks) || []).filter(function (block) {
       return block.type !== 'profile';
     });
@@ -66,9 +67,8 @@
       var href = block.page ? 'detail.html?page=' + encodeURIComponent(block.page) : (links[0] && links[0].url || '#');
       var desc = links.slice(0, 3).map(function (link) { return link.title; }).join(' · ');
       var portalKind = portalKinds[index] || 'message-bottle';
-      return '<a class="portal-card" href="' + escapeHtml(href) + '" data-portal-kind="' + portalKind + '">' +
+      return '<a class="portal-card" href="' + escapeHtml(href) + '" data-portal-kind="' + portalKind + '" style="' + portalTextStyle + '">' +
         '<span class="portal-index">0' + (index + 1) + ' / 0' + blocks.length + '</span>' +
-        '<span class="card-arrow">↗</span>' +
         '<span class="portal-deco" aria-hidden="true"></span>' +
         '<h3>' + escapeHtml(block.name) + '</h3>' +
         '<p>' + escapeHtml(desc || '内容正在慢慢浮出水面。') + '</p>' +
