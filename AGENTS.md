@@ -62,7 +62,6 @@ navigation/
 ├── docs/
 │   └── homepage-architecture.md    # 首页工程结构说明
 ├── memory/                         # 项目记忆 / 设计决策，不参与运行
-├── backup/                         # 已退出运行链路的历史备份 / 校验快照 / 旧概念资产
 ├── concepts/                       # 首页和海底区主要视觉素材
 ├── img/                            # 教程截图，按页面分目录
 └── .gitignore
@@ -244,7 +243,7 @@ link -> { title, url, desc, target? }
 注意：
 
 - `concepts/` 中有一部分是历史概念图、备份图、生成记录
-- 已确认退出当前运行链路、但仍需保留的旧素材，统一放到 `backup/资产设计仓/`
+- 已确认退出当前运行链路的旧素材不再保留在工作树里，需要时请查 Git 历史
 - 是否仍在使用，可先参考 `memory/project-structure-reference.md`
 
 ## 7. 全局系统
