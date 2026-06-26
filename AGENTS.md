@@ -9,7 +9,7 @@
 
 项目不依赖构建工具、框架或包管理器。页面直接由原生 HTML、CSS、JavaScript 和 `data.js` 驱动，浏览器可直接打开。
 
-本文档面向 Codex / 代码代理协作，记录当前仓库的真实结构、运行链路和修改约定。`CLAUDE.md` 是兼容文件；如果你在调整“长期项目约定”，应考虑同步两份文档。
+本文档面向 Codex / 代码代理协作，记录当前仓库的真实结构、运行链路和修改约定。`CLAUDE.md` 现在只是兼容入口，长期项目约定以 `AGENTS.md` 为准。
 
 ## 1. 先读什么
 
@@ -62,9 +62,9 @@ navigation/
 ├── docs/
 │   └── homepage-architecture.md    # 首页工程结构说明
 ├── memory/                         # 项目记忆 / 设计决策，不参与运行
+├── backup/                         # 已退出运行链路的历史备份 / 校验快照 / 旧概念资产
 ├── concepts/                       # 首页和海底区主要视觉素材
 ├── img/                            # 教程截图，按页面分目录
-├── index_his.html                  # 历史首页备份
 └── .gitignore
 ```
 
@@ -152,17 +152,12 @@ SITE_DATA.blocks[] -> {
   type,
   name,
   icon?,
-  cols?,
-  rows?,
-  layout?,
   page?,
   avatar?,
   username?,
   bio?,
-  socials?,
   subcategories?,
-  links?,
-  cardFooter?
+  links?
 }
 
 subcategory -> { name, links[], page? }
@@ -249,7 +244,7 @@ link -> { title, url, desc, target? }
 注意：
 
 - `concepts/` 中有一部分是历史概念图、备份图、生成记录
-- 在没有确认引用关系前，不要清理这些素材
+- 已确认退出当前运行链路、但仍需保留的旧素材，统一放到 `backup/资产设计仓/`
 - 是否仍在使用，可先参考 `memory/project-structure-reference.md`
 
 ## 7. 全局系统
