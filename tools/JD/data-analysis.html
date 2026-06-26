@@ -104,8 +104,7 @@
 
 .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 20px; }
 .page-title h1 { margin: 0 0 7px; color: var(--text); font-size: 1.35rem; letter-spacing: 0; }
-.page-title p { margin: 0; max-width: 680px; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.7; }
-#import .page-title p { max-width: none; white-space: nowrap; }
+.page-title p { margin: 0; max-width: none; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.7; }
 .status-pill {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 10px; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 999px;
@@ -285,9 +284,77 @@
 }
 .report-toolbar {
   display: grid;
-  grid-template-columns: minmax(220px, 300px) minmax(320px, 460px) max-content;
+  grid-template-columns: max-content minmax(320px, 360px) max-content;
+  align-items: end;
+  column-gap: 30px;
+  row-gap: 12px;
+}
+.report-detail-panel {
+  display: grid;
+  gap: 16px;
+}
+.report-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.report-detail-title {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 700;
+}
+.report-detail-topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 22px;
+}
+.report-detail-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 18px;
+}
+.report-detail-right {
+  display: grid;
+  justify-items: end;
+  align-self: flex-end;
+}
+.report-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 14px 22px;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.report-detail-config {
+  display: grid;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line-soft, var(--card-border));
+}
+.report-detail-config-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.report-detail-config-title {
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.report-detail-config .hint {
+  margin: 0;
+}
+.report-month-progress-hint {
+  align-self: end;
+  margin: 0 0 8px -16px;
+  color: var(--text-tertiary);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  white-space: nowrap;
 }
 .report-mode-switch {
   display: inline-flex;
@@ -297,6 +364,8 @@
   background: #ffffff;
   padding: 3px;
   border-radius: 3px;
+  align-self: end;
+  margin-bottom: 0;
 }
 .mode-btn {
   border: 0;
@@ -386,6 +455,9 @@
   background: #fff;
   overflow: auto;
 }
+.report-template-preview.copy-tools-hidden .report-row-check-cell {
+  display: none;
+}
 .report-template-preview table {
   border-collapse: collapse;
   min-width: 680px;
@@ -404,6 +476,66 @@
 .report-template-preview tr:first-child td {
   background: rgba(222, 115, 158, 0.06);
   font-weight: 700;
+}
+.report-template-preview .report-row-copy-cell,
+.report-template-preview .report-row-check-cell {
+  position: sticky;
+  z-index: 2;
+  min-width: 38px;
+  width: 38px;
+  padding: 0;
+  text-align: center;
+  background: #fff;
+}
+.report-template-preview .report-row-copy-cell { left: 0; }
+.report-template-preview .report-row-check-cell {
+  left: 38px;
+  border-right-color: var(--line-medium, var(--card-border));
+}
+.report-template-preview .report-row-check-cell.report-row-check-head {
+  min-width: 76px;
+  width: 76px;
+  padding: 0 6px;
+  font-size: 0.68rem;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+.report-template-preview tr:first-child .report-row-copy-cell,
+.report-template-preview tr:first-child .report-row-check-cell {
+  background: rgba(222, 115, 158, 0.06);
+}
+.report-row-check {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--link-color);
+  cursor: pointer;
+}
+.report-row-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 3px;
+  background: rgba(222, 115, 158, 0.1);
+  color: var(--link-color);
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+.report-row-copy-btn svg { width: 15px; height: 15px; }
+.report-row-copy-btn:hover { background: rgba(222, 115, 158, 0.18); }
+.report-row-copy-btn[hidden] { display: none; }
+.quick-copy-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.quick-copy-toggle svg { width: 16px; height: 16px; }
+.quick-copy-toggle.is-off {
+  color: var(--text-tertiary);
+  background: var(--search-bg);
 }
 .report-sheet-tabs {
   display: flex;
@@ -1142,7 +1274,7 @@
   .filter-strip { grid-template-columns: 1fr; }
   .filter-left { max-width: none; }
   .filter-right, .filter-actions { align-items: flex-start; justify-content: flex-start; }
-  .grid-2, .grid-3, .metric-row, .form-grid, .management-grid, .db-browser-toolbar { grid-template-columns: 1fr; }
+  .grid-2, .grid-3, .metric-row, .form-grid, .management-grid, .db-browser-toolbar, .report-toolbar { grid-template-columns: 1fr; }
   .field, .manual-control { grid-template-columns: 1fr; gap: 6px; align-items: stretch; }
   .field > .input,
   .field > .select,
@@ -1150,6 +1282,13 @@
   .field > .date-input-wrap { width: 100%; max-width: none; }
   .field.date-picker-field .date-popover { left: 0; }
   .manual-control.date-picker-field .date-popover { left: 0; }
+  .report-detail-header,
+  .report-detail-topbar,
+  .report-detail-config-head { flex-direction: column; align-items: stretch; }
+  .report-detail-left { align-items: stretch; }
+  .report-detail-right { justify-items: stretch; }
+  .report-detail-actions { justify-content: flex-start; }
+  .report-month-progress-hint { margin: 0; white-space: normal; }
   .manual-ranking-toolbar { flex-direction: column; align-items: stretch; }
   .manual-control-box, .manual-field-trigger, .manual-date-wrap .input { width: 100%; min-width: 0; }
 }
@@ -1172,7 +1311,7 @@
   <div class="tool-shell">
     <nav class="tool-sidebar">
       <div class="sidebar-main">
-        <button class="tab-btn active" data-page="import">导入<span class="tab-kicker">01</span></button>
+        <button class="tab-btn active" data-page="import">数据导入<span class="tab-kicker">01</span></button>
         <button class="tab-btn" data-page="report">报表<span class="tab-kicker">02</span></button>
         <button class="tab-btn" data-page="data-management">功能导航<span class="tab-kicker">03</span></button>
       </div>
@@ -1380,85 +1519,92 @@
           </div>
         </div>
 
-        <div class="panel">
-          <div class="report-toolbar">
-            <div class="field report-issue-field">
-              <label>期数</label>
-              <input class="input" id="reportIssueInput" type="text" placeholder="例如：第 1 期">
-            </div>
-            <div class="field date-picker-field" id="reportDatePickerField">
-              <label>日期范围</label>
-              <div class="date-input-wrap">
-                <button class="date-step-btn date-step-prev" id="reportDatePrev" type="button" title="向前" aria-label="向前">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                    <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </button>
-                <input class="input" type="text" id="reportDateInput" placeholder="YYYY-MM-DD">
-                <button class="date-step-btn date-step-next" id="reportDateNext" type="button" title="向后" aria-label="向后">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                    <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </button>
-                <button class="date-trigger" id="reportDateTrigger" type="button" title="选择日期">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-                    <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
-                    <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-                  </svg>
-                </button>
-              </div>
-              <input type="hidden" id="reportStartDate">
-              <input type="hidden" id="reportEndDate">
-              <div class="date-popover" id="reportDatePopover">
-                <div class="date-shortcuts">
-                  <button type="button" data-date-shortcut="yesterday">昨日</button>
-                  <button type="button" data-date-shortcut="7">近7日</button>
-                  <button type="button" data-date-shortcut="30">近30日</button>
-                  <button type="button" data-date-shortcut="today">自然日</button>
-                  <button type="button" data-date-shortcut="week">自然周</button>
-                  <button type="button" data-date-shortcut="month">自然月</button>
-                  <button type="button" data-date-shortcut="custom">自定义</button>
-                </div>
-                <div class="date-calendar">
-                  <div class="date-cal-head">
-                    <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
-                    <strong class="date-picker-month">2026-06</strong>
-                    <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
-                  </div>
-                  <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-                  <div class="date-grid"></div>
-                </div>
-              </div>
-            </div>
-            <div class="report-mode-switch">
-              <button class="mode-btn active" type="button" data-report-mode="daily">日报</button>
-              <button class="mode-btn" type="button" data-report-mode="period">周期报</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel report-daily-panel" style="margin-top:14px;">
-          <div class="panel-title">
-            <span>输出维度</span>
-          </div>
-          <p class="hint">勾选后导出模板会按维度生成对应标签页。日报按日期逐日输出，周期报按当前日期范围汇总输出；另外固定生成“竞品”和空白“模板”页。</p>
-          <div class="report-dim-list" id="reportDimensionList">
-            <label class="check-pill"><input type="checkbox" class="report-dim-check" value="mainSeries" checked>大系列</label>
-            <label class="check-pill"><input type="checkbox" class="report-dim-check" value="subSeries" checked>小系列</label>
-            <label class="check-pill"><input type="checkbox" class="report-dim-check" value="shortName">商品简称</label>
-            <label class="check-pill"><input type="checkbox" class="report-dim-check" value="sku">SKU</label>
-          </div>
-        </div>
-
         <div class="panel" style="margin-top:14px;">
-          <div class="panel-title">
-            <span id="reportOutputTitle">日报模板</span>
-            <div class="btn-row">
+          <div class="report-detail-topbar">
+            <div class="report-detail-left">
+              <div class="report-mode-switch">
+                <button class="mode-btn active" type="button" data-report-mode="daily">日报</button>
+                <button class="mode-btn" type="button" data-report-mode="period">周报</button>
+              </div>
+              <div class="field date-picker-field" id="reportDatePickerField">
+                <label>时间选择</label>
+                <div class="date-input-wrap">
+                  <button class="date-step-btn date-step-prev" id="reportDatePrev" type="button" title="向前" aria-label="向前">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </button>
+                  <input class="input" type="text" id="reportDateInput" placeholder="YYYY-MM-DD">
+                  <button class="date-step-btn date-step-next" id="reportDateNext" type="button" title="向后" aria-label="向后">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </button>
+                  <button class="date-trigger" id="reportDateTrigger" type="button" title="选择日期">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
+                      <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+                    </svg>
+                  </button>
+                </div>
+                <input type="hidden" id="reportStartDate">
+                <input type="hidden" id="reportEndDate">
+                <div class="date-popover" id="reportDatePopover">
+                  <div class="date-shortcuts">
+                    <button type="button" data-date-shortcut="yesterday">昨日</button>
+                    <button type="button" data-date-shortcut="7">近7日</button>
+                    <button type="button" data-date-shortcut="30">近30日</button>
+                    <button type="button" data-date-shortcut="today">自然日</button>
+                    <button type="button" data-date-shortcut="week">自然周</button>
+                    <button type="button" data-date-shortcut="month">自然月</button>
+                    <button type="button" data-date-shortcut="custom">自定义</button>
+                  </div>
+                  <div class="date-calendar">
+                    <div class="date-cal-head">
+                      <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
+                      <strong class="date-picker-month">2026-06</strong>
+                      <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
+                    </div>
+                    <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+                    <div class="date-grid"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="report-detail-right">
+              <div class="report-month-progress-hint" id="reportMonthProgressHint"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel report-detail-panel" style="margin-top:14px;">
+          <div class="report-detail-header">
+            <div class="report-detail-title" id="reportOutputTitle">报表明细</div>
+            <div class="report-detail-actions">
+              <button class="btn quick-copy-toggle" id="reportQuickCopyToggle" type="button" aria-pressed="true" title="显示或隐藏快速复制列">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle>
+                </svg>
+                <span>快速复制设置</span>
+              </button>
               <button class="btn" id="exportReportTemplateBtn" type="button">导出模板</button>
               <button class="btn" id="importReportTemplateBtn" type="button">导入模板</button>
             </div>
           </div>
           <input class="ghost-file" type="file" id="reportTemplateInput" accept=".xlsx,.xls">
+          <div class="report-detail-config">
+            <div class="report-detail-config-head">
+              <div class="report-detail-config-title">输出维度设置</div>
+            </div>
+            <p class="hint">勾选后导出模板会按维度生成对应标签页。日报按日期逐日输出，周报按当前日期范围汇总输出；另外固定生成“竞品”和空白“模板”页。</p>
+            <div class="report-dim-list" id="reportDimensionList">
+              <label class="check-pill"><input type="checkbox" class="report-dim-check" value="mainSeries" checked>大系列</label>
+              <label class="check-pill"><input type="checkbox" class="report-dim-check" value="subSeries" checked>小系列</label>
+              <label class="check-pill"><input type="checkbox" class="report-dim-check" value="shortName">商品简称</label>
+              <label class="check-pill"><input type="checkbox" class="report-dim-check" value="sku">SKU</label>
+            </div>
+          </div>
           <div class="report-template-actions">
             <span class="hint">导入修改后的 Excel 后，这里会优先展示“模板”标签页；没有公式缓存时，需要先在 Excel 中保存一次。</span>
           </div>
@@ -2251,6 +2397,9 @@
   var reportTemplateOriginalBase64 = '';
   var reportTemplatePreviewWorkbook = null;
   var reportTemplateActiveSheet = '';
+  var reportQuickCopyVisible = localStorage.getItem('jdReportQuickCopyVisible') !== 'false';
+  var reportTemplateCopyRows = {};
+  var reportTemplateCopyRowsLoaded = false;
   var estimateSavedRange = JSON.parse(localStorage.getItem('jdEstimateDateRange') || 'null');
   var estimateAutoGenerating = false;
   var estimateAutoAttemptedKeys = {};
@@ -2476,6 +2625,34 @@
     } catch (err) {
       console.warn(err);
       if ($('reportMsg')) $('reportMsg').textContent = '本地模板读取失败：' + (err && err.message ? err.message : String(err));
+    }
+  }
+
+  async function loadReportTemplateCopyRowsFromDb() {
+    if (reportTemplateCopyRowsLoaded) return;
+    if (!db || !db.objectStoreNames.contains('app_settings')) return;
+    reportTemplateCopyRowsLoaded = true;
+    try {
+      var saved = await getOne('app_settings', 'reportTemplateCopyRows');
+      reportTemplateCopyRows = saved && saved.value && typeof saved.value === 'object' ? saved.value : {};
+    } catch (err) {
+      console.warn(err);
+      reportTemplateCopyRows = {};
+    }
+  }
+
+  async function saveReportTemplateCopyRows() {
+    if (!db || !db.objectStoreNames.contains('app_settings')) return false;
+    try {
+      await put('app_settings', {
+        key: 'reportTemplateCopyRows',
+        value: reportTemplateCopyRows,
+        updatedAt: new Date().toISOString()
+      });
+      return true;
+    } catch (err) {
+      console.warn(err);
+      return false;
     }
   }
 
@@ -4512,6 +4689,18 @@
     return Array.from((tr || document).querySelectorAll('.manual-ranking-field')).map(function(input) {
       return input.getAttribute('data-manual-ranking-field') + '=' + String(input.value || '').trim();
     }).join('|');
+  }
+
+  function focusNextManualRankingField(input) {
+    if (!input || !$('manualRankingBody')) return;
+    var inputs = Array.from($('manualRankingBody').querySelectorAll('.manual-ranking-field'));
+    if (!inputs.length) return;
+    var index = inputs.indexOf(input);
+    if (index === -1) return;
+    var next = inputs[index + 1];
+    if (!next) return;
+    next.focus();
+    if (typeof next.select === 'function') next.select();
   }
 
   async function saveManualRankingRowIfChanged(tr) {
@@ -6987,10 +7176,9 @@
     if (!built) return;
     var wb = built.workbook;
     var range = built.range;
-    var issue = String($('reportIssueInput') ? $('reportIssueInput').value || '' : '').trim();
     var suffix = (range.start || today()) + (range.end && range.end !== range.start ? '_' + range.end : '');
-    var prefix = reportMode === 'period' ? '周期报模板_' : '日报模板_';
-    XLSX.writeFile(wb, prefix + (issue ? issue + '_' : '') + suffix + '.xlsx', { cellStyles: true });
+    var prefix = reportMode === 'period' ? '周报模板_' : '日报模板_';
+    XLSX.writeFile(wb, prefix + suffix + '.xlsx', { cellStyles: true });
     if ($('reportMsg')) $('reportMsg').textContent = reportTemplateWorkbook
       ? '已导出当前模板，并按所选日期刷新大系列、小系列和竞品数据页。'
       : '已导出模板，建议在 Excel 的“模板”页制作报表样式后再导入预览。';
@@ -7363,6 +7551,94 @@
     }).join('') + '</div>';
     var html = ws ? XLSX.utils.sheet_to_html(ws, { editable: false }) : '<div class="report-template-empty">当前标签页为空。</div>';
     $('reportOutput').innerHTML = tabs + '<div class="report-template-preview">' + html + '</div>';
+    enhanceReportTemplatePreview();
+    syncReportQuickCopyToggle();
+  }
+
+  function enhanceReportTemplatePreview() {
+    var preview = $('reportOutput') && $('reportOutput').querySelector('.report-template-preview');
+    var table = preview && preview.querySelector('table');
+    if (!table) return;
+    var sheetCopyRows = reportTemplateCopyRows[reportTemplateActiveSheet] || {};
+    preview.classList.toggle('copy-tools-hidden', !reportQuickCopyVisible);
+    Array.from(table.rows || []).forEach(function(tr, index) {
+      if (tr.querySelector('.report-row-copy-cell')) return;
+      var copyCell = document.createElement('td');
+      var checkCell = document.createElement('td');
+      copyCell.className = 'report-row-copy-cell';
+      checkCell.className = 'report-row-check-cell' + (index === 0 ? ' report-row-check-head' : '');
+      copyCell.innerHTML = index === 0 ? '' : '<button class="report-row-copy-btn" type="button" data-report-copy-row title="复制本行内容" hidden>' + copySvgIcon() + '</button>';
+      checkCell.innerHTML = index === 0 ? '开启复制' : '<input class="report-row-check" type="checkbox" data-report-copy-sheet="' + esc(reportTemplateActiveSheet) + '" data-report-copy-row-index="' + index + '" title="显示复制按钮" aria-label="显示复制按钮"' + (sheetCopyRows[index] ? ' checked' : '') + '>';
+      tr.insertBefore(checkCell, tr.firstChild);
+      tr.insertBefore(copyCell, tr.firstChild);
+      var input = checkCell.querySelector('.report-row-check');
+      if (input) setReportTemplateRowCopyVisible(input);
+    });
+  }
+
+  function copySvgIcon() {
+    return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<rect x="8" y="8" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.8"></rect>' +
+      '<path d="M5 15V7a2 2 0 0 1 2-2h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>' +
+      '</svg>';
+  }
+
+  function eyeSvgIcon(open) {
+    var slash = open ? '' : '<path d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>';
+    return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>' +
+      '<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle>' +
+      slash +
+      '</svg>';
+  }
+
+  function syncReportQuickCopyToggle() {
+    var btn = $('reportQuickCopyToggle');
+    if (btn) {
+      btn.classList.toggle('is-off', !reportQuickCopyVisible);
+      btn.setAttribute('aria-pressed', reportQuickCopyVisible ? 'true' : 'false');
+      btn.innerHTML = eyeSvgIcon(reportQuickCopyVisible) + '<span>快速复制设置</span>';
+    }
+    var preview = $('reportOutput') && $('reportOutput').querySelector('.report-template-preview');
+    if (preview) preview.classList.toggle('copy-tools-hidden', !reportQuickCopyVisible);
+  }
+
+  function toggleReportQuickCopyVisible() {
+    reportQuickCopyVisible = !reportQuickCopyVisible;
+    localStorage.setItem('jdReportQuickCopyVisible', reportQuickCopyVisible ? 'true' : 'false');
+    syncReportQuickCopyToggle();
+  }
+
+  function reportTemplateRowCopyText(tr) {
+    return Array.from((tr && tr.children) || []).reduce(function(values, cell) {
+      if (cell.classList.contains('report-row-copy-cell') || cell.classList.contains('report-row-check-cell')) return values;
+      var text = String(cell.textContent || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+      var colspan = Math.max(1, Number(cell.getAttribute('colspan')) || 1);
+      values.push(text);
+      for (var i = 1; i < colspan; i++) values.push('');
+      return values;
+    }, []).join('\t');
+  }
+
+  function setReportTemplateRowCopyVisible(input) {
+    var tr = input && input.closest('tr');
+    var btn = tr && tr.querySelector('[data-report-copy-row]');
+    if (btn) btn.hidden = !input.checked;
+  }
+
+  async function saveReportTemplateRowCopyState(input) {
+    if (!input) return;
+    var sheetName = input.getAttribute('data-report-copy-sheet') || reportTemplateActiveSheet || '模板';
+    var rowIndex = input.getAttribute('data-report-copy-row-index');
+    if (!rowIndex) return;
+    if (!reportTemplateCopyRows[sheetName]) reportTemplateCopyRows[sheetName] = {};
+    if (input.checked) {
+      reportTemplateCopyRows[sheetName][rowIndex] = true;
+    } else {
+      delete reportTemplateCopyRows[sheetName][rowIndex];
+      if (!Object.keys(reportTemplateCopyRows[sheetName]).length) delete reportTemplateCopyRows[sheetName];
+    }
+    await saveReportTemplateCopyRows();
   }
 
   async function importReportTemplate(file) {
@@ -7400,6 +7676,21 @@
     return datePickers.report
       ? datePickers.report.getRange()
       : normalizedRange($('reportStartDate').value, $('reportEndDate').value || $('reportStartDate').value);
+  }
+
+  function renderReportMonthProgressHint(range) {
+    var box = $('reportMonthProgressHint');
+    if (!box) return;
+    range = normalizedRange(range && range.start, range && (range.end || range.start));
+    var end = range && (range.end || range.start);
+    var date = dateFromYmd(end);
+    if (!date) {
+      box.textContent = '';
+      return;
+    }
+    var totalDays = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    var progress = totalDays ? (date.getDate() / totalDays * 100).toFixed(2) : '0.00';
+    box.textContent = '本月时间进度：截至 ' + ymd(date) + ' 已过 ' + progress + '%';
   }
 
   function hasRowsForSource(rows, range, sourceType) {
@@ -7453,13 +7744,14 @@
 
   async function renderReportOutput() {
     if (!$('reportOutputTitle')) return;
-    var isDaily = reportMode !== 'period';
-    $('reportOutputTitle').textContent = isDaily ? '日报模板' : '周期报模板';
+    $('reportOutputTitle').textContent = '报表明细';
     document.querySelectorAll('[data-report-mode]').forEach(function(btn) {
       btn.classList.toggle('active', btn.getAttribute('data-report-mode') === reportMode);
     });
     var range = currentReportRange();
+    renderReportMonthProgressHint(range);
     await autoGenerateMissingEstimatesForReport(range);
+    await loadReportTemplateCopyRowsFromDb();
     if (!reportTemplateWorkbook) await loadReportTemplateWorkbookFromDb();
     if (reportTemplateWorkbook) await refreshReportTemplatePreviewWorkbook();
     renderReportTemplatePreview(reportTemplateActiveSheet);
@@ -8175,9 +8467,6 @@
       renderReportOutput();
     });
   });
-  if ($('reportIssueInput')) {
-    $('reportIssueInput').addEventListener('input', renderReportOutput);
-  }
   document.querySelectorAll('.report-dim-check').forEach(function(input) {
     input.addEventListener('change', function() {
       saveReportDimensions();
@@ -8186,6 +8475,10 @@
   });
   if ($('exportReportTemplateBtn')) {
     $('exportReportTemplateBtn').addEventListener('click', exportReportTemplate);
+  }
+  if ($('reportQuickCopyToggle')) {
+    $('reportQuickCopyToggle').addEventListener('click', toggleReportQuickCopyVisible);
+    syncReportQuickCopyToggle();
   }
   if ($('importReportTemplateBtn')) {
     $('importReportTemplateBtn').addEventListener('click', function() {
@@ -8206,10 +8499,24 @@
     });
   }
   if ($('reportOutput')) {
-    $('reportOutput').addEventListener('click', function(e) {
+    $('reportOutput').addEventListener('click', async function(e) {
+      var copyBtn = e.target.closest('[data-report-copy-row]');
+      if (copyBtn) {
+        var text = reportTemplateRowCopyText(copyBtn.closest('tr'));
+        if (!text) return;
+        await copyText(text);
+        if ($('reportMsg')) $('reportMsg').textContent = '已复制当前行，可直接粘贴到表格。';
+        return;
+      }
       var tab = e.target.closest('[data-report-sheet]');
       if (!tab) return;
       renderReportTemplatePreview(tab.getAttribute('data-report-sheet'));
+    });
+    $('reportOutput').addEventListener('change', async function(e) {
+      if (e.target.classList.contains('report-row-check')) {
+        setReportTemplateRowCopyVisible(e.target);
+        await saveReportTemplateRowCopyState(e.target);
+      }
     });
   }
   if ($('exportDbBackupBtn')) {
@@ -8413,16 +8720,17 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
   $('manualRankingBody').addEventListener('input', function(e) {
     if (e.target.classList.contains('manual-ranking-field')) updateManualGrowthOptions(e.target.value);
   });
-  $('manualRankingBody').addEventListener('keydown', function(e) {
+  $('manualRankingBody').addEventListener('keydown', async function(e) {
     if (!e.target.classList.contains('manual-ranking-field') || e.key !== 'Enter') return;
     e.preventDefault();
+    var currentInput = e.target;
     var options = manualGrowthOptionsFor(e.target.value);
     if (options.length) {
       e.target.value = options[0];
       updateManualGrowthOptions(e.target.value);
     }
-    saveManualRankingRowIfChanged(e.target.closest('tr'));
-    e.target.blur();
+    await saveManualRankingRowIfChanged(e.target.closest('tr'));
+    focusNextManualRankingField(currentInput);
   });
   $('manualRankingBody').addEventListener('focusin', function(e) {
     if (e.target.classList.contains('manual-ranking-field')) {
@@ -8801,6 +9109,7 @@ document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
   openDb().then(async function() {
     $('dbStatus').textContent = '本地库准备中';
     await loadMonitorTracksFromDb();
+    await loadReportTemplateCopyRowsFromDb();
     if (reportTemplateWorkbook) await saveReportTemplateWorkbook();
     await loadReportTemplateWorkbookFromDb();
     await stripRawSnapshotRows();
