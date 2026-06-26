@@ -1337,50 +1337,7 @@
         <div class="grid grid-2">
           <div class="panel">
             <div class="panel-title">筛选口径</div>
-            <div class="field date-picker-field" id="dashboardDatePickerField">
-              <label>日期范围</label>
-              <div class="date-input-wrap">
-                <button class="date-step-btn date-step-prev" id="dashboardDatePrev" type="button" title="向前" aria-label="向前">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                    <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </button>
-                <input class="input" type="text" id="dashboardDateInput" placeholder="YYYY-MM-DD">
-                <button class="date-step-btn date-step-next" id="dashboardDateNext" type="button" title="向后" aria-label="向后">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                    <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </button>
-                <button class="date-trigger" id="dashboardDateTrigger" type="button" title="选择日期">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-                    <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
-                    <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-                  </svg>
-                </button>
-              </div>
-              <input type="hidden" id="dashboardStartDate">
-              <input type="hidden" id="dashboardEndDate">
-              <div class="date-popover" id="dashboardDatePopover">
-                <div class="date-shortcuts">
-                  <button type="button" data-date-shortcut="yesterday">昨日</button>
-                  <button type="button" data-date-shortcut="7">近7日</button>
-                  <button type="button" data-date-shortcut="30">近30日</button>
-                  <button type="button" data-date-shortcut="today">自然日</button>
-                  <button type="button" data-date-shortcut="week">自然周</button>
-                  <button type="button" data-date-shortcut="month">自然月</button>
-                  <button type="button" data-date-shortcut="custom">自定义</button>
-                </div>
-                <div class="date-calendar">
-                  <div class="date-cal-head">
-                    <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
-                    <strong class="date-picker-month">2026-06</strong>
-                    <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
-                  </div>
-                  <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-                  <div class="date-grid"></div>
-                </div>
-              </div>
-            </div>
+            <div class="field date-picker-field" id="dashboardDatePickerField"></div>
           </div>
           <div class="panel">
             <div class="panel-title">透视维度</div>
@@ -1441,50 +1398,7 @@
           </div>
           <p class="hint">&#25163;&#21160;&#34917;&#20805;&#27036;&#21333;&#22686;&#38271;&#29575;&#12290;&#40664;&#35748;&#25353;&#36861;&#36394;&#31454;&#21697;&#21644;&#24403;&#21069;&#26085;&#26399;&#20445;&#23384;&#12290;</p>
           <div class="manual-ranking-toolbar">
-            <div class="manual-control date-picker-field" id="manualRankingDatePickerField">
-              <span class="manual-control-label">&#26085;&#26399;</span>
-              <div class="date-input-wrap manual-date-wrap">
-                <button class="date-step-btn date-step-prev" id="manualRankingDatePrev" type="button" title="&#21069;&#19968;&#22825;" aria-label="&#21069;&#19968;&#22825;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                    <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </button>
-                <input class="input" type="text" id="manualRankingDate" placeholder="YYYY-MM-DD">
-                <button class="date-step-btn date-step-next" id="manualRankingDateNext" type="button" title="&#21518;&#19968;&#22825;" aria-label="&#21518;&#19968;&#22825;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                    <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </button>
-                <button class="date-trigger" id="manualRankingDateTrigger" type="button" title="&#36873;&#25321;&#26085;&#26399;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-                    <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
-                    <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-                  </svg>
-                </button>
-              </div>
-              <input type="hidden" id="manualRankingStartDate">
-              <input type="hidden" id="manualRankingEndDate">
-              <div class="date-popover" id="manualRankingDatePopover">
-                <div class="date-shortcuts">
-                  <button type="button" data-date-shortcut="yesterday">&#26152;&#26085;</button>
-                  <button type="button" data-date-shortcut="7">&#36817;7&#26085;</button>
-                  <button type="button" data-date-shortcut="30">&#36817;30&#26085;</button>
-                  <button type="button" data-date-shortcut="today">&#33258;&#28982;&#26085;</button>
-                  <button type="button" data-date-shortcut="week">&#33258;&#28982;&#21608;</button>
-                  <button type="button" data-date-shortcut="month">&#33258;&#28982;&#26376;</button>
-                  <button type="button" data-date-shortcut="custom">&#33258;&#23450;&#20041;</button>
-                </div>
-                <div class="date-calendar">
-                  <div class="date-cal-head">
-                    <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
-                    <strong class="date-picker-month">2026-06</strong>
-                    <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
-                  </div>
-                  <div class="date-week"><span>&#19968;</span><span>&#20108;</span><span>&#19977;</span><span>&#22235;</span><span>&#20116;</span><span>&#20845;</span><span>&#26085;</span></div>
-                  <div class="date-grid"></div>
-                </div>
-              </div>
-            </div>
+            <div class="manual-control date-picker-field" id="manualRankingDatePickerField"></div>
             <div class="manual-control">
               <span class="manual-control-label">&#26174;&#31034;&#33539;&#22260;</span>
               <label class="manual-control-box"><input type="checkbox" id="manualRankingTrackedOnlyCheck" checked>&#21482;&#30475;&#36861;&#36394;&#31454;&#21697;</label>
@@ -1526,50 +1440,7 @@
                 <button class="mode-btn active" type="button" data-report-mode="daily">日报</button>
                 <button class="mode-btn" type="button" data-report-mode="period">周报</button>
               </div>
-              <div class="field date-picker-field" id="reportDatePickerField">
-                <label>时间选择</label>
-                <div class="date-input-wrap">
-                  <button class="date-step-btn date-step-prev" id="reportDatePrev" type="button" title="向前" aria-label="向前">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </button>
-                  <input class="input" type="text" id="reportDateInput" placeholder="YYYY-MM-DD">
-                  <button class="date-step-btn date-step-next" id="reportDateNext" type="button" title="向后" aria-label="向后">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </button>
-                  <button class="date-trigger" id="reportDateTrigger" type="button" title="选择日期">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
-                      <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-                    </svg>
-                  </button>
-                </div>
-                <input type="hidden" id="reportStartDate">
-                <input type="hidden" id="reportEndDate">
-                <div class="date-popover" id="reportDatePopover">
-                  <div class="date-shortcuts">
-                    <button type="button" data-date-shortcut="yesterday">昨日</button>
-                    <button type="button" data-date-shortcut="7">近7日</button>
-                    <button type="button" data-date-shortcut="30">近30日</button>
-                    <button type="button" data-date-shortcut="today">自然日</button>
-                    <button type="button" data-date-shortcut="week">自然周</button>
-                    <button type="button" data-date-shortcut="month">自然月</button>
-                    <button type="button" data-date-shortcut="custom">自定义</button>
-                  </div>
-                  <div class="date-calendar">
-                    <div class="date-cal-head">
-                      <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
-                      <strong class="date-picker-month">2026-06</strong>
-                      <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
-                    </div>
-                    <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-                    <div class="date-grid"></div>
-                  </div>
-                </div>
-              </div>
+              <div class="field date-picker-field" id="reportDatePickerField"></div>
             </div>
             <div class="report-detail-right">
               <div class="report-month-progress-hint" id="reportMonthProgressHint"></div>
@@ -1809,50 +1680,7 @@
           </div>
           <div class="filter-strip">
             <div class="filter-left">
-              <div class="field date-picker-field" id="analyzedDatePickerField">
-                <label id="analyzedStartLabel">日期范围</label>
-                <div class="date-input-wrap">
-                  <button class="date-step-btn date-step-prev" id="analyzedDatePrev" type="button" title="前一天" aria-label="前一天">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </button>
-                  <input class="input" type="text" id="analyzedDateInput" placeholder="YYYY-MM-DD">
-                  <button class="date-step-btn date-step-next" id="analyzedDateNext" type="button" title="后一天" aria-label="后一天">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </button>
-                  <button class="date-trigger" id="analyzedDateTrigger" type="button" title="选择日期">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
-                      <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-                    </svg>
-                  </button>
-                </div>
-                <input type="hidden" id="analyzedStartDate">
-                <input type="hidden" id="analyzedEndDate">
-                <div class="date-popover" id="analyzedDatePopover">
-                  <div class="date-shortcuts">
-                    <button type="button" data-date-shortcut="yesterday">昨日</button>
-                    <button type="button" data-date-shortcut="7">近7日</button>
-                    <button type="button" data-date-shortcut="30">近30日</button>
-                    <button type="button" data-date-shortcut="today">自然日</button>
-                    <button type="button" data-date-shortcut="week">自然周</button>
-                    <button type="button" data-date-shortcut="month">自然月</button>
-                    <button type="button" data-date-shortcut="custom">自定义</button>
-                  </div>
-                  <div class="date-calendar">
-                    <div class="date-cal-head">
-                      <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
-                      <strong class="date-picker-month">2026-06</strong>
-                      <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
-                    </div>
-                    <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-                    <div class="date-grid"></div>
-                  </div>
-                </div>
-              </div>
+              <div class="field date-picker-field" id="analyzedDatePickerField"></div>
             </div>
             <div class="filter-right">
               <div class="filter-actions">
@@ -1876,69 +1704,6 @@
                 <select class="attr-select" id="analyzedAttrSelect" aria-label="&#36873;&#25321;&#23646;&#24615;&#21015;"></select>
               </div>
           </div>
-          <template id="legacyAnalyzedFilterDisabled">
-            <div class="btn-row">
-              <button class="btn" id="refreshAnalyzedDbBtn">刷新</button>
-              <button class="btn danger" id="clearAnalyzedDbBtn">清表</button>
-            </div>
-          </div>
-          <div class="grid grid-2">
-            <div>
-              <div class="field date-picker-field">
-                <label id="analyzedStartLabel">日期范围</label>
-                <div class="date-input-wrap">
-                  <button class="date-step-btn date-step-prev" id="analyzedDatePrev" type="button" title="前一天" aria-label="前一天">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </button>
-                  <input class="input" type="text" id="analyzedDateInput" placeholder="YYYY-MM-DD">
-                  <button class="date-step-btn date-step-next" id="analyzedDateNext" type="button" title="后一天" aria-label="后一天">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </button>
-                  <button class="date-trigger" id="analyzedDateTrigger" type="button" title="选择日期">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
-                      <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-                    </svg>
-                  </button>
-                </div>
-                <input type="hidden" id="analyzedStartDate">
-                <input type="hidden" id="analyzedEndDate">
-                <div class="date-popover" id="analyzedDatePopover">
-                  <div class="date-shortcuts">
-                    <button type="button" data-date-shortcut="yesterday">昨日</button>
-                    <button type="button" data-date-shortcut="7">近7日</button>
-                    <button type="button" data-date-shortcut="30">近30日</button>
-                    <button type="button" data-date-shortcut="today">自然日</button>
-                    <button type="button" data-date-shortcut="week">自然周</button>
-                    <button type="button" data-date-shortcut="month">自然月</button>
-                    <button type="button" data-date-shortcut="custom">自定义</button>
-                  </div>
-                  <div class="date-calendar">
-                    <div class="date-cal-head">
-                      <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
-                      <strong class="date-picker-month">2026-06</strong>
-                      <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
-                    </div>
-                    <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-                    <div class="date-grid"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div class="dimension-list">
-                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="mainSeries">大系列</label>
-                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="subSeries" checked>小系列</label>
-                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="shortName">商品简称</label>
-                <label class="check-pill"><input type="checkbox" class="analyzed-dim-check" value="brand">品牌</label>
-              </div>
-            </div>
-          </div>
-          </template>
           <div class="table-wrap">
             <table class="data-table">
               <thead id="analyzedDbHead"><tr><th>日期</th><th>维度（小系列）</th><th>销售数量</th><th>销售金额</th><th>访客/点击</th><th>站内花费</th><th>站外花费</th><th>排名</th></tr></thead>
@@ -1967,50 +1732,7 @@
           </div>
           <div class="filter-strip">
             <div class="filter-left">
-              <div class="field date-picker-field" id="rankingDatePickerField">
-                <label>&#26085;&#26399;&#33539;&#22260;</label>
-                <div class="date-input-wrap">
-                  <button class="date-step-btn date-step-prev" id="rankingDatePrev" type="button" title="&#21069;&#19968;&#22825;" aria-label="&#21069;&#19968;&#22825;">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </button>
-                  <input class="input" type="text" id="rankingDateInput" placeholder="YYYY-MM-DD">
-                  <button class="date-step-btn date-step-next" id="rankingDateNext" type="button" title="&#21518;&#19968;&#22825;" aria-label="&#21518;&#19968;&#22825;">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </button>
-                  <button class="date-trigger" id="rankingDateTrigger" type="button" title="&#36873;&#25321;&#26085;&#26399;">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
-                      <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-                    </svg>
-                  </button>
-                  <input type="hidden" id="rankingStartDate">
-                  <input type="hidden" id="rankingEndDate">
-                </div>
-                <div class="date-popover" id="rankingDatePopover">
-                  <div class="date-shortcuts">
-                    <button type="button" data-date-shortcut="yesterday">&#26152;&#26085;</button>
-                    <button type="button" data-date-shortcut="7">&#36817;7&#26085;</button>
-                    <button type="button" data-date-shortcut="30">&#36817;30&#26085;</button>
-                    <button type="button" data-date-shortcut="day">&#33258;&#28982;&#26085;</button>
-                    <button type="button" data-date-shortcut="week">&#33258;&#28982;&#21608;</button>
-                    <button type="button" data-date-shortcut="month">&#33258;&#28982;&#26376;</button>
-                    <button type="button" data-date-shortcut="custom">&#33258;&#23450;&#20041;</button>
-                  </div>
-                  <div class="date-calendar">
-                    <div class="date-cal-head">
-                      <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
-                      <strong class="date-picker-month">2026-06</strong>
-                      <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
-                    </div>
-                    <div class="date-week"><span>&#19968;</span><span>&#20108;</span><span>&#19977;</span><span>&#22235;</span><span>&#20116;</span><span>&#20845;</span><span>&#26085;</span></div>
-                    <div class="date-grid"></div>
-                  </div>
-                </div>
-              </div>
+              <div class="field date-picker-field" id="rankingDatePickerField"></div>
             </div>
           </div>
           <div class="filter-dim-row">
@@ -2049,50 +1771,7 @@
               </div>
             </div>
             <div class="filter-left">
-              <div class="field date-picker-field" id="estimateDatePickerField">
-                <label>日期范围</label>
-                <div class="date-input-wrap">
-                  <button class="date-step-btn date-step-prev" id="estimateDatePrev" type="button" title="向前" aria-label="向前">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </button>
-                  <input class="input" type="text" id="estimateDateInput" placeholder="YYYY-MM-DD">
-                  <button class="date-step-btn date-step-next" id="estimateDateNext" type="button" title="向后" aria-label="向后">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                  </button>
-                  <button class="date-trigger" id="estimateDateTrigger" type="button" title="选择日期">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect>
-                      <path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-                    </svg>
-                  </button>
-                </div>
-                <input type="hidden" id="estimateStartDate">
-                <input type="hidden" id="estimateEndDate">
-                <div class="date-popover" id="estimateDatePopover">
-                  <div class="date-shortcuts">
-                    <button type="button" data-date-shortcut="yesterday">昨日</button>
-                    <button type="button" data-date-shortcut="7">近7日</button>
-                    <button type="button" data-date-shortcut="30">近30日</button>
-                    <button type="button" data-date-shortcut="today">自然日</button>
-                    <button type="button" data-date-shortcut="week">自然周</button>
-                    <button type="button" data-date-shortcut="month">自然月</button>
-                    <button type="button" data-date-shortcut="custom">自定义</button>
-                  </div>
-                  <div class="date-calendar">
-                    <div class="date-cal-head">
-                      <div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>
-                      <strong class="date-picker-month">2026-06</strong>
-                      <div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>
-                    </div>
-                    <div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-                    <div class="date-grid"></div>
-                  </div>
-                </div>
-              </div>
+              <div class="field date-picker-field" id="estimateDatePickerField"></div>
             </div>
             <div class="filter-right">
               <div class="filter-actions">
@@ -2579,27 +2258,20 @@
 
   async function saveReportTemplateWorkbook() {
     if (!window.XLSX || !reportTemplateWorkbook) return false;
+    if (!db || !db.objectStoreNames.contains('app_settings')) return false;
     try {
       var base64 = reportTemplateOriginalBase64 || XLSX.write(reportTemplateWorkbook, { bookType: 'xlsx', type: 'base64', cellStyles: true });
       var activeSheet = reportTemplateActiveSheet || '模板';
-      var savedToDb = false;
-      if (db && db.objectStoreNames.contains('app_settings')) {
-        await put('app_settings', {
-          key: 'reportTemplateWorkbook',
-          value: base64,
-          valueType: 'base64',
-          activeSheet: activeSheet,
-          updatedAt: new Date().toISOString()
-        });
-        savedToDb = true;
-      }
-      try {
-        localStorage.setItem('jdReportTemplateWorkbookBase64', base64);
-        localStorage.setItem('jdReportTemplateActiveSheet', activeSheet);
-      } catch (storageErr) {
-        console.warn(storageErr);
-      }
-      return savedToDb || !!localStorage.getItem('jdReportTemplateWorkbookBase64');
+      await put('app_settings', {
+        key: 'reportTemplateWorkbook',
+        value: base64,
+        valueType: 'base64',
+        activeSheet: activeSheet,
+        updatedAt: new Date().toISOString()
+      });
+      localStorage.removeItem('jdReportTemplateWorkbookBase64');
+      localStorage.removeItem('jdReportTemplateActiveSheet');
+      return true;
     } catch (err) {
       console.warn(err);
       if ($('reportMsg')) $('reportMsg').textContent = '模板保存失败：' + (err && err.message ? err.message : String(err));
@@ -2614,6 +2286,17 @@
       var value = saved && saved.value ? saved.value : localStorage.getItem('jdReportTemplateWorkbookBase64');
       var activeSheet = saved && saved.activeSheet ? saved.activeSheet : localStorage.getItem('jdReportTemplateActiveSheet');
       if (!value) return;
+      if (!saved && db && db.objectStoreNames.contains('app_settings')) {
+        await put('app_settings', {
+          key: 'reportTemplateWorkbook',
+          value: value,
+          valueType: 'base64',
+          activeSheet: activeSheet || '模板',
+          updatedAt: new Date().toISOString()
+        });
+        localStorage.removeItem('jdReportTemplateWorkbookBase64');
+        localStorage.removeItem('jdReportTemplateActiveSheet');
+      }
       reportTemplateWorkbook = typeof value === 'string'
         ? XLSX.read(value, { type: 'base64', cellDates: true, cellFormula: true, cellStyles: true, cellNF: true })
         : XLSX.read(value, { type: 'array', cellDates: true, cellFormula: true, cellStyles: true, cellNF: true });
@@ -8564,75 +8247,150 @@
       await clearAllDatabaseData();
     });
   }
-  datePickers.dashboard = createDateRangePicker({
-    rootId: 'dashboardDatePickerField',
-    inputId: 'dashboardDateInput',
-    startId: 'dashboardStartDate',
-    endId: 'dashboardEndDate',
-    prevId: 'dashboardDatePrev',
-    nextId: 'dashboardDateNext',
-    triggerId: 'dashboardDateTrigger',
-    popoverId: 'dashboardDatePopover',
-    onChange: function() { renderDashboard(); }
-  });
-  datePickers.analyzed = createDateRangePicker({
-    rootId: 'analyzedDatePickerField',
-    inputId: 'analyzedDateInput',
-    startId: 'analyzedStartDate',
-    endId: 'analyzedEndDate',
-    prevId: 'analyzedDatePrev',
-    nextId: 'analyzedDateNext',
-    triggerId: 'analyzedDateTrigger',
-    popoverId: 'analyzedDatePopover',
-    onChange: function() { renderAnalyzedDb(); }
-  });
-  datePickers.ranking = createDateRangePicker({
-    rootId: 'rankingDatePickerField',
-    inputId: 'rankingDateInput',
-    startId: 'rankingStartDate',
-    endId: 'rankingEndDate',
-    prevId: 'rankingDatePrev',
-    nextId: 'rankingDateNext',
-    triggerId: 'rankingDateTrigger',
-    popoverId: 'rankingDatePopover',
-    onChange: function() { renderRankingRaw(); }
-  });
-  datePickers.estimate = createDateRangePicker({
-    rootId: 'estimateDatePickerField',
-    inputId: 'estimateDateInput',
-    startId: 'estimateStartDate',
-    endId: 'estimateEndDate',
-    prevId: 'estimateDatePrev',
-    nextId: 'estimateDateNext',
-    triggerId: 'estimateDateTrigger',
-    popoverId: 'estimateDatePopover',
-    onChange: function(range) {
-      range = range || normalizedRange($('estimateStartDate').value, $('estimateEndDate').value || $('estimateStartDate').value);
-      localStorage.setItem('jdEstimateDateRange', JSON.stringify(range));
-      renderEstimatesDb();
+  var datePickerConfigs = [
+    {
+      key: 'dashboard',
+      label: '日期范围',
+      rootId: 'dashboardDatePickerField',
+      inputId: 'dashboardDateInput',
+      startId: 'dashboardStartDate',
+      endId: 'dashboardEndDate',
+      prevId: 'dashboardDatePrev',
+      nextId: 'dashboardDateNext',
+      triggerId: 'dashboardDateTrigger',
+      popoverId: 'dashboardDatePopover',
+      onChange: function() { renderDashboard(); }
+    },
+    {
+      key: 'analyzed',
+      label: '日期范围',
+      labelId: 'analyzedStartLabel',
+      rootId: 'analyzedDatePickerField',
+      inputId: 'analyzedDateInput',
+      startId: 'analyzedStartDate',
+      endId: 'analyzedEndDate',
+      prevId: 'analyzedDatePrev',
+      nextId: 'analyzedDateNext',
+      triggerId: 'analyzedDateTrigger',
+      popoverId: 'analyzedDatePopover',
+      prevTitle: '前一天',
+      nextTitle: '后一天',
+      onChange: function() { renderAnalyzedDb(); }
+    },
+    {
+      key: 'ranking',
+      label: '日期范围',
+      rootId: 'rankingDatePickerField',
+      inputId: 'rankingDateInput',
+      startId: 'rankingStartDate',
+      endId: 'rankingEndDate',
+      prevId: 'rankingDatePrev',
+      nextId: 'rankingDateNext',
+      triggerId: 'rankingDateTrigger',
+      popoverId: 'rankingDatePopover',
+      prevTitle: '前一天',
+      nextTitle: '后一天',
+      dayShortcut: 'day',
+      onChange: function() { renderRankingRaw(); }
+    },
+    {
+      key: 'estimate',
+      label: '日期范围',
+      rootId: 'estimateDatePickerField',
+      inputId: 'estimateDateInput',
+      startId: 'estimateStartDate',
+      endId: 'estimateEndDate',
+      prevId: 'estimateDatePrev',
+      nextId: 'estimateDateNext',
+      triggerId: 'estimateDateTrigger',
+      popoverId: 'estimateDatePopover',
+      onChange: function(range) {
+        range = range || normalizedRange($('estimateStartDate').value, $('estimateEndDate').value || $('estimateStartDate').value);
+        localStorage.setItem('jdEstimateDateRange', JSON.stringify(range));
+        renderEstimatesDb();
+      }
+    },
+    {
+      key: 'report',
+      label: '时间选择',
+      rootId: 'reportDatePickerField',
+      inputId: 'reportDateInput',
+      startId: 'reportStartDate',
+      endId: 'reportEndDate',
+      prevId: 'reportDatePrev',
+      nextId: 'reportDateNext',
+      triggerId: 'reportDateTrigger',
+      popoverId: 'reportDatePopover',
+      onChange: function() { renderReportOutput(); }
+    },
+    {
+      key: 'manualRanking',
+      label: '日期',
+      labelTag: 'span',
+      labelClass: 'manual-control-label',
+      wrapClass: 'manual-date-wrap',
+      rootId: 'manualRankingDatePickerField',
+      inputId: 'manualRankingDate',
+      startId: 'manualRankingStartDate',
+      endId: 'manualRankingEndDate',
+      prevId: 'manualRankingDatePrev',
+      nextId: 'manualRankingDateNext',
+      triggerId: 'manualRankingDateTrigger',
+      popoverId: 'manualRankingDatePopover',
+      prevTitle: '前一天',
+      nextTitle: '后一天',
+      onChange: function() { renderManualRankingEntry(); }
     }
-  });
-  datePickers.report = createDateRangePicker({
-    rootId: 'reportDatePickerField',
-    inputId: 'reportDateInput',
-    startId: 'reportStartDate',
-    endId: 'reportEndDate',
-    prevId: 'reportDatePrev',
-    nextId: 'reportDateNext',
-    triggerId: 'reportDateTrigger',
-    popoverId: 'reportDatePopover',
-    onChange: function() { renderReportOutput(); }
-  });
-  datePickers.manualRanking = createDateRangePicker({
-    rootId: 'manualRankingDatePickerField',
-    inputId: 'manualRankingDate',
-    startId: 'manualRankingStartDate',
-    endId: 'manualRankingEndDate',
-    prevId: 'manualRankingDatePrev',
-    nextId: 'manualRankingDateNext',
-    triggerId: 'manualRankingDateTrigger',
-    popoverId: 'manualRankingDatePopover',
-    onChange: function() { renderManualRankingEntry(); }
+  ];
+
+  function renderDatePickerShell(config) {
+    var root = $(config.rootId);
+    if (!root) return;
+    var labelAttrs = (config.labelId ? ' id="' + esc(config.labelId) + '"' : '') + (config.labelClass ? ' class="' + esc(config.labelClass) + '"' : '');
+    var labelTag = config.labelTag || 'label';
+    var prevTitle = config.prevTitle || '向前';
+    var nextTitle = config.nextTitle || '向后';
+    var dayShortcut = config.dayShortcut || 'today';
+    root.innerHTML =
+      '<' + labelTag + labelAttrs + '>' + esc(config.label) + '</' + labelTag + '>' +
+      '<div class="date-input-wrap ' + esc(config.wrapClass || '') + '">' +
+        '<button class="date-step-btn date-step-prev" id="' + esc(config.prevId) + '" type="button" title="' + esc(prevTitle) + '" aria-label="' + esc(prevTitle) + '">' +
+          '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>' +
+        '</button>' +
+        '<input class="input" type="text" id="' + esc(config.inputId) + '" placeholder="YYYY-MM-DD">' +
+        '<button class="date-step-btn date-step-next" id="' + esc(config.nextId) + '" type="button" title="' + esc(nextTitle) + '" aria-label="' + esc(nextTitle) + '">' +
+          '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>' +
+        '</button>' +
+        '<button class="date-trigger" id="' + esc(config.triggerId) + '" type="button" title="选择日期">' +
+          '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.7"></rect><path d="M8 3.5v3M16 3.5v3M4 9h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg>' +
+        '</button>' +
+      '</div>' +
+      '<input type="hidden" id="' + esc(config.startId) + '">' +
+      '<input type="hidden" id="' + esc(config.endId) + '">' +
+      '<div class="date-popover" id="' + esc(config.popoverId) + '">' +
+        '<div class="date-shortcuts">' +
+          '<button type="button" data-date-shortcut="yesterday">昨日</button>' +
+          '<button type="button" data-date-shortcut="7">近7日</button>' +
+          '<button type="button" data-date-shortcut="' + esc(dayShortcut) + '">自然日</button>' +
+          '<button type="button" data-date-shortcut="week">自然周</button>' +
+          '<button type="button" data-date-shortcut="month">自然月</button>' +
+          '<button type="button" data-date-shortcut="custom">自定义</button>' +
+        '</div>' +
+        '<div class="date-calendar">' +
+          '<div class="date-cal-head">' +
+            '<div class="date-nav"><button type="button" data-month-shift="-12">&laquo;</button><button type="button" data-month-shift="-1">&lsaquo;</button></div>' +
+            '<strong class="date-picker-month">2026-06</strong>' +
+            '<div class="date-nav"><button type="button" data-month-shift="1">&rsaquo;</button><button type="button" data-month-shift="12">&raquo;</button></div>' +
+          '</div>' +
+          '<div class="date-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>' +
+          '<div class="date-grid"></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  datePickerConfigs.forEach(function(config) {
+    renderDatePickerShell(config);
+    datePickers[config.key] = createDateRangePicker(config);
   });
 document.querySelectorAll('.analyzed-dim-check').forEach(function(input) {
     input.addEventListener('change', function() {
