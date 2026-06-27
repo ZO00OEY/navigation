@@ -4,16 +4,17 @@
   var canvas = document.getElementById('rippleCanvas');
   var ctx = canvas.getContext('2d');
   var door = document.getElementById('doorHotspot');
+  var doorFace = document.getElementById('doorFace');
   var heroCopy = document.querySelector('.hero-copy');
   var heroEyebrow = document.querySelector('.hero-eyebrow');
   var titleLines = document.querySelectorAll('.hero-copy .title-line');
   var doorLayerImages = document.querySelectorAll('.door-layer-image');
+  var doorReflection = document.getElementById('doorReflection');
+  var doorReflectionImage = doorReflection.querySelector('img');
   var doorEraser = document.getElementById('doorEraser');
   var doorEraserCtx = doorEraser.getContext('2d');
-  var aura = document.getElementById('doorAura');
   var sidebar = document.getElementById('sidebar');
   var themeIcon = document.getElementById('themeIcon');
-  var railThemeIcon = document.getElementById('railThemeIcon');
   var sidebarNav = document.getElementById('sidebarNav');
   var searchOverlay = document.getElementById('searchOverlay');
   var siteSearch = document.getElementById('siteSearch');
@@ -33,6 +34,7 @@
     x: 0, y: 0, rx: 0, ry: 0
   };
   var imageMap = { scale: 1, offsetX: 0, offsetY: 0 };
+  var reflectionMap = { left: 0, top: 0, width: 0, height: 0 };
   var layoutFrame = 0;
   var animationFrame = 0;
   var lastAnimationTime = 0;
@@ -163,7 +165,6 @@
       ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.7 15.1A8.5 8.5 0 018.9 3.3 8.5 8.5 0 1020.7 15.1z"/></svg>'
       : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>';
     themeIcon.innerHTML = icon;
-    railThemeIcon.innerHTML = icon;
     document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#111218' : '#f8eeef');
   }
 
@@ -171,29 +172,6 @@
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     syncThemeStatus();
-  }
-
-  function createClickBurst(event) {
-    if (reducedMotion) return;
-    if (event.target.closest && event.target.closest('.rail-logo')) return;
-    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var hues = dark
-      ? [220, 235, 250, 260, 270, 280, 240, 255]
-      : [340, 350, 355, 0, 10, 20, 330, 345];
-    for (var i = 0; i < 24; i++) {
-      var particle = document.createElement('div');
-      var angle = Math.PI * 2 * i / 24 + (Math.random() - 0.5) * 0.5;
-      var distance = 30 + Math.random() * 85;
-      var hue = hues[Math.floor(Math.random() * hues.length)];
-      particle.className = 'firework-particle' + (Math.random() < 0.2 ? ' star' : '');
-      particle.style.cssText =
-        '--tx:' + Math.cos(angle) * distance + 'px;' +
-        '--ty:' + Math.sin(angle) * distance + 'px;' +
-        'background:hsl(' + hue + ',85%,' + (60 + Math.random() * 20) + '%);' +
-        'left:' + event.clientX + 'px;top:' + event.clientY + 'px;';
-      document.body.appendChild(particle);
-      window.setTimeout(function (node) { node.remove(); }, 900, particle);
-    }
   }
 
   function openSidebar() {
@@ -261,8 +239,8 @@
   function fitHeroTypography(heroRect, visualDoorLeft, visualDoorTop, scene) {
     var compact = heroRect.width <= 850;
     var preferred = compact
-      ? Math.min(72, Math.max(50, heroRect.width * 0.095))
-      : Math.min(112, Math.max(60, heroRect.width * 0.066));
+      ? Math.min(68, Math.max(48, heroRect.width * 0.09))
+      : Math.min(104, Math.max(58, heroRect.width * 0.061));
     var navigationWidth = readCssPixels('--layout-nav-width', 62);
     var heroGutter = readCssPixels('--hero-gutter', 30);
     var railSafeLeft = heroRect.left + navigationWidth + heroGutter;
@@ -312,17 +290,15 @@
     apply(value);
   }
 
-  function positionHeroPrompts(heroRect, sceneBottom, scene) {
-    var safeLeft = heroCopy.offsetLeft;
+  function positionHeroPrompts(heroRect, sceneBottom, scene, waterTop) {
+    var safeLeft = heroRect.width / 2;
     var visibleBottom = Math.min(heroRect.height, sceneBottom);
     var noteTop = Math.max(0, visibleBottom - 50);
     var copyRect = heroCopy.getBoundingClientRect();
     var copyBottom = copyRect.bottom - heroRect.top;
-    var actionTop = scene.topFlowScene
-      ? Math.max(copyBottom + 22, noteTop - 76)
-      : copyBottom + 24;
+    var actionTop = Math.max(copyBottom + 22, waterTop + 30);
     if (scene.stackedScene) {
-      actionTop = Math.max(0, Math.min(copyBottom + 20, scene.doorTop - 66));
+      actionTop = Math.max(copyBottom + 20, Math.min(waterTop + 20, scene.doorTop - 66));
     }
     actionTop = Math.max(0, Math.min(actionTop, noteTop - 58));
 
@@ -390,6 +366,12 @@
     door.style.top = doorBox.top + 'px';
     door.style.width = doorBox.width + 'px';
     door.style.height = doorBox.height + 'px';
+    doorFace.style.left = doorBox.left + 'px';
+    doorFace.style.top = doorBox.top + 'px';
+    doorFace.style.width = doorBox.width + 'px';
+    doorFace.style.height = doorBox.height + 'px';
+    doorFace.style.setProperty('--door-pad-x', doorBox.padX + 'px');
+    doorFace.style.setProperty('--door-pad-y', doorBox.padY + 'px');
     door.style.setProperty('--door-pad-x', doorBox.padX + 'px');
     door.style.setProperty('--door-pad-y', doorBox.padY + 'px');
     doorLayerImages.forEach(function (image) {
@@ -403,14 +385,17 @@
     doorEraser.style.top = doorBox.top + 'px';
     doorEraser.style.width = doorBox.width + 'px';
     doorEraser.style.height = doorBox.height + 'px';
-    aura.style.left = (doorBox.left - doorBox.width * 0.36) + 'px';
-    aura.style.top = (doorBox.top - doorBox.height * 0.12) + 'px';
-    aura.style.width = (doorBox.width * 1.72) + 'px';
-    aura.style.height = (doorBox.height * 1.24) + 'px';
-
+    doorReflection.style.left = doorBox.left + 'px';
+    doorReflection.style.top = (geometry.offsetY + SOURCE.waterY * scale - doorBox.padY * 0.4) + 'px';
+    doorReflection.style.width = doorBox.width + 'px';
+    doorReflection.style.height = (doorBox.height * 0.84) + 'px';
+    reflectionMap.left = doorBox.left;
+    reflectionMap.top = geometry.offsetY + SOURCE.waterY * scale - doorBox.padY * 0.4;
+    reflectionMap.width = doorBox.width;
+    reflectionMap.height = doorBox.height * 0.84 * 0.86;
     scene.doorTop = doorBox.top;
     fitHeroTypography(rect, doorBox.left, doorBox.top, scene);
-    positionHeroPrompts(rect, geometry.sceneBottom, scene);
+    positionHeroPrompts(rect, geometry.sceneBottom, scene, geometry.offsetY + SOURCE.waterY * scale);
   }
 
   function updateSceneLayout() {
@@ -584,6 +569,7 @@
         width,
         stripHeight + 0.5
       );
+      drawReflectionDistortionStrip(screenX, screenY, localY, stripHeight, dark);
     }
     distortionCtx.restore();
 
@@ -613,6 +599,53 @@
     ctx.restore();
   }
 
+  function drawReflectionDistortionStrip(screenX, screenY, localY, stripHeight, dark) {
+    if (!doorReflectionImage.complete || !doorReflectionImage.naturalWidth) return;
+    var left = reflectionMap.left;
+    var top = reflectionMap.top;
+    var width = reflectionMap.width;
+    var height = reflectionMap.height;
+    if (!width || !height) return;
+    if (screenX > left + width || screenX + distortionBuffer.width < left) return;
+    if (screenY > top + height || screenY + stripHeight < top) return;
+
+    var overlapLeft = Math.max(screenX, left);
+    var overlapRight = Math.min(screenX + distortionBuffer.width, left + width);
+    var overlapTop = Math.max(screenY, top);
+    var overlapBottom = Math.min(screenY + stripHeight, top + height);
+    var overlapWidth = overlapRight - overlapLeft;
+    var overlapHeight = overlapBottom - overlapTop;
+    if (overlapWidth <= 0 || overlapHeight <= 0) return;
+
+    var sourceX = (overlapLeft - left) / width * doorReflectionImage.naturalWidth;
+    var sourceY = (1 - (overlapBottom - top) / height) * doorReflectionImage.naturalHeight;
+    var sourceWidth = overlapWidth / width * doorReflectionImage.naturalWidth;
+    var sourceHeight = overlapHeight / height * doorReflectionImage.naturalHeight;
+    var maskY = (overlapTop - top) / height;
+    var fade = Math.max(0, 1 - maskY);
+    var alpha = (dark ? 0.18 : 0.34) * Math.min(1, fade * 1.35);
+
+    distortionCtx.save();
+    distortionCtx.globalAlpha = alpha;
+    if (dark) {
+      distortionCtx.filter = 'brightness(0.7) saturate(0.7) hue-rotate(175deg) blur(0.35px)';
+    } else {
+      distortionCtx.filter = 'saturate(0.82) blur(0.35px)';
+    }
+    distortionCtx.drawImage(
+      doorReflectionImage,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      overlapLeft - screenX,
+      localY + overlapTop - screenY,
+      overlapWidth,
+      overlapHeight + 0.5
+    );
+    distortionCtx.restore();
+  }
+
   function drawRipple(ripple) {
     var progress = ripple.age / ripple.life;
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -632,6 +665,12 @@
     door.style.setProperty('--door-y', (doorMotion.y + floatY).toFixed(3) + 'px');
     door.style.setProperty('--door-rx', (doorMotion.rx + floatR).toFixed(3) + 'deg');
     door.style.setProperty('--door-ry', (doorMotion.ry - floatR).toFixed(3) + 'deg');
+    doorFace.style.setProperty('--door-x', (doorMotion.x + floatX).toFixed(3) + 'px');
+    doorFace.style.setProperty('--door-y', (doorMotion.y + floatY).toFixed(3) + 'px');
+    doorFace.style.setProperty('--door-rx', (doorMotion.rx + floatR).toFixed(3) + 'deg');
+    doorFace.style.setProperty('--door-ry', (doorMotion.ry - floatR).toFixed(3) + 'deg');
+    doorReflection.style.setProperty('--reflection-drift-x', ((doorMotion.x + floatX) * 0.22).toFixed(3) + 'px');
+    doorReflection.style.setProperty('--reflection-drift-y', ((doorMotion.y + floatY) * 0.12).toFixed(3) + 'px');
     return doorMotion.hovering ||
       Math.abs(doorMotion.targetX - doorMotion.x) > 0.01 ||
       Math.abs(doorMotion.targetY - doorMotion.y) > 0.01 ||
@@ -654,6 +693,12 @@
     door.style.setProperty('--door-y', '0px');
     door.style.setProperty('--door-rx', '0deg');
     door.style.setProperty('--door-ry', '0deg');
+    doorFace.style.setProperty('--door-x', '0px');
+    doorFace.style.setProperty('--door-y', '0px');
+    doorFace.style.setProperty('--door-rx', '0deg');
+    doorFace.style.setProperty('--door-ry', '0deg');
+    doorReflection.style.setProperty('--reflection-drift-x', '0px');
+    doorReflection.style.setProperty('--reflection-drift-y', '0px');
   }
 
   function ensureAnimationRunning() {
@@ -703,19 +748,14 @@
 
   function awakenDoor() {
     resetDoorMotion(true);
-    hero.classList.remove('door-awake');
-    door.classList.remove('door-pressed');
-    void hero.offsetWidth;
-    hero.classList.add('door-awake');
-    door.classList.add('door-pressed');
+    doorFace.classList.remove('door-pressed');
+    void doorFace.offsetWidth;
+    doorFace.classList.add('door-pressed');
     window.setTimeout(openSidebar, reducedMotion ? 0 : 210);
     window.setTimeout(function () {
-      door.classList.remove('door-pressed');
+      doorFace.classList.remove('door-pressed');
       resetDoorMotion(true);
     }, reducedMotion ? 0 : 460);
-    window.setTimeout(function () {
-      hero.classList.remove('door-awake');
-    }, reducedMotion ? 0 : 900);
   }
 
   door.addEventListener('pointerenter', function (event) {
@@ -741,7 +781,6 @@
   });
 
   document.getElementById('sidebarOpen').addEventListener('click', dissolveLogoAndOpen);
-  document.getElementById('railSearch').addEventListener('click', openSearch);
   document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
   door.addEventListener('click', awakenDoor);
   document.getElementById('discoverButton').addEventListener('click', function () {
@@ -781,12 +820,6 @@
     var current = document.documentElement.getAttribute('data-theme');
     applyTheme(current === 'dark' ? 'light' : 'dark');
   });
-  document.getElementById('railThemeToggle').addEventListener('click', function () {
-    var current = document.documentElement.getAttribute('data-theme');
-    applyTheme(current === 'dark' ? 'light' : 'dark');
-  });
-  document.addEventListener('click', createClickBurst);
-
   art.addEventListener('load', scheduleLayout);
   window.addEventListener('resize', handleViewportChange);
   if (compactSidebarQuery.addEventListener) {
