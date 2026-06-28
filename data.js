@@ -1,10 +1,10 @@
 const SITE_DATA = {
-  title: "摸鱼祭",
+  title: "摸鱼神国",
   subtitle: "攻略 · 工具 · 资源集",
   blocks: [
     {
       type: "profile",
-      name: "摸鱼祭神国",
+      name: "摸鱼神国",
       avatar: "avatar.jpg",
       username: "ZO.oEY",
       bio: "在此献上摸鱼圣器，愿你在工位也能喘口气。"

@@ -12,6 +12,9 @@
   var copyDustSignature = '';
   var copyDustStarted = false;
   var copyDustTimer = 0;
+  var copyLandings = [];
+  var copySplashTimers = [];
+  var featherBirthTimer = 0;
   var doorLayerImages = document.querySelectorAll('.door-layer-image');
   var doorReflection = document.getElementById('doorReflection');
   var doorReflectionImage = doorReflection.querySelector('img');
@@ -302,17 +305,12 @@
       actionTop = Math.max(copyBottom + 20, Math.min(waterTop + 20, scene.doorTop - 66));
     }
     actionTop = Math.max(0, Math.min(actionTop, visibleBottom - 74));
-    var titleDoorRect = titleLines[1] ? titleLines[1].getBoundingClientRect() : null;
-    var featherEndLeft = titleDoorRect
-      ? titleDoorRect.right - titleDoorRect.width * 0.16 - heroRect.left
-      : safeLeft;
-    var featherEndTop = titleDoorRect
-      ? titleDoorRect.top + titleDoorRect.height * 0.62 - heroRect.top
-      : actionTop + (waterTop - actionTop) * 0.2;
+    var featherEndLeft = heroRect.width * 0.5;
+    var featherEndTop = Math.max(120, Math.min(waterTop - 124, heroRect.height * 0.38));
     var doorActionLeft = doorBox.left + doorBox.width / 2;
     var doorActionTop = Math.max(0, Math.min(doorBox.top + doorBox.height / 2 - 56, visibleBottom - 112));
-    var featherStartX = heroRect.width * 0.25 - featherEndLeft;
-    var featherStartY = -(featherEndTop + 92);
+    var wanderX = Math.max(120, Math.min(320, heroRect.width * 0.24));
+    var wanderY = Math.max(54, Math.min(138, heroRect.height * 0.14));
 
     setLayoutValue('actionLeft', featherEndLeft, function (value) {
       hero.style.setProperty('--hero-action-left', value.toFixed(2) + 'px');
@@ -322,14 +320,19 @@
     });
     hero.style.setProperty('--hero-action-door-left', doorActionLeft.toFixed(2) + 'px');
     hero.style.setProperty('--hero-action-door-top', doorActionTop.toFixed(2) + 'px');
-    hero.style.setProperty('--feather-x-0', featherStartX.toFixed(2) + 'px');
-    hero.style.setProperty('--feather-x-1', (featherStartX * 0.88).toFixed(2) + 'px');
-    hero.style.setProperty('--feather-x-2', (featherStartX * 0.52).toFixed(2) + 'px');
-    hero.style.setProperty('--feather-x-3', (featherStartX * 0.18).toFixed(2) + 'px');
-    hero.style.setProperty('--feather-y-0', featherStartY.toFixed(2) + 'px');
-    hero.style.setProperty('--feather-y-1', (featherStartY * 0.55).toFixed(2) + 'px');
-    hero.style.setProperty('--feather-y-2', (featherStartY * 0.34).toFixed(2) + 'px');
-    hero.style.setProperty('--feather-y-3', (featherStartY * 0.14).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-rise-y', Math.max(96, waterTop - featherEndTop + 26).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-x-a', (-wanderX * 0.56).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-y-a', (-wanderY * 0.46).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-x-b', (wanderX * 0.72).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-y-b', (-wanderY * 0.92).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-x-c', (wanderX * 0.44).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-y-c', (wanderY * 0.58).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-x-d', (-wanderX * 0.88).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-y-d', (wanderY * 0.32).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-x-e', (wanderX * 0.32).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-y-e', (-wanderY * 0.32).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-x-f', (-wanderX * 0.25).toFixed(2) + 'px');
+    hero.style.setProperty('--feather-swim-y-f', (-wanderY * 0.1).toFixed(2) + 'px');
   }
 
   function syncHeroCopyDust(heroRect, waterTop) {
@@ -352,6 +355,7 @@
     copyDustSignature = signature;
 
     heroCopyDust.innerHTML = '';
+    copyLandings = [];
     var walker = document.createTreeWalker(heroCopy, NodeFilter.SHOW_TEXT, {
       acceptNode: function (node) {
         return node.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
@@ -376,9 +380,12 @@
         var rect = rects[0];
         var screenY = rect.top - heroRect.top;
         var fall = Math.max(80, waterTop - screenY + sinkDepth + (index % 7) * 8);
+        var drift = (((index * 41) % 92) - 46);
+        var delay = 0.05 + (index % 19) * 0.018;
+        var isDoorChar = isPink && char === '门';
         var shard = document.createElement('span');
         shard.className = 'copy-glyph-shard ' + (isPink ? 'is-pink' : 'is-ink') +
-          (isPink && char === '门' ? ' is-door-char' : '');
+          (isDoorChar ? ' is-door-char' : '');
         shard.textContent = char;
         shard.setAttribute('data-chip', char);
         shard.style.left = (rect.left - heroRect.left).toFixed(2) + 'px';
@@ -393,22 +400,39 @@
           parentStyle.fontFamily
         ].join(' ');
         shard.style.color = parentStyle.color;
-        shard.style.setProperty('--drift', (((index * 41) % 92) - 46) + 'px');
-        shard.style.setProperty('--delay', (0.05 + (index % 19) * 0.018).toFixed(3) + 's');
+        shard.style.setProperty('--drift', drift + 'px');
+        shard.style.setProperty('--delay', delay.toFixed(3) + 's');
         shard.style.setProperty('--fall', fall.toFixed(2) + 'px');
         heroCopyDust.appendChild(shard);
+        copyLandings.push({
+          x: rect.left - heroRect.left + rect.width / 2 + drift * (isDoorChar ? 0.55 : 1),
+          y: Math.max(waterTop + 8, Math.min(heroRect.height - 24, screenY + fall)),
+          delay: delay + (isDoorChar ? 1.12 : 0),
+          duration: isDoorChar ? 3.05 : 2.35,
+          strength: isDoorChar ? 1.12 : 0.78
+        });
 
         for (var piece = 0; piece < 3; piece += 1) {
+          var bitDrift = ((((index + piece) * 37) % 84) - 42);
+          var bitDelay = 0.16 + (index % 17) * 0.014 + piece * 0.05;
+          var bitFall = fall + 14 + piece * 9;
           var bit = document.createElement('i');
           bit.className = isPink ? 'is-pink' : 'is-ink';
           bit.style.left = (rect.left - heroRect.left + rect.width * (0.25 + piece * 0.25)).toFixed(2) + 'px';
           bit.style.top = (screenY + rect.height * (0.2 + piece * 0.22)).toFixed(2) + 'px';
           bit.style.setProperty('--size', '2px');
           bit.style.setProperty('--trail', (10 + piece * 7) + 'px');
-          bit.style.setProperty('--drift', ((((index + piece) * 37) % 84) - 42) + 'px');
-          bit.style.setProperty('--delay', (0.16 + (index % 17) * 0.014 + piece * 0.05).toFixed(3) + 's');
-          bit.style.setProperty('--fall', (fall + 14 + piece * 9).toFixed(2) + 'px');
+          bit.style.setProperty('--drift', bitDrift + 'px');
+          bit.style.setProperty('--delay', bitDelay.toFixed(3) + 's');
+          bit.style.setProperty('--fall', bitFall.toFixed(2) + 'px');
           heroCopyDust.appendChild(bit);
+          copyLandings.push({
+            x: rect.left - heroRect.left + rect.width * (0.25 + piece * 0.25) + bitDrift,
+            y: Math.max(waterTop + 8, Math.min(heroRect.height - 24, screenY + bitFall)),
+            delay: bitDelay,
+            duration: 2.35,
+            strength: 0.48
+          });
         }
         index += 1;
       }
@@ -417,11 +441,43 @@
     if (!copyDustStarted) {
       window.clearTimeout(copyDustTimer);
       copyDustTimer = window.setTimeout(function () {
-        if (!heroCopyDust) return;
-        copyDustStarted = true;
-        heroCopyDust.classList.add('is-powdering');
+        startCopyDust();
       }, 1000);
     }
+  }
+
+  function clearCopyWaterEffects() {
+    copySplashTimers.forEach(function (timer) { window.clearTimeout(timer); });
+    copySplashTimers = [];
+    window.clearTimeout(featherBirthTimer);
+  }
+
+  function scheduleCopyWaterEffects() {
+    clearCopyWaterEffects();
+    var lastImpact = 0;
+    copyLandings.forEach(function (landing, index) {
+      var impact = Math.round((landing.delay + landing.duration * 0.9) * 1000);
+      lastImpact = Math.max(lastImpact, impact);
+      if (index % 3) return;
+      copySplashTimers.push(window.setTimeout(function () {
+        addRipple(landing.x, landing.y, landing.strength, {
+          x: ((index % 5) - 2) * 2,
+          y: 5
+        });
+      }, impact));
+    });
+    featherBirthTimer = window.setTimeout(function () {
+      discoverButton.classList.add('is-born');
+    }, lastImpact + 520);
+  }
+
+  function startCopyDust() {
+    if (!heroCopyDust) return;
+    copyDustStarted = true;
+    stopDoorHint();
+    discoverButton.classList.remove('is-born', 'is-drifting', 'is-ready', 'is-entering');
+    heroCopyDust.classList.add('is-powdering');
+    scheduleCopyWaterEffects();
   }
 
   function getObjectPosition() {
@@ -843,22 +899,40 @@
 
   document.getElementById('sidebarOpen').addEventListener('click', dissolveLogoAndOpen);
   document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
-  door.addEventListener('click', shakeDoor);
+  door.addEventListener('click', function () {
+    if (discoverButton.classList.contains('is-ready')) enterDoorWithFeather();
+    else shakeDoor();
+  });
   heroCopy.addEventListener('click', function () {
     if (reducedMotion) return;
     if (heroCopyDust) heroCopyDust.classList.remove('is-powdering');
     void heroCopy.offsetWidth;
-    copyDustStarted = true;
     window.clearTimeout(copyDustTimer);
     window.requestAnimationFrame(function () {
-      heroCopyDust.classList.add('is-powdering');
+      startCopyDust();
     });
   });
   var discoverButton = document.getElementById('discoverButton');
   var featherReadyTimer = null;
-  var featherAutoTimer = null;
+  var doorHintTimer = null;
+  function stopDoorHint() {
+    window.clearInterval(doorHintTimer);
+    doorHintTimer = null;
+  }
+  function startDoorHint() {
+    if (doorHintTimer || discoverButton.classList.contains('is-entering')) return;
+    doorHintTimer = window.setInterval(function () {
+      if (!discoverButton.classList.contains('is-ready') || discoverButton.classList.contains('is-entering')) {
+        stopDoorHint();
+        return;
+      }
+      shakeDoor();
+    }, 8200);
+  }
   function enterDoorWithFeather() {
     if (discoverButton.classList.contains('is-entering')) return;
+    if (!discoverButton.classList.contains('is-ready')) return;
+    stopDoorHint();
     window.clearTimeout(featherReadyTimer);
     discoverButton.classList.add('is-ready', 'is-entering');
     shakeDoor();
@@ -868,35 +942,34 @@
   }
 
   function driftFeatherToDoor() {
+    if (!discoverButton.classList.contains('is-born')) return;
     if (discoverButton.classList.contains('is-drifting')) return;
-    window.clearTimeout(featherAutoTimer);
     discoverButton.classList.add('is-drifting');
     featherReadyTimer = window.setTimeout(function () {
-      enterDoorWithFeather();
-    }, 2600);
+      discoverButton.classList.add('is-ready');
+      shakeDoor();
+      startDoorHint();
+    }, reducedMotion ? 0 : 1500);
   }
 
-  featherAutoTimer = window.setTimeout(driftFeatherToDoor, reducedMotion ? 0 : 2120);
-
-  discoverButton.addEventListener('mouseenter', function () {
-    if (discoverButton.classList.contains('is-entering')) return;
-    if (!discoverButton.classList.contains('is-drifting')) {
+  document.addEventListener('pointermove', function (event) {
+    if (!discoverButton.classList.contains('is-born')) return;
+    if (discoverButton.classList.contains('is-drifting') || discoverButton.classList.contains('is-entering')) return;
+    var feather = discoverButton.querySelector('.action-feather');
+    var rect = feather.getBoundingClientRect();
+    if (
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom
+    ) {
       driftFeatherToDoor();
-      return;
     }
-    enterDoorWithFeather();
   });
 
   discoverButton.addEventListener('click', function () {
-    if (reducedMotion) {
-      enterDoorWithFeather();
-      return;
-    }
     if (discoverButton.classList.contains('is-entering')) return;
-    if (!discoverButton.classList.contains('is-ready')) {
-      driftFeatherToDoor();
-      return;
-    }
+    if (!discoverButton.classList.contains('is-ready')) return;
     enterDoorWithFeather();
   });
 
