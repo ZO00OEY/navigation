@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>酒馆搭建教程——PC电脑 - 芝士的摸鱼站</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="tutorial.css">
+</head>
+<body>
+
+<div class="float-wrapper" id="floatWrapper">
+  <div class="float-stack open" id="floatStack">
+    <div class="bookmark-strip">
+      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
+      <div class="bookmark-buttons">
+        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+        <a href="../index.html" class="float-btn" title="返回导航">⌂</a>
+        <button class="toc-toggle float-btn" id="tocToggle" title="目录" aria-label="打开目录">☰</button>
+        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
+      </div>
+    </div>
+  </div>
+  <div class="float-w"></div>
+</div>
+<div class="toc-popup" id="tocPopup"></div>
+
+<div class="bg-decor">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<div class="lightbox" id="lightbox"><img src="" alt="" id="lightboxImg"></div>
+
+<div class="app">
+
+  <nav class="toc">
+    <div class="toc-label">目录</div>
+      <a href="#step-01" class="toc-item active"><span class="toc-num">01</span> 下载安装 Node.js 和 Git</a>
+      <a href="#step-02" class="toc-item"><span class="toc-num">02</span> 用 Git 下载酒馆</a>
+      <a href="#step-03" class="toc-item"><span class="toc-num">03</span> 安装酒馆</a>
+      <a href="#step-04" class="toc-item"><span class="toc-num">04</span> 启动酒馆</a>
+      <a href="#step-05" class="toc-item"><span class="toc-num">05</span> 更新酒馆</a>
+  </nav>
+
+  <div class="main-content">
+
+
+    <div class="page-header">
+      <h1>酒馆搭建教程——PC电脑</h1>
+      <p>超低配版本，先跑起来就是赢。AI 用 DeepSeek 就行。</p>
+    </div>
+
+    <a class="source-ref" href="https://ycnguyrbg2mq.feishu.cn/wiki/Z1IKw779UiyIjrkkwKXcIGGrnDf" target="_blank" rel="noopener"><span class="src-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span> 原始教程来自飞书云文档 →</a>
+
+    <div class="intro-card">
+      <strong>刚入门就先低配一点</strong>，玩起来就是赢。觉得酒馆适合自己，再去考虑用手机玩、多设备玩；再考虑扮演效果更好的 AI、各种预设、有游戏界面的复杂角色卡。
+    </div>
+
+    <div class="step" id="step-01">
+      <div class="step-head">
+        <span class="step-num">01</span>
+        <span class="step-title">下载安装 Node.js 和 Git</span>
+      </div>
+      <div class="step-body">
+        <p>酒馆依赖这两个工具，先装好：</p>
+        <p>
+          <a class="btn-link" href="https://nodejs.org/en/download/" target="_blank" rel="noopener">Node.js 下载</a>
+          <a class="btn-link" href="https://git-scm.com/downloads" target="_blank" rel="noopener">Git 下载</a>
+        </p>
+        <p>下载后一路点「下一步」安装即可，不用改任何设置。</p>
+      </div>
+    </div>
+
+    <div class="step" id="step-02">
+      <div class="step-head">
+        <span class="step-num">02</span>
+        <span class="step-title">用 Git 下载酒馆</span>
+      </div>
+      <div class="step-body">
+        <p>找一个你看着顺眼的文件夹，在地址栏输入 <strong>cmd</strong> 并回车：</p>
+        <div class="note note-warn">注意：文件夹路径中<strong>不可以有中文</strong>，否则后面会出问题。</div>
+        <img class="step-img" src="../img/pc-setup/image1.png" alt="在文件夹地址栏输入cmd">
+        <p style="margin-top:12px;">进入命令行界面后，右键粘贴下面这行指令并回车：</p>
+        <div class="code-wrap">
+          <div class="code-block">git clone https://ghfast.top/https://github.com/SillyTavern/SillyTavern -b release</div>
+          <button class="copy-btn" title="复制" onclick="copyCode(this)">📋</button>
+        </div>
+        <p>等待下载完成即可。</p>
+        <img class="step-img" src="../img/pc-setup/image2.png" alt="git clone 运行结果">
+      </div>
+    </div>
+
+    <div class="step" id="step-03">
+      <div class="step-head">
+        <span class="step-num">03</span>
+        <span class="step-title">安装酒馆</span>
+      </div>
+      <div class="step-body">
+        <p>刚才的目录会出现一个新的 SillyTavern 文件夹，点进去：</p>
+        <img class="step-img" src="../img/pc-setup/image3.png" alt="SillyTavern 文件夹">
+        <p style="margin-top:12px;">找到 <strong>Start.bat</strong>，右键 → <strong>以管理员身份运行</strong>，会开始自动安装：</p>
+        <img class="step-img" src="../img/pc-setup/image4.png" alt="右键以管理员身份运行 Start.bat">
+        <p>一开始可能是个空空的黑框（命令行），等一等就好，过一会浏览器里就会自动弹出安装好的酒馆页面了！</p>
+        <img class="step-img" src="../img/pc-setup/image5.png" alt="安装中命令行窗口">
+      </div>
+    </div>
+
+    <div class="step" id="step-04">
+      <div class="step-head">
+        <span class="step-num">04</span>
+        <span class="step-title">启动酒馆</span>
+      </div>
+      <div class="step-body">
+        <p>回看刚才的黑框（命令行），往上翻两行，可以看到酒馆已经成功运行的提示。</p>
+        <p>在浏览器地址栏输入 <strong>127.0.0.1:8000</strong> 即可手动打开本机酒馆，建议收藏这个页面：</p>
+        <img class="step-img" src="../img/pc-setup/image6.png" alt="浏览器打开 127.0.0.1:8000">
+        <p style="margin-top:12px;">以后每次想玩酒馆，回到文件夹运行 <strong>Start.bat</strong>，然后浏览器打开 127.0.0.1:8000 就行。</p>
+        <div class="note note-warn"><strong>一定要保持黑框不能关闭！</strong>这黑框就是酒馆的<strong>后台</strong>。关闭之后 127.0.0.1:8000 里就什么都没有了。<br>以后遇到各种乱七八糟的问题，都可以截图黑框里最新的（报错）内容找好心人问，方便有经验的佬辨认问题所在。</div>
+      </div>
+    </div>
+
+    <div class="step" id="step-05">
+      <div class="step-head">
+        <span class="step-num">05</span>
+        <span class="step-title">更新酒馆</span>
+      </div>
+      <div class="step-body">
+        <p>在酒馆文件夹（有 Start.bat 的那个）上方地址栏输入 <strong>cmd</strong> 并回车，打开命令行。</p>
+        <p>输入以下命令并回车，即可更新：</p>
+        <div class="code-wrap">
+          <div class="code-block">git pull</div>
+          <button class="copy-btn" title="复制" onclick="copyCode(this)">📋</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .main-content -->
+</div><!-- .app -->
+<script src="shared.js"></script>
+</body>
+</html>

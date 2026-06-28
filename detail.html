@@ -13,77 +13,55 @@
 </script>
 <link rel="stylesheet" href="guides/shared.css">
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap");
-
 :root {
-  --detail-bg: #fbf4f2;
-  --detail-surface: rgba(255, 253, 251, 0.76);
-  --detail-surface-strong: rgba(255, 253, 251, 0.92);
-  --detail-ink: #30292b;
-  --detail-muted: #71666a;
-  --detail-faint: #a19396;
-  --detail-accent: #b85f78;
-  --detail-accent-soft: rgba(184, 95, 120, 0.1);
-  --detail-line: rgba(76, 60, 64, 0.12);
-  --detail-shadow: 0 22px 70px rgba(104, 65, 78, 0.09);
-  --rail-width: 62px;
+  --detail-accent: #d45b86;
+  --detail-accent-strong: #e06f98;
+  --detail-accent-rgb: 212, 91, 134;
+  --detail-page-bg:
+    radial-gradient(ellipse at 94% 14%, rgba(var(--detail-accent-rgb), 0.07), transparent 32%),
+    radial-gradient(ellipse at 10% 6%, rgba(var(--detail-accent-rgb), 0.045), transparent 30%),
+    linear-gradient(180deg, #fbf5f6 0%, #fbf6f4 34%, #f5f6f8 64%, #f5f5f5 100%);
+  --detail-surface: #ffffff;
+  --detail-surface-strong: #fbfbfc;
+  --detail-ink: #15161c;
+  --detail-muted: #242630;
+  --detail-faint: #686b74;
+  --detail-line: #dde1e8;
+  --detail-line-soft: #eceef3;
 }
 
 [data-theme="dark"] {
-  --detail-bg: #151720;
-  --detail-surface: rgba(27, 29, 39, 0.72);
-  --detail-surface-strong: rgba(31, 33, 44, 0.92);
-  --detail-ink: #eeeef4;
-  --detail-muted: #aaa9b8;
-  --detail-faint: #777685;
-  --detail-accent: #aebdff;
-  --detail-accent-soft: rgba(174, 189, 255, 0.11);
-  --detail-line: rgba(226, 226, 238, 0.12);
-  --detail-shadow: 0 24px 76px rgba(0, 0, 0, 0.28);
+  --detail-page-bg:
+    radial-gradient(ellipse at 80% 10%, rgba(var(--detail-accent-rgb), 0.14), transparent 34%),
+    linear-gradient(180deg, #191a22 0%, #171820 58%, #181922 100%);
+  --detail-surface: rgba(24, 24, 32, 0.82);
+  --detail-surface-strong: rgba(255, 255, 255, 0.045);
+  --detail-ink: #f1f2f6;
+  --detail-muted: #c4c7d0;
+  --detail-faint: #8d909a;
+  --detail-line: rgba(var(--detail-accent-rgb), 0.28);
+  --detail-line-soft: rgba(255, 255, 255, 0.08);
 }
 
 html { scroll-behavior: smooth; }
 body {
   min-height: 100vh;
-  background:
-    url("concepts/water-underlay-repeat-v1.png"),
-    radial-gradient(ellipse at 12% 8%, rgba(239, 196, 207, 0.24), transparent 30%),
-    radial-gradient(ellipse at 92% 18%, rgba(244, 210, 205, 0.2), transparent 26%),
-    linear-gradient(to bottom, #f8eeef 0%, #fbf1ee 42%, #fffaf7 100%);
-  background-size: min(1080px, 125vw) auto, 100% 100%, 100% 100%, 100% 100%;
-  background-blend-mode: soft-light, normal, normal, normal;
+  background: var(--detail-page-bg);
   color: var(--detail-ink);
   font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
   overflow-x: hidden;
 }
-[data-theme="dark"] body {
-  background:
-    radial-gradient(ellipse at 74% 22%, rgba(92, 109, 169, 0.12), transparent 32%),
-    linear-gradient(to bottom, #171821 0%, #151720 58%, #171821 100%);
-}
 button, input { font: inherit; }
 
-.detail-rail {
-  position: fixed;
-  inset: 0 auto 0 0;
-  z-index: 30;
-  width: var(--rail-width);
-  padding: 16px 7px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 9px;
-}
-.rail-spacer { flex: 1; }
 .rail-button {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   padding: 0;
-  border: 0;
-  border-radius: 14px;
+  border: 1px solid var(--detail-line);
+  border-radius: 3px;
   color: var(--detail-accent);
-  background: transparent;
+  background: var(--detail-surface);
   display: grid;
   place-items: center;
   text-decoration: none;
@@ -96,94 +74,70 @@ button, input { font: inherit; }
 }
 .rail-button:active { transform: scale(0.94); }
 .rail-button::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  z-index: 2;
-  padding: 7px 10px;
-  border-radius: 8px;
-  color: #fff;
-  background: rgba(24, 22, 24, 0.92);
-  font-size: 0.7rem;
-  line-height: 1;
-  white-space: nowrap;
-  opacity: 0;
-  transform: translate(4px, -50%);
-  pointer-events: none;
-  transition: opacity 0.16s ease, transform 0.16s ease;
-}
-.rail-button:hover::after,
-.rail-button:focus-visible::after {
-  opacity: 1;
-  transform: translate(0, -50%);
+  display: none;
 }
 
 .detail-shell {
   position: relative;
   z-index: 1;
-  width: min(1120px, calc(100% - 120px));
+  width: min(1120px, calc(100% - 40px));
   margin: 0 auto;
-  padding: clamp(34px, 6vw, 70px) 0 72px;
-}
-.detail-shell::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0.32;
-  background:
-    radial-gradient(circle at 7% 16%, rgba(255, 255, 255, 0.5) 0 5px, transparent 6px),
-    radial-gradient(circle at 86% 22%, rgba(255, 255, 255, 0.34) 0 6px, transparent 7px),
-    radial-gradient(circle at 18% 46%, rgba(255, 255, 255, 0.26) 0 9px, transparent 10px);
+  padding: 24px 0 48px;
 }
 
 .detail-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  margin-bottom: clamp(38px, 5vw, 58px);
+  gap: 12px;
+  margin-bottom: 18px;
 }
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  color: var(--detail-muted);
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--detail-line);
+  border-radius: 3px;
+  color: var(--detail-faint);
+  background: var(--detail-surface);
   font-size: 0.78rem;
-  letter-spacing: 0.08em;
   text-decoration: none;
 }
 .back-link::before {
-  content: "";
-  width: 36px;
-  height: 1px;
-  background: var(--detail-accent);
+  content: "←";
+  color: var(--detail-accent);
 }
 .back-link:hover { color: var(--detail-accent); }
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#backToTop { display: grid; }
 .detail-search {
   position: relative;
-  width: min(360px, 42vw);
+  width: min(340px, 38vw);
 }
 .detail-search input {
   width: 100%;
-  height: 44px;
-  padding: 0 42px 0 16px;
+  height: 38px;
+  padding: 0 44px 0 18px;
   border: 1px solid var(--detail-line);
-  border-radius: 999px;
+  border-radius: 3px;
   outline: none;
   color: var(--detail-ink);
-  background: rgba(255, 253, 251, 0.6);
+  background: var(--detail-surface);
   font-size: 0.82rem;
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 [data-theme="dark"] .detail-search input { background: rgba(27, 28, 37, 0.62); }
 .detail-search input::placeholder { color: var(--detail-faint); }
 .detail-search input:focus {
-  border-color: color-mix(in srgb, var(--detail-accent) 44%, transparent);
+  border-color: rgba(var(--detail-accent-rgb), 0.42);
   background: var(--detail-surface-strong);
-  box-shadow: 0 0 0 4px var(--detail-accent-soft);
+  box-shadow: 0 0 0 3px rgba(var(--detail-accent-rgb), 0.08);
 }
 .search-icon {
   position: absolute;
@@ -197,50 +151,70 @@ button, input { font: inherit; }
 
 .page-header {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.72fr);
-  align-items: end;
-  gap: 48px;
-  margin-bottom: 24px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 14px;
+  padding: 18px;
+  border: 1px solid var(--detail-line);
+  border-radius: 3px;
+  background: var(--detail-surface);
+  box-shadow: 0 2px 8px rgba(40, 46, 56, 0.035);
 }
 .page-kicker {
-  color: var(--detail-accent);
-  font-size: 0.7rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  color: var(--detail-faint);
+  font-size: 0.76rem;
+  line-height: 1.4;
 }
 .page-title {
-  margin-top: 14px;
+  margin-top: 4px;
   color: var(--detail-ink);
-  font-family: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
-  font-size: clamp(2.35rem, 5vw, 4.7rem);
-  font-weight: 400;
-  line-height: 1.05;
+  font-size: clamp(1.85rem, 3.2vw, 2.8rem);
+  font-weight: 750;
+  line-height: 1.08;
   letter-spacing: 0;
 }
 .page-title .breadcrumb {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
   color: var(--detail-faint);
-  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 400;
-  letter-spacing: 0.08em;
 }
 .page-meta {
-  max-width: 440px;
+  display: grid;
+  justify-items: end;
+  gap: 6px;
   color: var(--detail-muted);
   font-size: 0.84rem;
-  line-height: 1.9;
+  line-height: 1.45;
+  text-align: right;
+}
+.meta-line {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--detail-line);
+  border-radius: 999px;
+  background: var(--detail-surface-strong);
+  color: var(--detail-ink);
+}
+.meta-count {
+  color: var(--detail-accent);
+  font-variant-numeric: tabular-nums;
 }
 .overview {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 18px;
-  margin: 34px 0 18px;
-  padding: 14px 0;
-  border-top: 1px solid var(--detail-line);
-  border-bottom: 1px solid var(--detail-line);
+  margin: 0 0 12px;
+  padding: 0;
+}
+.overview:empty,
+.overview.is-empty {
+  display: none;
 }
 .stat-row {
   display: flex;
@@ -248,10 +222,11 @@ button, input { font: inherit; }
   flex-wrap: wrap;
   gap: 8px;
 }
+.stat-row:empty { display: none; }
 .stat-pill,
 .category-chip {
-  min-height: 34px;
-  padding: 8px 13px;
+  min-height: 30px;
+  padding: 7px 11px;
   border: 1px solid var(--detail-line);
   border-radius: 999px;
   color: var(--detail-muted);
@@ -285,109 +260,90 @@ button, input { font: inherit; }
 
 .resource-panel {
   position: relative;
-  overflow: hidden;
   border: 1px solid var(--detail-line);
-  border-radius: 28px;
-  background:
-    linear-gradient(135deg, rgba(255, 253, 251, 0.9), rgba(255, 253, 251, 0.58)),
-    radial-gradient(ellipse at 86% 92%, rgba(224, 158, 178, 0.16), transparent 34%);
-  box-shadow: var(--detail-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-[data-theme="dark"] .resource-panel {
-  background:
-    linear-gradient(135deg, rgba(31, 33, 44, 0.9), rgba(27, 28, 38, 0.66)),
-    radial-gradient(ellipse at 86% 92%, rgba(122, 144, 220, 0.14), transparent 34%);
+  border-radius: 3px;
+  background: var(--detail-surface);
+  box-shadow: 0 2px 8px rgba(40, 46, 56, 0.035);
 }
 .resource-panel::before {
-  content: "";
-  position: absolute;
-  right: clamp(20px, 4vw, 48px);
-  bottom: clamp(14px, 3vw, 34px);
-  width: clamp(88px, 13vw, 150px);
-  aspect-ratio: 1.1;
-  background: var(--detail-deco, url("concepts/portal-deco-message-bottle.png")) center / contain no-repeat;
-  opacity: 0.22;
-  pointer-events: none;
+  display: none;
 }
 .card-inner {
   position: relative;
   z-index: 1;
-  padding: clamp(18px, 3vw, 32px);
+  padding: 0;
 }
 .detail-subcat-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 16px;
   min-height: 44px;
-  padding: 10px 2px 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--detail-line-soft);
   color: var(--detail-accent);
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 0.92rem;
+  font-weight: 600;
 }
 .detail-subcat-header:not(:first-child) {
-  margin-top: 18px;
+  margin-top: 0;
   border-top: 1px solid var(--detail-line);
 }
 .detail-subcat-header::after {
-  content: "";
-  width: 28px;
-  height: 1px;
-  background: color-mix(in srgb, var(--detail-accent) 54%, transparent);
+  display: none;
 }
 .detail-subcat-count {
-  color: var(--detail-faint);
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
+  color: var(--detail-accent);
+  font-size: 0.86rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 .link-list {
   display: grid;
 }
 .link-item {
   display: grid;
-  grid-template-columns: 36px minmax(150px, 0.42fr) minmax(0, 1fr) 34px;
+  grid-template-columns: 38px minmax(160px, 0.38fr) minmax(0, 1fr) 34px;
   align-items: center;
   gap: 14px;
   min-height: 58px;
-  padding: 9px 8px;
-  border-top: 1px solid color-mix(in srgb, var(--detail-line) 72%, transparent);
+  padding: 9px 14px;
+  border-top: 1px solid var(--detail-line-soft);
   color: var(--detail-ink);
   text-decoration: none;
   transition: background 0.18s ease, transform 0.18s ease;
 }
 .detail-subcat-header + .link-item { border-top: 0; }
 .link-item:hover {
-  background: rgba(255, 245, 247, 0.52);
-  transform: translateX(3px);
+  background: rgba(var(--detail-accent-rgb), 0.07);
+  transform: none;
 }
 [data-theme="dark"] .link-item:hover { background: rgba(82, 101, 174, 0.16); }
 .link-num {
   color: var(--detail-faint);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 .link-title {
   color: var(--detail-ink);
-  font-family: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.96rem;
+  font-weight: 700;
   line-height: 1.45;
 }
 .link-desc {
   min-width: 0;
   color: var(--detail-muted);
-  font-size: 0.8rem;
-  line-height: 1.65;
+  font-size: 0.78rem;
+  line-height: 1.55;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .link-arrow {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
   color: var(--detail-faint);
   display: grid;
   place-items: center;
@@ -396,8 +352,7 @@ button, input { font: inherit; }
 }
 .link-item:hover .link-arrow {
   color: var(--detail-accent);
-  background: var(--detail-accent-soft);
-  transform: translateX(2px);
+  background: rgba(var(--detail-accent-rgb), 0.12);
 }
 .link-item.hidden,
 .detail-subcat-header.hidden { display: none; }
@@ -405,21 +360,24 @@ button, input { font: inherit; }
   padding: 70px 20px;
   color: var(--detail-muted);
   text-align: center;
-  font-size: 0.86rem;
+  font-size: 1rem;
 }
 .footer {
-  margin-top: 42px;
+  margin-top: 24px;
   color: var(--detail-faint);
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   text-align: center;
 }
 
 @media (max-width: 850px) {
   .detail-shell {
-    width: min(100% - 32px, 760px);
-    padding-left: 48px;
+    width: min(100% - 24px, 760px);
   }
   .page-header { grid-template-columns: 1fr; gap: 14px; }
+  .page-meta {
+    justify-items: start;
+    text-align: left;
+  }
   .overview {
     align-items: flex-start;
     flex-direction: column;
@@ -442,13 +400,10 @@ button, input { font: inherit; }
 }
 
 @media (max-width: 560px) {
-  :root { --rail-width: 54px; }
-  .detail-rail { padding-inline: 5px; }
   .rail-button { width: 42px; height: 42px; }
   .detail-shell {
     width: calc(100% - 18px);
-    padding-top: 28px;
-    padding-left: 48px;
+    padding-top: 12px;
   }
   .detail-top {
     align-items: stretch;
@@ -456,15 +411,10 @@ button, input { font: inherit; }
     gap: 16px;
   }
   .detail-search { width: 100%; }
-  .page-title { font-size: clamp(2rem, 12vw, 3.05rem); }
-  .resource-panel { border-radius: 22px; }
-  .card-inner { padding: 18px 16px 22px; }
-  .resource-panel::before {
-    width: 104px;
-    right: 12px;
-    bottom: 8px;
-    opacity: 0.16;
-  }
+  .top-actions { justify-content: space-between; width: 100%; }
+  .top-actions .detail-search { flex: 1; min-width: 0; }
+  .page-title { font-size: clamp(1.75rem, 9vw, 2.45rem); }
+  .card-inner { padding: 0; }
   .detail-subcat-header {
     min-height: 38px;
     padding-top: 6px;
@@ -473,31 +423,22 @@ button, input { font: inherit; }
 </style>
 </head>
 <body>
-<nav class="detail-rail" aria-label="详情页工具">
-  <a class="rail-button" href="index.html" aria-label="返回导航" data-tooltip="返回导航">
-    <svg width="23" height="23" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2">
-      <ellipse cx="11" cy="19" rx="9" ry="7"/>
-      <path d="M20 12l7-6v18l-7-4"/>
-      <circle cx="7" cy="18" r="1.5" fill="currentColor"/>
-    </svg>
-  </a>
-  <div class="rail-spacer" aria-hidden="true"></div>
-  <button class="rail-button" id="themeToggle" type="button" aria-label="切换日夜模式" data-tooltip="切换日夜模式"></button>
-  <button class="rail-button" id="backToTop" type="button" aria-label="回到顶部" data-tooltip="回到顶部">↑</button>
-</nav>
-
 <main class="detail-shell">
   <div class="detail-top">
     <a class="back-link" href="index.html">返回导航</a>
-    <label class="detail-search" aria-label="搜索当前列表">
-      <input type="search" id="detailSearch" placeholder="搜索教程、工具或站点...">
-      <span class="search-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></span>
-    </label>
+    <div class="top-actions">
+      <label class="detail-search" aria-label="搜索当前列表">
+        <input type="search" id="detailSearch" placeholder="搜索当前目录...">
+        <span class="search-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></span>
+      </label>
+      <button class="rail-button" id="themeToggle" type="button" aria-label="切换日夜模式"></button>
+      <button class="rail-button" id="backToTop" type="button" aria-label="回到顶部">↑</button>
+    </div>
   </div>
 
   <header class="page-header">
     <div>
-      <div class="page-kicker">BELOW THE SURFACE</div>
+      <div class="page-kicker">目录</div>
       <h1 class="page-title" id="pageTitle"></h1>
     </div>
     <p class="page-meta" id="pageMeta"></p>
@@ -558,19 +499,11 @@ button, input { font: inherit; }
       '<span class="link-arrow">↗</span></a>';
   }
 
-  function decoForPage(pageId) {
-    if (pageId === 'tools') return 'url("concepts/portal-deco-compass.png")';
-    if (pageId === 'haoyong') return 'url("concepts/portal-deco-anchor.png")';
-    return 'url("concepts/portal-deco-message-bottle.png")';
-  }
-
   const titleEl = document.getElementById('pageTitle');
   const metaEl = document.getElementById('pageMeta');
   const listEl = document.getElementById('linkList');
-  const panelEl = document.getElementById('resourcePanel');
   const statRow = document.getElementById('statRow');
   const categoryStrip = document.getElementById('categoryStrip');
-  panelEl.style.setProperty('--detail-deco', decoForPage(page));
 
   if (subcat) {
     document.title = parentName + ' / ' + subcat.name + ' - 芝士的摸鱼站';
@@ -587,9 +520,11 @@ button, input { font: inherit; }
   }
 
   const groups = subcat ? [subcat] : parentBlock.subcategories.filter(function(s) { return s.links.length; });
-  const total = groups.reduce(function(sum, s) { return sum + s.links.length; }, 0);
-  metaEl.textContent = '延续首页的柔和水彩感，收进更利落的目录。搜索、跳转和打开链接都尽量少一步。';
-  statRow.innerHTML = '<span class="stat-pill">' + groups.length + ' 个分类</span><span class="stat-pill">' + total + ' 个入口</span>';
+  metaEl.innerHTML = groups.map(function(group) {
+    return '<span class="meta-line">' + esc(group.name) + '<span class="meta-count">· ' + group.links.length + '</span></span>';
+  }).join('');
+  statRow.innerHTML = '';
+  document.getElementById('overview').classList.toggle('is-empty', groups.length <= 1);
 
   let chipHtml = '';
   let html = '';
@@ -597,7 +532,7 @@ button, input { font: inherit; }
     if (!group.links.length) return;
     const id = slug(group.name, gi);
     if (groups.length > 1) chipHtml += '<a class="category-chip" href="#' + esc(id) + '">' + esc(group.name) + '</a>';
-    html += '<div class="detail-subcat-header" id="' + esc(id) + '">' + esc(group.name) + '<span class="detail-subcat-count">' + group.links.length + '</span></div>';
+    html += '<div class="detail-subcat-header" id="' + esc(id) + '"><span>' + esc(group.name) + '</span><span class="detail-subcat-count">· ' + group.links.length + '</span></div>';
     group.links.forEach(function(link, i) {
       html += renderLinkItem(link, i);
     });

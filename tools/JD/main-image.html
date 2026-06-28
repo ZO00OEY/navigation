@@ -4,14 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>商品主图更换 - 芝士的摸鱼站</title>
-<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);var p=localStorage.getItem('jdToolPalette')||'pink';document.documentElement.setAttribute('data-tool-palette',p);})();</script>
 <link rel="stylesheet" href="../../guides/shared.css">
+<link rel="stylesheet" href="shared/jd-tool-shell.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <style>
+:root {
+  --tool-accent: #d45b86;
+  --tool-accent-strong: #e06f98;
+  --tool-accent-rgb: 212, 91, 134;
+  --tool-page-bg:
+    radial-gradient(ellipse at 94% 14%, rgba(var(--tool-accent-rgb), 0.07), transparent 32%),
+    radial-gradient(ellipse at 10% 6%, rgba(var(--tool-accent-rgb), 0.045), transparent 30%),
+    linear-gradient(180deg, #fbf5f6 0%, #fbf6f4 34%, #f5f6f8 64%, #f5f5f5 100%);
+}
+[data-tool-palette="blue"] {
+  --tool-accent: #2f68ff;
+  --tool-accent-strong: #4f82ff;
+  --tool-accent-rgb: 47, 104, 255;
+  --tool-page-bg:
+    radial-gradient(ellipse at 94% 14%, rgba(93, 127, 184, 0.075), transparent 32%),
+    radial-gradient(ellipse at 10% 6%, rgba(115, 151, 205, 0.05), transparent 30%),
+    linear-gradient(180deg, #f5f8fb 0%, #f6f9fb 34%, #f5f7f9 64%, #f5f5f5 100%);
+}
 /* ---- Blob overrides ---- */
-.bg-decor { overflow: visible; }
-.blob { filter: blur(120px); opacity: 0.45; }
+.bg-decor { overflow: visible; background: var(--tool-page-bg); }
+.blob { display: none; filter: blur(120px); opacity: 0.45; }
 .blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(80,100,220,0.5), transparent); top: -200px; left: -150px; }
 .blob-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(140,80,200,0.4), transparent); top: 50%; right: -200px; bottom: auto; transform: translateY(-50%); }
 .blob-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(60,180,160,0.35), transparent); bottom: -150px; left: 30%; top: auto; }
@@ -19,51 +38,8 @@
 [data-theme="light"] .blob-1 { background: radial-gradient(circle, rgba(251,130,160,0.42), transparent); }
 [data-theme="light"] .blob-2 { background: radial-gradient(circle, rgba(220,150,200,0.36), transparent); }
 [data-theme="light"] .blob-3 { background: radial-gradient(circle, rgba(255,180,140,0.32), transparent); }
+[data-theme="light"] body { background: var(--tool-page-bg); }
 
-/* ---- Layout ---- */
-.app { max-width: 1000px; }
-
-.back-link {
-  display: inline-flex; align-items: center; gap: 4px;
-  color: var(--text-tertiary); text-decoration: none;
-  font-size: 0.82rem; transition: color 0.2s; margin-bottom: 20px;
-}
-.back-link:hover { color: var(--link-color); }
-
-/* ---- Tool Shell ---- */
-.tool-shell {
-  display: flex;
-  background: var(--card-bg); border: 1px solid var(--card-border);
-  border-radius: var(--radius); overflow: hidden;
-  box-shadow: 0 4px 24px var(--card-shadow);
-  min-height: 580px;
-}
-.tool-sidebar {
-  width: 178px; flex-shrink: 0;
-  background: var(--card-bg);
-  border-right: 1px solid var(--card-border);
-  padding: 16px 0;
-}
-.tool-sidebar .tab-btn {
-  display: block; width: 100%;
-  padding: 13px 18px; border: none; background: none;
-  text-align: left; font-size: 0.8rem; color: var(--text-secondary);
-  cursor: pointer; font-family: inherit;
-  transition: all 0.15s;
-  border-left: 2px solid transparent;
-}
-.tool-sidebar .tab-btn:hover { background: var(--link-item-hover); color: var(--text); }
-.tool-sidebar .tab-btn.active {
-  background: rgba(140,155,220,0.14); color: var(--link-color);
-  font-weight: 600; border-left-color: var(--link-color);
-}
-[data-theme="light"] .tool-sidebar .tab-btn.active {
-  background: rgba(251,114,153,0.12);
-}
-
-.tool-main { flex: 1; padding: 32px 36px; overflow-y: auto; min-width: 0; }
-.tool-page { display: none; }
-.tool-page.active { display: block; }
 .tool-main h1 { font-size: 1.3rem; margin-bottom: 8px; color: var(--text); letter-spacing: -0.01em; }
 .tool-main .sub { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 24px; line-height: 1.6; }
 .tool-main .sub a { color: var(--link-color); text-decoration: none; }
@@ -71,18 +47,15 @@
 
 /* ---- Info Card ---- */
 .info-card {
-  background: rgba(0,0,0,0.03); border: none;
-  border-radius: 4px; padding: 14px 20px;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 3px; padding: 16px 18px;
   margin-bottom: 14px; line-height: 1.7;
+  box-shadow: 0 2px 8px rgba(40, 46, 56, 0.035);
 }
 [data-theme="dark"] .info-card { background: rgba(255,255,255,0.04); }
 .intro-card { margin-bottom: 22px; }
 .intro-title { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
-.intro-toggle { font-size: 0.72rem; color: var(--text-tertiary); background: none; border: none; cursor: pointer; font-family: inherit; transition: color 0.15s; flex-shrink: 0; padding: 4px 8px; margin: -4px -8px; }
-.intro-toggle:hover { color: var(--link-color); }
 .intro-content { transition: max-height 0.35s ease, opacity 0.25s; overflow: hidden; }
-.intro-card.collapsed .intro-content { max-height: 0; opacity: 0; margin: 0; }
-.intro-card.collapsed .intro-title { margin-bottom: 0; }
 .intro-body { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5; }
 .intro-body p { margin-bottom: 0; }
 .intro-subtitle { font-size: 0.84rem; font-weight: 700; color: var(--text); margin: 10px 0 4px; }
@@ -93,14 +66,15 @@
 /* ---- Step Cards ---- */
 .step {
   background: var(--card-bg); border: 1px solid var(--card-border);
-  border-radius: var(--radius); padding: 20px 22px;
+  border-radius: 3px; padding: 20px 22px;
   margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(40, 46, 56, 0.035);
 }
 .step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .step-num {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; border-radius: 8px;
-  background: var(--step-num-bg); color: var(--step-num-color);
+  width: 28px; height: 28px; border-radius: 3px;
+  background: rgba(var(--tool-accent-rgb), 0.14); color: var(--link-color);
   font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
 }
 .step-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
@@ -112,8 +86,8 @@
 
 /* ---- Upload Zone ---- */
 .upload-zone {
-  border: 2px dashed rgba(140,155,220,0.22);
-  border-radius: 10px; padding: 40px 20px;
+  border: 1.5px dashed rgba(var(--tool-accent-rgb),0.28);
+  border-radius: 3px; padding: 40px 20px;
   text-align: center; cursor: pointer;
   transition: all 0.2s; margin-bottom: 10px;
 }
@@ -124,10 +98,10 @@
 .upload-zone .icon { font-size: 2.2rem; margin-bottom: 8px; }
 .upload-zone .hint { color: var(--text-secondary); font-size: 0.84rem; }
 .upload-zone .hint span { color: var(--link-color); text-decoration: underline; }
-[data-theme="light"] .upload-zone { border-color: rgba(251,114,153,0.25); }
+[data-theme="light"] .upload-zone { border-color: rgba(var(--tool-accent-rgb),0.25); }
 
 .row-inline { width: 36px; padding: 2px 4px; border: 1.5px solid rgba(140,155,220,0.3); border-radius: 5px; font-size: 0.84rem; text-align: center; outline: none; background: var(--search-bg); color: var(--text); font-family: inherit; transition: border-color 0.15s; }
-[data-theme="light"] .row-inline { border-color: rgba(251,114,153,0.3); }
+[data-theme="light"] .row-inline { border-color: rgba(var(--tool-accent-rgb),0.3); }
 .row-inline:focus { border-color: var(--link-color); }
 
 /* ---- Export Actions ---- */
@@ -170,7 +144,7 @@
 /* ---- Buttons ---- */
 .btn {
   width: 100%; padding: 12px; background: var(--link-color);
-  color: #fff; border: none; border-radius: 10px;
+  color: #fff; border: none; border-radius: 3px;
   font-size: 0.9rem; cursor: pointer; font-family: inherit;
   transition: all 0.2s; font-weight: 500;
 }
@@ -179,13 +153,22 @@
 .btn-sm {
   padding: 7px 16px; background: var(--card-bg);
   color: var(--link-color); border: 1px solid var(--card-border);
-  border-radius: 8px; font-size: 0.8rem; cursor: pointer;
+  border-radius: 3px; font-size: 0.8rem; cursor: pointer;
   font-family: inherit; transition: all 0.15s;
 }
 .btn-sm:hover { background: var(--link-item-hover); border-color: var(--link-color); }
 .btn-sm.primary { background: var(--link-color); color: #fff; border-color: var(--link-color); }
 .btn-sm.primary:hover { opacity: 0.88; }
 .btn-bar { display: flex; gap: 8px; margin-bottom: 14px; }
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 78px; height: 34px; padding: 0 12px;
+  border: 1px solid rgba(var(--tool-accent-rgb),0.36);
+  border-radius: 3px; background: rgba(var(--tool-accent-rgb),0.14); color: var(--link-color);
+  font-size: 0.78rem; font-weight: 700; font-family: inherit; cursor: pointer;
+  transition: all 0.15s;
+}
+.icon-btn:hover { background: rgba(var(--tool-accent-rgb),0.2); transform: translateY(-1px); }
 
 /* ---- Msg ---- */
 .msg { margin-top: 10px; font-size: 0.8rem; text-align: center; min-height: 20px; }
@@ -193,15 +176,37 @@
 .msg.err { color: #e74c3c; }
 
 /* ---- Mapping Table ---- */
+.sku-board { display: grid; gap: 16px; }
+.sku-panel {
+  position: relative; overflow: hidden;
+  border-radius: 3px; padding: 18px 18px 16px;
+}
+.sku-panel::before {
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 4px;
+  background: #d7dce5;
+}
+.sku-titlebar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; margin-bottom: 12px;
+}
+.sku-titlebar h2 { margin: 0; color: var(--text); font-size: 0.98rem; letter-spacing: 0; }
+.sku-titlebar p { margin: 4px 0 0; color: var(--text-tertiary); font-size: 0.72rem; }
+.sku-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mapping-table-wrap {
+  overflow: auto; max-height: 280px;
+  border: 1px solid var(--card-border); border-radius: 3px; background: var(--card-bg);
+}
 .mapping-table {
-  width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 16px;
+  width: 100%; border-collapse: collapse; font-size: 0.8rem;
 }
 .mapping-table th, .mapping-table td {
-  padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--card-border);
+  height: 34px; padding: 5px 10px; text-align: left; border-bottom: 1px solid var(--card-border);
 }
-.mapping-table th { background: var(--search-bg); color: var(--text-tertiary); font-weight: 600; }
-.mapping-table tbody { display: block; max-height: 200px; overflow-y: auto; }
-.mapping-table thead, .mapping-table tbody tr { display: table; width: 100%; table-layout: fixed; }
+.mapping-table th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--card-bg); color: var(--text); font-weight: 700;
+  box-shadow: 0 1px 0 var(--card-border), 0 10px 14px rgba(0,0,0,0.04);
+}
 .mapping-table .col-num { width: 36px; color: var(--text-tertiary); position: relative; }
 .mapping-table .col-sku { width: 30%; font-family: monospace; }
 .mapping-table .col-name { width: 70%; }
@@ -229,23 +234,21 @@
 .mapping-table tbody tr .col-num .del-x:hover { font-weight: 700; }
 
 .mapping-add-row {
-  display: table; width: 100%; table-layout: fixed;
-  margin-top: 4px;
+  display: grid; grid-template-columns: 36px minmax(120px, 30%) minmax(180px, 1fr);
+  gap: 8px; align-items: center; margin-top: 10px;
 }
-.add-num-cell { display: table-cell; width: 36px; vertical-align: middle; text-align: center; }
-.add-sku-cell { display: table-cell; width: 30%; vertical-align: middle; padding: 0 4px; }
-.add-name-cell { display: table-cell; width: 70%; vertical-align: middle; padding: 0 4px; }
+.add-num-cell { text-align: center; }
 .add-num {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 20px; height: 20px; border-radius: 4px;
+  width: 24px; height: 24px; border-radius: 3px;
   background: var(--link-color); color: #fff;
   font-size: 0.85rem; font-weight: 700;
   cursor: pointer; transition: all 0.15s;
 }
 .add-num:hover { opacity: 0.85; transform: scale(1.15); }
 .add-input {
-  width: 100%; padding: 5px 8px; border: 1px solid var(--card-border);
-  border-radius: 4px; font-size: 0.82rem; outline: none;
+  width: 100%; min-height: 32px; padding: 5px 10px; border: 1px solid var(--card-border);
+  border-radius: 3px; font-size: 0.82rem; outline: none;
   background: var(--search-bg); color: var(--text); font-family: inherit;
   box-sizing: border-box;
 }
@@ -307,50 +310,49 @@
 
 /* ---- Responsive ---- */
 @media (max-width: 700px) {
-  .tool-shell { flex-direction: column; }
-  .tool-sidebar { width: 100%; display: flex; padding: 0; border-right: none; border-bottom: 1px solid var(--card-border); }
-  .tool-sidebar .tab-btn { border-left: none; border-bottom: 2px solid transparent; white-space: nowrap; flex-shrink: 0; }
-  .tool-sidebar .tab-btn.active { border-left-color: transparent; border-bottom-color: var(--link-color); }
-  .tool-main { padding: 22px 18px; }
   .export-actions { grid-template-columns: 1fr; }
+  .sku-titlebar { align-items: flex-start; flex-direction: column; }
+  .mapping-add-row { grid-template-columns: 32px 1fr; }
+  .add-name-cell { grid-column: 2; }
 }
 </style>
 </head>
 <body>
 
-<div class="float-wrapper" id="floatWrapper">
-  <div class="float-stack open" id="floatStack">
-    <div class="bookmark-strip">
-      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
-      <div class="bookmark-buttons">
-        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
-        <a href="../../index.html" class="float-btn" title="返回导航">⌂</a>
-        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
-      </div>
-    </div>
-  </div>
-  <div class="float-w"></div>
-</div>
-
 <div class="bg-decor"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
 
 <div class="app">
-  <a class="back-link" href="../../index.html">← 返回导航</a>
-
   <div class="tool-shell">
     <nav class="tool-sidebar">
-      <button class="tab-btn active" data-page="page1">01 主图：定时批量替换</button>
-      <button class="tab-btn" data-page="page2">02 图片：批量重命名</button>
+      <div class="sidebar-main">
+        <div class="sidebar-section-title">主图工具</div>
+        <button class="tab-btn active" data-page="page1">01 主图：定时批量替换</button>
+        <button class="tab-btn" data-page="page2">02 图片：批量重命名</button>
+      </div>
+      <div class="sidebar-archive">
+        <div class="palette-card" aria-label="工具配色">
+          <div class="palette-options">
+            <button class="palette-swatch" type="button" data-tool-palette-option="pink" title="粉色配色" aria-label="粉色配色"></button>
+            <button class="palette-swatch" type="button" data-tool-palette-option="blue" title="蓝色配色" aria-label="蓝色配色"></button>
+          </div>
+        </div>
+        <a class="back-link" href="../../index.html">← 返回目录</a>
+      </div>
     </nav>
 
     <div class="tool-main">
 
       <!-- ===== Page 1: 批量替换主图 ===== -->
       <div class="tool-page active" id="page1">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>商品主图批量替换</h1>
+            <p>按 SKU 自动识别方图 / 长图，打包成京东后台可直接上传的主图替换压缩包。</p>
+          </div>
+        </div>
         <div class="intro-card info-card" id="introCard">
           <div class="intro-title">
             功能介绍
-            <button class="intro-toggle" id="introToggle">收起</button>
           </div>
           <div class="intro-content" id="introContent">
             <div class="intro-body">
@@ -408,20 +410,33 @@
 
       <!-- ===== Page 2: 图片批量重命名 ===== -->
       <div class="tool-page" id="page2">
-        <div class="step">
-          <div class="step-head"><span class="step-num">1</span><span class="step-title">导入 SKU 与简称对照表</span></div>
-          <div class="step-body">
-            <div class="btn-bar">
-              <button class="btn-sm" id="p2DownloadTpl">下载空模版</button>
-              <button class="btn-sm" id="p2ImportExcel">导入 Excel</button>
-              <button class="btn-sm" id="p2ExportExcel">导出为 Excel</button>
-              <button class="btn-sm" id="p2ClearMapping">清空</button>
+        <div class="page-head">
+          <div class="page-title">
+            <h1>图片批量重命名</h1>
+            <p>维护 SKU 与简称映射，把图片文件名在简称和 SKU 之间批量转换。</p>
+          </div>
+        </div>
+        <div class="sku-board">
+          <div class="step sku-panel">
+            <div class="sku-titlebar">
+              <div>
+                <h2>SKU 与简称对照表</h2>
+                <p>导入 Excel 后可直接点单元格编辑，也可以在下方新增一条映射。</p>
+              </div>
+              <div class="sku-actions">
+                <button class="icon-btn" id="p2DownloadTpl">空模版</button>
+                <button class="icon-btn" id="p2ImportExcel">导入</button>
+                <button class="icon-btn" id="p2ExportExcel">导出</button>
+                <button class="icon-btn" id="p2ClearMapping">清空</button>
+              </div>
               <input type="file" id="p2ExcelInput" accept=".xlsx,.xls" style="display:none">
             </div>
-            <table class="mapping-table" id="p2MappingTable">
-              <thead><tr><th class="col-num">#</th><th class="col-sku">SKU</th><th class="col-name">简称</th></tr></thead>
-              <tbody id="p2MappingBody"><tr><td colspan="3" style="text-align:center;color:var(--text-tertiary);padding:20px">暂无映射数据，请导入 Excel 或下载模版填写后导入</td></tr></tbody>
-            </table>
+            <div class="mapping-table-wrap">
+              <table class="mapping-table" id="p2MappingTable">
+                <thead><tr><th class="col-num">#</th><th class="col-sku">SKU</th><th class="col-name">简称</th></tr></thead>
+                <tbody id="p2MappingBody"><tr><td colspan="3" style="text-align:center;color:var(--text-tertiary);padding:20px">暂无映射数据，请导入 Excel 或下载模版填写后导入</td></tr></tbody>
+              </table>
+            </div>
             <div class="mapping-add-row">
               <span class="add-num-cell"><span class="add-num" id="p2AddBtn" title="添加">+</span></span>
               <span class="add-sku-cell"><input type="text" id="p2NewSku" placeholder="SKU" class="add-input"></span>
@@ -480,7 +495,7 @@
   <footer class="footer"><span>🌱 商品主图更换小工具</span></footer>
 </div>
 
-<script src="../../guides/shared.js"></script>
+<script src="shared/jd-tool-palette.js"></script>
 <script>
 /* ===== Tab Switching ===== */
 function switchTab(id) {
@@ -501,13 +516,6 @@ window.addEventListener('hashchange', function() {
   switchTab(location.hash.slice(1) || 'page1');
 });
 switchTab(location.hash.slice(1) || 'page1');
-
-/* ===== Intro Card Collapse ===== */
-document.getElementById('introToggle').addEventListener('click', function() {
-  var card = document.getElementById('introCard');
-  var collapsed = card.classList.toggle('collapsed');
-  this.textContent = collapsed ? '展开' : '收起';
-});
 
 /* ===== Page 1: 批量替换主图 ===== */
 var DROP_ZONE = document.getElementById('dropZone');
