@@ -483,7 +483,7 @@
 .report-detail-topbar {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 22px;
 }
 .report-detail-left {
@@ -493,8 +493,8 @@
   gap: 18px;
 }
 .report-detail-right {
-  display: grid;
-  justify-items: end;
+  display: flex;
+  justify-content: flex-start;
   align-self: flex-end;
 }
 .report-detail-actions {
@@ -526,7 +526,7 @@
 }
 .report-month-progress-hint {
   align-self: end;
-  margin: 0 0 8px -16px;
+  margin: 0 0 8px;
   color: var(--text-tertiary);
   font-size: 0.72rem;
   line-height: 1.5;
@@ -733,7 +733,16 @@
 }
 .report-row-copy-btn svg { width: 15px; height: 15px; }
 .report-row-copy-btn:hover { background: rgba(var(--tool-accent-rgb), 0.18); }
+.report-row-copy-btn.is-success {
+  animation: report-copy-bounce 0.34s ease-out;
+}
 .report-row-copy-btn[hidden] { display: none; }
+@keyframes report-copy-bounce {
+  0% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-4px) scale(1.08); }
+  70% { transform: translateY(1px) scale(0.97); }
+  100% { transform: translateY(0) scale(1); }
+}
 .quick-copy-toggle,
 .report-competitor-toggle {
   display: inline-flex;
@@ -1818,7 +1827,7 @@
           <input class="ghost-file" type="file" id="reportTemplateInput" accept=".xlsx,.xls">
           <div class="report-data-alert" id="reportDataAlert"></div>
           <div class="report-output" id="reportOutput">
-            <div class="report-template-empty">尚未导入模板，无法显示自定义报表。</div>
+            <div class="report-template-empty">正在准备报表预览，请稍等…</div>
           </div>
           <div class="msg" id="reportMsg"></div>
         </div>
@@ -2380,6 +2389,7 @@
     'competitor_estimates',
     'app_settings'
   ];
+  var DATA_DATE_HINT_KEY = 'jdDataDateHint';
   var DB_STORE_LABELS = {
     sku_profiles: 'SKU 档案',
     raw_snapshots: '导入记录',
@@ -2482,10 +2492,11 @@
   var reportQuickCopyVisible = localStorage.getItem('jdReportQuickCopyVisible') !== 'false';
   var reportTemplateCopyRows = {};
   var reportTemplateCopyRowsLoaded = false;
+  var reportTemplateLoading = false;
   var reportRenderRetryTimer = 0;
   var reportRenderRetryCount = 0;
-  var estimateSavedRange = JSON.parse(localStorage.getItem('jdEstimateDateRange') || 'null');
-  var estimateViewMode = localStorage.getItem('jdEstimateViewMode') === 'product' ? 'product' : 'date';
+  var estimateSavedRange = JSON.parse(sessionStorage.getItem('jdEstimateDateRange') || 'null');
+  var estimateViewMode = sessionStorage.getItem('jdEstimateViewMode') === 'date' ? 'date' : 'product';
   var estimateTrackedOnly = localStorage.getItem('jdEstimateTrackedOnly') !== 'false';
   var estimateAutoGenerating = false;
   var estimateAutoAttemptedKeys = {};
@@ -2689,6 +2700,7 @@
   async function loadReportTemplateWorkbookFromDb() {
     if (!window.XLSX || reportTemplateWorkbook) return;
     try {
+      reportTemplateLoading = true;
       var saved = db && db.objectStoreNames.contains('app_settings') ? await getOne('app_settings', 'reportTemplateWorkbook') : null;
       var value = saved && saved.value ? saved.value : localStorage.getItem('jdReportTemplateWorkbookBase64');
       var activeSheet = saved && saved.activeSheet ? saved.activeSheet : localStorage.getItem('jdReportTemplateActiveSheet');
@@ -2716,6 +2728,8 @@
     } catch (err) {
       console.warn(err);
       if ($('reportMsg')) $('reportMsg').textContent = '本地模板读取失败：' + (err && err.message ? err.message : String(err));
+    } finally {
+      reportTemplateLoading = false;
     }
   }
 
@@ -2797,6 +2811,31 @@
     return clampRangeToToday({ start: ymd(start), end: ymd(end) });
   }
 
+  function datePickerSessionKey(key) {
+    return 'jdDateRange:' + key;
+  }
+
+  function readDatePickerSessionRange(key) {
+    try {
+      var stored = sessionStorage.getItem(datePickerSessionKey(key));
+      if (!stored) return null;
+      var range = JSON.parse(stored);
+      return normalizedRange(range && range.start, range && (range.end || range.start));
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function writeDatePickerSessionRange(key, range) {
+    if (!key || !range || !range.start) return;
+    try {
+      sessionStorage.setItem(datePickerSessionKey(key), JSON.stringify({
+        start: range.start,
+        end: range.end || range.start
+      }));
+    } catch (err) {}
+  }
+
   function inferDateRangeStep(range) {
     var start = dateFromYmd(range.start);
     var end = dateFromYmd(range.end);
@@ -2845,6 +2884,7 @@
     var trigger = $(config.triggerId);
     var popover = $(config.popoverId);
     if (!root || !input || !startEl || !endEl || !popover) return null;
+    var sessionKey = config.sessionKey || config.key || config.inputId;
     var grid = root.querySelector('.date-grid');
     var monthTitle = root.querySelector('.date-picker-month');
     var weekRow = root.querySelector('.date-week');
@@ -2860,7 +2900,12 @@
     function sync() {
       var start = startEl.value;
       var end = endEl.value;
-      input.value = start && end && start !== end ? start + ' \u81f3 ' + end : (start || end || '');
+      var range = normalizedRange(start, end || start);
+      if (typeof config.formatValue === 'function') {
+        input.value = config.formatValue(range || { start: start, end: end || start }, input.value || '');
+      } else {
+        input.value = start && end && start !== end ? start + ' \u81f3 ' + end : (start || end || '');
+      }
       updateStepButtons();
     }
 
@@ -2898,6 +2943,7 @@
       startEl.value = normalized ? normalized.start : start;
       endEl.value = normalized ? normalized.end : (end || start);
       sync();
+      if (normalized) writeDatePickerSessionRange(sessionKey, normalized);
       state.previewRange = null;
       state.suppressSelectedRange = false;
       render();
@@ -3090,8 +3136,10 @@
       input.addEventListener('change', function() {
         parse();
         sync();
+        var normalized = getRange();
+        if (normalized) writeDatePickerSessionRange(sessionKey, normalized);
         render();
-        if (typeof config.onChange === 'function') config.onChange(getRange());
+        if (typeof config.onChange === 'function') config.onChange(normalized);
       });
       root.querySelectorAll('[data-month-shift]').forEach(function(btn) {
         btn.addEventListener('click', function() {
@@ -3338,6 +3386,19 @@
     keys.forEach(function(key) { localStorage.removeItem(key); });
   }
 
+  function collectLatestBackupDataDate(payload) {
+    if (!payload || !payload.stores) return '';
+    var latest = '';
+    ['analyzed_metrics', 'ranking_raw_metrics', 'competitor_estimates', 'raw_snapshots'].forEach(function(store) {
+      var rows = Array.isArray(payload.stores[store]) ? payload.stores[store] : [];
+      rows.forEach(function(row) {
+        var candidate = canonicalYmd(row && (row.endDate || row.startDate || row.date));
+        if (candidate && (!latest || candidate > latest)) latest = candidate;
+      });
+    });
+    return latest;
+  }
+
   async function exportDatabaseBackup() {
     if (!db) {
       setDbBackupMsg('本地数据库还没准备好，请稍后再试。', true);
@@ -3385,11 +3446,14 @@
         var rows = Array.isArray(payload.stores[store]) ? payload.stores[store] : [];
         for (var r = 0; r < rows.length; r++) await put(store, rows[r]);
       }
+      clearBackupLocalStorage();
       Object.keys(payload.localStorage || {}).forEach(function(key) {
         if (key && key.indexOf('jd') === 0) {
           try { localStorage.setItem(key, payload.localStorage[key]); } catch (err) { console.warn(err); }
         }
       });
+      var latestDataDate = collectLatestBackupDataDate(payload);
+      if (latestDataDate) localStorage.setItem(DATA_DATE_HINT_KEY, latestDataDate);
       reportTemplateWorkbook = null;
       reportTemplatePreviewWorkbook = null;
       reportTemplateOriginalBase64 = '';
@@ -3411,6 +3475,7 @@
     if (id === 'sku') id = 'db-sku';
     if (id === 'dashboard') id = 'import';
     if (id === 'import-setting') id = 'import-settings';
+    if (id === 'report') reportTemplateActiveSheet = '模板';
     document.querySelectorAll('.tool-page').forEach(function(page) { page.classList.remove('active'); });
     document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
     var page = $(id);
@@ -4817,6 +4882,60 @@
     if (!input) return yesterday();
     var dates = extractDatesFromText(input.value || '');
     return dates[0] || input.value || yesterday();
+  }
+
+  function normalizeManualRankingRecordsByDate(records, trackedOnly) {
+    var dates = {};
+    var rowMap = {};
+    (records || []).forEach(function(row) {
+      var date = canonicalYmd(row && row.startDate);
+      var endDate = canonicalYmd(row && (row.endDate || row.startDate));
+      var sku = normalizeSkuValue(row && row.sku);
+      if (!date || !sku || date !== endDate) return;
+      if (trackedOnly && !row.isTrackedCompetitor) return;
+      dates[date] = true;
+      rowMap[date + '|' + sku] = row;
+    });
+    return { dates: Object.keys(dates).sort(function(a, b) { return b.localeCompare(a); }), rowMap: rowMap };
+  }
+
+  async function findDefaultManualRankingDate() {
+    var targetDate = yesterday();
+    var fields = visibleManualRankingFields();
+    if (!fields.length) return targetDate;
+    var skus = await getAll('sku_profiles');
+    var competitors = skus.filter(function(row) {
+      return row.itemType === 'competitor' && (row.shortName || row.sku) && (!manualRankingTrackedOnly || row.isTrackedCompetitor);
+    });
+    if (!competitors.length) return targetDate;
+    var records = await getAll('ranking_raw_metrics');
+    var skuMap = {};
+    competitors.forEach(function(profile) {
+      var sku = normalizeSkuValue(profile.sku);
+      if (sku) skuMap[sku] = profile;
+    });
+    var normalized = normalizeManualRankingRecordsByDate(records.filter(function(row) {
+      var sku = normalizeSkuValue(row && row.sku);
+      return sku && skuMap[sku];
+    }).map(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      var profile = skuMap[sku] || {};
+      return Object.assign({}, row, { isTrackedCompetitor: !!profile.isTrackedCompetitor });
+    }), manualRankingTrackedOnly);
+    for (var i = 0; i < normalized.dates.length; i++) {
+      var date = normalized.dates[i];
+      if (date > targetDate) continue;
+      var hasManualData = competitors.some(function(profile) {
+        var sku = normalizeSkuValue(profile.sku);
+        var row = normalized.rowMap[date + '|' + sku] || {};
+        return fields.some(function(key) {
+          var config = MANUAL_RANKING_FIELDS[key];
+          return config && String(row[config.rawKey] || '').trim();
+        });
+      });
+      if (hasManualData) return date;
+    }
+    return targetDate;
   }
 
   async function renderManualRankingEntry() {
@@ -7962,7 +8081,7 @@
     if (!$('reportOutput')) return;
     var workbook = reportTemplatePreviewWorkbook || reportTemplateWorkbook;
     if (!workbook) {
-      $('reportOutput').innerHTML = '<div class="report-template-empty">暂无可预览的报表数据。请先导入基础数据，或导出模板后再导入预览。</div>';
+      $('reportOutput').innerHTML = '<div class="report-template-empty">' + (reportTemplateLoading ? '正在加载模板预览，请稍等…' : '暂无可预览的报表数据。请先导入基础数据，或导出模板后再导入预览。') + '</div>';
       return;
     }
     var names = sortReportSheetNames(workbook.SheetNames || []);
@@ -7977,7 +8096,7 @@
       return '<button class="' + className + '" type="button" data-report-sheet="' + esc(name) + '">' + esc(name) + '</button>';
     }).join('') + reportDimensionPickerHtml('report-sheet-tab add-dimension') + '</div>';
     var html = (!reportTemplateWorkbook && reportTemplateActiveSheet === '模板')
-      ? '<div class="report-template-empty">尚未导入模板，无法显示自定义报表。</div>'
+      ? '<div class="report-template-empty">' + (reportTemplateLoading ? '正在加载模板预览，请稍等…' : '尚未导入模板，无法显示自定义报表。') + '</div>'
       : (ws ? XLSX.utils.sheet_to_html(ws, { editable: false }) : '<div class="report-template-empty">当前标签页为空。</div>');
     $('reportOutput').innerHTML = tabs + '<div class="report-template-preview">' + html + '</div>';
     enhanceReportTemplatePreview();
@@ -8229,6 +8348,7 @@
   async function renderReportOutput() {
     if (!$('reportOutputTitle')) return;
     $('reportOutputTitle').textContent = '报表明细';
+    if ($('reportOutput')) $('reportOutput').innerHTML = '<div class="report-template-empty">正在准备报表预览，请稍等…</div>';
     syncReportCompetitorToggle();
     if (!window.XLSX) {
       if (reportRenderRetryCount >= 25) {
@@ -8276,6 +8396,13 @@
     textarea.select();
     document.execCommand('copy');
     textarea.remove();
+  }
+
+  function playReportCopySuccess(btn) {
+    if (!btn) return;
+    btn.classList.remove('is-success');
+    void btn.offsetWidth;
+    btn.classList.add('is-success');
   }
 
   async function renderDashboard() {
@@ -8978,8 +9105,8 @@
   }
   document.querySelectorAll('[data-estimate-view-mode]').forEach(function(btn) {
     btn.addEventListener('click', function() {
-      estimateViewMode = btn.getAttribute('data-estimate-view-mode') === 'product' ? 'product' : 'date';
-      localStorage.setItem('jdEstimateViewMode', estimateViewMode);
+      estimateViewMode = btn.getAttribute('data-estimate-view-mode') === 'date' ? 'date' : 'product';
+      sessionStorage.setItem('jdEstimateViewMode', estimateViewMode);
       renderEstimatesDb();
     });
   });
@@ -9033,6 +9160,7 @@
         var text = reportTemplateRowCopyText(copyBtn.closest('tr'));
         if (!text) return;
         await copyText(text);
+        playReportCopySuccess(copyBtn);
         if ($('reportMsg')) $('reportMsg').textContent = '已复制当前行，可直接粘贴到表格。';
         return;
       }
@@ -9247,7 +9375,7 @@
       popoverId: 'estimateDatePopover',
       onChange: function(range) {
         range = range || normalizedRange($('estimateStartDate').value, $('estimateEndDate').value || $('estimateStartDate').value);
-        localStorage.setItem('jdEstimateDateRange', JSON.stringify(range));
+        sessionStorage.setItem('jdEstimateDateRange', JSON.stringify(range));
         renderEstimatesDb();
       }
     },
@@ -9262,6 +9390,11 @@
       nextId: 'reportDateNext',
       triggerId: 'reportDateTrigger',
       popoverId: 'reportDatePopover',
+      formatValue: function(range) {
+        if (!range || !range.start) return '';
+        if (range.start === range.end) return range.start + '（' + weekdayText(range.start) + '）';
+        return range.start + ' 至 ' + range.end;
+      },
       onChange: function() { renderReportOutput(); }
     },
     {
@@ -9864,7 +9997,7 @@
   $('reportStartDate').value = defaultAnalyzedDate;
   $('reportEndDate').value = defaultAnalyzedDate;
   $('reportDateInput').value = defaultAnalyzedDate;
-  var defaultEstimateShortcut = rangeForShortcut('30') || { start: defaultAnalyzedDate, end: defaultAnalyzedDate };
+  var defaultEstimateShortcut = rangeForShortcut('7') || { start: defaultAnalyzedDate, end: defaultAnalyzedDate };
   var defaultEstimateEnd = estimateSavedRange && estimateSavedRange.end ? canonicalYmd(estimateSavedRange.end) || estimateSavedRange.end : defaultEstimateShortcut.end;
   var defaultEstimateStart = estimateSavedRange && estimateSavedRange.start ? canonicalYmd(estimateSavedRange.start) || estimateSavedRange.start : defaultEstimateShortcut.start;
   $('estimateStartDate').value = defaultEstimateStart;
@@ -9898,6 +10031,14 @@
     datePickers.manualRanking.sync();
     datePickers.manualRanking.render();
   }
+  datePickerConfigs.forEach(function(config) {
+    var picker = datePickers[config.key];
+    var savedRange = readDatePickerSessionRange(config.key);
+    if (!picker || !savedRange) return;
+    picker.setRange(savedRange.start, savedRange.end, { silent: true });
+    picker.setCalendarMonth(dateFromYmd(savedRange.start) || new Date());
+    picker.render();
+  });
   migrateImportConfig();
   switchPage(location.hash.slice(1) || 'import');
   updateDimensionHint();
@@ -9916,6 +10057,19 @@
     await normalizeCompetitorSkuDefaults();
     await mergeDuplicateSeriesColumns();
     await normalizeSkuCustomColumnKeys();
+    var savedManualRankingRange = readDatePickerSessionRange('manualRanking');
+    if (!savedManualRankingRange) {
+      var defaultManualRankingDate = await findDefaultManualRankingDate();
+      if (datePickers.manualRanking) {
+        datePickers.manualRanking.setRange(defaultManualRankingDate, defaultManualRankingDate, { silent: true });
+        datePickers.manualRanking.setCalendarMonth(dateFromYmd(defaultManualRankingDate) || new Date());
+        datePickers.manualRanking.render();
+      } else {
+        $('manualRankingStartDate').value = defaultManualRankingDate;
+        $('manualRankingEndDate').value = defaultManualRankingDate;
+        $('manualRankingDate').value = defaultManualRankingDate;
+      }
+    }
     renderAnalyzedDimensionControls();
     updateAnalyzedDimensionHint();
     await renderSkus();
