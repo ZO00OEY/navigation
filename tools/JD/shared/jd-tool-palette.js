@@ -12,6 +12,10 @@
       document.documentElement.setAttribute('data-tool-palette', palette);
       localStorage.setItem('jdToolPalette', palette);
       syncToolPaletteButtons();
+      btn.blur();
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     });
   });
 

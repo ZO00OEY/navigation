@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>数据分析小工具 - 芝士的摸鱼站</title>
-<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);var p=localStorage.getItem('jdToolPalette')||'pink';document.documentElement.setAttribute('data-tool-palette',p);})();</script>
+<script>(function(){if(window.history&&'scrollRestoration'in window.history)window.history.scrollRestoration='manual';var h=location.hash.slice(1);if(h&&h.indexOf('page=')!==0){window.__jdInitialPageHash=h;history.replaceState(null,'',location.pathname+location.search);}var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);var p=localStorage.getItem('jdToolPalette')||'pink';document.documentElement.setAttribute('data-tool-palette',p);})();</script>
 <link rel="stylesheet" href="../../guides/shared.css">
 <link rel="stylesheet" href="shared/jd-tool-shell.css">
 <script defer src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
@@ -2359,6 +2359,10 @@
 <script src="shared/jd-tool-palette.js"></script>
 <script>
 (function() {
+  if (window.history && 'scrollRestoration' in window.history) {
+    window.history.scrollRestoration = 'manual';
+  }
+
   var DB_NAME = 'jdDataAnalysisTool';
   var DB_VERSION = 2;
   var db = null;
@@ -2522,6 +2526,11 @@
   skuColumnLabels.subSeries = skuColumnLabels.subSeries || '小系列';
 
   function $(id) { return document.getElementById(id); }
+  function forceScrollTop() {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -2834,6 +2843,10 @@
         end: range.end || range.start
       }));
     } catch (err) {}
+  }
+
+  function shouldRestoreDatePickerSessionRange(key) {
+    return key === 'estimate';
   }
 
   function inferDateRangeStep(range) {
@@ -3462,7 +3475,7 @@
       await renderSkus();
       await renderDashboard();
       await renderAnalyzedDb();
-      if ((location.hash.slice(1) || 'import') === 'report') await renderReportOutput();
+      if ((readPageHash() || 'import') === 'report') await renderReportOutput();
       setDbBackupMsg('已导入数据库备份。', false);
       setTimeout(function() { location.reload(); }, 700);
     } catch (err) {
@@ -4897,45 +4910,6 @@
       rowMap[date + '|' + sku] = row;
     });
     return { dates: Object.keys(dates).sort(function(a, b) { return b.localeCompare(a); }), rowMap: rowMap };
-  }
-
-  async function findDefaultManualRankingDate() {
-    var targetDate = yesterday();
-    var fields = visibleManualRankingFields();
-    if (!fields.length) return targetDate;
-    var skus = await getAll('sku_profiles');
-    var competitors = skus.filter(function(row) {
-      return row.itemType === 'competitor' && (row.shortName || row.sku) && (!manualRankingTrackedOnly || row.isTrackedCompetitor);
-    });
-    if (!competitors.length) return targetDate;
-    var records = await getAll('ranking_raw_metrics');
-    var skuMap = {};
-    competitors.forEach(function(profile) {
-      var sku = normalizeSkuValue(profile.sku);
-      if (sku) skuMap[sku] = profile;
-    });
-    var normalized = normalizeManualRankingRecordsByDate(records.filter(function(row) {
-      var sku = normalizeSkuValue(row && row.sku);
-      return sku && skuMap[sku];
-    }).map(function(row) {
-      var sku = normalizeSkuValue(row.sku);
-      var profile = skuMap[sku] || {};
-      return Object.assign({}, row, { isTrackedCompetitor: !!profile.isTrackedCompetitor });
-    }), manualRankingTrackedOnly);
-    for (var i = 0; i < normalized.dates.length; i++) {
-      var date = normalized.dates[i];
-      if (date > targetDate) continue;
-      var hasManualData = competitors.some(function(profile) {
-        var sku = normalizeSkuValue(profile.sku);
-        var row = normalized.rowMap[date + '|' + sku] || {};
-        return fields.some(function(key) {
-          var config = MANUAL_RANKING_FIELDS[key];
-          return config && String(row[config.rawKey] || '').trim();
-        });
-      });
-      if (hasManualData) return date;
-    }
-    return targetDate;
   }
 
   async function renderManualRankingEntry() {
@@ -8359,7 +8333,7 @@
         reportRenderRetryCount += 1;
         reportRenderRetryTimer = window.setTimeout(function() {
           reportRenderRetryTimer = 0;
-          if ((location.hash.slice(1) || 'import') === 'report') renderReportOutput();
+          if ((readPageHash() || 'import') === 'report') renderReportOutput();
         }, 200);
       }
       return;
@@ -8964,51 +8938,31 @@
     await refreshCounts();
   }
 
-
-  document.querySelectorAll('.tab-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      location.hash = btn.getAttribute('data-page');
-    });
-  });
-  document.querySelectorAll('[data-back-import]').forEach(function(link) {
-    link.addEventListener('click', function(event) {
-      event.preventDefault();
-      if (location.hash !== '#import') location.hash = 'import';
-      switchPage('import');
-      window.scrollTo({ top: 0, behavior: 'auto' });
-    });
-  });
-  document.querySelectorAll('[data-management-link]').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var managementLink = btn.getAttribute('data-management-link');
-      if (managementLink === 'db-backup') {
-        setDbBackupModal(true);
-        return;
-      }
-      var target = btn.getAttribute('data-focus-target') || '';
-      var skuView = btn.getAttribute('data-sku-view') || '';
-      if (target && !skuView) sessionStorage.setItem('jdDataManagementFocus', target);
-      if (skuView) sessionStorage.setItem('jdSkuArchiveView', skuView);
-      location.hash = managementLink;
-    });
-  });
-  function focusManagedTarget() {
-    var target = sessionStorage.getItem('jdDataManagementFocus');
-    if (!target) return;
-    sessionStorage.removeItem('jdDataManagementFocus');
-    setTimeout(function() {
-      var node = $(target);
-      if (node) {
-        var panel = node.closest('.sku-panel') || node;
-        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 120);
+  function normalizePageHash(page) {
+    if (page === 'dashboard') return 'import';
+    if (page === 'import-setting') return 'import-settings';
+    return page || 'import';
   }
-  window.addEventListener('hashchange', function() {
-    var page = location.hash.slice(1) || 'import';
-    if (page === 'dashboard') page = 'import';
-    if (page === 'import-setting') page = 'import-settings';
+
+  function readPageHash() {
+    var hash = location.hash.slice(1);
+    if (!hash) return '';
+    if (hash.indexOf('page=') === 0) return new URLSearchParams(hash).get('page') || '';
+    return hash;
+  }
+
+  function replacePageHash(page) {
+    var normalized = normalizePageHash(page);
+    var nextHash = '#page=' + encodeURIComponent(normalized);
+    if (location.hash === nextHash) return normalized;
+    history.replaceState(null, '', nextHash);
+    return normalized;
+  }
+
+  function handlePageNavigation(page) {
+    page = normalizePageHash(page);
     switchPage(page);
+    forceScrollTop();
     if (page === 'import') {
       renderManualRankingEntry();
     }
@@ -9029,6 +8983,47 @@
     if (page === 'ranking-raw') renderRankingRaw();
     if (page === 'db-estimates') renderEstimatesDb();
     if (page === 'cleanup') renderCleanupSnapshots();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      handlePageNavigation(replacePageHash(btn.getAttribute('data-page')));
+    });
+  });
+  document.querySelectorAll('[data-back-import]').forEach(function(link) {
+    link.addEventListener('click', function(event) {
+      event.preventDefault();
+      handlePageNavigation(replacePageHash('import'));
+    });
+  });
+  document.querySelectorAll('[data-management-link]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var managementLink = btn.getAttribute('data-management-link');
+      if (managementLink === 'db-backup') {
+        setDbBackupModal(true);
+        return;
+      }
+      var target = btn.getAttribute('data-focus-target') || '';
+      var skuView = btn.getAttribute('data-sku-view') || '';
+      if (target && !skuView) sessionStorage.setItem('jdDataManagementFocus', target);
+      if (skuView) sessionStorage.setItem('jdSkuArchiveView', skuView);
+      handlePageNavigation(replacePageHash(managementLink));
+    });
+  });
+  function focusManagedTarget() {
+    var target = sessionStorage.getItem('jdDataManagementFocus');
+    if (!target) return;
+    sessionStorage.removeItem('jdDataManagementFocus');
+    setTimeout(function() {
+      var node = $(target);
+      if (node) {
+        var panel = node.closest('.sku-panel') || node;
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 120);
+  }
+  window.addEventListener('hashchange', function() {
+    handlePageNavigation(readPageHash() || 'import');
   });
 
   if ($('dbBrowserStoreSelect')) $('dbBrowserStoreSelect').addEventListener('change', renderDbBrowser);
@@ -9982,8 +9977,7 @@
   });
   if ($('viewImportRecordsBtn')) {
     $('viewImportRecordsBtn').addEventListener('click', function() {
-      location.hash = 'raw-snapshots';
-      renderSnapshots();
+      handlePageNavigation(replacePageHash('raw-snapshots'));
     });
   }
 
@@ -10034,13 +10028,17 @@
   datePickerConfigs.forEach(function(config) {
     var picker = datePickers[config.key];
     var savedRange = readDatePickerSessionRange(config.key);
-    if (!picker || !savedRange) return;
+    if (!picker || !savedRange || !shouldRestoreDatePickerSessionRange(config.key)) return;
     picker.setRange(savedRange.start, savedRange.end, { silent: true });
     picker.setCalendarMonth(dateFromYmd(savedRange.start) || new Date());
     picker.render();
   });
   migrateImportConfig();
-  switchPage(location.hash.slice(1) || 'import');
+  var initialPage = normalizePageHash(window.__jdInitialPageHash || readPageHash() || 'import');
+  replacePageHash(initialPage);
+  switchPage(initialPage);
+  forceScrollTop();
+  requestAnimationFrame(forceScrollTop);
   updateDimensionHint();
   renderAnalyzedDimensionControls();
   updateAnalyzedDimensionHint();
@@ -10057,28 +10055,13 @@
     await normalizeCompetitorSkuDefaults();
     await mergeDuplicateSeriesColumns();
     await normalizeSkuCustomColumnKeys();
-    var savedManualRankingRange = readDatePickerSessionRange('manualRanking');
-    if (!savedManualRankingRange) {
-      var defaultManualRankingDate = await findDefaultManualRankingDate();
-      if (datePickers.manualRanking) {
-        datePickers.manualRanking.setRange(defaultManualRankingDate, defaultManualRankingDate, { silent: true });
-        datePickers.manualRanking.setCalendarMonth(dateFromYmd(defaultManualRankingDate) || new Date());
-        datePickers.manualRanking.render();
-      } else {
-        $('manualRankingStartDate').value = defaultManualRankingDate;
-        $('manualRankingEndDate').value = defaultManualRankingDate;
-        $('manualRankingDate').value = defaultManualRankingDate;
-      }
-    }
     renderAnalyzedDimensionControls();
     updateAnalyzedDimensionHint();
     await renderSkus();
     await renderDashboard();
     await refreshCounts();
     await renderAnalyzedDb();
-    var currentPage = location.hash.slice(1) || 'import';
-    if (currentPage === 'dashboard') currentPage = 'import';
-    if (currentPage === 'import-setting') currentPage = 'import-settings';
+    var currentPage = normalizePageHash(readPageHash() || initialPage || 'import');
     if (currentPage === 'import') await renderManualRankingEntry();
     if (currentPage === 'import-settings') renderImportMappings();
     if (currentPage === 'report') {
@@ -10091,12 +10074,15 @@
       sessionStorage.removeItem('jdSkuArchiveView');
       setSkuArchiveView(initialSkuView || 'all');
       await renderSkus();
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      forceScrollTop();
     }
     if (currentPage === 'raw-snapshots') await renderSnapshots();
     if (currentPage === 'ranking-raw') await renderRankingRaw();
     if (currentPage === 'db-estimates') await renderEstimatesDb();
     if (currentPage === 'cleanup') await renderCleanupSnapshots();
+    forceScrollTop();
+    requestAnimationFrame(forceScrollTop);
+    setTimeout(forceScrollTop, 60);
   }).catch(function(err) {
       if ($('dbStatus')) $('dbStatus').textContent = '本地库已就绪';
     console.error(err);
