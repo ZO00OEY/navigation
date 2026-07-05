@@ -297,6 +297,17 @@
   font-family: Consolas, "SFMono-Regular", monospace;
   font-size: 0.72rem;
 }
+.db-browser-table {
+  table-layout: fixed;
+  width: max-content;
+  min-width: 100%;
+}
+.db-browser-table th,
+.db-browser-table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .db-browser-meta {
   margin: -4px 0 10px;
   color: var(--text-tertiary);
@@ -1440,7 +1451,9 @@
   font-family: Consolas, "SFMono-Regular", monospace;
   color: transparent;
   caret-color: var(--text);
-  background: transparent;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 .mapping-formula-picker {
   position: absolute;
@@ -2124,12 +2137,25 @@
 
         <div class="panel" style="margin-top:14px;">
           <div class="panel-title">
-            <span>手动数据录入</span>
+            <span>赠品配件规则录入</span>
           </div>
-          <div class="manual-ranking-toolbar">
+          <p class="panel-sub">套装内配件或 0 元赠品会按京东价拆分，干扰主品真实收入和毛保判断。这里按单 SKU 配置附带配件与赠品，用于后续还原真实 SKU 毛保。</p>
+          <div class="gross-margin-toolbar finance-gift-toolbar">
             <div class="manual-control date-picker-field" id="financeManualDatePickerField"></div>
+            <button class="btn" id="financeGiftDimBtn" type="button">维度设置</button>
+            <span class="report-dim-popover" id="financeGiftDimPopover"></span>
+            <span class="gross-margin-dim-tags" id="financeGiftDimTags"></span>
+            <span class="gross-margin-actions">
+              <button class="btn primary" id="applyFinanceGiftRulesBtn" type="button">生效</button>
+            </span>
           </div>
-          <div class="note" style="margin-top:12px;">暂不开放财务手动录入，先保留日期范围用于后续规则接入。</div>
+          <div class="report-data-alert" id="financeGiftAlert"></div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <table class="data-table" id="financeGiftTable">
+              <thead id="financeGiftHead"></thead>
+              <tbody id="financeGiftBody"><tr><td class="empty-row" colspan="4">暂无 SKU 档案</td></tr></tbody>
+            </table>
+          </div>
         </div>
 
         <div class="panel embedded-import-settings" id="financeImportRulesPanel" style="margin-top:14px;">
@@ -2250,7 +2276,7 @@
           </div>
           <div class="db-browser-meta" id="dbBrowserMeta">本地库准备中。</div>
           <div class="table-wrap">
-            <table class="data-table">
+            <table class="data-table db-browser-table" id="dbBrowserTable">
               <thead id="dbBrowserHead"><tr><th>表</th><th>记录</th></tr></thead>
               <tbody id="dbBrowserBody"><tr><td class="empty-row" colspan="2">请选择数据表</td></tr></tbody>
             </table>
@@ -2689,6 +2715,23 @@
   </div>
 </div>
 
+<div class="modal-backdrop" id="financeGiftRuleModal" aria-hidden="true">
+  <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="financeGiftRuleTitle">
+    <h2 id="financeGiftRuleTitle">配置配件</h2>
+    <p id="financeGiftRuleText">按 SKU 和数量录入，数量默认为 1。</p>
+    <div class="table-wrap" style="margin:10px 0 12px;">
+      <table class="data-table">
+        <thead><tr><th>SKU</th><th>数量</th><th><button class="mapping-rule-action add" id="addFinanceGiftRuleRowBtn" type="button">+</button></th></tr></thead>
+        <tbody id="financeGiftRuleModalBody"></tbody>
+      </table>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="financeGiftRuleCancelBtn" type="button">取消</button>
+      <button class="btn primary" id="financeGiftRuleOkBtn" type="button">保存</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="dbBackupModal" aria-hidden="true">
   <div class="info-modal" role="dialog" aria-modal="true" aria-labelledby="dbBackupModalTitle">
     <div class="info-modal-head">
@@ -2747,7 +2790,7 @@
   }
 
   var DB_NAME = 'jdDataAnalysisTool';
-  var DB_VERSION = 3;
+  var DB_VERSION = 4;
   var db = null;
   var skuImportTarget = 'own';
   var draggingColumnKey = null;
@@ -2779,6 +2822,7 @@
     'ranking_raw_metrics',
     'competitor_estimates',
     'finance_metrics',
+    'gross_margin_estimates',
     'app_settings'
   ];
   var DATA_DATE_HINT_KEY = 'jdDataDateHint';
@@ -2789,6 +2833,7 @@
     ranking_raw_metrics: '行业商品榜单',
     competitor_estimates: '竞品追踪',
     finance_metrics: '毛保数据',
+    gross_margin_estimates: '毛保预估表',
     app_settings: '应用设置'
   };
   var DEFAULT_IMPORT_MAPPINGS = {
@@ -2881,6 +2926,10 @@
   var grossMarginActiveDimensionsRaw = localStorage.getItem('jdGrossMarginActiveDimensions');
   var grossMarginAvailableDimensions = JSON.parse(grossMarginAvailableDimensionsRaw || grossMarginSelectedDimensionsRaw || JSON.stringify(grossMarginDefaultDimensions));
   var grossMarginActiveDimensions = JSON.parse(grossMarginActiveDimensionsRaw || grossMarginSelectedDimensionsRaw || JSON.stringify(grossMarginDefaultDimensions));
+  var financeGiftAvailableDimensions = JSON.parse(localStorage.getItem('jdFinanceGiftAvailableDimensions') || '["mainSeries","subSeries"]');
+  var financeGiftActiveDimensions = JSON.parse(localStorage.getItem('jdFinanceGiftActiveDimensions') || '[]');
+  var financeGiftFilters = JSON.parse(localStorage.getItem('jdFinanceGiftFilters') || '{}');
+  var financeGiftDraftRows = [];
   if (!grossMarginAvailableDimensionsRaw && !grossMarginSelectedDimensionsRaw && grossMarginProfileColumns.length) {
     grossMarginAvailableDimensions = ['sku'].concat(grossMarginProfileColumns);
     grossMarginActiveDimensions = grossMarginAvailableDimensions.slice();
@@ -3769,6 +3818,11 @@
           finance.createIndex('sourceType', 'sourceType', { unique: false });
           finance.createIndex('startDate', 'startDate', { unique: false });
         }
+        if (!database.objectStoreNames.contains('gross_margin_estimates')) {
+          var grossEstimate = database.createObjectStore('gross_margin_estimates', { keyPath: 'id', autoIncrement: true });
+          grossEstimate.createIndex('sku', 'sku', { unique: false });
+          grossEstimate.createIndex('startDate', 'startDate', { unique: false });
+        }
         if (!database.objectStoreNames.contains('app_settings')) {
           database.createObjectStore('app_settings', { keyPath: 'key' });
         }
@@ -3861,7 +3915,7 @@
   function collectLatestBackupDataDate(payload) {
     if (!payload || !payload.stores) return '';
     var latest = '';
-    ['analyzed_metrics', 'ranking_raw_metrics', 'competitor_estimates', 'finance_metrics', 'raw_snapshots'].forEach(function(store) {
+    ['analyzed_metrics', 'ranking_raw_metrics', 'competitor_estimates', 'finance_metrics', 'gross_margin_estimates', 'raw_snapshots'].forEach(function(store) {
       var rows = Array.isArray(payload.stores[store]) ? payload.stores[store] : [];
       rows.forEach(function(row) {
         var candidate = canonicalYmd(row && (row.endDate || row.startDate || row.date));
@@ -4032,6 +4086,33 @@
     return columns.length ? columns : ['记录'];
   }
 
+  function dbDisplayValue(value) {
+    return stringifyDbValue(value);
+  }
+
+  function dbColumnWidth(values) {
+    var maxLen = values.reduce(function(max, value) {
+      return Math.max(max, Array.from(String(value || '')).length);
+    }, 0);
+    return Math.max(72, Math.min(360, Math.min(maxLen, 30) * 9 + 30));
+  }
+
+  function renderDbTable(columns, rows, cellValue) {
+    var table = $('dbBrowserTable');
+    var colgroup = columns.map(function(column) {
+      var values = [column].concat(rows.map(function(row) { return cellValue(row, column); }));
+      return '<col style="width:' + dbColumnWidth(values) + 'px">';
+    }).join('');
+    var oldColgroup = table.querySelector('colgroup');
+    if (oldColgroup) oldColgroup.remove();
+    table.insertAdjacentHTML('afterbegin', '<colgroup>' + colgroup + '</colgroup>');
+    table.style.width = columns.reduce(function(total, column) {
+      var values = [column].concat(rows.map(function(row) { return cellValue(row, column); }));
+      return total + dbColumnWidth(values);
+    }, 0) + 'px';
+    $('dbBrowserHead').innerHTML = '<tr>' + columns.map(function(key) { return '<th>' + esc(key) + '</th>'; }).join('') + '</tr>';
+  }
+
   function syncDbBrowserModeControls() {
     document.querySelectorAll('[data-db-browser-mode]').forEach(function(btn) {
       btn.classList.toggle('active', btn.getAttribute('data-db-browser-mode') === dbBrowserMode);
@@ -4159,6 +4240,22 @@
         addSchemaField(fields, field);
       });
     }
+    if (store === 'gross_margin_estimates') {
+      [
+        { key: 'id', commonName: '记录 ID', note: '本地数据库自动生成主键' },
+        { key: 'sourceType', commonName: '记录类型', sourceHeaders: ['gift_accessory_rule'], note: '当前用于区分赠品配件规则' },
+        { key: 'startDate', commonName: '开始日期', note: '规则生效日期范围开始' },
+        { key: 'endDate', commonName: '结束日期', note: '规则生效日期范围结束' },
+        { key: 'sku', commonName: '主品 SKU', note: '需要还原真实毛保的单 SKU' },
+        { key: 'accessories', commonName: '配件', note: '配件 SKU 与数量列表' },
+        { key: 'gifts', commonName: '赠品', note: '赠品 SKU 与数量列表' },
+        { key: 'updatedAt', commonName: '更新时间', note: '规则最后保存时间' }
+      ].forEach(function(field) {
+        field.sources = ['财务数据导入-赠品配件规则录入'];
+        field.origin = '内置字段/手动录入';
+        addSchemaField(fields, field);
+      });
+    }
     rows.forEach(function(row) {
       Object.keys(row || {}).forEach(function(key) {
         addSchemaField(fields, { key: key, commonName: fields[key] && fields[key].commonName || key, origin: '当前数据中存在' });
@@ -4193,7 +4290,8 @@
     }
     dbBrowserRows = schemaRows;
     var columns = ['数据库字段名', '通用名称', '原始表格表头/别名', '数据来源', '说明', '登记来源'];
-    $('dbBrowserHead').innerHTML = '<tr>' + columns.map(function(key) { return '<th>' + esc(key) + '</th>'; }).join('') + '</tr>';
+    var columnMap = { '数据库字段名': 'key', '通用名称': 'commonName', '原始表格表头/别名': 'sourceHeaders', '数据来源': 'sources', '说明': 'note', '登记来源': 'origin' };
+    renderDbTable(columns, schemaRows, function(row, column) { return row[columnMap[column]]; });
     $('dbBrowserBody').innerHTML = schemaRows.length ? schemaRows.map(function(row, index) {
       return '<tr data-db-row="' + index + '">' +
         '<td><code>' + esc(row.key) + '</code></td>' +
@@ -4247,7 +4345,7 @@
     var limit = Math.max(10, Math.min(1000, Number($('dbBrowserLimit').value) || 100));
     dbBrowserRows = filtered.slice(0, limit);
     var columns = getDbBrowserColumns(dbBrowserRows);
-    $('dbBrowserHead').innerHTML = '<tr>' + columns.map(function(key) { return '<th>' + esc(key) + '</th>'; }).join('') + '</tr>';
+    renderDbTable(columns, dbBrowserRows, function(row, key) { return key === '记录' ? row : row[key]; });
     if (!dbBrowserRows.length) {
       $('dbBrowserBody').innerHTML = '<tr><td class="empty-row" colspan="' + columns.length + '">暂无匹配记录</td></tr>';
     } else {
@@ -4771,7 +4869,7 @@
     ].forEach(function(pair) {
       enhanceResizableTableByBody(pair[0], pair[1]);
     });
-    document.querySelectorAll('.tool-page .table-wrap table.data-table:not(.sku-table):not(.manual-entry-table):not(.resizable-table)').forEach(function(table, index) {
+    document.querySelectorAll('.tool-page .table-wrap table.data-table:not(.sku-table):not(.manual-entry-table):not(.db-browser-table):not(.resizable-table)').forEach(function(table, index) {
       var page = table.closest('.tool-page');
       enhanceResizableTable(table, 'autoTable:' + (page ? page.id : 'page') + ':' + index);
     });
@@ -6067,7 +6165,7 @@
       return '<th>' + esc(grossMarginDimensionLabel(key)) + '</th>';
     }).join('');
     $('grossMarginHead').innerHTML = '<tr>' + dimensionHeads +
-      '<th>财务销量</th><th>原始毛保</th><th>广告业绩金</th><th>综合毛保</th></tr>';
+      '<th>财务销量</th><th>原始毛保</th><th>广告业绩金</th><th>综合毛保</th><th>真实件收入</th><th>真实件毛保</th><th>真实收入</th><th>真实毛保</th></tr>';
   }
 
   function grossMarginDimensionValue(row, profile, key) {
@@ -6076,6 +6174,159 @@
     if (key === 'grossMarginRule') return row.grossMarginRule || '-';
     if (key === 'fileName') return row.fileName || '-';
     return profile[key] || '-';
+  }
+
+  function financeGiftDimensionOptions() {
+    return grossMarginProfileColumnOptions().filter(function(item) {
+      return item.key !== 'shortName';
+    });
+  }
+
+  function normalizeFinanceGiftDimensions() {
+    var allowed = financeGiftDimensionOptions().map(function(item) { return item.key; });
+    financeGiftAvailableDimensions = financeGiftAvailableDimensions.filter(function(key, index, arr) {
+      return allowed.indexOf(key) !== -1 && arr.indexOf(key) === index;
+    });
+    financeGiftActiveDimensions = financeGiftActiveDimensions.filter(function(key, index, arr) {
+      return financeGiftAvailableDimensions.indexOf(key) !== -1 && arr.indexOf(key) === index;
+    });
+  }
+
+  function saveFinanceGiftDimensions() {
+    normalizeFinanceGiftDimensions();
+    localStorage.setItem('jdFinanceGiftAvailableDimensions', JSON.stringify(financeGiftAvailableDimensions));
+    localStorage.setItem('jdFinanceGiftActiveDimensions', JSON.stringify(financeGiftActiveDimensions));
+  }
+
+  function syncFinanceGiftDimControl() {
+    normalizeFinanceGiftDimensions();
+    var options = financeGiftDimensionOptions();
+    if ($('financeGiftDimPopover')) {
+      $('financeGiftDimPopover').innerHTML = options.map(function(option) {
+        return '<label class="report-dim-option"><input type="checkbox" data-finance-gift-dim="' + esc(option.key) + '"' + (financeGiftAvailableDimensions.indexOf(option.key) !== -1 ? ' checked' : '') + '>' + esc(option.label) + '</label>';
+      }).join('');
+    }
+    if ($('financeGiftDimTags')) {
+      $('financeGiftDimTags').innerHTML = options.filter(function(option) {
+        return financeGiftAvailableDimensions.indexOf(option.key) !== -1;
+      }).map(function(option) {
+        return '<button class="tag gross-margin-dim-tag' + (financeGiftActiveDimensions.indexOf(option.key) !== -1 ? ' active' : '') + '" type="button" data-finance-gift-tag="' + esc(option.key) + '">' + esc(option.label) + '</button>';
+      }).join('') + '<span class="tag gross-margin-dim-tag active">SKU</span><span class="tag gross-margin-dim-tag active">商品简称</span>';
+    }
+  }
+
+  function financeGiftRuleText(list) {
+    list = Array.isArray(list) ? list : [];
+    return list.length ? list.map(function(item) {
+      return normalizeSkuValue(item.sku) + ' × ' + (Number(item.qty) || 1);
+    }).join('；') : '点击配置';
+  }
+
+  function financeGiftFilterValue(row, key) {
+    return row[key] || '-';
+  }
+
+  function financeGiftPassesFilters(row) {
+    return Object.keys(financeGiftFilters || {}).every(function(key) {
+      var list = financeGiftFilters[key] || [];
+      return !list.length || list.indexOf(financeGiftFilterValue(row, key)) !== -1;
+    });
+  }
+
+  function renderFinanceGiftFilterSelect(key, rows) {
+    var values = Array.from(new Set(rows.map(function(row) { return financeGiftFilterValue(row, key); }))).sort(function(a, b) {
+      return a.localeCompare(b, 'zh-Hans-CN', { numeric: true });
+    });
+    var selected = financeGiftFilters[key] || [];
+    return '<select class="select finance-gift-filter" data-finance-gift-filter="' + esc(key) + '">' +
+      '<option value="">全部</option>' +
+      values.map(function(value) {
+        return '<option value="' + esc(value) + '"' + (selected.indexOf(value) !== -1 ? ' selected' : '') + '>' + esc(value) + '</option>';
+      }).join('') +
+    '</select>';
+  }
+
+  async function loadFinanceGiftRows() {
+    var skuRows = await getAll('sku_profiles');
+    var range = datePickers.financeManual ? datePickers.financeManual.getRange() : previousMonthRange();
+    var query = normalizedQueryRange(range);
+    var rules = await getAll('gross_margin_estimates');
+    var currentRules = {};
+    var previousRules = {};
+    rules.forEach(function(rule) {
+      if (rule.startDate === query.start && rule.endDate === query.end) currentRules[normalizeSkuValue(rule.sku)] = rule;
+      if (!currentRules[normalizeSkuValue(rule.sku)] && rule.endDate && rule.endDate < query.start) previousRules[normalizeSkuValue(rule.sku)] = rule;
+    });
+    financeGiftDraftRows = skuRows.filter(function(row) { return row.itemType !== 'competitor'; }).map(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      var rule = currentRules[sku] || previousRules[sku] || {};
+      return Object.assign({}, row, {
+        sku: sku,
+        accessories: JSON.parse(JSON.stringify(rule.accessories || [])),
+        gifts: JSON.parse(JSON.stringify(rule.gifts || []))
+      });
+    });
+  }
+
+  async function renderFinanceGiftRules(reload) {
+    if (!$('financeGiftBody')) return;
+    syncFinanceGiftDimControl();
+    if (reload !== false) await loadFinanceGiftRows();
+    var rowsForFilters = financeGiftDraftRows.slice();
+    var dimensions = financeGiftActiveDimensions.slice();
+    var headers = dimensions.map(function(key) {
+      var label = grossMarginDimensionLabel(key);
+      return '<th>' + esc(label) + '<br>' + renderFinanceGiftFilterSelect(key, rowsForFilters) + '</th>';
+    }).join('') + '<th>SKU</th><th>商品简称</th><th>配件</th><th>赠品</th>';
+    $('financeGiftHead').innerHTML = '<tr>' + headers + '</tr>';
+    var rows = financeGiftDraftRows.filter(financeGiftPassesFilters);
+    if ($('financeGiftAlert')) {
+      $('financeGiftAlert').className = rows.length ? 'report-data-alert ok' : 'report-data-alert warn';
+      $('financeGiftAlert').textContent = rows.length ? '当前显示 ' + rows.length + ' 个本品 SKU，点击配件或赠品单元格配置绑定关系。' : '暂无符合筛选的 SKU。';
+    }
+    if (!rows.length) {
+      $('financeGiftBody').innerHTML = '<tr><td class="empty-row" colspan="' + (dimensions.length + 4) + '">暂无符合筛选的 SKU</td></tr>';
+      enhanceAllResizableTables();
+      return;
+    }
+    $('financeGiftBody').innerHTML = rows.map(function(row) {
+      var dimCells = dimensions.map(function(key) { return '<td>' + esc(row[key] || '-') + '</td>'; }).join('');
+      return '<tr data-finance-gift-sku="' + esc(row.sku) + '">' + dimCells +
+        '<td>' + esc(row.sku || '-') + '</td>' +
+        '<td>' + esc(row.shortName || '-') + '</td>' +
+        '<td class="db-json-cell" data-finance-gift-edit="accessories">' + esc(financeGiftRuleText(row.accessories)) + '</td>' +
+        '<td class="db-json-cell" data-finance-gift-edit="gifts">' + esc(financeGiftRuleText(row.gifts)) + '</td>' +
+      '</tr>';
+    }).join('');
+    enhanceAllResizableTables();
+  }
+
+  async function saveFinanceGiftRules() {
+    var range = datePickers.financeManual ? datePickers.financeManual.getRange() : previousMonthRange();
+    var query = normalizedQueryRange(range);
+    var existing = await getAll('gross_margin_estimates');
+    for (var i = 0; i < existing.length; i++) {
+      if (existing[i].startDate === query.start && existing[i].endDate === query.end) await remove('gross_margin_estimates', existing[i].id);
+    }
+    for (var j = 0; j < financeGiftDraftRows.length; j++) {
+      var row = financeGiftDraftRows[j];
+      if (!(row.accessories || []).length && !(row.gifts || []).length) continue;
+      await put('gross_margin_estimates', {
+        sourceType: 'gift_accessory_rule',
+        startDate: query.start,
+        endDate: query.end,
+        sku: row.sku,
+        accessories: row.accessories || [],
+        gifts: row.gifts || [],
+        updatedAt: new Date().toISOString()
+      });
+    }
+    if ($('financeGiftAlert')) {
+      $('financeGiftAlert').className = 'report-data-alert ok';
+      $('financeGiftAlert').textContent = '赠品配件规则已保存到毛保预估表。';
+    }
+    await renderGrossMarginData();
+    await renderDbBrowser();
   }
 
   async function renderGrossMarginData() {
@@ -6087,6 +6338,36 @@
     var skuRows = await getAll('sku_profiles');
     var skuMap = {};
     skuRows.forEach(function(item) { skuMap[normalizeSkuValue(item.sku)] = item; });
+    var rules = (await getAll('gross_margin_estimates')).filter(function(rule) {
+      return rule.startDate === normalizedQueryRange(range).start && rule.endDate === normalizedQueryRange(range).end;
+    });
+    var ruleMap = {};
+    rules.forEach(function(rule) { ruleMap[normalizeSkuValue(rule.sku)] = rule; });
+    var metricBySku = {};
+    rows.forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      if (!metricBySku[sku]) metricBySku[sku] = { income: 0, salesQty: 0, rawGrossMargin: 0 };
+      metricBySku[sku].income += Number(row.income) || 0;
+      metricBySku[sku].salesQty += Number(row.salesQty) || 0;
+      metricBySku[sku].rawGrossMargin += Number(row.rawGrossMargin) || 0;
+    });
+    function componentUnitValue(sku, field) {
+      var metric = metricBySku[normalizeSkuValue(sku)] || {};
+      var qty = Number(metric.salesQty) || 0;
+      return qty ? (Number(metric[field]) || 0) / qty : 0;
+    }
+    function trueGrossMarginValues(row) {
+      var qty = Number(row.salesQty) || 0;
+      var unitIncome = qty ? (Number(row.income) || 0) / qty : 0;
+      var unitGross = qty ? (Number(row.rawGrossMargin) || 0) / qty : 0;
+      var rule = ruleMap[normalizeSkuValue(row.sku)] || {};
+      (rule.accessories || []).concat(rule.gifts || []).forEach(function(item) {
+        var itemQty = Number(item.qty) || 1;
+        unitIncome += componentUnitValue(item.sku, 'income') * itemQty;
+        unitGross += componentUnitValue(item.sku, 'rawGrossMargin') * itemQty;
+      });
+      return { trueUnitIncome: unitIncome, trueUnitGross: unitGross, trueIncome: unitIncome * qty, trueGross: unitGross * qty };
+    }
     var groups = {};
     var dimensions = grossMarginActiveDimensions.slice();
     rows.forEach(function(row) {
@@ -6097,11 +6378,14 @@
         return grossMarginDimensionValue(row, profile, key);
       });
       var groupKey = dimensionValues.length ? dimensionValues.join('\u0001') : 'summary';
-      if (!groups[groupKey]) groups[groupKey] = { dimensions: dimensionValues, salesQty: 0, rawGrossMargin: 0, adPerformanceAmount: 0, comprehensiveGrossMargin: 0, rules: {} };
+      if (!groups[groupKey]) groups[groupKey] = { dimensions: dimensionValues, salesQty: 0, rawGrossMargin: 0, adPerformanceAmount: 0, comprehensiveGrossMargin: 0, trueIncome: 0, trueGross: 0, rules: {} };
+      var trueValues = trueGrossMarginValues(row);
       groups[groupKey].salesQty += Number(row.salesQty) || 0;
       groups[groupKey].rawGrossMargin += Number(row.rawGrossMargin) || 0;
       groups[groupKey].adPerformanceAmount += Number(row.adPerformanceAmount) || 0;
       groups[groupKey].comprehensiveGrossMargin += Number(row.comprehensiveGrossMargin) || 0;
+      groups[groupKey].trueIncome += trueValues.trueIncome;
+      groups[groupKey].trueGross += trueValues.trueGross;
       if (row.grossMarginRule) groups[groupKey].rules[row.grossMarginRule] = true;
     });
     renderGrossMarginHead();
@@ -6114,7 +6398,7 @@
         ? '当前日期范围已按 ' + dimensionText + '毛保数据。计算规则：' + (ruleNames || '未记录') + '。'
         : '当前日期范围暂无毛保数据，请先在数据导入中心导入综合毛保文件。';
     }
-    var colCount = dimensions.length + 4;
+    var colCount = dimensions.length + 8;
     if (!list.length) {
       $('grossMarginBody').innerHTML = '<tr><td class="empty-row" colspan="' + colCount + '">暂无毛保数据</td></tr>';
       enhanceAllResizableTables();
@@ -6128,7 +6412,11 @@
         '<td>' + esc(formatMetric(row.salesQty, 0)) + '</td>' +
         '<td>' + esc(formatMetric(row.rawGrossMargin, 2)) + '</td>' +
         '<td>' + esc(formatMetric(row.adPerformanceAmount, 2)) + '</td>' +
-        '<td>' + esc(formatMetric(row.comprehensiveGrossMargin, 2)) + '</td></tr>';
+        '<td>' + esc(formatMetric(row.comprehensiveGrossMargin, 2)) + '</td>' +
+        '<td>' + esc(formatMetric(row.salesQty ? row.trueIncome / row.salesQty : 0, 6)) + '</td>' +
+        '<td>' + esc(formatMetric(row.salesQty ? row.trueGross / row.salesQty : 0, 6)) + '</td>' +
+        '<td>' + esc(formatMetric(row.trueIncome, 6)) + '</td>' +
+        '<td>' + esc(formatMetric(row.trueGross, 6)) + '</td></tr>';
     }).join('');
     enhanceAllResizableTables();
   }
@@ -10269,6 +10557,7 @@
     }
     if (page === 'finance-import') {
       renderAllImportMappings();
+      renderFinanceGiftRules(false);
     }
     if (page === 'import-settings') {
       renderAllImportMappings();
@@ -10700,7 +10989,8 @@
       prevId: 'financeManualDatePrev',
       nextId: 'financeManualDateNext',
       triggerId: 'financeManualDateTrigger',
-      popoverId: 'financeManualDatePopover'
+      popoverId: 'financeManualDatePopover',
+      onChange: function() { renderFinanceGiftRules(); }
     },
     {
       key: 'report',
@@ -11018,6 +11308,115 @@
   $('clearRankingRawBtn').addEventListener('click', function() { clearDbTable('ranking_raw_metrics', renderRankingRaw); });
   if ($('clearSkuDbBtn')) $('clearSkuDbBtn').addEventListener('click', function() { clearDbTable('sku_profiles', renderSkuDb); });
   $('clearAnalyzedDbBtn').addEventListener('click', clearCurrentAnalyzedRows);
+  function editFinanceGiftRule(row, field) {
+    var modal = $('financeGiftRuleModal');
+    var body = $('financeGiftRuleModalBody');
+    if (!modal || !body) return;
+    var title = field === 'gifts' ? '配置赠品' : '配置配件';
+    $('financeGiftRuleTitle').textContent = title;
+    $('financeGiftRuleText').textContent = '当前主 SKU：' + (row.sku || '-') + '。按 SKU 和数量录入，数量默认为 1。';
+    var draft = JSON.parse(JSON.stringify(row[field] && row[field].length ? row[field] : [{ sku: '', qty: 1 }]));
+    function renderRows() {
+      body.innerHTML = draft.map(function(item, index) {
+        return '<tr data-finance-gift-rule-row="' + index + '">' +
+          '<td><input class="input" data-finance-gift-rule-sku value="' + esc(item.sku || '') + '" placeholder="SKU"></td>' +
+          '<td><input class="input" data-finance-gift-rule-qty type="number" min="0" step="0.01" value="' + esc(item.qty || 1) + '"></td>' +
+          '<td><button class="icon-btn row-delete-btn" data-finance-gift-rule-delete type="button">' + iconTrash() + '</button></td>' +
+        '</tr>';
+      }).join('');
+    }
+    function syncDraft() {
+      body.querySelectorAll('[data-finance-gift-rule-row]').forEach(function(tr) {
+        var index = Number(tr.getAttribute('data-finance-gift-rule-row'));
+        draft[index] = {
+          sku: normalizeSkuValue(tr.querySelector('[data-finance-gift-rule-sku]').value),
+          qty: Number(tr.querySelector('[data-finance-gift-rule-qty]').value) || 1
+        };
+      });
+    }
+    function close(save) {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      $('financeGiftRuleCancelBtn').removeEventListener('click', cancel);
+      $('financeGiftRuleOkBtn').removeEventListener('click', ok);
+      $('addFinanceGiftRuleRowBtn').removeEventListener('click', add);
+      body.removeEventListener('click', del);
+      if (save) {
+        syncDraft();
+        row[field] = draft.filter(function(item) { return item.sku; });
+        renderFinanceGiftRules(false);
+      }
+    }
+    function cancel() { close(false); }
+    function ok() { close(true); }
+    function add() {
+      syncDraft();
+      draft.push({ sku: '', qty: 1 });
+      renderRows();
+    }
+    function del(e) {
+      if (!e.target.closest('[data-finance-gift-rule-delete]')) return;
+      syncDraft();
+      draft.splice(Number(e.target.closest('[data-finance-gift-rule-row]').getAttribute('data-finance-gift-rule-row')), 1);
+      if (!draft.length) draft.push({ sku: '', qty: 1 });
+      renderRows();
+    }
+    renderRows();
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    $('financeGiftRuleCancelBtn').addEventListener('click', cancel);
+    $('financeGiftRuleOkBtn').addEventListener('click', ok);
+    $('addFinanceGiftRuleRowBtn').addEventListener('click', add);
+    body.addEventListener('click', del);
+  }
+  if ($('financeGiftDimBtn')) {
+    $('financeGiftDimBtn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      togglePopover($('financeGiftDimPopover'));
+    });
+  }
+  if ($('financeGiftDimPopover')) {
+    $('financeGiftDimPopover').addEventListener('change', function(e) {
+      if (!e.target.matches('[data-finance-gift-dim]')) return;
+      var key = e.target.getAttribute('data-finance-gift-dim');
+      financeGiftAvailableDimensions = financeGiftAvailableDimensions.filter(function(item) { return item !== key; });
+      financeGiftActiveDimensions = financeGiftActiveDimensions.filter(function(item) { return item !== key; });
+      if (e.target.checked) financeGiftAvailableDimensions.push(key);
+      saveFinanceGiftDimensions();
+      renderFinanceGiftRules(false);
+      $('financeGiftDimPopover').classList.add('open');
+    });
+  }
+  if ($('financeGiftDimTags')) {
+    $('financeGiftDimTags').addEventListener('click', function(e) {
+      var tag = e.target.closest('[data-finance-gift-tag]');
+      if (!tag) return;
+      var key = tag.getAttribute('data-finance-gift-tag');
+      financeGiftActiveDimensions = financeGiftActiveDimensions.filter(function(item) { return item !== key; });
+      if (!tag.classList.contains('active')) financeGiftActiveDimensions.push(key);
+      saveFinanceGiftDimensions();
+      renderFinanceGiftRules(false);
+    });
+  }
+  if ($('financeGiftHead')) {
+    $('financeGiftHead').addEventListener('change', function(e) {
+      if (!e.target.matches('[data-finance-gift-filter]')) return;
+      var key = e.target.getAttribute('data-finance-gift-filter');
+      financeGiftFilters[key] = e.target.value ? [e.target.value] : [];
+      localStorage.setItem('jdFinanceGiftFilters', JSON.stringify(financeGiftFilters));
+      renderFinanceGiftRules(false);
+    });
+  }
+  if ($('financeGiftBody')) {
+    $('financeGiftBody').addEventListener('click', function(e) {
+      var cell = e.target.closest('[data-finance-gift-edit]');
+      if (!cell) return;
+      var sku = normalizeSkuValue(cell.closest('[data-finance-gift-sku]').getAttribute('data-finance-gift-sku'));
+      var row = financeGiftDraftRows.find(function(item) { return normalizeSkuValue(item.sku) === sku; });
+      if (row) editFinanceGiftRule(row, cell.getAttribute('data-finance-gift-edit'));
+    });
+  }
+  if ($('applyFinanceGiftRulesBtn')) $('applyFinanceGiftRulesBtn').addEventListener('click', saveFinanceGiftRules);
   document.addEventListener('click', async function(e) {
     document.querySelectorAll('.mapping-formula-field.open').forEach(function(node) {
       if (!node.contains(e.target)) node.classList.remove('open');
@@ -11539,6 +11938,7 @@
     }
     if (currentPage === 'finance-import') {
       renderAllImportMappings();
+      renderFinanceGiftRules();
     }
     if (currentPage === 'import-settings') {
       renderAllImportMappings();
