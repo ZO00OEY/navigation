@@ -193,6 +193,7 @@
 .grid { display: grid; gap: 14px; }
 .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.search-analysis-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
 .panel {
   border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; background: var(--card-bg);
   padding: 18px; min-width: 0; box-shadow: 0 2px 8px rgba(40, 46, 56, 0.035);
@@ -297,6 +298,61 @@
   font-family: Consolas, "SFMono-Regular", monospace;
   font-size: 0.72rem;
 }
+#financeGiftTable .db-json-cell {
+  max-width: none;
+  min-width: 220px;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  font-family: inherit;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.finance-gift-edit-cell {
+  cursor: text;
+}
+.finance-gift-edit-box {
+  width: 100%;
+  min-height: 72px;
+  resize: vertical;
+  font: inherit;
+  line-height: 1.5;
+}
+.finance-gift-help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  border: 1px solid rgba(var(--tool-accent-rgb), 0.42);
+  border-radius: 50%;
+  background: rgba(var(--tool-accent-rgb), 0.08);
+  color: var(--tool-accent-strong);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: middle;
+  cursor: help;
+}
+.finance-gift-help-popover {
+  position: absolute;
+  z-index: 80;
+  display: none;
+  max-width: 300px;
+  padding: 10px 12px;
+  border: 1px solid #f2cf7a;
+  border-radius: 6px;
+  background: #fff6cc;
+  color: #5c4300;
+  box-shadow: 0 10px 28px rgba(92, 67, 0, 0.18);
+  font-size: 0.76rem;
+  font-weight: 500;
+  line-height: 1.65;
+}
+.finance-gift-help-popover.open {
+  display: block;
+}
 .db-browser-table {
   table-layout: fixed;
   width: max-content;
@@ -364,6 +420,72 @@
   line-height: 1.7;
 }
 .confirm-modal .btn-row { justify-content: flex-end; }
+.finance-gift-rule-modal {
+  width: min(660px, 100%);
+  padding: 22px 20px;
+}
+.search-brand-modal {
+  width: min(1120px, 100%);
+}
+.search-brand-modal .data-table {
+  min-width: 920px;
+}
+.search-brand-modal-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: end;
+  margin-top: 12px;
+}
+.search-brand-modal-filter label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.search-brand-modal-filter textarea {
+  width: 100%;
+  min-height: 92px;
+  resize: vertical;
+}
+.search-brand-modal-filter .panel-sub {
+  margin-top: 6px;
+}
+.search-brand-modal-actions .btn-row {
+  margin-bottom: 18px;
+}
+.finance-gift-rule-modal .table-wrap {
+  overflow: visible;
+}
+.finance-gift-paste-box {
+  width: 100%;
+  min-height: 92px;
+  height: 92px;
+  margin: 8px 0 10px;
+  resize: vertical;
+  border: 1px solid rgba(var(--tool-accent-rgb), 0.34);
+  border-radius: 8px;
+  background: rgba(var(--tool-accent-rgb), 0.05);
+  box-shadow: none;
+}
+.finance-gift-paste-box:focus {
+  border-color: rgba(var(--tool-accent-rgb), 0.68);
+  background: rgba(var(--tool-accent-rgb), 0.05);
+  box-shadow: none;
+}
+.finance-gift-rule-modal .data-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+.finance-gift-rule-modal .data-table th:nth-child(2),
+.finance-gift-rule-modal .data-table td:nth-child(2) {
+  width: 96px;
+}
+.finance-gift-rule-modal .data-table th:nth-child(3),
+.finance-gift-rule-modal .data-table td:nth-child(3) {
+  width: 56px;
+  text-align: center;
+}
 .info-modal {
   width: min(640px, 100%);
   border: 1px solid rgba(var(--tool-accent-rgb), 0.26);
@@ -856,6 +978,40 @@
 .report-sheet-tab.fixed + .report-sheet-tab:not(.fixed) {
   margin-left: 10px;
 }
+.finance-data-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  margin: 0 0 -1px;
+  padding-left: 8px;
+}
+.finance-data-tab {
+  position: relative;
+  z-index: 1;
+  min-height: 42px;
+  padding: 9px 18px;
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  background: #f7f8fb;
+  color: var(--text-secondary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.finance-data-tab.active {
+  z-index: 2;
+  background: #fff;
+  color: var(--link-color);
+  box-shadow: 0 -6px 18px rgba(var(--tool-accent-rgb), 0.08);
+}
+.finance-data-panel.is-import-mode {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+.finance-data-pane[hidden] { display: none; }
 .report-dim-picker {
   position: relative;
   display: inline-flex;
@@ -916,6 +1072,13 @@
 .report-dim-option input {
   accent-color: var(--link-color);
   cursor: inherit;
+}
+.report-dim-option.is-locked {
+  color: var(--text-tertiary);
+  background: rgba(0, 0, 0, 0.03);
+}
+.report-dim-option.is-locked input {
+  accent-color: #b8bec9;
 }
 .report-dim-option:hover {
   background: rgba(var(--tool-accent-rgb), 0.1);
@@ -1234,29 +1397,20 @@
 .import-summary.show { display: flex; }
 .import-summary.ok { border-color: rgba(86, 180, 125, 0.28); background: rgba(86, 180, 125, 0.08); }
 .import-summary.err { border-color: rgba(217, 83, 79, 0.28); background: rgba(217, 83, 79, 0.07); }
+.import-summary span { flex: 1; white-space: pre-line; }
 .import-summary .btn { min-height: 28px; padding: 5px 10px; white-space: nowrap; }
 .import-source-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
   margin-top: 10px;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
 }
 .import-source-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  padding: 0 10px;
-  border: 1px solid rgba(var(--tool-accent-rgb), 0.18);
-  border-radius: 999px;
-  background: rgba(var(--tool-accent-rgb), 0.05);
   color: var(--link-color);
   text-decoration: none;
-  font-size: 0.72rem;
-  white-space: nowrap;
+  font-weight: 700;
 }
 .import-source-link:hover {
-  border-color: rgba(var(--tool-accent-rgb), 0.34);
-  background: rgba(var(--tool-accent-rgb), 0.12);
+  text-decoration: underline;
 }
 .import-config-btn {
   min-height: 30px;
@@ -1598,6 +1752,24 @@
 }
 
 .table-wrap { overflow: auto; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; background: #ffffff; }
+.finance-import-section {
+  border: 1px solid var(--line-medium, var(--card-border));
+  background: var(--card-bg);
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(40, 46, 56, 0.035);
+}
+.finance-import-section + .finance-import-section {
+  margin-top: 14px;
+}
+.finance-gift-table-wrap {
+  max-height: 620px;
+}
+.finance-gift-table-wrap thead {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #fff;
+}
 .sku-table-wrap { max-height: 690px; background: #ffffff; }
 .sku-table-wrap thead { position: sticky; top: 0; z-index: 5; background: #ffffff; }
 .sku-table-wrap thead th {
@@ -1616,6 +1788,7 @@
 .data-table th, .data-table td { padding: 7px 10px; height: 36px; border-bottom: 1px solid var(--line-soft, var(--card-border)); text-align: left; vertical-align: middle; }
 .data-table th { color: var(--text); background: #fafafa; font-weight: 700; white-space: nowrap; }
 .data-table td { color: var(--text); }
+.data-table .gross-margin-derived-cell { background: #fafafa; }
 .data-table:not(.sku-table):not(.manual-entry-table) td { white-space: nowrap; }
 .data-table tr:last-child td { border-bottom: none; }
 .data-table .input, .data-table .select { min-height: 30px; padding: 5px 10px; }
@@ -1844,7 +2017,8 @@
   font-weight: 700; line-height: 1; font-family: inherit;
 }
 .small-plus:hover { border-color: rgba(var(--tool-accent-rgb), 0.32); background: rgba(var(--tool-accent-rgb), 0.08); color: var(--tool-accent-strong); }
-.sku-msg-line { min-height: 20px; margin-top: 8px; color: var(--text-tertiary); font-size: 0.75rem; }
+.sku-msg-line { display: none; margin: 0 0 8px; color: var(--text-tertiary); font-size: 0.75rem; }
+.sku-msg-line:not(:empty) { display: block; }
 .sku-msg-line.ok { color: #56b47d; }
 .sku-msg-line.err { color: #d9534f; }
 .msg { min-height: 20px; margin-top: 9px; color: var(--text-tertiary); font-size: 0.76rem; }
@@ -1975,7 +2149,7 @@
   .filter-strip { grid-template-columns: 1fr; }
   .filter-left { max-width: none; }
   .filter-right, .filter-actions { align-items: flex-start; justify-content: flex-start; }
-  .grid-2, .grid-3, .metric-row, .form-grid, .management-grid, .db-browser-toolbar, .report-toolbar { grid-template-columns: 1fr; }
+  .grid-2, .grid-3, .search-analysis-grid, .metric-row, .form-grid, .management-grid, .db-browser-toolbar, .report-toolbar { grid-template-columns: 1fr; }
   .field, .manual-control { grid-template-columns: 1fr; gap: 6px; align-items: stretch; }
   .field > .input,
   .field > .select,
@@ -1994,7 +2168,6 @@
   .report-month-progress-hint { margin: 0; white-space: normal; }
   .manual-ranking-toolbar { flex-direction: column; align-items: stretch; }
   .manual-control-box, .manual-field-trigger, .manual-date-wrap .input { width: 100%; min-width: 0; }
-  .import-source-links { gap: 8px; }
   .import-config-btn { width: 100%; justify-content: center; }
   .backup-modal-grid { grid-template-columns: 1fr; }
   .backup-modal-foot { align-items: stretch; }
@@ -2028,8 +2201,11 @@
         </div>
         <div class="sidebar-group">
           <div class="sidebar-group-title">财务数据</div>
-          <button class="tab-btn sub" data-page="finance-import">数据导入<span class="tab-kicker">07</span></button>
-          <button class="tab-btn sub" data-page="finance-data">毛保数据明细<span class="tab-kicker">08</span></button>
+          <button class="tab-btn sub" data-page="finance-data">毛保数据导入与分析<span class="tab-kicker">07</span></button>
+        </div>
+        <div class="sidebar-group">
+          <div class="sidebar-group-title">其他分析</div>
+          <button class="tab-btn sub" data-page="search-import">搜索导入与分析<span class="tab-kicker">08</span></button>
         </div>
       </div>
       <div class="sidebar-archive">
@@ -2062,10 +2238,7 @@
             <span>支持一次选择多个文件；列位置可以变，页面会按文件名、工作表名和表头自动判断。</span>
           </div>
           <div class="import-source-links">
-            <a class="import-source-link" href="https://jdsz.jd.com/szweb/view/product/productDetail.html" target="_blank" rel="noopener">销售明细</a>
-            <a class="import-source-link" href="https://jzt.jd.com/custom-report/#/overview" target="_blank" rel="noopener">站内花费</a>
-            <a class="import-source-link" href="https://jzt.jd.com/jtk/#/order-detail" target="_blank" rel="noopener">站外 CPS</a>
-            <a class="import-source-link" href="https://jdsz.jd.com/szweb/view/industry/industry-product-rank-temp.html" target="_blank" rel="noopener">行业榜单</a>
+            数据来源：<a class="import-source-link" href="https://jdsz.jd.com/szweb/view/product/productDetail.html" target="_blank" rel="noopener">销售明细</a>、<a class="import-source-link" href="https://jzt.jd.com/custom-report/#/overview" target="_blank" rel="noopener">站内花费</a>、<a class="import-source-link" href="https://jzt.jd.com/jtk/#/order-detail" target="_blank" rel="noopener">站外 CPS</a>、<a class="import-source-link" href="https://jdsz.jd.com/szweb/view/industry/industry-product-rank-temp.html" target="_blank" rel="noopener">行业榜单</a>
           </div>
           <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" multiple style="display:none">
           <div class="msg" id="importMsg"></div>
@@ -2109,63 +2282,6 @@
           <div class="msg" id="mappingMsg"></div>
         </div>
 
-      </section>
-
-      <section class="tool-page" id="finance-import">
-        <div class="page-head">
-          <div class="page-title">
-            <h1>财务数据导入</h1>
-            <p>财务数据从这里独立导入，目前先接入毛保数据，后续再扩展其他财务规则。</p>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-title">
-            <span>批量自动导入</span>
-          </div>
-          <div class="upload-zone" id="financeDropZone">
-            <strong>拖入毛保数据 Excel 文件，或点击选择</strong>
-            <span>当前对应毛保数据，导入时会按标签页读取订单明细和广告数据明细。</span>
-          </div>
-          <input type="file" id="financeFileInput" accept=".xlsx,.xls,.csv" multiple style="display:none">
-          <div class="msg" id="financeImportMsg"></div>
-          <div class="import-summary" id="financeImportSummary">
-            <span id="financeImportSummaryText">还没有导入文件</span>
-            <button class="btn" type="button" id="financeViewImportRecordsBtn">查看详细</button>
-          </div>
-        </div>
-
-        <div class="panel" style="margin-top:14px;">
-          <div class="panel-title">
-            <span>赠品配件规则录入</span>
-          </div>
-          <p class="panel-sub">套装内配件或 0 元赠品会按京东价拆分，干扰主品真实收入和毛保判断。这里按单 SKU 配置附带配件与赠品，用于后续还原真实 SKU 毛保。</p>
-          <div class="gross-margin-toolbar finance-gift-toolbar">
-            <div class="manual-control date-picker-field" id="financeManualDatePickerField"></div>
-            <button class="btn" id="financeGiftDimBtn" type="button">维度设置</button>
-            <span class="report-dim-popover" id="financeGiftDimPopover"></span>
-            <span class="gross-margin-dim-tags" id="financeGiftDimTags"></span>
-            <span class="gross-margin-actions">
-              <button class="btn primary" id="applyFinanceGiftRulesBtn" type="button">生效</button>
-            </span>
-          </div>
-          <div class="report-data-alert" id="financeGiftAlert"></div>
-          <div class="table-wrap" style="margin-top:12px;">
-            <table class="data-table" id="financeGiftTable">
-              <thead id="financeGiftHead"></thead>
-              <tbody id="financeGiftBody"><tr><td class="empty-row" colspan="4">暂无 SKU 档案</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="panel embedded-import-settings" id="financeImportRulesPanel" style="margin-top:14px;">
-          <div class="panel-title">
-            <span>自定义导入规则</span>
-          </div>
-          <p class="panel-sub">这里仅显示财务数据相关导入规则，目前为毛保数据。</p>
-          <div class="mapping-accordion" id="financeMappingSections"></div>
-          <div class="msg" id="financeMappingMsg"></div>
-        </div>
       </section>
 
       <section class="tool-page" id="report">
@@ -2340,10 +2456,10 @@
                 <button class="icon-btn" data-add-row="own" title="&#26032;&#22686;&#26412;&#21697; SKU" aria-label="&#26032;&#22686;&#26412;&#21697; SKU">&#26032;&#22686;SKU</button>
               </div>
             </div>
+            <div class="sku-msg-line" id="ownSkuMsg"></div>
             <div class="table-wrap sku-table-wrap">
               <table class="data-table sku-table" id="ownSkuTable"></table>
             </div>
-            <div class="sku-msg-line" id="ownSkuMsg"></div>
           </div>
 
           <div class="panel sku-panel" data-sku-section="competitor">
@@ -2359,10 +2475,10 @@
                 <button class="icon-btn" data-add-row="competitor" title="&#26032;&#22686;&#31454;&#21697; SKU" aria-label="&#26032;&#22686;&#31454;&#21697; SKU">&#26032;&#22686;SKU</button>
               </div>
             </div>
+            <div class="sku-msg-line" id="competitorSkuMsg"></div>
             <div class="table-wrap sku-table-wrap">
               <table class="data-table sku-table" id="competitorSkuTable"></table>
             </div>
-            <div class="sku-msg-line" id="competitorSkuMsg"></div>
           </div>
           <input class="ghost-file" type="file" id="skuImportInput" accept=".xlsx,.xls,.csv">
           <div class="msg" id="skuMsg"></div>
@@ -2512,30 +2628,159 @@
       <section class="tool-page" id="finance-data">
         <div class="page-head">
           <div class="page-title">
-            <h1>毛保数据明细</h1>
-            <p>按日期范围汇总综合毛保数据，SKU 档案字段会从当前最新档案实时匹配。</p>
+            <h1>毛保数据导入与分析</h1>
+            <p>在这里导入毛保数据、配置赠品配件规则，并按日期范围汇总分析。</p>
           </div>
         </div>
-        <div class="panel">
-          <div class="panel-title">数据筛选</div>
-          <div class="toolbar-row gross-margin-toolbar">
-            <div class="field date-picker-field" id="grossMarginDatePickerField"></div>
-            <span class="report-dim-picker">
-              <button class="btn" id="grossMarginDimBtn" type="button">维度设置</button>
-              <span class="report-dim-popover" id="grossMarginDimPopover"></span>
-            </span>
-            <span class="gross-margin-dim-tags" id="grossMarginDimTags"></span>
-            <span class="gross-margin-actions">
-              <button class="btn" id="refreshGrossMarginBtn" type="button">刷新</button>
-              <button class="btn danger" id="clearGrossMarginBtn" type="button">清表</button>
-              <button class="btn" type="button" data-management-link="finance-import">前往数据导入中心</button>
-            </span>
+        <div class="finance-data-tabs">
+          <button class="finance-data-tab active" type="button" data-gross-margin-panel="import">数据导入</button>
+          <button class="finance-data-tab" type="button" data-gross-margin-panel="filter">数据筛选</button>
+          <button class="finance-data-tab" type="button" data-gross-margin-panel="dashboard">数据看板</button>
+        </div>
+        <div class="panel finance-data-panel is-import-mode" id="grossMarginPanel">
+          <div class="finance-data-pane" id="grossMarginImportPane">
+            <div class="finance-import-section">
+              <div class="panel-title">
+                <span>批量自动导入</span>
+              </div>
+              <div class="upload-zone" id="financeDropZone">
+                <strong>拖入毛保数据 Excel 文件，或点击选择</strong>
+                <span>当前对应毛保数据，导入时会按标签页读取订单明细和广告数据明细。</span>
+              </div>
+              <input type="file" id="financeFileInput" accept=".xlsx,.xls,.csv" multiple style="display:none">
+              <div class="msg" id="financeImportMsg"></div>
+              <div class="import-summary" id="financeImportSummary">
+                <span id="financeImportSummaryText">还没有导入文件</span>
+                <button class="btn" type="button" id="financeViewImportRecordsBtn">查看详细</button>
+              </div>
+            </div>
+
+            <div class="finance-import-section">
+              <div class="panel-title">
+                <span>赠品配件规则录入</span>
+              </div>
+              <p class="panel-sub">套装内配件或 0 元赠品会按京东价拆分，干扰主品真实收入和毛保判断。这里按单 SKU 配置附带配件与赠品，用于后续还原真实 SKU 毛保。</p>
+              <div class="gross-margin-toolbar finance-gift-toolbar">
+                <div class="manual-control date-picker-field" id="financeManualDatePickerField"></div>
+                <span class="report-dim-picker">
+                  <button class="btn" id="financeGiftDimBtn" type="button">维度设置</button>
+                  <span class="report-dim-popover" id="financeGiftDimPopover"></span>
+                </span>
+                <span class="gross-margin-dim-tags" id="financeGiftDimTags"></span>
+                <span class="gross-margin-actions">
+                  <button class="btn primary" id="applyFinanceGiftRulesBtn" type="button">生效</button>
+                </span>
+              </div>
+              <div class="report-data-alert" id="financeGiftAlert"></div>
+              <div class="table-wrap finance-gift-table-wrap" style="margin-top:12px;">
+                <table class="data-table" id="financeGiftTable">
+                  <thead id="financeGiftHead"></thead>
+                  <tbody id="financeGiftBody"><tr><td class="empty-row" colspan="4">暂无 SKU 档案</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="finance-import-section embedded-import-settings" id="financeImportRulesPanel">
+              <div class="panel-title">
+                <span>自定义导入规则</span>
+              </div>
+              <p class="panel-sub">这里仅显示财务数据相关导入规则，目前为毛保数据。</p>
+              <div class="mapping-accordion" id="financeMappingSections"></div>
+              <div class="msg" id="financeMappingMsg"></div>
+            </div>
           </div>
-          <div class="report-data-alert" id="grossMarginDataAlert"></div>
+          <div class="finance-data-pane" id="grossMarginFilterPane" hidden>
+            <div class="toolbar-row gross-margin-toolbar">
+              <div class="field date-picker-field" id="grossMarginDatePickerField"></div>
+              <span class="report-dim-picker">
+                <button class="btn" id="grossMarginDimBtn" type="button">维度设置</button>
+                <span class="report-dim-popover" id="grossMarginDimPopover"></span>
+              </span>
+              <span class="gross-margin-dim-tags" id="grossMarginDimTags"></span>
+              <span class="gross-margin-actions">
+                <button class="btn" id="refreshGrossMarginBtn" type="button">刷新</button>
+                <button class="btn danger" id="clearGrossMarginBtn" type="button">清表</button>
+                <button class="btn" type="button" data-gross-margin-panel="import">前往数据导入</button>
+              </span>
+            </div>
+            <div class="report-data-alert" id="grossMarginDataAlert"></div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead id="grossMarginHead"><tr><th>SKU</th><th>商品简称</th><th>财务销量</th><th>原始毛保</th><th>广告业绩金</th><th>综合毛保</th></tr></thead>
+                <tbody id="grossMarginBody"><tr><td class="empty-row" colspan="6">暂无毛保数据</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="finance-data-pane" id="grossMarginDashboardPane" hidden>
+            <div class="report-template-actions">
+              <button class="btn" id="exportGrossMarginDashboardBtn" type="button">导出模板</button>
+              <button class="btn" id="importGrossMarginDashboardBtn" type="button">导入模板</button>
+              <span class="msg" id="grossMarginDashboardMsg"></span>
+            </div>
+            <input class="ghost-file" type="file" id="grossMarginDashboardInput" accept=".xlsx,.xls">
+            <div id="grossMarginDashboardOutput">
+              <div class="report-template-empty">导出模板后，在 Excel 的“模板”页编辑，再导入即可预览。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="search-import">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>搜索导入与分析</h1>
+            <p>导入关键词汇总表，只按定义的产品词汇总访客、成交金额和订单量，不保存原始关键词明细。</p>
+          </div>
+        </div>
+
+        <div class="grid search-analysis-grid">
+          <div class="panel">
+            <div class="panel-title">
+              <span>批量自动导入</span>
+            </div>
+          <div class="upload-zone" id="searchDropZone">
+            <strong>拖入关键词汇总 Excel / CSV 文件，或点击选择</strong>
+            <span>导入使用下方搜索数据明细的日期范围；导入后会让你选择档案维度和值。</span>
+          </div>
+          <div class="import-source-links">
+            数据来源：<a class="import-source-link" href="https://ppzh.jd.com/brandweb/brand/view/viewflow/flowKeywordAnalysisNew.html" target="_blank" rel="noopener">搜索关键词分析</a>
+          </div>
+          <input type="file" id="searchFileInput" accept=".xlsx,.xls,.csv" multiple style="display:none">
+            <div class="msg" id="searchImportMsg"></div>
+            <div class="import-summary" id="searchImportSummary">
+              <span id="searchImportSummaryText">还没有导入文件</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              <span>品牌词设置</span>
+            </div>
+            <textarea class="input" id="searchBrandWordsInput" style="width:100%; min-height:82px; resize:vertical;" placeholder="例如：华为、小米、vivo、红米、苹果"></textarea>
+            <p class="panel-sub" style="margin-top:8px;">包含以上关键词的行为“品牌词”，其余归为“品类词”。用逗号、分号、顿号或换行分隔，支持手动修改，失焦后自动保存。</p>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px;">
+          <div class="panel-title">
+            <span>搜索数据明细</span>
+          </div>
+          <div class="filter-strip">
+            <div class="filter-left">
+              <div class="field date-picker-field" id="searchDataDatePickerField"></div>
+            </div>
+            <div class="filter-right">
+              <div class="filter-actions">
+                <button class="btn" id="refreshSearchDataBtn" type="button">刷新</button>
+                <button class="btn danger" id="clearSearchDataBtn" type="button">清空当前</button>
+              </div>
+            </div>
+          </div>
+          <div class="report-data-alert" id="searchDataAlert"></div>
           <div class="table-wrap">
             <table class="data-table">
-              <thead id="grossMarginHead"><tr><th>SKU</th><th>商品简称</th><th>财务销量</th><th>原始毛保</th><th>广告业绩金</th><th>综合毛保</th></tr></thead>
-              <tbody id="grossMarginBody"><tr><td class="empty-row" colspan="6">暂无毛保数据</td></tr></tbody>
+              <thead><tr><th>日期</th><th>维度</th><th>具体值</th><th>总访客</th><th>总单量</th><th>总成交金额</th><th>品类词访客</th><th>品类词转化率</th><th>品类词单量</th><th>品类词成交金额</th><th>品牌词访客</th><th>品牌词转化率</th><th>品牌词单量</th><th>品牌词成交金额</th></tr></thead>
+              <tbody id="searchDataBody"><tr><td class="empty-row" colspan="14">暂无搜索数据</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -2716,9 +2961,10 @@
 </div>
 
 <div class="modal-backdrop" id="financeGiftRuleModal" aria-hidden="true">
-  <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="financeGiftRuleTitle">
+  <div class="confirm-modal finance-gift-rule-modal" role="dialog" aria-modal="true" aria-labelledby="financeGiftRuleTitle">
     <h2 id="financeGiftRuleTitle">配置配件</h2>
     <p id="financeGiftRuleText">按 SKU 和数量录入，数量默认为 1。</p>
+    <textarea class="input finance-gift-paste-box" id="financeGiftRulePasteInput" placeholder="在这里直接粘贴 SKU，每行一个或用空格分隔；粘贴后会自动填入下方，数量默认 1。"></textarea>
     <div class="table-wrap" style="margin:10px 0 12px;">
       <table class="data-table">
         <thead><tr><th>SKU</th><th>数量</th><th><button class="mapping-rule-action add" id="addFinanceGiftRuleRowBtn" type="button">+</button></th></tr></thead>
@@ -2728,6 +2974,49 @@
     <div class="btn-row">
       <button class="btn" id="financeGiftRuleCancelBtn" type="button">取消</button>
       <button class="btn primary" id="financeGiftRuleOkBtn" type="button">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="grossMarginDashboardFieldModal" aria-hidden="true">
+  <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="grossMarginDashboardFieldTitle" style="width:min(780px,100%);">
+    <h2 id="grossMarginDashboardFieldTitle">导出模板字段设置</h2>
+    <p>可在“明细”页末尾增加占比字段：每个 SKU 的分子数值 / 同维度下的分子总数值。</p>
+    <div class="table-wrap" style="margin:10px 0 12px;">
+      <table class="data-table">
+        <thead><tr><th>字段名</th><th>字段类型</th><th>分子</th><th>分母维度</th><th><button class="mapping-rule-action add" id="addGrossMarginDashboardFieldBtn" type="button">+</button></th></tr></thead>
+        <tbody id="grossMarginDashboardFieldBody"></tbody>
+      </table>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="grossMarginDashboardFieldCancelBtn" type="button">取消</button>
+      <button class="btn primary" id="grossMarginDashboardFieldOkBtn" type="button">确认导出</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="searchBrandModal" aria-hidden="true">
+  <div class="confirm-modal search-brand-modal" role="dialog" aria-modal="true" aria-labelledby="searchBrandModalTitle">
+    <h2 id="searchBrandModalTitle">选择搜索数据所属产品</h2>
+    <p>每个文件会先跳过命中过滤词的搜索词，再取访客量最高的搜索词，并按档案列自动匹配产品；匹配不准时可手动调整。</p>
+    <div class="field date-picker-field" id="searchImportDatePickerField" style="margin-bottom:12px;"></div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>原始文件名</th><th>档案列</th><th>匹配产品（根据搜索词自动匹配）</th><th>访客量最高的搜索词（可在过滤词处排除高访客行业词）</th></tr></thead>
+        <tbody id="searchBrandModalBody"></tbody>
+      </table>
+    </div>
+    <div class="search-brand-modal-actions">
+      <div class="search-brand-modal-filter">
+        <label for="searchBrandModalFilterInput">过滤词设置</label>
+        <textarea class="input" id="searchBrandModalFilterInput" placeholder="例如：手机、电脑"></textarea>
+        <p class="panel-sub">命中过滤词的搜索词只会从第 4 列“访客量最高的搜索词”自动选择里排除，不影响最终计算；用逗号、分号、顿号或换行分隔。</p>
+        <div class="msg" id="searchBrandModalMsg"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="searchBrandCancelBtn" type="button">取消</button>
+        <button class="btn primary" id="searchBrandOkBtn" type="button">确认导入</button>
+      </div>
     </div>
   </div>
 </div>
@@ -2791,6 +3080,7 @@
 
   var DB_NAME = 'jdDataAnalysisTool';
   var DB_VERSION = 4;
+  var SEARCH_ANALYSIS_SOURCE_URL = 'https://ppzh.jd.com/brandweb/brand/view/viewflow/flowKeywordAnalysisNew.html';
   var db = null;
   var skuImportTarget = 'own';
   var draggingColumnKey = null;
@@ -2810,7 +3100,8 @@
       industry_ranking: '行业商品榜单-商品榜单',
       finance_gross_margin: '毛保数据-综合毛保',
       finance_gross_margin_order: '毛保数据-综合毛保-订单明细数据',
-      finance_gross_margin_ad: '毛保数据-综合毛保-广告数据明细'
+      finance_gross_margin_ad: '毛保数据-综合毛保-广告数据明细',
+      search_analysis: '其他分析-搜索数据'
     },
     periodType: { unknown: '待确认', day: '单日', period: '跨期' },
     itemType: { own: '本品', competitor: '竞品' }
@@ -2829,7 +3120,7 @@
   var DB_STORE_LABELS = {
     sku_profiles: 'SKU 档案',
     raw_snapshots: '导入记录',
-    analyzed_metrics: '本店商品明细',
+    analyzed_metrics: '本店/搜索分析明细',
     ranking_raw_metrics: '行业商品榜单',
     competitor_estimates: '竞品追踪',
     finance_metrics: '毛保数据',
@@ -2884,6 +3175,12 @@
       { key: 'sku', label: 'SKU', column: '商品编码', locked: true, note: '按 SKU 与当日汇总；商品名称、系列等展示字段从最新 SKU 档案匹配' },
       { key: 'date', label: '日期', column: '业务时间', locked: true, note: '广告费用归属日期' },
       { key: 'adPerformanceAmount', label: '广告业绩金额', column: '广告业绩金额', locked: true, note: '按日期和 SKU 求和后扣减原始毛保' }
+    ],
+    search_analysis: [
+      { key: 'keyword', label: '关键词', column: '关键词', locked: true, note: '搜索词或关键词' },
+      { key: 'visitorCount', label: '访客', column: '访客', locked: true, note: '按关键词汇总访客数' },
+      { key: 'salesAmount', label: '成交金额', column: '成交金额', locked: true, note: '按关键词汇总成交金额' },
+      { key: 'orderQty', label: '订单量', column: '子单量', locked: true, note: '按关键词汇总订单量/子单量' }
     ]
   };
   var DEFAULT_IMPORT_RULES = {
@@ -2891,7 +3188,8 @@
     onsite_cost: { filePatterns: ['营销概况.*SKU维度'], includeComparison: true },
     offsite_cps_cost: { filePatterns: ['CPS|\u7ad9\u5916|\u4e0b\u5355\u8ba2\u5355\u660e\u7ec6|\u8ba2\u5355\u660e\u7ec6'], includeComparison: false },
     industry_ranking: { filePatterns: ['\u70ed\u9500\u5546\u54c1\u699c|\u5546\u54c1\u699c\u5355|\u699c\u5355|\u6392\u884c\u699c|\u884c\u4e1a\u9500\u552e'], includeComparison: false },
-    finance_gross_margin: { filePatterns: ['综合毛保返利单号', '综合毛保', '毛保'], includeComparison: false, grossMarginFormula: 'cost-income*0.85' }
+    finance_gross_margin: { filePatterns: ['综合毛保返利单号', '综合毛保', '毛保'], includeComparison: false, grossMarginFormula: 'cost-income*0.85' },
+    search_analysis: { filePatterns: ['关键词汇总', '关键词', '搜索'], includeComparison: false }
   };
   var importMappings = JSON.parse(localStorage.getItem('jdImportMappings') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_MAPPINGS));
   var importRules = JSON.parse(localStorage.getItem('jdImportRules') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_RULES));
@@ -2903,7 +3201,8 @@
     { type: 'industry_ranking', category: '店铺与竞品', title: '商品榜单', writeTarget: '行业商品榜单', sourceName: '\u884c\u4e1a\u5546\u54c1\u699c\u5355', sourceUrl: 'https://jdsz.jd.com/szweb/view/industry/industry-product-rank-temp.html', desc: '\u7528\u4e8e\u5bfc\u5165\u884c\u4e1a\u5546\u54c1\u699c\u5355\u91cc\u7684\u6392\u540d\u3001\u6210\u4ea4\u533a\u95f4\u3001\u8bbf\u5ba2\u533a\u95f4\u7b49\u6570\u636e\u3002', open: false },
     { type: 'finance_gross_margin', category: '财务数据', title: '综合毛保预设', writeTarget: '毛保数据', sourceName: '综合毛保返利单号', sourceUrl: '', desc: '用于识别综合毛保整本文件；下方订单明细和广告明细分别维护各自标签页字段规则。', open: false },
     { type: 'finance_gross_margin_order', category: '财务数据', title: '综合毛保-订单明细数据', writeTarget: '毛保数据', sourceName: '综合毛保返利单号 / 订单明细数据', sourceUrl: '', desc: '用于导入综合毛保订单维度的收入、成本、销售数量，并按日期和 SKU 汇总。', open: false },
-    { type: 'finance_gross_margin_ad', category: '财务数据', title: '综合毛保-广告数据明细', writeTarget: '毛保数据', sourceName: '综合毛保返利单号 / 广告数据明细', sourceUrl: '', desc: '用于导入综合毛保广告维度的广告业绩金额，并按日期和 SKU 汇总。', open: false }
+    { type: 'finance_gross_margin_ad', category: '财务数据', title: '综合毛保-广告数据明细', writeTarget: '毛保数据', sourceName: '综合毛保返利单号 / 广告数据明细', sourceUrl: '', desc: '用于导入综合毛保广告维度的广告业绩金额，并按日期和 SKU 汇总。', open: false },
+    { type: 'search_analysis', category: '其他分析', title: '搜索导入与分析', writeTarget: '搜索数据明细', sourceName: '搜索关键词分析', sourceUrl: SEARCH_ANALYSIS_SOURCE_URL, desc: '用于导入关键词维度的访客、成交金额和订单量，并按选定档案维度汇总。', open: false }
   ];
   var monitorTracks = JSON.parse(localStorage.getItem('jdMonitorTracks') || '[]');
   var analyzedExtraDimensions = JSON.parse(localStorage.getItem('jdAnalyzedExtraDimensions') || '[]');
@@ -2926,10 +3225,23 @@
   var grossMarginActiveDimensionsRaw = localStorage.getItem('jdGrossMarginActiveDimensions');
   var grossMarginAvailableDimensions = JSON.parse(grossMarginAvailableDimensionsRaw || grossMarginSelectedDimensionsRaw || JSON.stringify(grossMarginDefaultDimensions));
   var grossMarginActiveDimensions = JSON.parse(grossMarginActiveDimensionsRaw || grossMarginSelectedDimensionsRaw || JSON.stringify(grossMarginDefaultDimensions));
+  var grossMarginValueFilters = JSON.parse(localStorage.getItem('jdGrossMarginValueFilters') || '{}');
+  var grossMarginLastRows = [];
+  var grossMarginLastSkuMap = {};
+  var grossMarginDashboardTemplateWorkbook = null;
+  var grossMarginDashboardPreviewWorkbook = null;
+  var grossMarginDashboardActiveSheet = '模板';
+  var grossMarginDashboardTemplateOriginalBase64 = '';
+  var grossMarginDashboardCustomFields = JSON.parse(localStorage.getItem('jdGrossMarginDashboardCustomFields') || '[]');
   var financeGiftAvailableDimensions = JSON.parse(localStorage.getItem('jdFinanceGiftAvailableDimensions') || '["mainSeries","subSeries"]');
   var financeGiftActiveDimensions = JSON.parse(localStorage.getItem('jdFinanceGiftActiveDimensions') || '[]');
   var financeGiftFilters = JSON.parse(localStorage.getItem('jdFinanceGiftFilters') || '{}');
   var financeGiftDraftRows = [];
+  var financeGiftSkuNameMap = {};
+  var searchAnalysisFilterWords = JSON.parse(localStorage.getItem('jdSearchAnalysisFilterWords') || '[]');
+  var searchAnalysisBrandWords = JSON.parse(localStorage.getItem('jdSearchAnalysisBrandWords') || '[]');
+  var searchAnalysisLastDimension = localStorage.getItem('jdSearchAnalysisDimension') || 'mainSeries';
+  var searchAnalysisLastValue = localStorage.getItem('jdSearchAnalysisValue') || '';
   if (!grossMarginAvailableDimensionsRaw && !grossMarginSelectedDimensionsRaw && grossMarginProfileColumns.length) {
     grossMarginAvailableDimensions = ['sku'].concat(grossMarginProfileColumns);
     grossMarginActiveDimensions = grossMarginAvailableDimensions.slice();
@@ -3225,6 +3537,43 @@
       if ($('reportMsg')) $('reportMsg').textContent = '本地模板读取失败：' + (err && err.message ? err.message : String(err));
     } finally {
       reportTemplateLoading = false;
+    }
+  }
+
+  async function saveGrossMarginDashboardTemplateWorkbook() {
+    if (!window.XLSX || !grossMarginDashboardTemplateWorkbook) return false;
+    if (!db || !db.objectStoreNames.contains('app_settings')) return false;
+    try {
+      var base64 = grossMarginDashboardTemplateOriginalBase64 || XLSX.write(grossMarginDashboardTemplateWorkbook, { bookType: 'xlsx', type: 'base64', cellStyles: true });
+      await put('app_settings', {
+        key: 'grossMarginDashboardTemplateWorkbook',
+        value: base64,
+        valueType: 'base64',
+        updatedAt: new Date().toISOString()
+      });
+      return true;
+    } catch (err) {
+      console.warn(err);
+      if ($('grossMarginDashboardMsg')) $('grossMarginDashboardMsg').textContent = '模板保存失败：' + (err && err.message ? err.message : String(err));
+      return false;
+    }
+  }
+
+  async function loadGrossMarginDashboardTemplateWorkbookFromDb() {
+    if (!window.XLSX || grossMarginDashboardTemplateWorkbook) return;
+    try {
+      var saved = db && db.objectStoreNames.contains('app_settings') ? await getOne('app_settings', 'grossMarginDashboardTemplateWorkbook') : null;
+      var value = saved && saved.value;
+      if (!value) return;
+      grossMarginDashboardTemplateWorkbook = XLSX.read(value, { type: 'base64', cellDates: true, cellFormula: true, cellStyles: true, cellNF: true });
+      grossMarginDashboardTemplateOriginalBase64 = value;
+      grossMarginDashboardActiveSheet = grossMarginDashboardTemplateWorkbook.SheetNames[0];
+      await refreshGrossMarginDashboardPreviewWorkbook();
+      renderGrossMarginDashboardPreview(grossMarginDashboardActiveSheet);
+      if ($('grossMarginDashboardMsg')) $('grossMarginDashboardMsg').textContent = '已加载本地保存的毛保看板模板。';
+    } catch (err) {
+      console.warn(err);
+      if ($('grossMarginDashboardMsg')) $('grossMarginDashboardMsg').textContent = '本地模板读取失败：' + (err && err.message ? err.message : String(err));
     }
   }
 
@@ -4001,6 +4350,7 @@
     if (id === 'sku') id = 'db-sku';
     if (id === 'dashboard') id = 'import';
     if (id === 'import-setting') id = 'import-settings';
+    if (id === 'search-data') id = 'search-import';
     if (id === 'report') reportTemplateActiveSheet = '模板';
     document.querySelectorAll('.tool-page').forEach(function(page) { page.classList.remove('active'); });
     document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
@@ -4123,7 +4473,7 @@
   }
 
   function sourceTypesForStore(store) {
-    if (store === 'analyzed_metrics') return ['sales_detail', 'onsite_cost', 'offsite_cps_cost'];
+    if (store === 'analyzed_metrics') return ['sales_detail', 'onsite_cost', 'offsite_cps_cost', 'search_analysis'];
     if (store === 'ranking_raw_metrics') return ['industry_ranking'];
     if (store === 'finance_metrics') return ['finance_gross_margin_order', 'finance_gross_margin_ad'];
     return [];
@@ -4786,7 +5136,13 @@
   function cellPlainText(cell) {
     if (!cell) return '';
     var input = cell.querySelector && cell.querySelector('input, select, textarea');
-    if (input) return input.value || input.textContent || '';
+    if (input) {
+      if (input.tagName === 'SELECT') {
+        var option = input.options && input.selectedIndex >= 0 ? input.options[input.selectedIndex] : null;
+        return input.value || (option ? option.textContent : '') || '';
+      }
+      return input.value || input.textContent || '';
+    }
     return cell.innerText || cell.textContent || '';
   }
 
@@ -4803,8 +5159,21 @@
       return Math.max(max, textPixelEstimate(value));
     }, 0);
     var width = Math.ceil(textWidth + 30);
+    var financeGiftRuleColumn = table && table.id === 'financeGiftTable' && Array.from(table.querySelectorAll('tbody tr')).some(function(tr) {
+      var cell = tr.children[index];
+      return cell && cell.hasAttribute('data-finance-gift-edit');
+    });
     var minWidth = scope === 'rankingRaw' && index >= 3 ? 118 : 64;
     var maxWidth = 640;
+    var colKey = th && th.getAttribute('data-col-key');
+    if ((scope === 'grossMargin' || scope === 'financeGift') && colKey === 'mainSeries') minWidth = 180;
+    if ((scope === 'grossMargin' || scope === 'financeGift') && colKey === 'subSeries') minWidth = 240;
+    if (financeGiftRuleColumn) {
+      minWidth = 220;
+      maxWidth = 420;
+    } else if (table && table.id === 'financeGiftTable') {
+      maxWidth = 360;
+    }
     if (scope === 'snapshotRecords' || scope === 'cleanupSnapshots') maxWidth = 520;
     return Math.max(minWidth, Math.min(maxWidth, width || 116));
   }
@@ -4837,7 +5206,7 @@
       var storedWidth = Number(genericColumnWidths[scope + ':' + key] || 0);
       var autoWidth = estimateAutoColumnWidth(table, index, scope);
       var defaultWidth = autoWidth;
-      var width = Math.max(58, storedWidth || defaultWidth);
+      var width = Math.max(58, table.id === 'financeGiftTable' ? Math.max(storedWidth, defaultWidth) : (storedWidth || defaultWidth));
       total += width;
       var col = document.createElement('col');
       col.style.width = width + 'px';
@@ -4863,6 +5232,7 @@
       ['rankingRawBody', 'rankingRaw'],
       ['estimatesDbBody', 'estimatesDb'],
       ['grossMarginBody', 'grossMargin'],
+      ['financeGiftBody', 'financeGift'],
       ['cleanupSnapshotBody', 'cleanupSnapshots'],
       ['monitorBody', 'monitorTracks'],
       ['trackedCompetitorBody', 'trackedCompetitors']
@@ -5145,7 +5515,13 @@
       var rows = await parseWorkbook(file);
       var debug = rows.__debug || {};
       var headerPlan = buildSkuImportHeaderPlan(rows);
+      var existingMap = {};
+      (await getAll('sku_profiles')).forEach(function(row) {
+        if (row.sku) existingMap[normalizeSkuValue(row.sku)] = true;
+      });
       var count = 0;
+      var added = 0;
+      var replaced = 0;
       var skipped = [];
       for (var i = 0; i < rows.length; i++) {
         var src = rows[i];
@@ -5159,7 +5535,11 @@
           if (skipped.length < 5) skipped.push({ row: i + 2, sku: item.sku || '', shortName: item.shortName || '' });
           continue;
         }
+        var skuKey = normalizeSkuValue(item.sku);
+        if (existingMap[skuKey]) replaced++;
+        else added++;
         await put('sku_profiles', item);
+        existingMap[skuKey] = true;
         count++;
       }
       saveSkuColumnState();
@@ -5168,7 +5548,7 @@
       if (count === 0) {
         reportSkuImportFailure(type, rows, headerPlan, skipped, debug);
       } else {
-        setSkuMsg(type, '已导入 ' + count + ' 条 SKU。' + (skipped.length ? ' 跳过 ' + skipped.length + ' 行缺少 SKU 或简称。' : ''));
+        setSkuMsg(type, '已导入 ' + count + ' 条 SKU：新增 ' + added + ' 条，覆盖 ' + replaced + ' 条。' + (skipped.length ? ' 跳过 ' + skipped.length + ' 行缺少 SKU 或简称。' : ''));
       }
     } catch (err) {
       setSkuMsg(type, '导入失败：' + err.message, true);
@@ -5327,7 +5707,7 @@
 
   function metricImportStatus(sourceType, result) {
     if (sourceType === 'unknown') return 'pending';
-    if (sourceType === 'sales_detail' || sourceType === 'onsite_cost' || sourceType === 'offsite_cps_cost' || sourceType === 'industry_ranking' || sourceType === 'finance_gross_margin') {
+    if (sourceType === 'sales_detail' || sourceType === 'onsite_cost' || sourceType === 'offsite_cps_cost' || sourceType === 'industry_ranking' || sourceType === 'finance_gross_margin' || sourceType === 'search_analysis') {
       return result && result.saved > 0 ? 'success' : 'failed';
     }
     return 'recorded';
@@ -5860,6 +6240,7 @@
       }
     });
     await put('ranking_raw_metrics', row);
+    await autoGenerateMissingEstimatesForReport({ start: date, end: date });
     if (!silent) setManualRankingMsg('\u5df2\u4fdd\u5b58\uff1a' + (profile.shortName || sku) + ' / ' + date);
     await renderRankingRaw();
   }
@@ -6081,12 +6462,407 @@
     enhanceAllResizableTables();
   }
 
-  function grossMarginProfileColumnOptions() {
-    return [
+  function searchAnalysisDimensionOptions() {
+    var base = [
       { key: 'mainSeries', label: '大系列' },
       { key: 'subSeries', label: '小系列' },
+      { key: 'shortName', label: '商品简称' },
+      { key: 'brand', label: '品牌' },
+      { key: 'sku', label: 'SKU' }
+    ];
+    return base.concat(skuDimensionColumns.map(function(key) {
+      return { key: key, label: skuColumnLabels[key] || key };
+    })).filter(function(item, index, arr) {
+      return item.key && arr.findIndex(function(other) { return other.key === item.key; }) === index;
+    });
+  }
+
+  function saveSearchAnalysisSettings() {
+    localStorage.setItem('jdSearchAnalysisFilterWords', JSON.stringify(searchAnalysisFilterWords));
+    localStorage.setItem('jdSearchAnalysisBrandWords', JSON.stringify(searchAnalysisBrandWords));
+    localStorage.setItem('jdSearchAnalysisDimension', searchAnalysisLastDimension || 'mainSeries');
+    localStorage.setItem('jdSearchAnalysisValue', searchAnalysisLastValue || '');
+  }
+
+  function parseWordList(text) {
+    return Array.from(new Set(String(text || '').split(/[\r\n,，;；、]+/).map(function(item) {
+      return item.trim();
+    }).filter(Boolean)));
+  }
+
+  function renderSearchAnalysisSettings() {
+    if ($('searchBrandWordsInput')) $('searchBrandWordsInput').value = searchAnalysisBrandWords.join('，');
+  }
+
+  function normalizeSearchText(text) {
+    return String(text == null ? '' : text).toLowerCase();
+  }
+
+  function hasSearchFilterWord(text) {
+    var normalized = normalizeSearchText(text);
+    return searchAnalysisFilterWords.some(function(word) {
+      word = normalizeSearchText(word).trim();
+      return word && normalized.indexOf(word) !== -1;
+    });
+  }
+
+  function hasSearchBrandWord(text) {
+    var normalized = normalizeSearchText(text);
+    return searchAnalysisBrandWords.some(function(word) {
+      word = normalizeSearchText(word).trim();
+      return word && normalized.indexOf(word) !== -1;
+    });
+  }
+
+  function resolveSearchColumn(headers, aliases) {
+    headers = headers || [];
+    for (var i = 0; i < aliases.length; i++) {
+      var alias = aliases[i];
+      var exact = headers.find(function(header) { return String(header || '').trim() === alias; });
+      if (exact) return exact;
+      var fuzzy = headers.find(function(header) { return String(header || '').indexOf(alias) !== -1; });
+      if (fuzzy) return fuzzy;
+    }
+    return '';
+  }
+
+  async function searchBrandChoices() {
+    var rows = await getAll('sku_profiles');
+    var options = searchAnalysisDimensionOptions();
+    var valuesByKey = {};
+    options.forEach(function(option) { valuesByKey[option.key] = {}; });
+    rows.forEach(function(row) {
+      options.forEach(function(option) {
+        var value = option.key === 'sku' ? row.sku : row[option.key];
+        if (value) valuesByKey[option.key][String(value).trim()] = true;
+      });
+    });
+    return {
+      options: options,
+      valuesByKey: valuesByKey
+    };
+  }
+
+  function compactSearchText(text) {
+    return normalizeSearchText(text).replace(/\s+/g, '');
+  }
+
+  function pickSearchMatchedKeyword(rows) {
+    var headers = Object.keys(rows[0] || {});
+    var keywordCol = resolveSearchColumn(headers, ['关键词', '搜索词']);
+    var visitorCol = resolveSearchColumn(headers, ['访客', '访客数']);
+    var best = { keyword: '', score: -1 };
+    rows.forEach(function(row) {
+      var keyword = String(exactRowValue(row, keywordCol) || '').trim();
+      if (!keyword || hasSearchFilterWord(keyword)) return;
+      var score = Number(parseMetricNumber(exactRowValue(row, visitorCol))) || 0;
+      if (score > best.score) best = { keyword: normalizeSearchText(keyword).trim() || keyword, score: score };
+    });
+    return best.keyword;
+  }
+
+  function guessSearchBrandValue(keyword, values) {
+    var key = compactSearchText(keyword);
+    var best = '';
+    (values || []).forEach(function(value) {
+      var text = compactSearchText(value);
+      if (!text) return;
+      if ((key && key.indexOf(text) !== -1) || (key && text.indexOf(key) !== -1)) {
+        if (!best || text.length > compactSearchText(best).length) best = value;
+      }
+    });
+    return best;
+  }
+
+  function chooseSearchBrandTargets(imports) {
+    return new Promise(async function(resolve) {
+      var modal = $('searchBrandModal');
+      var body = $('searchBrandModalBody');
+      var filterInput = $('searchBrandModalFilterInput');
+      var msg = $('searchBrandModalMsg');
+      var ok = $('searchBrandOkBtn');
+      var cancel = $('searchBrandCancelBtn');
+      if (!modal || !body || !ok || !cancel) {
+        resolve(null);
+        return;
+      }
+      var choices = await searchBrandChoices();
+      function sortedValues(key) {
+        return Object.keys(choices.valuesByKey[key] || {}).sort(function(a, b) {
+          return a.localeCompare(b, 'zh-Hans-CN', { numeric: true });
+        });
+      }
+      function cleanup(result) {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        body.removeEventListener('change', onChange);
+        body.removeEventListener('input', onInput);
+        if (filterInput) filterInput.removeEventListener('blur', onFilterBlur);
+        ok.removeEventListener('click', onOk);
+        cancel.removeEventListener('click', onCancel);
+        resolve(result);
+      }
+      function renderValueSelect(row, keepValue) {
+        var dim = row.querySelector('[data-search-brand-dim]').value;
+        var keyword = row.querySelector('[data-search-brand-keyword]').value;
+        var valueSelect = row.querySelector('[data-search-brand-value]');
+        var values = sortedValues(dim);
+        var guessed = guessSearchBrandValue(keyword, values) || keepValue || searchAnalysisLastValue || '';
+        valueSelect.innerHTML = values.map(function(value) {
+          return '<option value="' + esc(value) + '">' + esc(value) + '</option>';
+        }).join('');
+        if (guessed && values.indexOf(guessed) !== -1) valueSelect.value = guessed;
+      }
+      function renderRows() {
+        body.innerHTML = imports.map(function(item, index) {
+          var dim = item.dimension || searchAnalysisLastDimension || (choices.options[0] || {}).key || '';
+          var dimOptions = choices.options.map(function(option) {
+            return '<option value="' + esc(option.key) + '"' + (option.key === dim ? ' selected' : '') + '>' + esc(option.label) + '</option>';
+          }).join('');
+          return '<tr data-search-brand-row="' + index + '">' +
+            '<td title="' + esc(item.file.name) + '">' + esc(item.file.name) + '</td>' +
+            '<td><select class="select" data-search-brand-dim>' + dimOptions + '</select></td>' +
+            '<td><select class="select" data-search-brand-value></select></td>' +
+            '<td><input class="input" data-search-brand-keyword value="' + esc(item.matchedKeyword || '') + '" placeholder="未识别"></td>' +
+            '</tr>';
+        }).join('');
+        body.querySelectorAll('[data-search-brand-row]').forEach(function(row) {
+          renderValueSelect(row, imports[Number(row.getAttribute('data-search-brand-row'))].value);
+        });
+      }
+      function onChange(e) {
+        var row = e.target.closest('[data-search-brand-row]');
+        if (!row) return;
+        renderValueSelect(row, e.target.matches('[data-search-brand-value]') ? e.target.value : '');
+      }
+      function onInput(e) {
+        var row = e.target.closest('[data-search-brand-row]');
+        if (row && e.target.matches('[data-search-brand-keyword]')) renderValueSelect(row, '');
+      }
+      function saveModalFilterWords() {
+        if (!filterInput) return;
+        searchAnalysisFilterWords = parseWordList(filterInput.value);
+        saveSearchAnalysisSettings();
+        renderSearchAnalysisSettings();
+      }
+      function onFilterBlur() {
+        saveModalFilterWords();
+        imports.forEach(function(item) {
+          item.matchedKeyword = pickSearchMatchedKeyword(item.rows);
+          item.value = '';
+        });
+        renderRows();
+      }
+      function onOk() {
+        saveModalFilterWords();
+        var targets = [];
+        body.querySelectorAll('[data-search-brand-row]').forEach(function(row) {
+          var index = Number(row.getAttribute('data-search-brand-row'));
+          targets[index] = Object.assign({}, imports[index], {
+            dimension: row.querySelector('[data-search-brand-dim]').value,
+            value: row.querySelector('[data-search-brand-value]').value,
+            matchedKeyword: row.querySelector('[data-search-brand-keyword]').value
+          });
+        });
+        if (targets.some(function(item) { return !item.value; })) return;
+        searchAnalysisLastDimension = targets[0].dimension;
+        searchAnalysisLastValue = targets[0].value;
+        saveSearchAnalysisSettings();
+        renderSearchAnalysisSettings();
+        cleanup(targets);
+      }
+      function onCancel() { cleanup(null); }
+      if (filterInput) filterInput.value = searchAnalysisFilterWords.join('，');
+      renderRows();
+      msg.textContent = '“访客量最高的搜索词”可手动修改；“匹配产品”也可直接选择归属。';
+      msg.className = 'msg';
+      body.addEventListener('change', onChange);
+      body.addEventListener('input', onInput);
+      if (filterInput) filterInput.addEventListener('blur', onFilterBlur);
+      ok.addEventListener('click', onOk);
+      cancel.addEventListener('click', onCancel);
+      if (datePickers.searchImport && datePickers.searchData) {
+        var importRange = datePickers.searchData.getRange();
+        $('searchImportStartDate').value = importRange.start;
+        $('searchImportEndDate').value = importRange.end;
+        datePickers.searchImport.sync();
+        datePickers.searchImport.setCalendarMonth(dateFromYmd(importRange.start) || new Date());
+        datePickers.searchImport.render();
+      }
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+    });
+  }
+
+  async function saveSearchAnalysisMetrics(rows, file, snapshotId, target) {
+    target = target || {};
+    var headers = Object.keys(rows[0] || {});
+    var keywordCol = resolveSearchColumn(headers, ['关键词', '搜索词']);
+    var visitorCol = resolveSearchColumn(headers, ['访客', '访客数']);
+    var amountCol = resolveSearchColumn(headers, ['成交金额', '成交']);
+    var orderCol = resolveSearchColumn(headers, ['子单量', '订单量', '下单量']);
+    if (!keywordCol || !visitorCol || !amountCol || !orderCol) {
+      return { saved: 0, skipped: rows.length, note: '缺少关键词/访客/成交金额/订单量列；识别到的表头：' + headers.slice(0, 8).join('、') };
+    }
+    var range = datePickers.searchImport ? datePickers.searchImport.getRange() : { start: today(), end: today() };
+    var query = normalizedQueryRange(range);
+    var total = {
+      visitorCount: 0,
+      salesAmount: 0,
+      orderQty: 0,
+      keywords: {},
+      skipped: 0,
+      brandKeywords: 0,
+      categoryKeywords: 0,
+      brandVisitorCount: 0,
+      brandSalesAmount: 0,
+      brandOrderQty: 0,
+      categoryVisitorCount: 0,
+      categorySalesAmount: 0,
+      categoryOrderQty: 0
+    };
+    rows.forEach(function(row) {
+      var keyword = String(exactRowValue(row, keywordCol) || '').trim();
+      if (!keyword) {
+        total.skipped++;
+        return;
+      }
+      var visitors = Number(parseMetricNumber(exactRowValue(row, visitorCol))) || 0;
+      var amount = Number(parseMetricNumber(exactRowValue(row, amountCol))) || 0;
+      var orders = Number(parseMetricNumber(exactRowValue(row, orderCol))) || 0;
+      total.keywords[keyword] = true;
+      if (hasSearchBrandWord(keyword)) {
+        total.brandKeywords++;
+        total.brandVisitorCount += visitors;
+        total.brandSalesAmount += amount;
+        total.brandOrderQty += orders;
+      } else {
+        total.categoryKeywords++;
+        total.categoryVisitorCount += visitors;
+        total.categorySalesAmount += amount;
+        total.categoryOrderQty += orders;
+      }
+      total.visitorCount += visitors;
+      total.salesAmount += amount;
+      total.orderQty += orders;
+    });
+    var existing = await getAll('analyzed_metrics');
+    var duplicates = existing.filter(function(item) {
+      return item.sourceType === 'search_analysis' &&
+        item.startDate === query.start &&
+        item.endDate === query.end &&
+        item.dimensionKey === target.dimension &&
+        item.dimensionValue === target.value;
+    });
+    for (var i = 0; i < duplicates.length; i++) await remove('analyzed_metrics', duplicates[i].id);
+    var keywordCount = Object.keys(total.keywords).length;
+    if (!keywordCount) {
+      return { saved: 0, skipped: rows.length, replaced: duplicates.length, note: '没有可计算的搜索词' };
+    }
+    var brandConversionRate = total.brandVisitorCount ? total.brandOrderQty / total.brandVisitorCount : 0;
+    var categoryConversionRate = total.categoryVisitorCount ? total.categoryOrderQty / total.categoryVisitorCount : 0;
+    await put('analyzed_metrics', {
+      sourceType: 'search_analysis',
+      periodType: inferPeriodType(query.start, query.end),
+      startDate: query.start,
+      endDate: query.end,
+      dimensionKey: target.dimension,
+      dimensionLabel: (searchAnalysisDimensionOptions().find(function(item) { return item.key === target.dimension; }) || {}).label || target.dimension,
+      dimensionValue: target.value,
+      visitorCount: total.visitorCount,
+      salesAmount: total.salesAmount,
+      orderQty: total.orderQty,
+      keywordCount: keywordCount,
+      matchedKeyword: target.matchedKeyword || '',
+      filterWords: searchAnalysisFilterWords.slice(),
+      brandWords: searchAnalysisBrandWords.slice(),
+      brandKeywordCount: total.brandKeywords,
+      categoryKeywordCount: total.categoryKeywords,
+      brandVisitorCount: total.brandVisitorCount,
+      brandSalesAmount: total.brandSalesAmount,
+      brandOrderQty: total.brandOrderQty,
+      brandConversionRate: brandConversionRate,
+      categoryVisitorCount: total.categoryVisitorCount,
+      categorySalesAmount: total.categorySalesAmount,
+      categoryOrderQty: total.categoryOrderQty,
+      categoryConversionRate: categoryConversionRate,
+      importedAt: new Date().toISOString(),
+      snapshotId: snapshotId,
+      fileName: file.name
+    });
+    return { saved: 1, skipped: total.skipped, replaced: duplicates.length, note: '写入 1 条搜索汇总；搜索词 ' + keywordCount + ' 个；空搜索词 ' + total.skipped + ' 行' };
+  }
+
+  async function renderSearchData() {
+    if (!$('searchDataBody')) return;
+    var searchTable = $('searchDataBody').closest('table');
+    if (searchTable) {
+      searchTable.classList.remove('resizable-table');
+      var oldCols = searchTable.querySelector('colgroup');
+      if (oldCols) oldCols.remove();
+      searchTable.style.width = '';
+    }
+    var range = datePickers.searchData ? datePickers.searchData.getRange() : { start: today(), end: today() };
+    var rows = filterMetricRowsByDateRange((await getAll('analyzed_metrics')).filter(function(row) {
+      return row.sourceType === 'search_analysis';
+    }), normalizedQueryRange(range));
+    if ($('searchDataAlert')) {
+      $('searchDataAlert').className = rows.length ? 'report-data-alert ok' : 'report-data-alert warn';
+      $('searchDataAlert').textContent = rows.length ? '当前范围显示 ' + rows.length + ' 条搜索汇总。' : '当前范围暂无搜索数据。';
+    }
+    if (!rows.length) {
+      $('searchDataBody').innerHTML = '<tr><td class="empty-row" colspan="14">暂无搜索数据</td></tr>';
+      enhanceAllResizableTables();
+      return;
+    }
+    rows.sort(function(a, b) {
+      return String(b.startDate || '').localeCompare(String(a.startDate || '')) || String(a.dimensionValue || '').localeCompare(String(b.dimensionValue || ''), 'zh-Hans-CN');
+    });
+    $('searchDataBody').innerHTML = rows.map(function(row) {
+      return '<tr><td>' + esc(rangeText(row)) + '</td>' +
+        '<td>' + esc(row.dimensionLabel || row.dimensionKey || '-') + '</td>' +
+        '<td>' + esc(row.dimensionValue || '-') + '</td>' +
+        '<td>' + esc(formatMetric(row.visitorCount, 0)) + '</td>' +
+        '<td>' + esc(formatMetric(row.orderQty, 0)) + '</td>' +
+        '<td>' + esc(formatMetric(row.salesAmount, 2)) + '</td>' +
+        '<td>' + esc(formatMetric(row.categoryVisitorCount || 0, 0)) + '</td>' +
+        '<td>' + esc(formatPercent(row.categoryConversionRate || 0)) + '</td>' +
+        '<td>' + esc(formatMetric(row.categoryOrderQty || 0, 0)) + '</td>' +
+        '<td>' + esc(formatMetric(row.categorySalesAmount || 0, 2)) + '</td>' +
+        '<td>' + esc(formatMetric(row.brandVisitorCount || 0, 0)) + '</td>' +
+        '<td>' + esc(formatPercent(row.brandConversionRate || 0)) + '</td>' +
+        '<td>' + esc(formatMetric(row.brandOrderQty || 0, 0)) + '</td>' +
+        '<td>' + esc(formatMetric(row.brandSalesAmount || 0, 2)) + '</td></tr>';
+    }).join('');
+    enhanceAllResizableTables();
+  }
+
+  async function clearCurrentSearchData() {
+    var range = datePickers.searchData ? datePickers.searchData.getRange() : { start: today(), end: today() };
+    var query = normalizedQueryRange(range);
+    var rows = await getAll('analyzed_metrics');
+    var targets = rows.filter(function(row) {
+      return row.sourceType === 'search_analysis' && !(query.start && (row.endDate || row.startDate) < query.start) && !(query.end && (row.startDate || row.endDate) > query.end);
+    });
+    if (!targets.length) return;
+    if (!await confirmAction('确认清空当前搜索数据？', '将删除当前日期范围内 ' + targets.length + ' 条搜索汇总，删除后无法恢复。')) return;
+    for (var i = 0; i < targets.length; i++) await remove('analyzed_metrics', targets[i].id);
+    await renderSearchData();
+    await refreshCounts();
+  }
+
+  function grossMarginProfileColumnOptions() {
+    var fixed = [
+      { key: 'mainSeries', label: '大系列' },
+      { key: 'subSeries', label: '小系列' },
+      { key: 'brand', label: '品牌' },
       { key: 'shortName', label: '商品简称' }
     ];
+    return fixed.concat(skuDimensionColumns.map(function(key) {
+      return { key: key, label: skuColumnLabels[key] || key };
+    })).filter(function(option, index, arr) {
+      return arr.findIndex(function(item) { return item.key === option.key; }) === index;
+    });
   }
 
   function normalizeGrossMarginProfileColumns() {
@@ -6104,27 +6880,46 @@
   }
 
   function grossMarginDimensionOptions() {
-    return [
-      { key: 'sku', label: 'SKU' },
+    var profileOptions = [
       { key: 'mainSeries', label: '大系列' },
       { key: 'subSeries', label: '小系列' },
-      { key: 'shortName', label: '商品简称' },
-      { key: 'startDate', label: '日期' },
-      { key: 'grossMarginRule', label: '计算规则' },
-      { key: 'fileName', label: '来源文件' }
-    ];
+      { key: 'sku', label: 'SKU' },
+      { key: 'shortName', label: '商品简称' }
+    ].concat(skuDimensionColumns.map(function(key) {
+      return { key: key, label: skuColumnLabels[key] || key };
+    })).filter(function(option, index, arr) {
+      return arr.findIndex(function(item) {
+        return item.key === option.key;
+      }) === index;
+    });
+    return profileOptions.concat([
+      { key: 'brand', label: '品牌' },
+      { key: 'startDate', label: '日期' }
+    ]).filter(function(option, index, arr) {
+      return arr.findIndex(function(item) { return item.key === option.key; }) === index;
+    });
+  }
+
+  function grossMarginFilterableDimensionKeys() {
+    return grossMarginAvailableDimensions.filter(function(key) {
+      return key !== 'startDate';
+    });
   }
 
   function normalizeGrossMarginSelectedDimensions() {
     var allowed = grossMarginDimensionOptions().map(function(item) { return item.key; });
     grossMarginAvailableDimensions = grossMarginAvailableDimensions.filter(function(key, index, arr) {
       return allowed.indexOf(key) !== -1 && arr.indexOf(key) === index;
+    }).sort(function(a, b) {
+      return allowed.indexOf(a) - allowed.indexOf(b);
     });
     grossMarginActiveDimensions = grossMarginActiveDimensions.filter(function(key, index, arr) {
       return grossMarginAvailableDimensions.indexOf(key) !== -1 && arr.indexOf(key) === index;
+    }).sort(function(a, b) {
+      return allowed.indexOf(a) - allowed.indexOf(b);
     });
     grossMarginProfileColumns = grossMarginActiveDimensions.filter(function(key) {
-      return ['mainSeries', 'subSeries', 'shortName'].indexOf(key) !== -1;
+      return ['startDate', 'grossMarginRule', 'fileName'].indexOf(key) === -1;
     });
   }
 
@@ -6139,6 +6934,77 @@
     localStorage.setItem('jdGrossMarginActiveDimensions', JSON.stringify(grossMarginActiveDimensions));
     localStorage.setItem('jdGrossMarginSelectedDimensions', JSON.stringify(grossMarginActiveDimensions));
     localStorage.setItem('jdGrossMarginProfileColumns', JSON.stringify(grossMarginProfileColumns));
+  }
+
+  function saveGrossMarginValueFilters() {
+    localStorage.setItem('jdGrossMarginValueFilters', JSON.stringify(grossMarginValueFilters));
+  }
+
+  function grossMarginPassesValueFilters(row, profile) {
+    return grossMarginFilterableDimensionKeys().every(function(key) {
+      if (grossMarginAvailableDimensions.indexOf(key) === -1) return true;
+      var selected = grossMarginValueFilters[key] || [];
+      return !selected.length || selected.indexOf(grossMarginDimensionValue(row, profile, key)) !== -1;
+    });
+  }
+
+  function grossMarginValueFilterOptions(rows, skuMap, key) {
+    rows = Array.isArray(rows) ? rows : [];
+    if (key === 'subSeries') {
+      var mainSeries = grossMarginValueFilters.mainSeries || [];
+      if (mainSeries.length) {
+        rows = rows.filter(function(row) {
+          return mainSeries.indexOf(grossMarginDimensionValue(row, skuMap[normalizeSkuValue(row.sku)] || {}, 'mainSeries')) !== -1;
+        });
+      }
+    }
+    return Array.from(new Set(rows.map(function(row) {
+      return grossMarginDimensionValue(row, skuMap[normalizeSkuValue(row.sku)] || {}, key);
+    }).filter(Boolean))).sort(function(a, b) {
+      return a.localeCompare(b, 'zh-Hans-CN', { numeric: true });
+    });
+  }
+
+  function renderGrossMarginHeaderFilterSelect(key) {
+    if (['mainSeries', 'subSeries'].indexOf(key) === -1) return '';
+    var values = grossMarginValueFilterOptions(grossMarginLastRows, grossMarginLastSkuMap, key);
+    var selected = (grossMarginValueFilters[key] || [])[0] || '';
+    return '<br><select class="select gross-margin-header-filter" data-gross-margin-header-filter="' + esc(key) + '">' +
+      '<option value="">全部</option>' +
+      values.map(function(value) {
+        return '<option value="' + esc(value) + '"' + (value === selected ? ' selected' : '') + '>' + esc(value) + '</option>';
+      }).join('') +
+    '</select>';
+  }
+
+  function sanitizeGrossMarginValueFilters(rows, skuMap) {
+    var changed = false;
+    grossMarginFilterableDimensionKeys().forEach(function(key) {
+      var selected = grossMarginValueFilters[key] || [];
+      if (!selected.length) return;
+      var allowed = grossMarginValueFilterOptions(rows, skuMap, key);
+      var next = selected.filter(function(value) { return allowed.indexOf(value) !== -1; });
+      if (next.length) grossMarginValueFilters[key] = next;
+      else delete grossMarginValueFilters[key];
+      if (next.length !== selected.length) changed = true;
+    });
+    if (changed) saveGrossMarginValueFilters();
+  }
+
+  function renderGrossMarginValuePopover(key, rows, skuMap) {
+    var popover = $('grossMarginValuePopover');
+    if (!popover) {
+      popover = document.createElement('span');
+      popover.id = 'grossMarginValuePopover';
+      popover.className = 'report-dim-popover gross-margin-value-popover';
+      document.body.appendChild(popover);
+    }
+    var values = grossMarginValueFilterOptions(rows, skuMap, key);
+    var selected = grossMarginValueFilters[key] || [];
+    popover.innerHTML = values.length ? '<label class="report-dim-option"><input type="checkbox" data-gross-margin-value-all="' + esc(key) + '"' + (selected.length ? '' : ' checked') + '> 全部</label>' + values.map(function(value) {
+      return '<label class="report-dim-option"><input type="checkbox" data-gross-margin-value="' + esc(key) + '" value="' + esc(value) + '"' + (selected.indexOf(value) !== -1 ? ' checked' : '') + '> ' + esc(value) + '</label>';
+    }).join('') : '<span class="report-dim-empty">没有可选项</span>';
+    return popover;
   }
 
   function syncGrossMarginDimControl() {
@@ -6161,11 +7027,12 @@
   function renderGrossMarginHead() {
     normalizeGrossMarginSelectedDimensions();
     syncGrossMarginDimControl();
-    var dimensionHeads = grossMarginActiveDimensions.map(function(key) {
-      return '<th>' + esc(grossMarginDimensionLabel(key)) + '</th>';
+    var dimensions = grossMarginActiveDimensions.slice();
+    var dimensionHeads = dimensions.map(function(key) {
+      return '<th data-col-key="' + esc(key) + '">' + esc(grossMarginDimensionLabel(key)) + renderGrossMarginHeaderFilterSelect(key) + '</th>';
     }).join('');
     $('grossMarginHead').innerHTML = '<tr>' + dimensionHeads +
-      '<th>财务销量</th><th>原始毛保</th><th>广告业绩金</th><th>综合毛保</th><th>真实件收入</th><th>真实件毛保</th><th>真实收入</th><th>真实毛保</th></tr>';
+      '<th>财务销量</th><th>原始收入</th><th>原始毛保</th><th>广告业绩金</th><th>综合毛保</th><th class="gross-margin-derived-cell">真实件收入</th><th class="gross-margin-derived-cell">真实件毛保</th><th class="gross-margin-derived-cell">真实收入</th><th class="gross-margin-derived-cell">真实毛保</th></tr>';
   }
 
   function grossMarginDimensionValue(row, profile, key) {
@@ -6174,6 +7041,13 @@
     if (key === 'grossMarginRule') return row.grossMarginRule || '-';
     if (key === 'fileName') return row.fileName || '-';
     return profile[key] || '-';
+  }
+
+  function financeGiftFixedDimensions() {
+    return [
+      { key: 'sku', label: 'SKU' },
+      { key: 'shortName', label: '商品简称' }
+    ];
   }
 
   function financeGiftDimensionOptions() {
@@ -6186,9 +7060,13 @@
     var allowed = financeGiftDimensionOptions().map(function(item) { return item.key; });
     financeGiftAvailableDimensions = financeGiftAvailableDimensions.filter(function(key, index, arr) {
       return allowed.indexOf(key) !== -1 && arr.indexOf(key) === index;
+    }).sort(function(a, b) {
+      return allowed.indexOf(a) - allowed.indexOf(b);
     });
     financeGiftActiveDimensions = financeGiftActiveDimensions.filter(function(key, index, arr) {
       return financeGiftAvailableDimensions.indexOf(key) !== -1 && arr.indexOf(key) === index;
+    }).sort(function(a, b) {
+      return financeGiftAvailableDimensions.indexOf(a) - financeGiftAvailableDimensions.indexOf(b);
     });
   }
 
@@ -6200,9 +7078,12 @@
 
   function syncFinanceGiftDimControl() {
     normalizeFinanceGiftDimensions();
+    var fixedOptions = financeGiftFixedDimensions();
     var options = financeGiftDimensionOptions();
     if ($('financeGiftDimPopover')) {
-      $('financeGiftDimPopover').innerHTML = options.map(function(option) {
+      $('financeGiftDimPopover').innerHTML = fixedOptions.map(function(option) {
+        return '<label class="report-dim-option is-locked"><input type="checkbox" checked disabled>' + esc(option.label) + '</label>';
+      }).join('') + options.map(function(option) {
         return '<label class="report-dim-option"><input type="checkbox" data-finance-gift-dim="' + esc(option.key) + '"' + (financeGiftAvailableDimensions.indexOf(option.key) !== -1 ? ' checked' : '') + '>' + esc(option.label) + '</label>';
       }).join('');
     }
@@ -6211,15 +7092,47 @@
         return financeGiftAvailableDimensions.indexOf(option.key) !== -1;
       }).map(function(option) {
         return '<button class="tag gross-margin-dim-tag' + (financeGiftActiveDimensions.indexOf(option.key) !== -1 ? ' active' : '') + '" type="button" data-finance-gift-tag="' + esc(option.key) + '">' + esc(option.label) + '</button>';
-      }).join('') + '<span class="tag gross-margin-dim-tag active">SKU</span><span class="tag gross-margin-dim-tag active">商品简称</span>';
+      }).join('');
     }
   }
 
   function financeGiftRuleText(list) {
     list = Array.isArray(list) ? list : [];
     return list.length ? list.map(function(item) {
-      return normalizeSkuValue(item.sku) + ' × ' + (Number(item.qty) || 1);
+      var sku = normalizeSkuValue(item.sku);
+      var name = financeGiftSkuNameMap[sku] || '未匹配商品';
+      return name + ' * ' + (Number(item.qty) || 1);
     }).join('；') : '点击配置';
+  }
+
+  function financeGiftRuleHtml(list) {
+    return esc(financeGiftRuleText(list)).replace(/；/g, '；<br>');
+  }
+
+  function financeGiftRuleEditText(list) {
+    list = Array.isArray(list) ? list : [];
+    return list.map(function(item) {
+      return normalizeSkuValue(item.sku) + ' * ' + (Number(item.qty) || 1);
+    }).filter(function(line) {
+      return line.replace(/\s|\*/g, '');
+    }).join('\n');
+  }
+
+  function parseFinanceGiftRuleText(text) {
+    return String(text || '').split(/[\r\n；;]+/)
+      .map(function(line) {
+        line = line.trim();
+        if (!line) return null;
+        var parts = line.split(/\s*[＊*xX×]\s*/);
+        var sku = normalizeSkuValue(parts[0]);
+        var qty = parts.length > 1 ? Number(parts[1]) : 1;
+        return sku ? { sku: sku, qty: isFinite(qty) && qty > 0 ? qty : 1 } : null;
+      })
+      .filter(Boolean);
+  }
+
+  function financeGiftHelpButton(field) {
+    return '<button class="finance-gift-help-btn" type="button" data-finance-gift-help="' + esc(field) + '" title="在输入框后直接输入 SKU，每行一个，默认数量为 1，可手动修改。">!</button>';
   }
 
   function financeGiftFilterValue(row, key) {
@@ -6233,8 +7146,48 @@
     });
   }
 
+  function financeGiftRowsForFilterOptions(rows, key, filters) {
+    rows = Array.isArray(rows) ? rows : [];
+    filters = filters || financeGiftFilters || {};
+    if (key === 'subSeries') {
+      var mainSeries = filters.mainSeries || [];
+      if (mainSeries.length) {
+        rows = rows.filter(function(row) {
+          return mainSeries.indexOf(financeGiftFilterValue(row, 'mainSeries')) !== -1;
+        });
+      }
+    }
+    return rows;
+  }
+
+  function sanitizeFinanceGiftFilters(rows) {
+    rows = Array.isArray(rows) ? rows : [];
+    var next = {};
+    var changed = false;
+    Object.keys(financeGiftFilters || {}).sort(function(a, b) {
+      var order = ['mainSeries', 'subSeries'];
+      return (order.indexOf(a) === -1 ? 99 : order.indexOf(a)) - (order.indexOf(b) === -1 ? 99 : order.indexOf(b));
+    }).forEach(function(key) {
+      var selected = Array.isArray(financeGiftFilters[key]) ? financeGiftFilters[key].filter(Boolean) : [];
+      if (!selected.length) return;
+      var allowedRows = financeGiftRowsForFilterOptions(rows, key, next);
+      var allowed = allowedRows.map(function(row) {
+        return financeGiftFilterValue(row, key);
+      });
+      var valid = selected.filter(function(value, index, arr) {
+        return allowed.indexOf(value) !== -1 && arr.indexOf(value) === index;
+      });
+      if (valid.length) next[key] = valid;
+      if (valid.length !== selected.length) changed = true;
+    });
+    if (!changed && JSON.stringify(next) === JSON.stringify(financeGiftFilters || {})) return;
+    financeGiftFilters = next;
+    localStorage.setItem('jdFinanceGiftFilters', JSON.stringify(financeGiftFilters));
+  }
+
   function renderFinanceGiftFilterSelect(key, rows) {
-    var values = Array.from(new Set(rows.map(function(row) { return financeGiftFilterValue(row, key); }))).sort(function(a, b) {
+    var optionRows = financeGiftRowsForFilterOptions(rows, key);
+    var values = Array.from(new Set(optionRows.map(function(row) { return financeGiftFilterValue(row, key); }))).sort(function(a, b) {
       return a.localeCompare(b, 'zh-Hans-CN', { numeric: true });
     });
     var selected = financeGiftFilters[key] || [];
@@ -6248,8 +7201,33 @@
 
   async function loadFinanceGiftRows() {
     var skuRows = await getAll('sku_profiles');
+    var skuMap = {};
+    financeGiftSkuNameMap = {};
+    skuRows.forEach(function(row) {
+      if (row.sku) {
+        var sku = normalizeSkuValue(row.sku);
+        skuMap[sku] = row;
+        financeGiftSkuNameMap[sku] = row.shortName || '';
+      }
+    });
     var range = datePickers.financeManual ? datePickers.financeManual.getRange() : previousMonthRange();
     var query = normalizedQueryRange(range);
+    var financeRows = filterMetricRowsByDateRange(await getAll('finance_metrics'), query).filter(function(row) {
+      return row.sourceType === 'finance_gross_margin';
+    });
+    var salesQtyBySku = {};
+    financeRows.forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      if (!sku) return;
+      salesQtyBySku[sku] = (salesQtyBySku[sku] || 0) + (Number(row.salesQty) || 0);
+    });
+    var financeSkus = Array.from(new Set(financeRows.map(function(row) {
+      return normalizeSkuValue(row.sku);
+    }).filter(Boolean))).sort(function(a, b) {
+      var an = (skuMap[a] || {}).shortName || a;
+      var bn = (skuMap[b] || {}).shortName || b;
+      return an.localeCompare(bn, 'zh-Hans-CN', { numeric: true });
+    });
     var rules = await getAll('gross_margin_estimates');
     var currentRules = {};
     var previousRules = {};
@@ -6257,11 +7235,12 @@
       if (rule.startDate === query.start && rule.endDate === query.end) currentRules[normalizeSkuValue(rule.sku)] = rule;
       if (!currentRules[normalizeSkuValue(rule.sku)] && rule.endDate && rule.endDate < query.start) previousRules[normalizeSkuValue(rule.sku)] = rule;
     });
-    financeGiftDraftRows = skuRows.filter(function(row) { return row.itemType !== 'competitor'; }).map(function(row) {
-      var sku = normalizeSkuValue(row.sku);
+    financeGiftDraftRows = financeSkus.map(function(sku) {
+      var profile = skuMap[sku] || {};
       var rule = currentRules[sku] || previousRules[sku] || {};
-      return Object.assign({}, row, {
+      return Object.assign({}, profile, {
         sku: sku,
+        financeSalesQty: salesQtyBySku[sku] || 0,
         accessories: JSON.parse(JSON.stringify(rule.accessories || [])),
         gifts: JSON.parse(JSON.stringify(rule.gifts || []))
       });
@@ -6272,20 +7251,26 @@
     if (!$('financeGiftBody')) return;
     syncFinanceGiftDimControl();
     if (reload !== false) await loadFinanceGiftRows();
-    var rowsForFilters = financeGiftDraftRows.slice();
+    var rowsForFilters = financeGiftDraftRows.filter(function(row) {
+      return Number(row.financeSalesQty) > 0;
+    });
+    sanitizeFinanceGiftFilters(rowsForFilters);
     var dimensions = financeGiftActiveDimensions.slice();
     var headers = dimensions.map(function(key) {
       var label = grossMarginDimensionLabel(key);
-      return '<th>' + esc(label) + '<br>' + renderFinanceGiftFilterSelect(key, rowsForFilters) + '</th>';
-    }).join('') + '<th>SKU</th><th>商品简称</th><th>配件</th><th>赠品</th>';
+      return '<th data-col-key="' + esc(key) + '">' + esc(label) + '<br>' + renderFinanceGiftFilterSelect(key, rowsForFilters) + '</th>';
+    }).join('') + '<th>SKU</th><th>商品简称</th><th>财务销量</th><th>配件' + financeGiftHelpButton('accessories') + '</th><th>赠品' + financeGiftHelpButton('gifts') + '</th>';
     $('financeGiftHead').innerHTML = '<tr>' + headers + '</tr>';
-    var rows = financeGiftDraftRows.filter(financeGiftPassesFilters);
+    var rows = rowsForFilters.filter(financeGiftPassesFilters);
+    var emptyReason = financeGiftDraftRows.length
+      ? '当前筛选条件下没有符合的 SKU，请清空大系列 / 小系列筛选后再试。'
+      : '当前日期范围内没有已导入的毛保数据 SKU，请先导入毛保数据或调整日期范围。';
     if ($('financeGiftAlert')) {
       $('financeGiftAlert').className = rows.length ? 'report-data-alert ok' : 'report-data-alert warn';
-      $('financeGiftAlert').textContent = rows.length ? '当前显示 ' + rows.length + ' 个本品 SKU，点击配件或赠品单元格配置绑定关系。' : '暂无符合筛选的 SKU。';
+      $('financeGiftAlert').textContent = rows.length ? '当前显示 ' + rows.length + ' 个本品 SKU，点击配件或赠品单元格配置绑定关系。' : emptyReason;
     }
     if (!rows.length) {
-      $('financeGiftBody').innerHTML = '<tr><td class="empty-row" colspan="' + (dimensions.length + 4) + '">暂无符合筛选的 SKU</td></tr>';
+      $('financeGiftBody').innerHTML = '<tr><td class="empty-row" colspan="' + (dimensions.length + 5) + '">' + esc(emptyReason) + '</td></tr>';
       enhanceAllResizableTables();
       return;
     }
@@ -6294,8 +7279,9 @@
       return '<tr data-finance-gift-sku="' + esc(row.sku) + '">' + dimCells +
         '<td>' + esc(row.sku || '-') + '</td>' +
         '<td>' + esc(row.shortName || '-') + '</td>' +
-        '<td class="db-json-cell" data-finance-gift-edit="accessories">' + esc(financeGiftRuleText(row.accessories)) + '</td>' +
-        '<td class="db-json-cell" data-finance-gift-edit="gifts">' + esc(financeGiftRuleText(row.gifts)) + '</td>' +
+        '<td>' + esc(formatMetric(row.financeSalesQty, 0) || '0') + '</td>' +
+        '<td class="db-json-cell finance-gift-edit-cell" data-finance-gift-edit="accessories">' + financeGiftRuleHtml(row.accessories) + '</td>' +
+        '<td class="db-json-cell finance-gift-edit-cell" data-finance-gift-edit="gifts">' + financeGiftRuleHtml(row.gifts) + '</td>' +
       '</tr>';
     }).join('');
     enhanceAllResizableTables();
@@ -6338,6 +7324,9 @@
     var skuRows = await getAll('sku_profiles');
     var skuMap = {};
     skuRows.forEach(function(item) { skuMap[normalizeSkuValue(item.sku)] = item; });
+    grossMarginLastRows = rows.slice();
+    grossMarginLastSkuMap = skuMap;
+    sanitizeGrossMarginValueFilters(rows, skuMap);
     var rules = (await getAll('gross_margin_estimates')).filter(function(rule) {
       return rule.startDate === normalizedQueryRange(range).start && rule.endDate === normalizedQueryRange(range).end;
     });
@@ -6374,13 +7363,15 @@
       var sku = normalizeSkuValue(row.sku);
       if (dimensions.indexOf('sku') !== -1 && !sku) return;
       var profile = skuMap[sku] || {};
+      if (!grossMarginPassesValueFilters(row, profile)) return;
       var dimensionValues = dimensions.map(function(key) {
         return grossMarginDimensionValue(row, profile, key);
       });
       var groupKey = dimensionValues.length ? dimensionValues.join('\u0001') : 'summary';
-      if (!groups[groupKey]) groups[groupKey] = { dimensions: dimensionValues, salesQty: 0, rawGrossMargin: 0, adPerformanceAmount: 0, comprehensiveGrossMargin: 0, trueIncome: 0, trueGross: 0, rules: {} };
+      if (!groups[groupKey]) groups[groupKey] = { dimensions: dimensionValues, salesQty: 0, income: 0, rawGrossMargin: 0, adPerformanceAmount: 0, comprehensiveGrossMargin: 0, trueIncome: 0, trueGross: 0, rules: {} };
       var trueValues = trueGrossMarginValues(row);
       groups[groupKey].salesQty += Number(row.salesQty) || 0;
+      groups[groupKey].income += Number(row.income) || 0;
       groups[groupKey].rawGrossMargin += Number(row.rawGrossMargin) || 0;
       groups[groupKey].adPerformanceAmount += Number(row.adPerformanceAmount) || 0;
       groups[groupKey].comprehensiveGrossMargin += Number(row.comprehensiveGrossMargin) || 0;
@@ -6398,7 +7389,7 @@
         ? '当前日期范围已按 ' + dimensionText + '毛保数据。计算规则：' + (ruleNames || '未记录') + '。'
         : '当前日期范围暂无毛保数据，请先在数据导入中心导入综合毛保文件。';
     }
-    var colCount = dimensions.length + 8;
+    var colCount = dimensions.length + 9;
     if (!list.length) {
       $('grossMarginBody').innerHTML = '<tr><td class="empty-row" colspan="' + colCount + '">暂无毛保数据</td></tr>';
       enhanceAllResizableTables();
@@ -6410,15 +7401,346 @@
       }).join('');
       return '<tr>' + dimensionCells +
         '<td>' + esc(formatMetric(row.salesQty, 0)) + '</td>' +
+        '<td>' + esc(formatMetric(row.income, 2)) + '</td>' +
         '<td>' + esc(formatMetric(row.rawGrossMargin, 2)) + '</td>' +
         '<td>' + esc(formatMetric(row.adPerformanceAmount, 2)) + '</td>' +
         '<td>' + esc(formatMetric(row.comprehensiveGrossMargin, 2)) + '</td>' +
-        '<td>' + esc(formatMetric(row.salesQty ? row.trueIncome / row.salesQty : 0, 6)) + '</td>' +
-        '<td>' + esc(formatMetric(row.salesQty ? row.trueGross / row.salesQty : 0, 6)) + '</td>' +
-        '<td>' + esc(formatMetric(row.trueIncome, 6)) + '</td>' +
-        '<td>' + esc(formatMetric(row.trueGross, 6)) + '</td></tr>';
+        '<td class="gross-margin-derived-cell">' + esc(formatMetric(row.salesQty ? row.trueIncome / row.salesQty : 0, 6)) + '</td>' +
+        '<td class="gross-margin-derived-cell">' + esc(formatMetric(row.salesQty ? row.trueGross / row.salesQty : 0, 6)) + '</td>' +
+        '<td class="gross-margin-derived-cell">' + esc(formatMetric(row.trueIncome, 6)) + '</td>' +
+        '<td class="gross-margin-derived-cell">' + esc(formatMetric(row.trueGross, 6)) + '</td></tr>';
     }).join('');
     enhanceAllResizableTables();
+  }
+
+  function grossMarginDashboardHeaders(dimensions) {
+    return dimensions.map(grossMarginDimensionLabel).concat(['财务销量', '原始收入', '原始毛保', '广告业绩金', '综合毛保', '真实件收入', '真实件毛保', '真实收入', '真实毛保']);
+  }
+
+  function grossMarginDashboardMetricOptions() {
+    return [
+      { key: 'salesQty', label: '财务销量' },
+      { key: 'income', label: '原始收入' },
+      { key: 'rawGrossMargin', label: '原始毛保' },
+      { key: 'adPerformanceAmount', label: '广告业绩金' },
+      { key: 'comprehensiveGrossMargin', label: '综合毛保' },
+      { key: 'trueUnitIncome', label: '真实件收入' },
+      { key: 'trueUnitGross', label: '真实件毛保' },
+      { key: 'trueIncome', label: '真实收入' },
+      { key: 'trueGross', label: '真实毛保' }
+    ];
+  }
+
+  function grossMarginDashboardMetricValue(row, key) {
+    if (key === 'trueUnitIncome') return row.salesQty ? row.trueIncome / row.salesQty : 0;
+    if (key === 'trueUnitGross') return row.salesQty ? row.trueGross / row.salesQty : 0;
+    return Number(row[key]) || 0;
+  }
+
+  function grossMarginDashboardDenominatorOptions() {
+    return grossMarginProfileColumnOptions().filter(function(option) {
+      return option.key !== 'sku' && option.key !== 'shortName';
+    });
+  }
+
+  async function loadGrossMarginDashboardCustomFields() {
+    var saved = db && db.objectStoreNames.contains('app_settings') ? await getOne('app_settings', 'grossMarginDashboardCustomFields') : null;
+    grossMarginDashboardCustomFields = saved && Array.isArray(saved.value)
+      ? saved.value
+      : JSON.parse(localStorage.getItem('jdGrossMarginDashboardCustomFields') || '[]');
+    return grossMarginDashboardCustomFields;
+  }
+
+  async function saveGrossMarginDashboardCustomFields() {
+    localStorage.setItem('jdGrossMarginDashboardCustomFields', JSON.stringify(grossMarginDashboardCustomFields));
+    if (db && db.objectStoreNames.contains('app_settings')) {
+      await put('app_settings', {
+        key: 'grossMarginDashboardCustomFields',
+        value: grossMarginDashboardCustomFields,
+        updatedAt: new Date().toISOString()
+      });
+    }
+  }
+
+  async function loadGrossMarginDashboardRows(dimensions, filterZeroSales) {
+    var range = datePickers.grossMargin ? datePickers.grossMargin.getRange() : normalizedRange($('grossMarginStartDate').value, $('grossMarginEndDate').value || $('grossMarginStartDate').value);
+    var query = normalizedQueryRange(range);
+    var rows = filterMetricRowsByDateRange(await getAll('finance_metrics'), query).filter(function(row) {
+      return row.sourceType === 'finance_gross_margin';
+    });
+    var skuRows = await getAll('sku_profiles');
+    var skuMap = {};
+    skuRows.forEach(function(item) { skuMap[normalizeSkuValue(item.sku)] = item; });
+    var rules = (await getAll('gross_margin_estimates')).filter(function(rule) {
+      return rule.startDate === query.start && rule.endDate === query.end;
+    });
+    var ruleMap = {};
+    rules.forEach(function(rule) { ruleMap[normalizeSkuValue(rule.sku)] = rule; });
+    var metricBySku = {};
+    rows.forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      if (!metricBySku[sku]) metricBySku[sku] = { income: 0, salesQty: 0, rawGrossMargin: 0 };
+      metricBySku[sku].income += Number(row.income) || 0;
+      metricBySku[sku].salesQty += Number(row.salesQty) || 0;
+      metricBySku[sku].rawGrossMargin += Number(row.rawGrossMargin) || 0;
+    });
+    function componentUnitValue(sku, field) {
+      var metric = metricBySku[normalizeSkuValue(sku)] || {};
+      var qty = Number(metric.salesQty) || 0;
+      return qty ? (Number(metric[field]) || 0) / qty : 0;
+    }
+    var groups = {};
+    rows.forEach(function(row) {
+      var qty = Number(row.salesQty) || 0;
+      var sku = normalizeSkuValue(row.sku);
+      var profile = skuMap[sku] || {};
+      var values = dimensions.map(function(key) { return grossMarginDimensionValue(row, profile, key); });
+      var key = values.join('\u0001') || 'summary';
+      if (!groups[key]) groups[key] = { dimensions: values, dimensionValues: {}, salesQty: 0, income: 0, rawGrossMargin: 0, adPerformanceAmount: 0, comprehensiveGrossMargin: 0, trueIncome: 0, trueGross: 0 };
+      dimensions.forEach(function(dim, index) { groups[key].dimensionValues[dim] = values[index]; });
+      var unitIncome = qty ? (Number(row.income) || 0) / qty : 0;
+      var unitGross = qty ? (Number(row.rawGrossMargin) || 0) / qty : 0;
+      var rule = ruleMap[sku] || {};
+      (rule.accessories || []).concat(rule.gifts || []).forEach(function(item) {
+        var itemQty = Number(item.qty) || 1;
+        unitIncome += componentUnitValue(item.sku, 'income') * itemQty;
+        unitGross += componentUnitValue(item.sku, 'rawGrossMargin') * itemQty;
+      });
+      groups[key].salesQty += qty;
+      groups[key].income += Number(row.income) || 0;
+      groups[key].rawGrossMargin += Number(row.rawGrossMargin) || 0;
+      groups[key].adPerformanceAmount += Number(row.adPerformanceAmount) || 0;
+      groups[key].comprehensiveGrossMargin += Number(row.comprehensiveGrossMargin) || 0;
+      groups[key].trueIncome += unitIncome * qty;
+      groups[key].trueGross += unitGross * qty;
+    });
+    return Object.keys(groups).map(function(key) { return groups[key]; }).filter(function(row) {
+      return !filterZeroSales || Number(row.salesQty) !== 0;
+    }).sort(function(a, b) {
+      return (a.dimensions || []).join('').localeCompare((b.dimensions || []).join(''), 'zh-Hans-CN', { numeric: true });
+    });
+  }
+
+  function grossMarginDashboardAoa(dimensions, rows, customFields) {
+    customFields = Array.isArray(customFields) ? customFields : [];
+    var totals = {};
+    customFields.forEach(function(field) {
+      totals[field.id] = {};
+      rows.forEach(function(row) {
+        var denominator = (row.dimensionValues || {})[field.denominatorKey] || '-';
+        totals[field.id][denominator] = (totals[field.id][denominator] || 0) + grossMarginDashboardMetricValue(row, field.numeratorKey);
+      });
+    });
+    return [grossMarginDashboardHeaders(dimensions).concat(customFields.map(function(field) { return field.name || '占比'; }))].concat(rows.map(function(row) {
+      return (row.dimensions || []).concat([
+        row.salesQty,
+        row.income,
+        row.rawGrossMargin,
+        row.adPerformanceAmount,
+        row.comprehensiveGrossMargin,
+        row.salesQty ? row.trueIncome / row.salesQty : 0,
+        row.salesQty ? row.trueGross / row.salesQty : 0,
+        row.trueIncome,
+        row.trueGross
+      ]).concat(customFields.map(function(field) {
+        var denominator = (row.dimensionValues || {})[field.denominatorKey] || '-';
+        var total = totals[field.id] && totals[field.id][denominator];
+        return total ? grossMarginDashboardMetricValue(row, field.numeratorKey) / total : 0;
+      }));
+    }));
+  }
+
+  async function buildGrossMarginDashboardWorkbook() {
+    if (!window.XLSX) {
+      if ($('grossMarginDashboardMsg')) $('grossMarginDashboardMsg').textContent = '表格组件还没加载完成，请稍后重试。';
+      return null;
+    }
+    var mainDimensions = ['mainSeries'];
+    var detailDimensions = ['mainSeries', 'subSeries', 'sku', 'shortName'];
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(grossMarginDashboardAoa(mainDimensions, await loadGrossMarginDashboardRows(mainDimensions, false), [])), '大系列');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(grossMarginDashboardAoa(detailDimensions, await loadGrossMarginDashboardRows(detailDimensions, true), grossMarginDashboardCustomFields)), '明细');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([]), '模板');
+    return wb;
+  }
+
+  async function exportGrossMarginDashboardTemplate() {
+    await loadGrossMarginDashboardCustomFields();
+    var wb = await buildGrossMarginDashboardWorkbook();
+    if (!wb) return;
+    var range = datePickers.grossMargin ? datePickers.grossMargin.getRange() : normalizedQueryRange({});
+    XLSX.writeFile(wb, '毛保看板模板_' + (range.start || today()) + '_' + (range.end || range.start || today()) + '.xlsx', { cellStyles: true });
+    if ($('grossMarginDashboardMsg')) $('grossMarginDashboardMsg').textContent = '已导出模板。';
+  }
+
+  function grossMarginDashboardDefaultFieldName(numeratorKey, denominatorKey) {
+    var metric = grossMarginDashboardMetricOptions().find(function(item) { return item.key === numeratorKey; }) || { label: '指标' };
+    return grossMarginDimensionLabel(denominatorKey) + metric.label + '占比';
+  }
+
+  function renderGrossMarginDashboardFieldRows(draft) {
+    var metrics = grossMarginDashboardMetricOptions();
+    var denominators = grossMarginDashboardDenominatorOptions();
+    $('grossMarginDashboardFieldBody').innerHTML = draft.map(function(field, index) {
+      return '<tr data-gross-margin-dashboard-field-row="' + index + '" data-field-id="' + esc(field.id || '') + '">' +
+        '<td><input class="input" data-gross-margin-dashboard-field-name data-manual-name="' + (field.manualName ? 'true' : '') + '" value="' + esc(field.name || '') + '" placeholder="例如：小系列销量占比"></td>' +
+        '<td>占比</td>' +
+        '<td><select class="select" data-gross-margin-dashboard-field-numerator>' + metrics.map(function(option) {
+          return '<option value="' + esc(option.key) + '"' + (field.numeratorKey === option.key ? ' selected' : '') + '>' + esc(option.label) + '</option>';
+        }).join('') + '</select></td>' +
+        '<td><select class="select" data-gross-margin-dashboard-field-denominator>' + denominators.map(function(option) {
+          return '<option value="' + esc(option.key) + '"' + (field.denominatorKey === option.key ? ' selected' : '') + '>' + esc(option.label) + '</option>';
+        }).join('') + '</select></td>' +
+        '<td><button class="icon-btn row-delete-btn" data-gross-margin-dashboard-field-delete type="button">' + iconTrash() + '</button></td>' +
+      '</tr>';
+    }).join('') || '<tr><td class="empty-row" colspan="5">暂无自定义字段，点击 + 新增。</td></tr>';
+  }
+
+  async function openGrossMarginDashboardFieldModal() {
+    await loadGrossMarginDashboardCustomFields();
+    var modal = $('grossMarginDashboardFieldModal');
+    if (!modal) return exportGrossMarginDashboardTemplate();
+    var draft = JSON.parse(JSON.stringify(grossMarginDashboardCustomFields || []));
+    function add() {
+      var metric = grossMarginDashboardMetricOptions()[0] || {};
+      var denominator = grossMarginDashboardDenominatorOptions()[0] || {};
+      var numeratorKey = metric.key || 'salesQty';
+      var denominatorKey = denominator.key || 'mainSeries';
+      draft.push({ id: 'field_' + Date.now() + '_' + draft.length, name: grossMarginDashboardDefaultFieldName(numeratorKey, denominatorKey), manualName: false, type: 'ratio', numeratorKey: numeratorKey, denominatorKey: denominatorKey });
+      renderGrossMarginDashboardFieldRows(draft);
+    }
+    function syncDraft() {
+      draft = Array.from($('grossMarginDashboardFieldBody').querySelectorAll('[data-gross-margin-dashboard-field-row]')).map(function(tr, index) {
+        var numeratorKey = tr.querySelector('[data-gross-margin-dashboard-field-numerator]').value;
+        var denominatorKey = tr.querySelector('[data-gross-margin-dashboard-field-denominator]').value;
+        var nameInput = tr.querySelector('[data-gross-margin-dashboard-field-name]');
+        var name = nameInput.value.trim() || grossMarginDashboardDefaultFieldName(numeratorKey, denominatorKey);
+        return { id: tr.dataset.fieldId || draft[index].id || ('field_' + Date.now() + '_' + index), name: name, manualName: nameInput.dataset.manualName === 'true', type: 'ratio', numeratorKey: numeratorKey, denominatorKey: denominatorKey };
+      });
+    }
+    async function ok() {
+      syncDraft();
+      grossMarginDashboardCustomFields = draft;
+      await saveGrossMarginDashboardCustomFields();
+      close();
+      await exportGrossMarginDashboardTemplate();
+    }
+    function close() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      $('addGrossMarginDashboardFieldBtn').removeEventListener('click', add);
+      $('grossMarginDashboardFieldOkBtn').removeEventListener('click', ok);
+      $('grossMarginDashboardFieldCancelBtn').removeEventListener('click', close);
+    }
+    $('grossMarginDashboardFieldBody').onclick = function(e) {
+      if (!e.target.closest('[data-gross-margin-dashboard-field-delete]')) return;
+      var tr = e.target.closest('[data-gross-margin-dashboard-field-row]');
+      draft.splice(Number(tr.getAttribute('data-gross-margin-dashboard-field-row')), 1);
+      renderGrossMarginDashboardFieldRows(draft);
+    };
+    $('grossMarginDashboardFieldBody').onchange = function(e) {
+      if (!e.target.matches('[data-gross-margin-dashboard-field-numerator], [data-gross-margin-dashboard-field-denominator]')) return;
+      var tr = e.target.closest('[data-gross-margin-dashboard-field-row]');
+      var nameInput = tr && tr.querySelector('[data-gross-margin-dashboard-field-name]');
+      if (!nameInput || nameInput.dataset.manualName === 'true') return;
+      nameInput.value = grossMarginDashboardDefaultFieldName(
+        tr.querySelector('[data-gross-margin-dashboard-field-numerator]').value,
+        tr.querySelector('[data-gross-margin-dashboard-field-denominator]').value
+      );
+    };
+    $('grossMarginDashboardFieldBody').oninput = function(e) {
+      if (!e.target.matches('[data-gross-margin-dashboard-field-name]')) return;
+      e.target.dataset.manualName = e.target.value.trim() ? 'true' : '';
+    };
+    renderGrossMarginDashboardFieldRows(draft);
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    $('addGrossMarginDashboardFieldBtn').addEventListener('click', add);
+    $('grossMarginDashboardFieldOkBtn').addEventListener('click', ok);
+    $('grossMarginDashboardFieldCancelBtn').addEventListener('click', close);
+  }
+
+  async function refreshGrossMarginDashboardPreviewWorkbook() {
+    if (!grossMarginDashboardTemplateWorkbook) return null;
+    var data = await buildGrossMarginDashboardWorkbook();
+    if (!data) return null;
+    var preview = cloneWorkbookForPreview(grossMarginDashboardTemplateWorkbook);
+    (data.SheetNames || []).forEach(function(name) {
+      if (name !== '模板') upsertPreviewSheet(preview, name, data.Sheets[name]);
+    });
+    if (preview.Sheets['明细表'] && !preview.Sheets['明细']) {
+      preview.Sheets['明细'] = preview.Sheets['明细表'];
+      preview.SheetNames = (preview.SheetNames || []).map(function(name) { return name === '明细表' ? '明细' : name; });
+      delete preview.Sheets['明细表'];
+    }
+    preview.SheetNames = ['大系列', '明细', '模板'].filter(function(name) {
+      return preview.Sheets[name];
+    }).concat((preview.SheetNames || []).filter(function(name) {
+      return ['大系列', '明细', '模板'].indexOf(name) === -1;
+    }));
+    if (preview.Sheets['模板']) {
+      preview.Sheets['模板'] = cloneWorksheet(preview.Sheets['模板']);
+      applyReportTemplateFormulas(preview, '模板');
+    }
+    grossMarginDashboardPreviewWorkbook = preview;
+    return preview;
+  }
+
+  function renderGrossMarginDashboardPreview(sheetName) {
+    var output = $('grossMarginDashboardOutput');
+    if (!output) return;
+    var workbook = grossMarginDashboardPreviewWorkbook || grossMarginDashboardTemplateWorkbook;
+    if (!workbook) {
+      output.innerHTML = '<div class="report-template-empty">导出模板后，在 Excel 的“模板”页编辑，再导入即可预览。</div>';
+      return;
+    }
+    var names = workbook.SheetNames || [];
+    grossMarginDashboardActiveSheet = sheetName || grossMarginDashboardActiveSheet || names[0];
+    if (names.indexOf(grossMarginDashboardActiveSheet) === -1) grossMarginDashboardActiveSheet = names[0];
+    var tabs = '<div class="report-sheet-tabs">' + names.map(function(name) {
+      var className = 'report-sheet-tab' + (name === '模板' ? ' template fixed' : '') + (name === grossMarginDashboardActiveSheet ? ' active' : '');
+      return '<button class="' + className + '" type="button" data-gross-margin-dashboard-sheet="' + esc(name) + '">' + esc(name) + '</button>';
+    }).join('') + '</div>';
+    var ws = workbook.Sheets[grossMarginDashboardActiveSheet];
+    output.innerHTML = tabs + '<div class="report-template-preview">' + (ws ? XLSX.utils.sheet_to_html(ws, { editable: false }) : '<div class="report-template-empty">当前标签页为空。</div>') + '</div>';
+    normalizeTemplatePreviewLeadingZeros(output);
+  }
+
+  function normalizeTemplatePreviewLeadingZeros(root) {
+    if (!root) return;
+    root.querySelectorAll('.report-template-preview td, .report-template-preview th').forEach(function(cell) {
+      var text = String(cell.textContent || '').trim();
+      if (!/^-?\.\d/.test(text)) return;
+      cell.textContent = text.replace(/^-\./, '-0.').replace(/^\./, '0.');
+    });
+  }
+
+  async function importGrossMarginDashboardTemplate(file) {
+    if (!file || !window.XLSX) return;
+    var loaded = await new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function() {
+        try {
+          var bytes = new Uint8Array(reader.result);
+          var binary = '';
+          for (var i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+          resolve({
+            base64: btoa(binary),
+            workbook: XLSX.read(reader.result, { type: 'array', cellDates: true, cellFormula: true, cellStyles: true, cellNF: true })
+          });
+        }
+        catch (err) { reject(err); }
+      };
+      reader.onerror = function() { reject(reader.error); };
+      reader.readAsArrayBuffer(file);
+    });
+    grossMarginDashboardTemplateWorkbook = loaded.workbook;
+    grossMarginDashboardTemplateOriginalBase64 = loaded.base64 || '';
+    grossMarginDashboardActiveSheet = loaded.workbook.SheetNames[0];
+    var saved = await saveGrossMarginDashboardTemplateWorkbook();
+    await refreshGrossMarginDashboardPreviewWorkbook();
+    renderGrossMarginDashboardPreview(grossMarginDashboardActiveSheet);
+    if ($('grossMarginDashboardMsg')) $('grossMarginDashboardMsg').textContent = saved ? '已导入并保存模板：' + file.name : '已导入模板，但本地保存失败：' + file.name;
   }
 
   async function clearCurrentGrossMarginRows() {
@@ -7215,6 +8537,11 @@
     }
     var estimateColspan = (estimateViewMode === 'product' ? 7 : 8) + getSelectedEstimateAttributes().length + 1;
     if (estimateViewMode === 'date') {
+      var autoGeneratedForDate = await autoGenerateMissingEstimatesForReport(range);
+      if (autoGeneratedForDate) {
+        await renderEstimatesDb();
+        return;
+      }
       var dateRows = filterMetricRowsByDateRange(rows, range).filter(function(row) {
         var profile = skuMap[normalizeSkuValue(row.sku)] || {};
         return !estimateTrackedOnly || profile.isTrackedCompetitor;
@@ -7748,7 +9075,7 @@
       var hasValue = false;
       for (var c = minCol; c <= maxCol; c++) {
         var cell = ws[XLSX.utils.encode_cell({ r: r, c: c })];
-        var value = cell ? (cell.v instanceof Date ? cell.v : (cell.w != null ? cell.w : cell.v)) : '';
+        var value = cell ? (cell.v instanceof Date ? cell.v : (/e\+/i.test(String(cell.w || '')) && cell.v != null ? cell.v : (cell.w != null ? cell.w : cell.v))) : '';
         if (value != null && String(value).trim() !== '') hasValue = true;
         row.push(value == null ? '' : value);
       }
@@ -8000,7 +9327,12 @@
   }
 
   function normalizeSkuValue(value) {
-    return String(value == null ? '' : value).trim().replace(/\.0$/, '');
+    var text = String(value == null ? '' : value).trim().replace(/\.0$/, '');
+    if (/^\d+(?:\.\d+)?e\+\d+$/i.test(text)) {
+      var expanded = Number(text).toLocaleString('fullwide', { useGrouping: false, maximumFractionDigits: 0 });
+      if (/^\d+$/.test(expanded)) return expanded;
+    }
+    return text;
   }
 
   function normalizeImportedDate(value) {
@@ -8479,6 +9811,105 @@
     };
   }
 
+  async function handleSearchImportFiles(files) {
+    files = Array.prototype.slice.call(files || []).filter(Boolean);
+    if (!files.length) return;
+    var uiMsg = $('searchImportMsg');
+    var summary = $('searchImportSummary');
+    var summaryText = $('searchImportSummaryText');
+    if (uiMsg) {
+      uiMsg.textContent = '正在读取 ' + files.length + ' 个搜索数据文件...';
+      uiMsg.className = 'msg';
+    }
+    if (summary && summaryText) {
+      summary.className = 'import-summary show';
+      summaryText.textContent = '正在处理 ' + files.length + ' 个文件...';
+    }
+    var results = [];
+    var imports = [];
+    for (var pre = 0; pre < files.length; pre++) {
+      try {
+        var parsedRows = await parseWorkbook(files[pre]);
+        imports.push({ file: files[pre], rows: parsedRows, matchedKeyword: pickSearchMatchedKeyword(parsedRows) });
+      } catch (err) {
+        await put('raw_snapshots', {
+          sourceType: 'search_analysis',
+          periodType: 'unknown',
+          startDate: '',
+          endDate: '',
+          fileName: files[pre].name,
+          importedAt: new Date().toISOString(),
+          rowCount: 0,
+          detectNote: err.message,
+          importStatus: 'failed',
+          statusNote: err.message
+        });
+        results.push({ ok: false, fileName: files[pre].name, error: err.message || String(err) });
+      }
+    }
+    if (!imports.length) return;
+    var targets = await chooseSearchBrandTargets(imports);
+    if (!targets) return;
+    for (var i = 0; i < targets.length; i++) {
+      var target = targets[i];
+      var file = target.file;
+      try {
+        var rows = target.rows;
+        var range = datePickers.searchImport ? datePickers.searchImport.getRange() : { start: today(), end: today() };
+        var query = normalizedQueryRange(range);
+        var snapshotRecord = {
+          sourceType: 'search_analysis',
+          periodType: inferPeriodType(query.start, query.end),
+          startDate: query.start,
+          endDate: query.end,
+          fileName: file.name,
+          importedAt: new Date().toISOString(),
+          rowCount: rows.length,
+          detectNote: '按搜索分析导入',
+          importStatus: 'processing',
+          statusNote: '按搜索分析导入'
+        };
+        var snapshotId = await put('raw_snapshots', snapshotRecord);
+        var result = await saveSearchAnalysisMetrics(rows, file, snapshotId, target);
+        snapshotRecord.id = snapshotId;
+        snapshotRecord.importStatus = result.saved ? 'success' : 'failed';
+        snapshotRecord.statusNote = result.note;
+        await put('raw_snapshots', snapshotRecord);
+        results.push({ ok: !!result.saved, fileName: file.name, importResult: result });
+      } catch (err) {
+        await put('raw_snapshots', {
+          sourceType: 'search_analysis',
+          periodType: 'unknown',
+          startDate: '',
+          endDate: '',
+          fileName: file.name,
+          importedAt: new Date().toISOString(),
+          rowCount: 0,
+          detectNote: err.message,
+          importStatus: 'failed',
+          statusNote: err.message
+        });
+        results.push({ ok: false, fileName: file.name, error: err.message || String(err) });
+      }
+    }
+    var success = results.filter(function(item) { return item.ok; }).length;
+    var failed = results.length - success;
+    if (uiMsg) {
+      uiMsg.textContent = failed ? '处理完成，成功 ' + success + ' 个，失败 ' + failed + ' 个。' : '搜索数据导入完成。';
+      uiMsg.className = 'msg' + (failed ? ' err' : ' ok');
+    }
+    if (summary && summaryText) {
+      summary.className = 'import-summary show ' + (failed ? 'err' : 'ok');
+      summaryText.textContent = results.map(function(item) {
+        return item.fileName + '：' + (item.importResult ? item.importResult.note : item.error);
+      }).join('\n');
+    }
+    await renderSearchData();
+    await renderSnapshots();
+    await renderDbBrowser();
+    await refreshCounts();
+  }
+
   function sheetNameIncludes(sheet, names) {
     var name = String(sheet && sheet.name || '');
     return names.some(function(keyword) { return name.indexOf(keyword) !== -1; });
@@ -8709,7 +10140,26 @@
     box.className = 'import-summary show ' + (failedCount ? 'err' : 'ok');
     text.textContent = failedCount
       ? '已处理 ' + results.length + ' 个文件，成功 ' + successCount + ' 个，失败 ' + failedCount + ' 个。'
-      : '已处理 ' + results.length + ' 个文件，全部导入成功。' + (replacedNotes.length ? ' ' + replacedNotes.join('；') + '。' : '');
+      : '已处理 ' + results.length + ' 个文件，全部导入成功。' + (replacedNotes.length ? '\n' + replacedNotes.join('。\n') + '。' : '');
+  }
+
+  function syncFinanceGrossMarginRangeAfterImport(results) {
+    var ranges = (results || []).filter(function(item) {
+      var meta = item && item.meta;
+      return item && item.importStatus !== 'failed' && meta && meta.sourceType === 'finance_gross_margin' && meta.startDate;
+    }).map(function(item) {
+      return { start: item.meta.startDate, end: item.meta.endDate || item.meta.startDate };
+    });
+    if (!ranges.length) return false;
+    var start = ranges.map(function(range) { return range.start; }).sort()[0];
+    var end = ranges.map(function(range) { return range.end; }).sort().pop();
+    [datePickers.financeManual, datePickers.grossMargin].forEach(function(picker) {
+      if (!picker) return;
+      picker.setRange(start, end, { silent: true });
+      picker.setCalendarMonth(dateFromYmd(start) || new Date());
+      picker.render();
+    });
+    return true;
   }
 
 
@@ -8732,8 +10182,9 @@
       try {
         var fileRuleType = detectSourceTypeByFileRules(file);
         if (fileRuleType === 'finance_gross_margin_order' || fileRuleType === 'finance_gross_margin_ad') fileRuleType = 'finance_gross_margin';
-        if (scope === 'finance' && fileRuleType !== 'finance_gross_margin') throw new Error('当前财务数据导入仅支持毛保数据文件：' + file.name);
+        if (scope === 'finance' && fileRuleType !== 'finance_gross_margin') throw new Error('当前毛保数据导入仅支持毛保数据文件：' + file.name);
         if (scope !== 'finance' && fileRuleType === 'finance_gross_margin') throw new Error('毛保数据请到财务数据的数据导入页导入：' + file.name);
+        if (fileRuleType === 'search_analysis') throw new Error('搜索分析数据请到左侧“其他分析 > 搜索导入与分析”页导入：' + file.name);
         var grossMarginRule = fileRuleType === 'finance_gross_margin' ? await chooseGrossMarginRule(file.name) : '';
         var rows = await parseWorkbook(file);
         var meta = detectImportMeta(file, rows);
@@ -8826,8 +10277,10 @@
       ui.msg.textContent = '';
       ui.msg.className = 'msg';
     }
+    var syncedFinanceRange = scope === 'finance' && syncFinanceGrossMarginRangeAfterImport(results);
     await renderSnapshots();
     await renderRankingRaw();
+    if (syncedFinanceRange) await renderFinanceGiftRules();
     await renderGrossMarginData();
     await refreshCounts();
   }
@@ -9656,6 +11109,7 @@
       ? '<div class="report-template-empty">' + (reportTemplateLoading ? '正在加载模板预览，请稍等…' : '尚未导入模板，无法显示自定义报表。') + '</div>'
       : (ws ? XLSX.utils.sheet_to_html(ws, { editable: false }) : '<div class="report-template-empty">当前标签页为空。</div>');
     $('reportOutput').innerHTML = tabs + '<div class="report-template-preview">' + html + '</div>';
+    normalizeTemplatePreviewLeadingZeros($('reportOutput'));
     enhanceReportTemplatePreview();
     syncReportQuickCopyToggle();
   }
@@ -10524,6 +11978,8 @@
   function normalizePageHash(page) {
     if (page === 'dashboard') return 'import';
     if (page === 'import-setting') return 'import-settings';
+    if (page === 'finance-import') return 'finance-data';
+    if (page === 'search-data') return 'search-import';
     return page || 'import';
   }
 
@@ -10555,9 +12011,14 @@
       renderManualRankingEntry();
       renderAllImportMappings();
     }
-    if (page === 'finance-import') {
+    if (page === 'finance-data') {
       renderAllImportMappings();
       renderFinanceGiftRules(false);
+      renderGrossMarginData();
+    }
+    if (page === 'search-import') {
+      renderSearchAnalysisSettings();
+      renderSearchData();
     }
     if (page === 'import-settings') {
       renderAllImportMappings();
@@ -10977,6 +12438,31 @@
       onChange: function() { renderGrossMarginData(); }
     },
     {
+      key: 'searchImport',
+      label: '导入日期范围',
+      rootId: 'searchImportDatePickerField',
+      inputId: 'searchImportDateInput',
+      startId: 'searchImportStartDate',
+      endId: 'searchImportEndDate',
+      prevId: 'searchImportDatePrev',
+      nextId: 'searchImportDateNext',
+      triggerId: 'searchImportDateTrigger',
+      popoverId: 'searchImportDatePopover'
+    },
+    {
+      key: 'searchData',
+      label: '日期范围',
+      rootId: 'searchDataDatePickerField',
+      inputId: 'searchDataDateInput',
+      startId: 'searchDataStartDate',
+      endId: 'searchDataEndDate',
+      prevId: 'searchDataDatePrev',
+      nextId: 'searchDataDateNext',
+      triggerId: 'searchDataDateTrigger',
+      popoverId: 'searchDataDatePopover',
+      onChange: function() { renderSearchData(); }
+    },
+    {
       key: 'financeManual',
       label: '日期范围',
       labelTag: 'span',
@@ -11107,22 +12593,69 @@
       if (!key) return;
       grossMarginAvailableDimensions = grossMarginAvailableDimensions.filter(function(item) { return item !== key; });
       grossMarginActiveDimensions = grossMarginActiveDimensions.filter(function(item) { return item !== key; });
-      if (e.target.checked) grossMarginAvailableDimensions.push(key);
+      if (e.target.checked) {
+        grossMarginAvailableDimensions.push(key);
+      } else {
+        delete grossMarginValueFilters[key];
+        saveGrossMarginValueFilters();
+      }
       saveGrossMarginSelectedDimensions();
       renderGrossMarginData();
       $('grossMarginDimPopover').classList.add('open');
     });
   }
+  if ($('grossMarginHead')) {
+    $('grossMarginHead').addEventListener('change', function(e) {
+      var key = e.target.getAttribute('data-gross-margin-header-filter');
+      if (!key) return;
+      var value = e.target.value || '';
+      if (value) grossMarginValueFilters[key] = [value];
+      else delete grossMarginValueFilters[key];
+      if (key === 'mainSeries') delete grossMarginValueFilters.subSeries;
+      saveGrossMarginValueFilters();
+      renderGrossMarginData();
+    });
+  }
   if ($('grossMarginDimTags')) {
     $('grossMarginDimTags').addEventListener('click', function(e) {
-      var key = e.target.getAttribute('data-gross-margin-tag');
+      var tag = e.target.closest('[data-gross-margin-tag]');
+      var key = tag && tag.getAttribute('data-gross-margin-tag');
       if (!key) return;
-      grossMarginActiveDimensions = grossMarginActiveDimensions.filter(function(item) { return item !== key; });
-      if (!e.target.classList.contains('active')) grossMarginActiveDimensions.push(key);
+      if (grossMarginActiveDimensions.indexOf(key) === -1) {
+        grossMarginActiveDimensions.push(key);
+      } else {
+        grossMarginActiveDimensions = grossMarginActiveDimensions.filter(function(item) { return item !== key; });
+        delete grossMarginValueFilters[key];
+        saveGrossMarginValueFilters();
+      }
       saveGrossMarginSelectedDimensions();
       renderGrossMarginData();
     });
   }
+  document.addEventListener('change', async function(e) {
+    var all = e.target.getAttribute('data-gross-margin-value-all');
+    var key = all || e.target.getAttribute('data-gross-margin-value');
+    if (!key) return;
+    var popover = e.target.closest('#grossMarginValuePopover');
+    if (!popover) return;
+    if (all) {
+      delete grossMarginValueFilters[key];
+    } else {
+      var checked = Array.from(popover.querySelectorAll('[data-gross-margin-value="' + key + '"]:checked')).map(function(input) {
+        return input.value;
+      });
+      if (checked.length) grossMarginValueFilters[key] = checked;
+      else delete grossMarginValueFilters[key];
+    }
+    saveGrossMarginValueFilters();
+    var left = popover.style.left;
+    var top = popover.style.top;
+    await renderGrossMarginData();
+    var nextPopover = renderGrossMarginValuePopover(key, grossMarginLastRows, grossMarginLastSkuMap);
+    nextPopover.style.left = left;
+    nextPopover.style.top = top;
+    nextPopover.classList.add('open');
+  });
   if ($('analyzedDimList')) {
     $('analyzedDimList').addEventListener('click', function(e) {
       var addBtn = e.target.closest('#addAnalyzedDimBtn');
@@ -11311,15 +12844,26 @@
   function editFinanceGiftRule(row, field) {
     var modal = $('financeGiftRuleModal');
     var body = $('financeGiftRuleModalBody');
-    if (!modal || !body) return;
+    var pasteInput = $('financeGiftRulePasteInput');
+    if (!modal || !body || !pasteInput) return;
     var title = field === 'gifts' ? '配置赠品' : '配置配件';
     $('financeGiftRuleTitle').textContent = title;
     $('financeGiftRuleText').textContent = '当前主 SKU：' + (row.sku || '-') + '。按 SKU 和数量录入，数量默认为 1。';
     var draft = JSON.parse(JSON.stringify(row[field] && row[field].length ? row[field] : [{ sku: '', qty: 1 }]));
+    function shortNamePreviewText(sku) {
+      sku = normalizeSkuValue(sku);
+      return sku && financeGiftSkuNameMap[sku] ? sku + '(' + financeGiftSkuNameMap[sku] + ')' : sku;
+    }
+    function setSkuInputDisplay(input, editing) {
+      if (!input) return;
+      var raw = normalizeSkuValue(input.dataset.rawSku != null ? input.dataset.rawSku : input.value);
+      input.dataset.rawSku = raw;
+      input.value = editing ? raw : shortNamePreviewText(raw);
+    }
     function renderRows() {
       body.innerHTML = draft.map(function(item, index) {
         return '<tr data-finance-gift-rule-row="' + index + '">' +
-          '<td><input class="input" data-finance-gift-rule-sku value="' + esc(item.sku || '') + '" placeholder="SKU"></td>' +
+          '<td><input class="input" data-finance-gift-rule-sku data-raw-sku="' + esc(normalizeSkuValue(item.sku || '')) + '" value="' + esc(shortNamePreviewText(item.sku || '')) + '" placeholder="SKU"></td>' +
           '<td><input class="input" data-finance-gift-rule-qty type="number" min="0" step="0.01" value="' + esc(item.qty || 1) + '"></td>' +
           '<td><button class="icon-btn row-delete-btn" data-finance-gift-rule-delete type="button">' + iconTrash() + '</button></td>' +
         '</tr>';
@@ -11328,23 +12872,56 @@
     function syncDraft() {
       body.querySelectorAll('[data-finance-gift-rule-row]').forEach(function(tr) {
         var index = Number(tr.getAttribute('data-finance-gift-rule-row'));
+        var skuInput = tr.querySelector('[data-finance-gift-rule-sku]');
         draft[index] = {
-          sku: normalizeSkuValue(tr.querySelector('[data-finance-gift-rule-sku]').value),
+          sku: normalizeSkuValue((skuInput && skuInput.dataset.rawSku) || (skuInput && skuInput.value) || ''),
           qty: Number(tr.querySelector('[data-finance-gift-rule-qty]').value) || 1
         };
       });
     }
-    function close(save) {
+    function parsePastedSkus(text) {
+      return Array.from(new Set(String(text || '')
+        .split(/[\r\n\t,，;；\s]+/)
+        .map(function(part) {
+          return normalizeSkuValue(String(part || '').replace(/[（(].*$/, ''));
+        })
+        .filter(Boolean)));
+    }
+    function importPastedSkus(text) {
+      var skus = parsePastedSkus(text);
+      if (!skus.length) return;
+      syncDraft();
+      var existing = {};
+      draft.forEach(function(item) {
+        var sku = normalizeSkuValue(item && item.sku);
+        if (sku) existing[sku] = true;
+      });
+      var next = draft.filter(function(item) { return normalizeSkuValue(item && item.sku); });
+      skus.forEach(function(sku) {
+        if (existing[sku]) return;
+        existing[sku] = true;
+        next.push({ sku: sku, qty: 1 });
+      });
+      draft = next.length ? next : [{ sku: '', qty: 1 }];
+      renderRows();
+    }
+    async function close(save) {
       modal.classList.remove('open');
       modal.setAttribute('aria-hidden', 'true');
       $('financeGiftRuleCancelBtn').removeEventListener('click', cancel);
       $('financeGiftRuleOkBtn').removeEventListener('click', ok);
       $('addFinanceGiftRuleRowBtn').removeEventListener('click', add);
       body.removeEventListener('click', del);
+      body.removeEventListener('input', onInput);
+      body.removeEventListener('focusin', onFocusIn);
+      body.removeEventListener('focusout', onFocusOut);
+      pasteInput.removeEventListener('paste', onPaste);
+      pasteInput.removeEventListener('change', onPasteChange);
       if (save) {
         syncDraft();
         row[field] = draft.filter(function(item) { return item.sku; });
-        renderFinanceGiftRules(false);
+        await renderFinanceGiftRules(false);
+        await saveFinanceGiftRules();
       }
     }
     function cancel() { close(false); }
@@ -11361,13 +12938,42 @@
       if (!draft.length) draft.push({ sku: '', qty: 1 });
       renderRows();
     }
+    function onInput(e) {
+      if (!e.target.matches('[data-finance-gift-rule-sku]')) return;
+      e.target.dataset.rawSku = normalizeSkuValue(e.target.value);
+    }
+    function onFocusIn(e) {
+      if (!e.target.matches('[data-finance-gift-rule-sku]')) return;
+      setSkuInputDisplay(e.target, true);
+    }
+    function onFocusOut(e) {
+      if (!e.target.matches('[data-finance-gift-rule-sku]')) return;
+      e.target.dataset.rawSku = normalizeSkuValue(e.target.value);
+      setSkuInputDisplay(e.target, false);
+    }
+    function onPaste() {
+      setTimeout(function() {
+        importPastedSkus(pasteInput.value);
+        pasteInput.value = '';
+      }, 0);
+    }
+    function onPasteChange() {
+      importPastedSkus(pasteInput.value);
+      pasteInput.value = '';
+    }
     renderRows();
+    pasteInput.value = '';
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
     $('financeGiftRuleCancelBtn').addEventListener('click', cancel);
     $('financeGiftRuleOkBtn').addEventListener('click', ok);
     $('addFinanceGiftRuleRowBtn').addEventListener('click', add);
     body.addEventListener('click', del);
+    body.addEventListener('input', onInput);
+    body.addEventListener('focusin', onFocusIn);
+    body.addEventListener('focusout', onFocusOut);
+    pasteInput.addEventListener('paste', onPaste);
+    pasteInput.addEventListener('change', onPasteChange);
   }
   if ($('financeGiftDimBtn')) {
     $('financeGiftDimBtn').addEventListener('click', function(e) {
@@ -11399,6 +13005,23 @@
     });
   }
   if ($('financeGiftHead')) {
+    $('financeGiftHead').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-finance-gift-help]');
+      if (!btn) return;
+      e.stopPropagation();
+      var popover = $('financeGiftHelpPopover');
+      if (!popover) {
+        popover = document.createElement('div');
+        popover.id = 'financeGiftHelpPopover';
+        popover.className = 'finance-gift-help-popover';
+        popover.textContent = '在输入框后直接输入 SKU，每行一个，默认数量为 1，可手动修改。编辑时显示 SKU * 数量，失焦后显示商品简称 * 数量。';
+        document.body.appendChild(popover);
+      }
+      var rect = btn.getBoundingClientRect();
+      popover.style.left = Math.round(rect.left + window.scrollX) + 'px';
+      popover.style.top = Math.round(rect.bottom + window.scrollY + 8) + 'px';
+      popover.classList.toggle('open');
+    });
     $('financeGiftHead').addEventListener('change', function(e) {
       if (!e.target.matches('[data-finance-gift-filter]')) return;
       var key = e.target.getAttribute('data-finance-gift-filter');
@@ -11407,15 +13030,36 @@
       renderFinanceGiftRules(false);
     });
   }
+  function editFinanceGiftRuleInline(cell, row, field) {
+    if (!cell || cell.querySelector('textarea')) return;
+    var textarea = document.createElement('textarea');
+    textarea.className = 'input finance-gift-edit-box';
+    textarea.value = financeGiftRuleEditText(row[field]);
+    cell.innerHTML = '';
+    cell.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    textarea.addEventListener('blur', async function() {
+      row[field] = parseFinanceGiftRuleText(textarea.value);
+      await renderFinanceGiftRules(false);
+      await saveFinanceGiftRules();
+    }, { once: true });
+  }
   if ($('financeGiftBody')) {
     $('financeGiftBody').addEventListener('click', function(e) {
       var cell = e.target.closest('[data-finance-gift-edit]');
       if (!cell) return;
       var sku = normalizeSkuValue(cell.closest('[data-finance-gift-sku]').getAttribute('data-finance-gift-sku'));
       var row = financeGiftDraftRows.find(function(item) { return normalizeSkuValue(item.sku) === sku; });
-      if (row) editFinanceGiftRule(row, cell.getAttribute('data-finance-gift-edit'));
+      if (row) editFinanceGiftRuleInline(cell, row, cell.getAttribute('data-finance-gift-edit'));
     });
   }
+  document.addEventListener('click', function(e) {
+    var popover = $('financeGiftHelpPopover');
+    if (!popover || !popover.classList.contains('open')) return;
+    if (e.target.closest('[data-finance-gift-help]') || popover.contains(e.target)) return;
+    popover.classList.remove('open');
+  });
   if ($('applyFinanceGiftRulesBtn')) $('applyFinanceGiftRulesBtn').addEventListener('click', saveFinanceGiftRules);
   document.addEventListener('click', async function(e) {
     document.querySelectorAll('.mapping-formula-field.open').forEach(function(node) {
@@ -11806,15 +13450,18 @@
     dropZone.addEventListener('drop', function(e) {
       e.preventDefault();
       dropZone.classList.remove('dragover');
-      handleImportFiles(e.dataTransfer.files, scope);
+      if (scope === 'search') handleSearchImportFiles(e.dataTransfer.files);
+      else handleImportFiles(e.dataTransfer.files, scope);
     });
     input.addEventListener('change', function() {
-      handleImportFiles(input.files, scope);
+      if (scope === 'search') handleSearchImportFiles(input.files);
+      else handleImportFiles(input.files, scope);
       input.value = '';
     });
   }
   bindImportUpload('dropZone', 'fileInput', 'shop');
   bindImportUpload('financeDropZone', 'financeFileInput', 'finance');
+  bindImportUpload('searchDropZone', 'searchFileInput', 'search');
   if ($('viewImportRecordsBtn')) {
     $('viewImportRecordsBtn').addEventListener('click', function() {
       handlePageNavigation(replacePageHash('raw-snapshots'));
@@ -11825,11 +13472,62 @@
       handlePageNavigation(replacePageHash('raw-snapshots'));
     });
   }
+  if ($('searchBrandWordsInput')) {
+    $('searchBrandWordsInput').addEventListener('blur', function() {
+      searchAnalysisBrandWords = parseWordList($('searchBrandWordsInput').value);
+      saveSearchAnalysisSettings();
+      renderSearchAnalysisSettings();
+    });
+  }
+  if ($('refreshSearchDataBtn')) $('refreshSearchDataBtn').addEventListener('click', renderSearchData);
+  if ($('clearSearchDataBtn')) $('clearSearchDataBtn').addEventListener('click', clearCurrentSearchData);
   if ($('refreshGrossMarginBtn')) {
     $('refreshGrossMarginBtn').addEventListener('click', renderGrossMarginData);
   }
   if ($('clearGrossMarginBtn')) {
     $('clearGrossMarginBtn').addEventListener('click', clearCurrentGrossMarginRows);
+  }
+  document.querySelectorAll('[data-gross-margin-panel]').forEach(function(btn) {
+    btn.addEventListener('click', async function() {
+      var panel = btn.getAttribute('data-gross-margin-panel') || 'filter';
+      document.querySelectorAll('.finance-data-tab[data-gross-margin-panel]').forEach(function(item) {
+        item.classList.toggle('active', item.getAttribute('data-gross-margin-panel') === panel);
+      });
+      if ($('grossMarginImportPane')) $('grossMarginImportPane').hidden = panel !== 'import';
+      if ($('grossMarginFilterPane')) $('grossMarginFilterPane').hidden = panel !== 'filter';
+      if ($('grossMarginDashboardPane')) $('grossMarginDashboardPane').hidden = panel !== 'dashboard';
+      if ($('grossMarginPanel')) $('grossMarginPanel').classList.toggle('is-import-mode', panel === 'import');
+      if (panel === 'dashboard' && grossMarginDashboardTemplateWorkbook) {
+        await refreshGrossMarginDashboardPreviewWorkbook();
+        renderGrossMarginDashboardPreview(grossMarginDashboardActiveSheet);
+      }
+    });
+  });
+  if ($('exportGrossMarginDashboardBtn')) $('exportGrossMarginDashboardBtn').addEventListener('click', openGrossMarginDashboardFieldModal);
+  if ($('importGrossMarginDashboardBtn')) {
+    $('importGrossMarginDashboardBtn').addEventListener('click', function() {
+      $('grossMarginDashboardInput').click();
+    });
+  }
+  if ($('grossMarginDashboardInput')) {
+    $('grossMarginDashboardInput').addEventListener('change', async function(e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      try {
+        await importGrossMarginDashboardTemplate(file);
+      } catch (err) {
+        if ($('grossMarginDashboardMsg')) $('grossMarginDashboardMsg').textContent = '导入失败：' + (err && err.message ? err.message : String(err));
+      } finally {
+        e.target.value = '';
+      }
+    });
+  }
+  if ($('grossMarginDashboardOutput')) {
+    $('grossMarginDashboardOutput').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-gross-margin-dashboard-sheet]');
+      if (!btn) return;
+      renderGrossMarginDashboardPreview(btn.getAttribute('data-gross-margin-dashboard-sheet'));
+    });
   }
 
   var defaultAnalyzedDate = yesterday();
@@ -11852,6 +13550,16 @@
   $('grossMarginStartDate').value = defaultGrossMarginRange.start;
   $('grossMarginEndDate').value = defaultGrossMarginRange.end;
   $('grossMarginDateInput').value = defaultGrossMarginRange.start + ' 至 ' + defaultGrossMarginRange.end;
+  if ($('searchDataStartDate')) {
+    $('searchDataStartDate').value = defaultAnalyzedDate;
+    $('searchDataEndDate').value = defaultAnalyzedDate;
+    $('searchDataDateInput').value = defaultAnalyzedDate;
+  }
+  if ($('searchImportStartDate')) {
+    $('searchImportStartDate').value = defaultAnalyzedDate;
+    $('searchImportEndDate').value = defaultAnalyzedDate;
+    $('searchImportDateInput').value = defaultAnalyzedDate;
+  }
   if ($('financeManualStartDate')) {
     $('financeManualStartDate').value = defaultGrossMarginRange.start;
     $('financeManualEndDate').value = defaultGrossMarginRange.end;
@@ -11879,6 +13587,16 @@
     datePickers.grossMargin.setCalendarMonth(dateFromYmd(defaultGrossMarginRange.start) || new Date());
     datePickers.grossMargin.sync();
     datePickers.grossMargin.render();
+  }
+  if (datePickers.searchData) {
+    datePickers.searchData.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
+    datePickers.searchData.sync();
+    datePickers.searchData.render();
+  }
+  if (datePickers.searchImport) {
+    datePickers.searchImport.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
+    datePickers.searchImport.sync();
+    datePickers.searchImport.render();
   }
   if (datePickers.financeManual) {
     datePickers.financeManual.setCalendarMonth(dateFromYmd(defaultGrossMarginRange.start) || new Date());
@@ -11921,6 +13639,8 @@
     await loadReportTemplateCopyRowsFromDb();
     if (reportTemplateWorkbook) await saveReportTemplateWorkbook();
     await loadReportTemplateWorkbookFromDb();
+    if (grossMarginDashboardTemplateWorkbook) await saveGrossMarginDashboardTemplateWorkbook();
+    await loadGrossMarginDashboardTemplateWorkbookFromDb();
     await stripRawSnapshotRows();
     await normalizeCompetitorSkuDefaults();
     await mergeDuplicateSeriesColumns();
@@ -11936,9 +13656,14 @@
       await renderManualRankingEntry();
       renderAllImportMappings();
     }
-    if (currentPage === 'finance-import') {
+    if (currentPage === 'finance-data') {
       renderAllImportMappings();
       renderFinanceGiftRules();
+      await renderGrossMarginData();
+    }
+    if (currentPage === 'search-import') {
+      renderSearchAnalysisSettings();
+      await renderSearchData();
     }
     if (currentPage === 'import-settings') {
       renderAllImportMappings();
