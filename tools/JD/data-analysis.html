@@ -2529,22 +2529,9 @@
       <div class="sidebar-main">
         <a class="back-link" href="#import" data-back-import>返回</a>
         <button class="tab-btn" data-page="data-management">设置<span class="tab-kicker">01</span></button>
-        <div class="sidebar-group">
-          <div class="sidebar-group-title">店铺与竞品</div>
-          <button class="tab-btn sub active" data-page="import">数据导入<span class="tab-kicker">02</span></button>
-          <button class="tab-btn sub" data-page="report">周日报看板<span class="tab-kicker">03</span></button>
-          <button class="tab-btn sub" data-page="db-analyzed">本店商品明细<span class="tab-kicker">04</span></button>
-          <button class="tab-btn sub" data-page="ranking-raw">行业商品榜单<span class="tab-kicker">05</span></button>
-          <button class="tab-btn sub" data-page="db-estimates">竞品追踪<span class="tab-kicker">06</span></button>
-        </div>
-        <div class="sidebar-group">
-          <div class="sidebar-group-title">财务数据</div>
-          <button class="tab-btn sub" data-page="finance-data">毛保数据导入与分析<span class="tab-kicker">07</span></button>
-        </div>
-        <div class="sidebar-group">
-          <div class="sidebar-group-title">其他分析</div>
-          <button class="tab-btn sub" data-page="search-import">关键词搜索导入与分析<span class="tab-kicker">08</span></button>
-        </div>
+        <button class="tab-btn active" data-page="shop-competitor">店铺与竞品<span class="tab-kicker">02</span></button>
+        <button class="tab-btn" data-page="finance-data">毛保数据导入与分析<span class="tab-kicker">03</span></button>
+        <button class="tab-btn" data-page="search-import">关键词搜索导入与分析<span class="tab-kicker">04</span></button>
       </div>
       <div class="sidebar-archive">
         <div class="palette-card" aria-label="工具配色">
@@ -4748,9 +4735,40 @@
     }
   }
 
+  var SHOP_COMPETITOR_PAGES = [
+    { id: 'import', label: '数据导入' },
+    { id: 'report', label: '周日报看板' },
+    { id: 'db-analyzed', label: '本店商品明细' },
+    { id: 'ranking-raw', label: '行业商品榜单' },
+    { id: 'db-estimates', label: '竞品追踪' }
+  ];
+
+  function isShopCompetitorPage(id) {
+    return SHOP_COMPETITOR_PAGES.some(function(item) { return item.id === id; });
+  }
+
+  function ensureShopCompetitorTabs() {
+    var html = '<div class="finance-data-tabs shop-competitor-tabs" data-shop-tabs>' + SHOP_COMPETITOR_PAGES.map(function(item) {
+      return '<button class="finance-data-tab" type="button" data-shop-page="' + item.id + '">' + item.label + '</button>';
+    }).join('') + '</div>';
+    SHOP_COMPETITOR_PAGES.forEach(function(item) {
+      var page = $(item.id);
+      var head = page && page.querySelector('.page-head');
+      if (head && !page.querySelector('[data-shop-tabs]')) head.insertAdjacentHTML('afterend', html);
+    });
+  }
+
+  function syncShopCompetitorTabs(id) {
+    ensureShopCompetitorTabs();
+    document.querySelectorAll('[data-shop-page]').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-shop-page') === id);
+    });
+  }
+
   function switchPage(id) {
     if (id === 'sku') id = 'db-sku';
     if (id === 'dashboard') id = 'import';
+    if (id === 'shop-competitor') id = 'import';
     if (id === 'import-setting') id = 'import-settings';
     if (id === 'search-data') id = 'search-import';
     if (id === 'report') reportTemplateActiveSheet = '模板';
@@ -4761,15 +4779,16 @@
       id = 'import';
       page = $(id);
     }
-    var btn = document.querySelector('.tab-btn[data-page="' + id + '"]');
+    var btn = isShopCompetitorPage(id) ? document.querySelector('.tab-btn[data-page="shop-competitor"]') : document.querySelector('.tab-btn[data-page="' + id + '"]');
     if (!btn && id === 'import-settings') {
-      btn = document.querySelector('.tab-btn[data-page="import"]');
+      btn = document.querySelector('.tab-btn[data-page="shop-competitor"]');
     }
-    if (!btn && ['db-browser', 'db-sku', 'raw-snapshots', 'db-analyzed', 'ranking-raw', 'db-estimates', 'db-backup'].indexOf(id) !== -1) {
+    if (!btn && ['db-browser', 'db-sku', 'raw-snapshots', 'db-backup'].indexOf(id) !== -1) {
       btn = document.querySelector('.tab-btn[data-page="data-management"]');
     }
     if (page) page.classList.add('active');
     if (btn) btn.classList.add('active');
+    syncShopCompetitorTabs(id);
   }
 
   async function refreshCounts() {
@@ -12687,6 +12706,11 @@
     btn.addEventListener('click', function() {
       handlePageNavigation(replacePageHash(btn.getAttribute('data-page')));
     });
+  });
+  document.addEventListener('click', function(event) {
+    var btn = event.target.closest('[data-shop-page]');
+    if (!btn) return;
+    handlePageNavigation(replacePageHash(btn.getAttribute('data-shop-page')));
   });
   document.querySelectorAll('[data-back-import]').forEach(function(link) {
     link.addEventListener('click', function(event) {
