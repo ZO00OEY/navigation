@@ -193,7 +193,7 @@
 .grid { display: grid; gap: 14px; }
 .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.search-analysis-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
+.search-analysis-grid { grid-template-columns: 1fr; align-items: stretch; }
 .panel {
   border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; background: var(--card-bg);
   padding: 18px; min-width: 0; box-shadow: 0 2px 8px rgba(40, 46, 56, 0.035);
@@ -2543,7 +2543,7 @@
         </div>
         <div class="sidebar-group">
           <div class="sidebar-group-title">其他分析</div>
-          <button class="tab-btn sub" data-page="search-import">搜索导入与分析<span class="tab-kicker">08</span></button>
+          <button class="tab-btn sub" data-page="search-import">关键词搜索导入与分析<span class="tab-kicker">08</span></button>
         </div>
       </div>
       <div class="sidebar-archive">
@@ -3066,11 +3066,17 @@
       <section class="tool-page" id="search-import">
         <div class="page-head">
           <div class="page-title">
-            <h1>搜索导入与分析</h1>
+            <h1>关键词搜索导入与分析</h1>
             <p>导入关键词汇总表，只按定义的产品词汇总访客、成交金额和订单量，不保存原始关键词明细。</p>
           </div>
         </div>
 
+        <div class="finance-data-tabs">
+          <button class="finance-data-tab active" type="button" data-search-panel="import">导入与设置</button>
+          <button class="finance-data-tab" type="button" data-search-panel="detail">搜索数据明细</button>
+        </div>
+        <div class="panel finance-data-panel is-import-mode" id="searchAnalysisPanel">
+          <div class="finance-data-pane" id="searchImportPane">
         <div class="grid search-analysis-grid">
           <div class="panel">
             <div class="panel-title">
@@ -3099,7 +3105,9 @@
           </div>
         </div>
 
-        <div class="panel" style="margin-top:14px;">
+          </div>
+          <div class="finance-data-pane" id="searchDetailPane" hidden>
+        <div class="finance-import-section">
           <div class="panel-title">
             <span>搜索数据明细</span>
           </div>
@@ -3120,6 +3128,8 @@
               <thead><tr><th>日期</th><th>维度</th><th>具体值</th><th>总访客</th><th>总单量</th><th>总成交金额</th><th>品类词访客</th><th>品类词转化率</th><th>品类词单量</th><th>品类词成交金额</th><th>品牌词访客</th><th>品牌词转化率</th><th>品牌词单量</th><th>品牌词成交金额</th></tr></thead>
               <tbody id="searchDataBody"><tr><td class="empty-row" colspan="14">暂无搜索数据</td></tr></tbody>
             </table>
+          </div>
+        </div>
           </div>
         </div>
       </section>
@@ -14152,6 +14162,18 @@
   }
   if ($('refreshSearchDataBtn')) $('refreshSearchDataBtn').addEventListener('click', renderSearchData);
   if ($('clearSearchDataBtn')) $('clearSearchDataBtn').addEventListener('click', clearCurrentSearchData);
+  document.querySelectorAll('[data-search-panel]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var panel = btn.getAttribute('data-search-panel') || 'import';
+      document.querySelectorAll('.finance-data-tab[data-search-panel]').forEach(function(item) {
+        item.classList.toggle('active', item.getAttribute('data-search-panel') === panel);
+      });
+      if ($('searchImportPane')) $('searchImportPane').hidden = panel !== 'import';
+      if ($('searchDetailPane')) $('searchDetailPane').hidden = panel !== 'detail';
+      if ($('searchAnalysisPanel')) $('searchAnalysisPanel').classList.toggle('is-import-mode', panel === 'import');
+      if (panel === 'detail') renderSearchData();
+    });
+  });
   if ($('refreshGrossMarginBtn')) {
     $('refreshGrossMarginBtn').addEventListener('click', renderGrossMarginData);
   }
