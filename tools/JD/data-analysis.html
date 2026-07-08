@@ -1597,6 +1597,9 @@
   color: var(--link-color);
   font-weight: 800;
 }
+.mapping-formula-placeholder {
+  color: var(--text-tertiary);
+}
 .mapping-formula-input {
   position: absolute;
   inset: 0;
@@ -1608,6 +1611,9 @@
   background: transparent !important;
   border-color: transparent !important;
   box-shadow: none !important;
+}
+.mapping-formula-input::placeholder {
+  color: transparent;
 }
 .mapping-formula-picker {
   position: absolute;
@@ -1663,6 +1669,335 @@
   border-radius: 6px;
   padding: 12px;
   background: var(--search-bg);
+}
+.finance-mapping-accordion {
+  margin-top: 8px;
+}
+.finance-mapping-accordion .mapping-category {
+  gap: 0;
+}
+.finance-mapping-accordion .mapping-category-title {
+  display: none;
+}
+.finance-mapping-accordion .mapping-preset-card {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+.finance-mapping-accordion .mapping-preset-head {
+  padding: 0 0 8px;
+  border-bottom: 1px solid var(--line-soft, var(--card-border));
+}
+.finance-mapping-accordion .mapping-preset-title {
+  gap: 0;
+}
+.finance-mapping-accordion .mapping-preset-title span {
+  max-width: 920px;
+}
+.finance-mapping-accordion .mapping-preset-topline {
+  display: none;
+}
+.finance-mapping-accordion .mapping-preset-actions {
+  gap: 7px;
+}
+.finance-mapping-accordion .mapping-preset-select {
+  width: min(100%, 360px);
+}
+.finance-mapping-accordion .mapping-preset-icon {
+  width: 32px;
+  height: 32px;
+}
+.finance-mapping-accordion .mapping-preset-rules {
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.finance-mapping-accordion .mapping-rule-row {
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 8px 12px;
+}
+.finance-mapping-accordion .mapping-rule-row > span:nth-last-child(-n+2) {
+  display: none;
+}
+.finance-mapping-accordion .mapping-rule-label {
+  min-width: 0;
+  color: var(--text-secondary);
+}
+.finance-mapping-accordion .mapping-rule-tag {
+  min-height: 34px;
+  padding: 0 8px 0 11px;
+  border-color: var(--line-medium, var(--card-border));
+  border-radius: 7px;
+  background: #f8fafc;
+}
+.finance-mapping-accordion .mapping-rule-tag:focus-within {
+  border-color: #c9d1dc;
+  background: #fff;
+}
+.finance-mapping-accordion .mapping-rule-tag .mapping-file-pattern {
+  width: 170px;
+}
+.finance-mapping-accordion .mapping-rule-tag-add {
+  border-radius: 7px;
+  background: #f8fafc;
+}
+.finance-mapping-accordion .mapping-formula-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  max-width: 100%;
+}
+.finance-mapping-accordion .mapping-formula-code {
+  color: var(--text);
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  word-break: break-all;
+}
+.finance-mapping-accordion .mapping-formula-edit-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+.finance-mapping-accordion .mapping-formula-edit-btn svg {
+  width: 15px;
+  height: 15px;
+}
+.finance-mapping-accordion .mapping-preset-body {
+  padding: 10px 0 0;
+  gap: 0;
+}
+.finance-mapping-accordion .mapping-formula-field {
+  gap: 8px;
+}
+.finance-mapping-accordion .mapping-formula-editor {
+  min-height: 36px;
+}
+.finance-mapping-accordion .mapping-formula-source,
+.finance-formula-modal .mapping-formula-source {
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 7px;
+  background: #fff;
+}
+.finance-mapping-accordion .mapping-formula-source-title,
+.finance-formula-modal .mapping-formula-source-title {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line-soft, var(--card-border));
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+.finance-mapping-accordion .mapping-formula-source-head,
+.finance-formula-modal .mapping-formula-source-head {
+  display: grid;
+  grid-template-columns: minmax(130px, 1fr) minmax(110px, 0.8fr);
+  gap: 10px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line-soft, var(--card-border));
+  background: #f8fafc;
+  color: var(--text-tertiary);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.finance-mapping-accordion .mapping-formula-source-list,
+.finance-formula-modal .mapping-formula-source-list {
+  display: grid;
+  max-height: 152px;
+  overflow: auto;
+}
+.finance-mapping-accordion .mapping-formula-option,
+.finance-formula-modal .mapping-formula-option {
+  display: grid;
+  grid-template-columns: minmax(130px, 1fr) minmax(110px, 0.8fr);
+  gap: 10px;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 0;
+  border-bottom: 1px solid var(--line-soft, var(--card-border));
+}
+.finance-mapping-accordion .mapping-formula-option:last-child,
+.finance-formula-modal .mapping-formula-option:last-child {
+  border-bottom: 0;
+}
+.finance-mapping-accordion .mapping-formula-option:hover,
+.finance-formula-modal .mapping-formula-option:hover {
+  background: #f8fafc;
+  color: var(--text);
+}
+.finance-mapping-accordion .mapping-formula-original,
+.finance-formula-modal .mapping-formula-original {
+  color: var(--text);
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 0.76rem;
+}
+.finance-mapping-accordion .mapping-formula-short,
+.finance-formula-modal .mapping-formula-short {
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+}
+.finance-formula-modal {
+  width: min(680px, 100%);
+  border-color: var(--line-medium, var(--card-border));
+}
+.finance-formula-modal h2 {
+  color: var(--text);
+}
+.finance-formula-modal .mapping-formula-field {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 14px;
+}
+.finance-formula-modal .mapping-formula-editor {
+  min-height: 38px;
+}
+.finance-formula-modal .mapping-formula-source-list {
+  max-height: 220px;
+}
+.finance-rule-modal {
+  width: min(980px, calc(100vw - 32px));
+}
+.finance-rule-modal .custom-mode-emphasis {
+  color: var(--link-color);
+  font-weight: 800;
+}
+.finance-custom-preview {
+  display: grid;
+  gap: 0;
+  max-height: 480px;
+  margin: 10px 0 14px;
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+}
+.finance-custom-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line-medium, var(--card-border));
+  background: #f8fafc;
+}
+.finance-custom-tab {
+  min-height: 38px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 7px 7px 0 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 700;
+  cursor: pointer;
+}
+.finance-custom-tab.active {
+  margin-bottom: -1px;
+  border-color: var(--line-medium, var(--card-border));
+  background: #fff;
+  color: var(--text);
+}
+.finance-custom-sheet {
+  display: grid;
+  gap: 8px;
+  max-height: 420px;
+  overflow: auto;
+  padding: 10px;
+}
+.finance-custom-head,
+.finance-custom-field {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(160px, 1fr) minmax(150px, 0.9fr);
+  gap: 8px;
+  align-items: center;
+}
+.finance-custom-head {
+  padding: 0 6px;
+  color: var(--text-tertiary);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.finance-custom-fields {
+  display: grid;
+  gap: 5px;
+}
+.finance-custom-field {
+  padding: 6px;
+  border: 1px solid var(--line-soft, var(--card-border));
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.78rem;
+}
+.finance-custom-field label {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+}
+.finance-custom-field input[type="checkbox"] {
+  accent-color: var(--link-color);
+}
+.finance-custom-field-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.finance-custom-field .input {
+  min-height: 30px;
+  padding: 4px 8px;
+  font-size: 0.76rem;
+}
+.finance-mapping-accordion .mapping-sheet-tabs {
+  align-items: flex-end;
+  gap: 0;
+  margin: 0 0 -1px;
+  padding-left: 8px;
+}
+.finance-mapping-accordion .mapping-sheet-tab {
+  position: relative;
+  z-index: 1;
+  min-height: 40px;
+  padding: 8px 18px;
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: #f7f8fb;
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+.finance-mapping-accordion .mapping-sheet-tab.active {
+  z-index: 2;
+  background: #fff;
+  color: var(--text);
+  border-color: var(--line-medium, var(--card-border));
+}
+.finance-mapping-accordion .mapping-sheet-add {
+  width: 38px;
+  min-height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.finance-mapping-accordion .mapping-sheet-add svg {
+  width: 15px;
+  height: 15px;
+}
+.finance-mapping-accordion .mapping-sheet-panel {
+  border-top: 1px solid var(--line-medium, var(--card-border));
+  padding-top: 12px;
+  background: #fff;
+}
+.finance-mapping-accordion .mapping-sheet-note {
+  margin: 0 0 8px;
+  color: var(--text-tertiary);
+  font-size: 0.74rem;
+}
+.finance-mapping-accordion .table-wrap {
+  border-color: var(--line-soft, var(--card-border));
 }
 .gross-margin-toolbar {
   display: flex;
@@ -2169,6 +2504,9 @@
   .manual-ranking-toolbar { flex-direction: column; align-items: stretch; }
   .manual-control-box, .manual-field-trigger, .manual-date-wrap .input { width: 100%; min-width: 0; }
   .import-config-btn { width: 100%; justify-content: center; }
+  .finance-mapping-accordion .mapping-preset-rules { grid-template-columns: 1fr; }
+  .finance-mapping-accordion .mapping-rule-row { grid-template-columns: 1fr; }
+  .finance-mapping-accordion .mapping-preset-topline { align-items: flex-start; }
   .backup-modal-grid { grid-template-columns: 1fr; }
   .backup-modal-foot { align-items: stretch; }
   .backup-modal-foot .btn-row { width: 100%; justify-content: flex-start; }
@@ -2655,7 +2993,15 @@
               </div>
             </div>
 
-            <div class="finance-import-section">
+            <div class="finance-import-section embedded-import-settings" id="financeImportRulesPanel">
+              <div class="panel-title">
+                <span>自定义导入规则</span>
+              </div>
+              <div class="mapping-accordion finance-mapping-accordion" id="financeMappingSections"></div>
+              <div class="msg" id="financeMappingMsg"></div>
+            </div>
+
+            <div class="finance-import-section" id="financeGiftRulesSection">
               <div class="panel-title">
                 <span>赠品配件规则录入</span>
               </div>
@@ -2680,14 +3026,6 @@
               </div>
             </div>
 
-            <div class="finance-import-section embedded-import-settings" id="financeImportRulesPanel">
-              <div class="panel-title">
-                <span>自定义导入规则</span>
-              </div>
-              <p class="panel-sub">这里仅显示财务数据相关导入规则，目前为毛保数据。</p>
-              <div class="mapping-accordion" id="financeMappingSections"></div>
-              <div class="msg" id="financeMappingMsg"></div>
-            </div>
           </div>
           <div class="finance-data-pane" id="grossMarginFilterPane" hidden>
             <div class="toolbar-row gross-margin-toolbar">
@@ -2946,16 +3284,36 @@
 </div>
 
 <div class="modal-backdrop" id="grossMarginRuleModal" aria-hidden="true">
-  <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="grossMarginRuleTitle">
+  <div class="confirm-modal finance-rule-modal" role="dialog" aria-modal="true" aria-labelledby="grossMarginRuleTitle">
     <h2 id="grossMarginRuleTitle">确认毛保计算规则</h2>
-    <p>检测到当前文件匹配为毛保数据明细，请确认本次导入使用的计算规则。</p>
-    <label class="mapping-preset-label" for="grossMarginRuleSelect">计算规则</label>
-    <select class="select" id="grossMarginRuleSelect" style="width:100%; margin:8px 0 14px;">
-      <option value="综合毛保">综合毛保</option>
-    </select>
+    <p id="grossMarginRuleDesc">检测到当前文件匹配为毛保数据明细，请确认本次导入使用的计算规则。</p>
+    <label class="mapping-preset-label" id="grossMarginRuleNameLabel" for="grossMarginRuleNameInput">已匹配到预设</label>
+    <input class="input" id="grossMarginRuleNameInput" style="width:100%; margin:8px 0 14px;" value="综合毛保-手动配置全产品配件赠品" placeholder="请输入预设名称">
+    <div class="finance-custom-preview" id="grossMarginCustomPreview" hidden></div>
     <div class="btn-row">
       <button class="btn" id="grossMarginRuleCancelBtn" type="button">取消导入</button>
       <button class="btn primary" id="grossMarginRuleOkBtn" type="button">确认导入</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="financeFormulaModal" aria-hidden="true">
+  <div class="confirm-modal finance-formula-modal" role="dialog" aria-modal="true" aria-labelledby="financeFormulaTitle">
+    <h2 id="financeFormulaTitle">编辑毛保公式</h2>
+    <div class="mapping-formula-field">
+      <div class="mapping-formula-editor">
+        <div class="mapping-formula-highlight" data-finance-formula-highlight></div>
+        <input class="input mapping-formula-input" id="financeFormulaInput" data-finance-formula value="" placeholder="例如：cost-income*0.85">
+      </div>
+      <div class="mapping-formula-source">
+        <div class="mapping-formula-source-title">点击字段插入公式</div>
+        <div class="mapping-formula-source-head"><span>数据库字段名</span><span>通用名称</span></div>
+        <div class="mapping-formula-source-list" id="financeFormulaFieldList"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="financeFormulaCancelBtn" type="button">取消</button>
+      <button class="btn primary" id="financeFormulaOkBtn" type="button">确定</button>
     </div>
   </div>
 </div>
@@ -3101,6 +3459,7 @@
       finance_gross_margin: '毛保数据-综合毛保',
       finance_gross_margin_order: '毛保数据-综合毛保-订单明细数据',
       finance_gross_margin_ad: '毛保数据-综合毛保-广告数据明细',
+      finance_gross_margin_rebate: '毛保数据-综合毛保-已抵消返利明细',
       search_analysis: '其他分析-搜索数据'
     },
     periodType: { unknown: '待确认', day: '单日', period: '跨期' },
@@ -3176,6 +3535,7 @@
       { key: 'date', label: '日期', column: '业务时间', locked: true, note: '广告费用归属日期' },
       { key: 'adPerformanceAmount', label: '广告业绩金额', column: '广告业绩金额', locked: true, note: '按日期和 SKU 求和后扣减原始毛保' }
     ],
+    finance_gross_margin_rebate: [],
     search_analysis: [
       { key: 'keyword', label: '关键词', column: '关键词', locked: true, note: '搜索词或关键词' },
       { key: 'visitorCount', label: '访客', column: '访客', locked: true, note: '按关键词汇总访客数' },
@@ -3191,6 +3551,10 @@
     finance_gross_margin: { filePatterns: ['综合毛保返利单号', '综合毛保', '毛保'], includeComparison: false, grossMarginFormula: 'cost-income*0.85' },
     search_analysis: { filePatterns: ['关键词汇总', '关键词', '搜索'], includeComparison: false }
   };
+  var FINANCE_GROSS_MARGIN_PRESETS = [
+    { value: '综合毛保', label: '综合毛保-手动配置全产品配件赠品', supportsGiftRules: true },
+    { value: '其他算法预留', label: '其他算法预留', supportsGiftRules: false }
+  ];
   var importMappings = JSON.parse(localStorage.getItem('jdImportMappings') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_MAPPINGS));
   var importRules = JSON.parse(localStorage.getItem('jdImportRules') || 'null') || JSON.parse(JSON.stringify(DEFAULT_IMPORT_RULES));
   var importCustomFieldRegistry = JSON.parse(localStorage.getItem('jdImportCustomFieldRegistry') || '{}');
@@ -3202,6 +3566,7 @@
     { type: 'finance_gross_margin', category: '财务数据', title: '综合毛保预设', writeTarget: '毛保数据', sourceName: '综合毛保返利单号', sourceUrl: '', desc: '用于识别综合毛保整本文件；下方订单明细和广告明细分别维护各自标签页字段规则。', open: false },
     { type: 'finance_gross_margin_order', category: '财务数据', title: '综合毛保-订单明细数据', writeTarget: '毛保数据', sourceName: '综合毛保返利单号 / 订单明细数据', sourceUrl: '', desc: '用于导入综合毛保订单维度的收入、成本、销售数量，并按日期和 SKU 汇总。', open: false },
     { type: 'finance_gross_margin_ad', category: '财务数据', title: '综合毛保-广告数据明细', writeTarget: '毛保数据', sourceName: '综合毛保返利单号 / 广告数据明细', sourceUrl: '', desc: '用于导入综合毛保广告维度的广告业绩金额，并按日期和 SKU 汇总。', open: false },
+    { type: 'finance_gross_margin_rebate', category: '财务数据', title: '综合毛保-已抵消返利明细', writeTarget: '毛保数据', sourceName: '综合毛保返利单号 / 已抵消返利明细', sourceUrl: '', desc: '预留标签页，当前不抓取字段。', open: false },
     { type: 'search_analysis', category: '其他分析', title: '搜索导入与分析', writeTarget: '搜索数据明细', sourceName: '搜索关键词分析', sourceUrl: SEARCH_ANALYSIS_SOURCE_URL, desc: '用于导入关键词维度的访客、成交金额和订单量，并按选定档案维度汇总。', open: false }
   ];
   var monitorTracks = JSON.parse(localStorage.getItem('jdMonitorTracks') || '[]');
@@ -3325,6 +3690,9 @@
   function iconExport() {
     return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 14V4m0 0L8 8m4-4l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 17v2h14v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
   }
+  function iconPencil() {
+    return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20h4.5L19 9.5 14.5 5 4 15.5V20Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13.5 6 18 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+  }
   function today() { return ymd(new Date()); }
   function dateFromYmd(value) {
     var parts = String(value || '').split('-').map(Number);
@@ -3397,6 +3765,29 @@
     if (!Array.isArray(importRules[type].filePatterns)) importRules[type].filePatterns = [];
     return importRules[type];
   }
+  function financeGrossMarginPreset(value) {
+    value = String(value || '').trim();
+    return FINANCE_GROSS_MARGIN_PRESETS.find(function(item) { return item.value === value; }) || FINANCE_GROSS_MARGIN_PRESETS[0];
+  }
+  function currentFinancePreset() {
+    var rule = getImportRuleConfig('finance_gross_margin');
+    var preset = financeGrossMarginPreset(rule.currentPreset || localStorage.getItem('jdGrossMarginRuleLast') || '综合毛保');
+    rule.currentPreset = preset.value;
+    return preset.value;
+  }
+  function currentFinancePresetSupportsGiftRules() {
+    return !!financeGrossMarginPreset(currentFinancePreset()).supportsGiftRules;
+  }
+  function financePresetOptionsHtml(selected) {
+    selected = financeGrossMarginPreset(selected || currentFinancePreset()).value;
+    return FINANCE_GROSS_MARGIN_PRESETS.map(function(item) {
+      return '<option value="' + esc(item.value) + '"' + (item.value === selected ? ' selected' : '') + '>' + esc(item.label) + '</option>';
+    }).join('');
+  }
+  function syncFinanceGiftRulesSection() {
+    var section = $('financeGiftRulesSection');
+    if (section) section.hidden = !currentFinancePresetSupportsGiftRules();
+  }
   function mappingSectionSchemaName(section) {
     return (section.writeTarget ? section.writeTarget + '-' : '') + (section.title || labels.sourceType[section.type] || section.type);
   }
@@ -3447,6 +3838,7 @@
     }
     var financeRule = getImportRuleConfig('finance_gross_margin');
     if (!financeRule.grossMarginFormula) financeRule.grossMarginFormula = DEFAULT_IMPORT_RULES.finance_gross_margin.grossMarginFormula;
+    if (!financeRule.currentPreset) financeRule.currentPreset = '综合毛保';
     DEFAULT_IMPORT_RULES.finance_gross_margin.filePatterns.forEach(function(pattern) {
       if (!financeRule.filePatterns.some(function(current) { return String(current || '') === pattern; })) financeRule.filePatterns.push(pattern);
     });
@@ -4475,7 +4867,7 @@
   function sourceTypesForStore(store) {
     if (store === 'analyzed_metrics') return ['sales_detail', 'onsite_cost', 'offsite_cps_cost', 'search_analysis'];
     if (store === 'ranking_raw_metrics') return ['industry_ranking'];
-    if (store === 'finance_metrics') return ['finance_gross_margin_order', 'finance_gross_margin_ad'];
+    if (store === 'finance_metrics') return ['finance_gross_margin_order', 'finance_gross_margin_ad', 'finance_gross_margin_rebate'];
     return [];
   }
 
@@ -5343,7 +5735,7 @@
   }
 
   function importMappingStore(type) {
-    if (type === 'finance_gross_margin' || type === 'finance_gross_margin_order' || type === 'finance_gross_margin_ad') return 'finance_metrics';
+    if (type === 'finance_gross_margin' || financeSheetRuleTypes().indexOf(type) !== -1) return 'finance_metrics';
     return type === 'industry_ranking' ? 'ranking_raw_metrics' : 'analyzed_metrics';
   }
 
@@ -5660,6 +6052,132 @@
     }
   }
 
+  function financeSheetRuleTypes() {
+    return ['finance_gross_margin_order', 'finance_gross_margin_ad', 'finance_gross_margin_rebate'];
+  }
+
+  function financeSheetPatterns(type) {
+    if (type === 'finance_gross_margin_order') return ['订单明细数据', '订单数据明细'];
+    if (type === 'finance_gross_margin_ad') return ['广告数据明细'];
+    if (type === 'finance_gross_margin_rebate') return ['已抵消返利明细'];
+    return [];
+  }
+
+  function financeFieldAliases(type) {
+    if (type === 'finance_gross_margin_order') {
+      return {
+        sku: ['商品编码', 'SKU', 'sku'],
+        date: ['订单完成时间', '订单日期', '完成时间'],
+        income: ['收入'],
+        cost: ['成本'],
+        salesQty: ['销售数量', '数量']
+      };
+    }
+    if (type === 'finance_gross_margin_ad') {
+      return {
+        sku: ['商品编码', 'SKU', 'sku'],
+        date: ['业务时间', '日期'],
+        adPerformanceAmount: ['广告业绩金额', '广告业绩金']
+      };
+    }
+    return {};
+  }
+
+  function financeSheetLabel(type) {
+    var section = mappingSections.find(function(item) { return item.type === type; });
+    return section ? section.title.replace(/^综合毛保-/, '') : type;
+  }
+
+  function financeSheetMatchReport(sheets) {
+    sheets = (sheets || []).map(function(sheet) {
+      return typeof sheet === 'string' ? { name: sheet, rows: null } : sheet;
+    });
+    var matched = [];
+    var missing = [];
+    var fieldMissing = [];
+    financeSheetRuleTypes().forEach(function(type) {
+      var patterns = financeSheetPatterns(type);
+      var hit = sheets.find(function(sheet) {
+        return patterns.some(function(pattern) { return String(sheet && sheet.name || '').indexOf(pattern) !== -1; });
+      });
+      if (hit) {
+        matched.push(financeSheetLabel(type) + '（' + hit.name + '）');
+        var headers = hit.headers || Object.keys((hit.rows && hit.rows[0]) || {});
+        if (headers.length) {
+          var aliases = financeFieldAliases(type);
+          getImportMappings(type).forEach(function(item) {
+            if (!item || !item.key || !String(item.column || '').trim()) return;
+            if (!resolveImportColumn(headers, item.column, aliases[item.key] || [])) fieldMissing.push(financeSheetLabel(type) + '缺少字段：' + (item.label || item.key));
+          });
+        }
+      } else {
+        missing.push(financeSheetLabel(type));
+      }
+    });
+    var extra = sheets.filter(function(sheet) {
+      return !financeSheetRuleTypes().some(function(type) {
+        return financeSheetPatterns(type).some(function(pattern) { return String(sheet && sheet.name || '').indexOf(pattern) !== -1; });
+      });
+    }).map(function(sheet) { return sheet.name; });
+    return { matched: matched, missing: missing, extra: extra, fieldMissing: fieldMissing, canImport: !!matched.length && !missing.length && !extra.length && !fieldMissing.length };
+  }
+
+  function renderFinanceCustomPreview(sheets) {
+    sheets = sheets || [];
+    var tabs = '<div class="finance-custom-tabs">' + sheets.map(function(sheet, si) {
+      return '<button class="finance-custom-tab ' + (si === 0 ? 'active' : '') + '" type="button" data-finance-custom-tab="' + si + '">' + esc(sheet.name || ('标签页 ' + (si + 1))) + '</button>';
+    }).join('') + '</div>';
+    var panels = sheets.map(function(sheet, si) {
+      var headers = sheet.headers || Object.keys((sheet.rows && sheet.rows[0]) || {});
+      var fields = headers.length ? headers.map(function(header, hi) {
+        var key = si + ':' + hi;
+        return '<div class="finance-custom-field">' +
+          '<label title="' + esc(header) + '">' +
+            '<input type="checkbox" data-finance-custom-field="' + key + '" checked>' +
+            '<span class="finance-custom-field-name">' + esc(header) + '</span>' +
+          '</label>' +
+          '<input class="input" data-finance-custom-label="' + key + '" value="' + esc(header) + '" placeholder="通用名称">' +
+          '<input class="input" data-finance-custom-db-key="' + key + '" value="custom_' + (si + 1) + '_' + (hi + 1) + '" placeholder="数据库字段名">' +
+        '</div>';
+      }).join('') : '<div class="muted">未识别到表头</div>';
+      return '<div class="finance-custom-sheet" data-finance-custom-panel="' + si + '" style="' + (si === 0 ? '' : 'display:none;') + '">' +
+        '<div class="finance-custom-head"><span>原表表头</span><span>通用名称</span><span>数据库字段名</span></div>' +
+        '<div class="finance-custom-fields">' + fields + '</div>' +
+      '</div>';
+    }).join('');
+    return tabs + panels;
+  }
+
+  function saveFinanceCustomDraft(fileName, sheets) {
+    var preview = $('grossMarginCustomPreview');
+    var nameInput = $('grossMarginRuleNameInput');
+    var payload = {
+      fileName: fileName || '',
+      name: nameInput ? nameInput.value.trim() || '自定义毛保预设' : '自定义毛保预设',
+      createdAt: new Date().toISOString(),
+      sheets: (sheets || []).map(function(sheet, si) {
+        var headers = sheet.headers || Object.keys((sheet.rows && sheet.rows[0]) || {});
+        return {
+          name: sheet.name || '',
+          fields: headers.map(function(header, hi) {
+            var key = si + ':' + hi;
+            var checked = preview ? preview.querySelector('[data-finance-custom-field="' + key + '"]') : null;
+            var label = preview ? preview.querySelector('[data-finance-custom-label="' + key + '"]') : null;
+            var dbKey = preview ? preview.querySelector('[data-finance-custom-db-key="' + key + '"]') : null;
+            return {
+              header: header,
+              label: label ? label.value.trim() || header : header,
+              key: dbKey ? dbKey.value.trim() || ('custom_' + (si + 1) + '_' + (hi + 1)) : ('custom_' + (si + 1) + '_' + (hi + 1)),
+              enabled: checked ? checked.checked : true
+            };
+          }).filter(function(field) { return field.enabled; })
+        };
+      })
+    };
+    localStorage.setItem('jdFinanceCustomImportDraft', JSON.stringify(payload));
+    return payload;
+  }
+
   async function normalizeCompetitorSkuDefaults() {
     var rows = await getAll('sku_profiles');
     for (var i = 0; i < rows.length; i++) {
@@ -5671,17 +6189,44 @@
     }
   }
 
-  function chooseGrossMarginRule(fileName) {
+  function chooseGrossMarginRule(fileName, sheets) {
     return new Promise(function(resolve, reject) {
       var modal = $('grossMarginRuleModal');
       if (!modal) {
         resolve(localStorage.getItem('jdGrossMarginRuleLast') || '综合毛保');
         return;
       }
-      var select = $('grossMarginRuleSelect');
+      var nameInput = $('grossMarginRuleNameInput');
       var title = $('grossMarginRuleTitle');
-      if (title) title.textContent = '确认毛保计算规则';
-      if (select) select.value = localStorage.getItem('jdGrossMarginRuleLast') || '综合毛保';
+      var desc = $('grossMarginRuleDesc');
+      var nameLabel = $('grossMarginRuleNameLabel');
+      var preview = $('grossMarginCustomPreview');
+      var okBtn = $('grossMarginRuleOkBtn');
+      var match = financeSheetMatchReport(Array.isArray(sheets) ? sheets : []);
+      if (title) title.textContent = match.canImport ? '已匹配到预设' : '新建自定义预设';
+      if (desc) {
+        if (match.canImport) {
+          desc.innerHTML = '已匹配预设“' + esc(financeGrossMarginPreset(currentFinancePreset()).label) + '”。<br>匹配标签页：' + esc(match.matched.join('、')) + '。';
+        } else {
+          var problems = [];
+          if (match.missing.length) problems.push('缺少标签页：' + match.missing.join('、'));
+          if (match.extra.length) problems.push('未在预设中定义的标签页：' + match.extra.join('、'));
+          if (match.fieldMissing.length) problems.push(match.fieldMissing.join('、'));
+          desc.innerHTML = '文件标签页或字段无法匹配当前预设，<span class="custom-mode-emphasis">要进入自定义模式</span>。<br>' +
+            (problems.length ? esc(problems.join('；')) + '。<br>' : '') +
+            '请在下方勾选要启用抓取的字段，并填写通用名称和数据库字段名。';
+        }
+      }
+      if (nameInput) {
+        nameInput.value = match.canImport ? financeGrossMarginPreset(currentFinancePreset()).label : (fileName ? fileName.replace(/\.[^.]+$/, '') + '-自定义预设' : '自定义毛保预设');
+        nameInput.readOnly = match.canImport;
+      }
+      if (nameLabel) nameLabel.textContent = match.canImport ? '已匹配到预设' : '新预设名称';
+      if (preview) {
+        preview.hidden = match.canImport;
+        preview.innerHTML = match.canImport ? '' : renderFinanceCustomPreview(sheets || []);
+      }
+      if (okBtn) okBtn.textContent = match.canImport ? '确认导入' : '新建自定义规则';
       modal.classList.add('open');
       modal.setAttribute('aria-hidden', 'false');
       function close() {
@@ -5691,7 +6236,15 @@
         $('grossMarginRuleCancelBtn').removeEventListener('click', cancel);
       }
       function ok() {
-        var value = select && select.value ? select.value : '综合毛保';
+        if (!match.canImport) {
+          saveFinanceCustomDraft(fileName, sheets || []);
+          close();
+          reject(new Error('已生成自定义规则草稿，请到导入规则里确认字段后再导入：' + (fileName || '')));
+          return;
+        }
+        var value = '综合毛保';
+        getImportRuleConfig('finance_gross_margin').currentPreset = financeGrossMarginPreset(value).value;
+        saveImportRules();
         localStorage.setItem('jdGrossMarginRuleLast', value);
         close();
         resolve(value);
@@ -7212,8 +7765,9 @@
     });
     var range = datePickers.financeManual ? datePickers.financeManual.getRange() : previousMonthRange();
     var query = normalizedQueryRange(range);
+    var currentPreset = currentFinancePreset();
     var financeRows = filterMetricRowsByDateRange(await getAll('finance_metrics'), query).filter(function(row) {
-      return row.sourceType === 'finance_gross_margin';
+      return row.sourceType === 'finance_gross_margin' && (row.grossMarginRule || '综合毛保') === currentPreset;
     });
     var salesQtyBySku = {};
     financeRows.forEach(function(row) {
@@ -7249,6 +7803,8 @@
 
   async function renderFinanceGiftRules(reload) {
     if (!$('financeGiftBody')) return;
+    syncFinanceGiftRulesSection();
+    if (!currentFinancePresetSupportsGiftRules()) return;
     syncFinanceGiftDimControl();
     if (reload !== false) await loadFinanceGiftRows();
     var rowsForFilters = financeGiftDraftRows.filter(function(row) {
@@ -7288,11 +7844,13 @@
   }
 
   async function saveFinanceGiftRules() {
+    if (!currentFinancePresetSupportsGiftRules()) return;
     var range = datePickers.financeManual ? datePickers.financeManual.getRange() : previousMonthRange();
     var query = normalizedQueryRange(range);
+    var currentPreset = currentFinancePreset();
     var existing = await getAll('gross_margin_estimates');
     for (var i = 0; i < existing.length; i++) {
-      if (existing[i].startDate === query.start && existing[i].endDate === query.end) await remove('gross_margin_estimates', existing[i].id);
+      if (existing[i].startDate === query.start && existing[i].endDate === query.end && (existing[i].grossMarginRule || '综合毛保') === currentPreset) await remove('gross_margin_estimates', existing[i].id);
     }
     for (var j = 0; j < financeGiftDraftRows.length; j++) {
       var row = financeGiftDraftRows[j];
@@ -7302,6 +7860,7 @@
         startDate: query.start,
         endDate: query.end,
         sku: row.sku,
+        grossMarginRule: currentPreset,
         accessories: row.accessories || [],
         gifts: row.gifts || [],
         updatedAt: new Date().toISOString()
@@ -8859,56 +9418,41 @@
       });
     }
     function renderFinancePreset(sections) {
-      var rule = getImportRuleConfig('finance_gross_margin');
       var sheetSections = sections.filter(function(section) { return section.type !== 'finance_gross_margin'; });
-      var patternText = (rule.filePatterns || []).filter(Boolean).join(' / ') || '综合毛保返利单号';
-      var patternRows = renderFilePatternTags('finance_gross_margin', '文件名匹配规则', '例如：综合毛保返利单号');
-      var formulaOptions = financeFormulaFields().map(function(item) {
-        return '<button class="mapping-formula-option" type="button" data-insert-finance-field="' + esc(item.key) + '">' + esc(item.key + '（' + item.label + '）') + '</button>';
-      }).join('');
+      var formula = currentFinanceFormula();
+      var selectedPreset = currentFinancePreset();
+      var presetRow = '<div class="mapping-rule-row">' +
+        '<span class="mapping-rule-label">当前预设</span>' +
+        '<select class="select mapping-preset-select" data-finance-preset-select>' + financePresetOptionsHtml(selectedPreset) + '</select>' +
+        '<span>' + esc(financeGrossMarginPreset(selectedPreset).supportsGiftRules ? '匹配后显示赠品配件规则录入' : '该预设暂不使用赠品配件规则') + '</span><span></span>' +
+      '</div>';
       var formulaRow = '<div class="mapping-rule-row">' +
-        '<span class="mapping-rule-label">毛保计算规则</span>' +
-        '<div class="mapping-formula-field">' +
-          '<div class="mapping-formula-editor">' +
-            '<div class="mapping-formula-highlight" data-finance-formula-highlight></div>' +
-            '<input class="input mapping-formula-input" data-finance-formula value="' + esc(rule.grossMarginFormula || DEFAULT_IMPORT_RULES.finance_gross_margin.grossMarginFormula) + '" placeholder="例如：cost-income*0.85">' +
-          '</div>' +
-          '<div class="mapping-formula-picker">' + formulaOptions + '</div>' +
+        '<span class="mapping-rule-label">毛保公式</span>' +
+        '<div class="mapping-formula-preview">' +
+          '<code class="mapping-formula-code">' + esc(normalizeFinanceFormula(formula)) + '</code>' +
+          '<button class="btn mapping-preset-icon mapping-formula-edit-btn" type="button" data-edit-finance-formula title="编辑公式" aria-label="编辑公式">' + iconPencil() + '</button>' +
         '</div>' +
         '<span>=</span><span></span>' +
       '</div>';
       var tabs = sheetSections.map(function(section, index) {
         return '<button class="mapping-sheet-tab ' + (index === 0 ? 'active' : '') + '" type="button" data-finance-sheet-tab="' + esc(section.type) + '">' + esc(section.title.replace(/^综合毛保-/, '')) + '</button>';
-      }).join('');
+      }).join('') +
+        '<button class="mapping-sheet-tab mapping-sheet-add" type="button" data-add-finance-sheet title="自定义标签页" aria-label="自定义标签页">' + iconPlus() + '</button>';
       var panels = sheetSections.map(function(section, index) {
-        var sheetPattern = section.type === 'finance_gross_margin_order' ? '订单明细数据 / 订单数据明细' : '广告数据明细';
+        var sheetPattern = financeSheetPatterns(section.type).join(' / ') || '未设置';
         return '<div class="mapping-sheet-panel" data-finance-sheet-panel="' + esc(section.type) + '" style="' + (index === 0 ? '' : 'display:none;') + '">' +
-          '<div class="mapping-rule-box">' +
-            '<div class="mapping-rule-row">' +
-              '<span class="mapping-rule-label">标签页名匹配规则</span>' +
-              '<input class="input" value="' + esc(sheetPattern) + '" disabled>' +
-              '<span></span><span></span>' +
-            '</div>' +
-          '</div>' +
+          '<p class="mapping-sheet-note">标签页匹配：' + esc(sheetPattern) + '</p>' +
           '<div class="table-wrap">' + renderMappingTable(section) + '</div>' +
         '</div>';
       }).join('');
       return '<div class="mapping-preset-card">' +
         '<div class="mapping-preset-head">' +
           '<div class="mapping-preset-title">' +
-            '<strong>毛保数据</strong>' +
-            '<span>当前默认预设为“综合毛保”。文件名匹配规则支持正则，当前匹配：' + esc(patternText) + '。导入后会继续按标签页规则读取订单明细和广告数据明细。</span>' +
-            '<div class="mapping-preset-actions">' +
-              '<span class="mapping-preset-label">计算规则</span>' +
-            '<select class="select mapping-preset-select"><option>综合毛保</option></select>' +
-            '<button class="btn mapping-preset-icon" type="button" data-finance-preset-new title="新建规则" aria-label="新建规则">' + iconPlus() + '</button>' +
-            '<button class="btn mapping-preset-icon" type="button" data-finance-preset-import title="导入规则" aria-label="导入规则">' + iconImport() + '</button>' +
-            '<button class="btn mapping-preset-icon" type="button" data-finance-preset-export title="导出规则" aria-label="导出规则">' + iconExport() + '</button>' +
-            '</div>' +
-            '<div class="mapping-rule-box mapping-preset-rules">' + patternRows + formulaRow + '</div>' +
+            '<div class="mapping-rule-box mapping-preset-rules">' + presetRow + formulaRow + '</div>' +
           '</div>' +
         '</div>' +
         '<div class="mapping-preset-body">' +
+          '<p class="mapping-sheet-note">为不同标签页设置导入规则。</p>' +
           '<div class="mapping-sheet-tabs">' + tabs + '</div>' +
           panels +
         '</div>' +
@@ -8924,7 +9468,7 @@
       var sections = mappingSections.filter(function(section) { return (section.category || '未分类') === category; });
       var body = category === '财务数据' ? renderFinancePreset(sections) : sections.map(renderMappingSection).join('');
       return '<div class="mapping-category">' +
-        '<div class="mapping-category-title">' + esc(category) + '</div>' +
+        (targetId === 'financeMappingSections' ? '' : '<div class="mapping-category-title">' + esc(category) + '</div>') +
         body +
       '</div>';
     }).join('');
@@ -8935,6 +9479,7 @@
     }
     enhanceAllResizableTables();
     refreshFinanceFormulaHighlights();
+    syncFinanceGiftRulesSection();
   }
 
   function renderAllImportMappings() {
@@ -9046,6 +9591,35 @@
             return { name: name, rows: matrixToObjects(matrix) };
           });
           resolve(sheets);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = function() { reject(reader.error); };
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
+  function readWorkbookSheetPreview(file) {
+    return new Promise(function(resolve, reject) {
+      if (!window.XLSX) {
+        reject(new Error('表格解析组件还没加载完成，请稍等几秒后重试'));
+        return;
+      }
+      if (/\.csv$/i.test(file.name)) {
+        parseWorkbook(file).then(function(rows) {
+          resolve([{ name: file.name, rows: rows.slice(0, 1), headers: Object.keys(rows[0] || {}) }]);
+        }).catch(reject);
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function() {
+        try {
+          var wb = XLSX.read(reader.result, { type: 'array', cellDates: true, sheetRows: 20 });
+          resolve((wb.SheetNames || []).map(function(name) {
+            var rows = matrixToObjects(worksheetToMatrix(wb.Sheets[name]));
+            return { name: name, rows: rows.slice(0, 1), headers: Object.keys(rows[0] || {}) };
+          }));
         } catch (err) {
           reject(err);
         }
@@ -9225,7 +9799,7 @@
 
   function detectSourceType(file, rows) {
     var ruleType = detectSourceTypeByFileRules(file);
-    if (ruleType === 'finance_gross_margin_order' || ruleType === 'finance_gross_margin_ad') ruleType = 'finance_gross_margin';
+    if (financeSheetRuleTypes().indexOf(ruleType) !== -1) ruleType = 'finance_gross_margin';
     if (ruleType) return ruleType;
     var text = collectDetectText(file, rows);
     var scores = {
@@ -9926,21 +10500,81 @@
   }
 
   function financeFormulaFields() {
-    var types = ['finance_gross_margin_order', 'finance_gross_margin_ad'];
+    var types = financeSheetRuleTypes();
     var seen = {};
     var list = [];
     types.forEach(function(type) {
       getImportMappings(type).forEach(function(item) {
-        if (!item || seen[item.key] || item.key === 'sku' || item.key === 'date') return;
+        if (!item || !item.key || seen[item.key]) return;
+        if (!String(item.column || item.label || '').trim()) return;
         seen[item.key] = true;
-        list.push({ key: item.key, label: item.label || item.key });
+        list.push({ key: item.key, label: item.label || item.key, column: item.column || item.key });
       });
     });
     return list;
   }
 
+  function renderFinanceFormulaFieldOptions() {
+    return financeFormulaFields().map(function(item) {
+      return '<button class="mapping-formula-option" type="button" data-insert-finance-field="' + esc(item.key) + '">' +
+        '<span class="mapping-formula-original">' + esc(item.key) + '</span>' +
+        '<span class="mapping-formula-short">' + esc(item.label || item.key) + '</span>' +
+      '</button>';
+    }).join('');
+  }
+
+  function currentFinanceFormula() {
+    var rule = getImportRuleConfig('finance_gross_margin');
+    var fallback = DEFAULT_IMPORT_RULES.finance_gross_margin.grossMarginFormula;
+    var formula = normalizeFinanceFormula(rule.grossMarginFormula) || fallback;
+    try {
+      evaluateFinanceFormula(formula, {});
+      return formula;
+    } catch (err) {
+      rule.grossMarginFormula = fallback;
+      saveImportRules();
+      return fallback;
+    }
+  }
+
+  function openFinanceFormulaModal() {
+    var modal = $('financeFormulaModal');
+    var input = $('financeFormulaInput');
+    if (!modal || !input) return;
+    input.value = currentFinanceFormula();
+    if ($('financeFormulaFieldList')) $('financeFormulaFieldList').innerHTML = renderFinanceFormulaFieldOptions();
+    renderFinanceFormulaHighlight(input);
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    setTimeout(function() {
+      input.focus();
+      input.select();
+    }, 0);
+  }
+
+  function closeFinanceFormulaModal() {
+    var modal = $('financeFormulaModal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+
+  function saveFinanceFormulaModal() {
+    var input = $('financeFormulaInput');
+    if (!input) return;
+    var normalizedFormula = normalizeFinanceFormula(input.value);
+    getImportRuleConfig('finance_gross_margin').grossMarginFormula = normalizedFormula;
+    saveImportRules();
+    closeFinanceFormulaModal();
+    renderAllImportMappings();
+    if ($('financeMappingMsg')) {
+      $('financeMappingMsg').textContent = '毛保计算规则已保存。';
+      $('financeMappingMsg').className = 'msg ok';
+    }
+  }
+
   function normalizeFinanceFormula(value) {
-    return String(value || DEFAULT_IMPORT_RULES.finance_gross_margin.grossMarginFormula).replace(/\s+/g, '');
+    return String(value == null ? '' : value).replace(/\s+/g, '');
   }
 
   function escapeRegExp(text) {
@@ -9950,9 +10584,10 @@
   function financeFormulaHighlightHtml(value) {
     var fields = financeFormulaFields().map(function(item) { return item.key; }).filter(Boolean).sort(function(a, b) { return b.length - a.length; });
     var text = normalizeFinanceFormula(value);
-    if (!fields.length) return esc(text || '例如：cost-income*0.85');
+    if (!text) return '<span class="mapping-formula-placeholder">例如：cost-income*0.85</span>';
+    if (!fields.length) return esc(text);
     var fieldPattern = new RegExp('\\b(' + fields.map(escapeRegExp).join('|') + ')\\b', 'g');
-    return esc(text || '例如：cost-income*0.85').replace(fieldPattern, '<span class="mapping-formula-token">$1</span>');
+    return esc(text).replace(fieldPattern, '<span class="mapping-formula-token">$1</span>');
   }
 
   function renderFinanceFormulaHighlight(input) {
@@ -10007,15 +10642,19 @@
     return groups[key];
   }
 
-  async function saveFinanceGrossMarginMetrics(file, snapshotId, grossMarginRule) {
+  async function saveFinanceGrossMarginMetrics(file, snapshotId, grossMarginRule, parsedSheets) {
     grossMarginRule = grossMarginRule || '综合毛保';
-    var grossMarginFormula = normalizeFinanceFormula(getImportRuleConfig('finance_gross_margin').grossMarginFormula);
-    var sheets = await parseWorkbookSheets(file);
+    if (grossMarginRule !== '综合毛保') throw new Error('当前毛保预设尚未接入导入算法：' + grossMarginRule);
+    var grossMarginFormula = currentFinanceFormula();
+    var sheets = parsedSheets || await parseWorkbookSheets(file);
     var orderSheet = sheets.find(function(sheet) {
-      return sheetNameIncludes(sheet, ['订单明细数据', '订单数据明细']);
+      return sheetNameIncludes(sheet, financeSheetPatterns('finance_gross_margin_order'));
     });
     var adSheet = sheets.find(function(sheet) {
-      return sheetNameIncludes(sheet, ['广告数据明细']);
+      return sheetNameIncludes(sheet, financeSheetPatterns('finance_gross_margin_ad'));
+    });
+    var rebateSheet = sheets.find(function(sheet) {
+      return sheetNameIncludes(sheet, financeSheetPatterns('finance_gross_margin_rebate'));
     });
     if (!orderSheet && !adSheet) {
       return { saved: 0, skipped: 0, replaced: 0, startDate: '', endDate: '', note: '没有找到订单明细数据或广告数据明细标签页' };
@@ -10026,18 +10665,8 @@
     var skipped = 0;
     var orderRows = orderSheet ? (orderSheet.rows || []) : [];
     var adRows = adSheet ? (adSheet.rows || []) : [];
-    var orderResolved = resolveMappedColumns('finance_gross_margin_order', orderRows, {
-      sku: ['商品编码', 'SKU', 'sku'],
-      date: ['订单完成时间', '订单日期', '完成时间'],
-      income: ['收入'],
-      cost: ['成本'],
-      salesQty: ['销售数量', '数量']
-    });
-    var adResolved = resolveMappedColumns('finance_gross_margin_ad', adRows, {
-      sku: ['商品编码', 'SKU', 'sku'],
-      date: ['业务时间', '日期'],
-      adPerformanceAmount: ['广告业绩金额', '广告业绩金']
-    });
+    var orderResolved = resolveMappedColumns('finance_gross_margin_order', orderRows, financeFieldAliases('finance_gross_margin_order'));
+    var adResolved = resolveMappedColumns('finance_gross_margin_ad', adRows, financeFieldAliases('finance_gross_margin_ad'));
 
     orderRows.forEach(function(row) {
       var sku = normalizeSkuValue(exactRowValue(row, orderResolved.columns.sku));
@@ -10089,6 +10718,7 @@
     var missing = [];
     if (!orderSheet) missing.push('未找到订单明细数据');
     if (!adSheet) missing.push('未找到广告数据明细');
+    if (rebateSheet) missing.push('已识别已抵消返利明细，当前未配置抓取字段');
     ['sku', 'date', 'income', 'cost', 'salesQty'].forEach(function(key) {
       if (orderSheet && orderResolved.headers.indexOf(orderResolved.columns[key]) === -1) missing.push('订单表缺少' + key);
     });
@@ -10180,12 +10810,12 @@
     for (var i = 0; i < files.length; i++) {
       var file = files[i];
       try {
-        var fileRuleType = detectSourceTypeByFileRules(file);
-        if (fileRuleType === 'finance_gross_margin_order' || fileRuleType === 'finance_gross_margin_ad') fileRuleType = 'finance_gross_margin';
-        if (scope === 'finance' && fileRuleType !== 'finance_gross_margin') throw new Error('当前毛保数据导入仅支持毛保数据文件：' + file.name);
+        var fileRuleType = scope === 'finance' ? 'finance_gross_margin' : detectSourceTypeByFileRules(file);
+        if (financeSheetRuleTypes().indexOf(fileRuleType) !== -1) fileRuleType = 'finance_gross_margin';
         if (scope !== 'finance' && fileRuleType === 'finance_gross_margin') throw new Error('毛保数据请到财务数据的数据导入页导入：' + file.name);
         if (fileRuleType === 'search_analysis') throw new Error('搜索分析数据请到左侧“其他分析 > 搜索导入与分析”页导入：' + file.name);
-        var grossMarginRule = fileRuleType === 'finance_gross_margin' ? await chooseGrossMarginRule(file.name) : '';
+        var financeSheets = fileRuleType === 'finance_gross_margin' ? await readWorkbookSheetPreview(file) : null;
+        var grossMarginRule = fileRuleType === 'finance_gross_margin' ? await chooseGrossMarginRule(file.name, financeSheets) : '';
         var rows = await parseWorkbook(file);
         var meta = detectImportMeta(file, rows);
         if (fileRuleType === 'finance_gross_margin') meta.sourceType = 'finance_gross_margin';
@@ -13065,6 +13695,48 @@
     document.querySelectorAll('.mapping-formula-field.open').forEach(function(node) {
       if (!node.contains(e.target)) node.classList.remove('open');
     });
+    var customTab = e.target.closest('[data-finance-custom-tab]');
+    if (customTab) {
+      var preview = customTab.closest('#grossMarginCustomPreview');
+      var active = customTab.getAttribute('data-finance-custom-tab');
+      preview.querySelectorAll('[data-finance-custom-tab]').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-finance-custom-tab') === active);
+      });
+      preview.querySelectorAll('[data-finance-custom-panel]').forEach(function(panel) {
+        panel.style.display = panel.getAttribute('data-finance-custom-panel') === active ? '' : 'none';
+      });
+      return;
+    }
+    if (e.target.closest('[data-edit-finance-formula]')) {
+      openFinanceFormulaModal();
+      return;
+    }
+    if (e.target.closest('#financeFormulaCancelBtn')) {
+      closeFinanceFormulaModal();
+      return;
+    }
+    if (e.target.closest('#financeFormulaOkBtn')) {
+      saveFinanceFormulaModal();
+      return;
+    }
+    if (e.target === $('financeFormulaModal')) {
+      closeFinanceFormulaModal();
+      return;
+    }
+    var insertField = e.target.closest('[data-insert-finance-field]');
+    if (insertField) {
+      var field = insertField.getAttribute('data-insert-finance-field');
+      var formulaBox = insertField.closest('.mapping-formula-field');
+      var input = formulaBox && formulaBox.querySelector('[data-finance-formula]');
+      if (!input) return;
+      var start = input.selectionStart || 0;
+      var end = input.selectionEnd || start;
+      input.value = normalizeFinanceFormula(input.value.slice(0, start) + field + input.value.slice(end));
+      input.focus();
+      input.setSelectionRange(start + field.length, start + field.length);
+      renderFinanceFormulaHighlight(input);
+      return;
+    }
     var mappingRoot = e.target.closest('#mappingSections,#financeMappingSections');
     if (!mappingRoot) return;
     var mappingMsgEl = mappingRoot.id === 'financeMappingSections' ? $('financeMappingMsg') : $('mappingMsg');
@@ -13072,22 +13744,6 @@
     var formulaInput = e.target.closest('[data-finance-formula]');
     if (formulaInput) {
       formulaInput.closest('.mapping-formula-field').classList.add('open');
-      return;
-    }
-    var insertField = e.target.closest('[data-insert-finance-field]');
-    if (insertField) {
-      var field = insertField.getAttribute('data-insert-finance-field');
-      var input = insertField.closest('.mapping-formula-field').querySelector('[data-finance-formula]');
-      var start = input.selectionStart || 0;
-      var end = input.selectionEnd || start;
-      input.value = normalizeFinanceFormula(input.value.slice(0, start) + field + input.value.slice(end));
-      input.focus();
-      input.setSelectionRange(start + field.length, start + field.length);
-      getImportRuleConfig('finance_gross_margin').grossMarginFormula = input.value;
-      saveImportRules();
-      renderFinanceFormulaHighlight(input);
-      mappingMsgEl.textContent = '毛保计算规则已保存。';
-      mappingMsgEl.className = 'msg ok';
       return;
     }
     var financeTab = e.target.closest('[data-finance-sheet-tab]');
@@ -13101,15 +13757,21 @@
       });
       return;
     }
+    if (e.target.closest('[data-add-finance-sheet]')) {
+      mappingMsgEl.textContent = '自定义标签页入口已预留，确认字段汇总口径后可接入新的标签页规则。';
+      mappingMsgEl.className = 'msg ok';
+      return;
+    }
     if (e.target.closest('[data-finance-preset-export]')) {
       var payload = {
         preset: '综合毛保',
         grossMarginRule: '综合毛保',
-        grossMarginFormula: getImportRuleConfig('finance_gross_margin').grossMarginFormula,
+        grossMarginFormula: currentFinanceFormula(),
         filePatterns: getImportRuleConfig('finance_gross_margin').filePatterns,
         mappings: {
           order: getImportMappings('finance_gross_margin_order'),
-          ad: getImportMappings('finance_gross_margin_ad')
+          ad: getImportMappings('finance_gross_margin_ad'),
+          rebate: getImportMappings('finance_gross_margin_rebate')
         }
       };
       var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
@@ -13183,19 +13845,15 @@
     }
   });
   document.addEventListener('input', function(e) {
+    if (e.target.matches('#financeFormulaInput')) {
+      var modalFormula = normalizeFinanceFormula(e.target.value);
+      if (e.target.value !== modalFormula) e.target.value = modalFormula;
+      renderFinanceFormulaHighlight(e.target);
+      return;
+    }
     var mappingRoot = e.target.closest('#mappingSections,#financeMappingSections');
     if (!mappingRoot) return;
     var mappingMsgEl = mappingRoot.id === 'financeMappingSections' ? $('financeMappingMsg') : $('mappingMsg');
-    if (e.target.matches('[data-finance-formula]')) {
-      var normalizedFormula = normalizeFinanceFormula(e.target.value);
-      if (e.target.value !== normalizedFormula) e.target.value = normalizedFormula;
-      getImportRuleConfig('finance_gross_margin').grossMarginFormula = normalizedFormula;
-      saveImportRules();
-      renderFinanceFormulaHighlight(e.target);
-      mappingMsgEl.textContent = '毛保计算规则已保存。';
-      mappingMsgEl.className = 'msg ok';
-      return;
-    }
     var patternRow = e.target.closest('[data-rule-type]');
     if (e.target.classList.contains('mapping-file-pattern') && patternRow) {
       var rule = getImportRuleConfig(patternRow.dataset.ruleType);
@@ -13208,10 +13866,23 @@
     var row = e.target.closest('tr[data-index]');
     if (row) updateMappingFromRow(row);
   });
-  document.addEventListener('change', function(e) {
+  document.addEventListener('change', async function(e) {
     var mappingRoot = e.target.closest('#mappingSections,#financeMappingSections');
     if (!mappingRoot) return;
     var mappingMsgEl = mappingRoot.id === 'financeMappingSections' ? $('financeMappingMsg') : $('mappingMsg');
+    if (e.target.matches('[data-finance-preset-select]')) {
+      var preset = financeGrossMarginPreset(e.target.value);
+      getImportRuleConfig('finance_gross_margin').currentPreset = preset.value;
+      localStorage.setItem('jdGrossMarginRuleLast', preset.value);
+      saveImportRules();
+      renderAllImportMappings();
+      await renderFinanceGiftRules();
+      if (mappingMsgEl) {
+        mappingMsgEl.textContent = '当前毛保预设已切换为：' + preset.label + '。';
+        mappingMsgEl.className = 'msg ok';
+      }
+      return;
+    }
     if (e.target.classList.contains('mapping-include-comparison')) {
       var rule = getImportRuleConfig(e.target.dataset.ruleType);
       rule.includeComparison = e.target.checked;

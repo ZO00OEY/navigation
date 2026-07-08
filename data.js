@@ -59,10 +59,23 @@ const SITE_DATA = {
           name: "通用",
           links: [
             { title: "在线工具箱", url: "http://tool.myop.cn/", desc: "实用在线工具集合", target: "_blank" },
+            { title: "PDF24 Tools", url: "https://tools.pdf24.org/zh/", desc: "PDF 合并、压缩、转换工具", target: "_blank" },
+            { title: "ILovePDF", url: "https://www.ilovepdf.com/zh-cn", desc: "常用 PDF 在线处理", target: "_blank" },
+            { title: "CloudConvert", url: "https://cloudconvert.com/", desc: "文件格式在线转换", target: "_blank" },
             { title: "剧OK", url: "https://juok3.top/", desc: "在线追剧 高清下载", target: "_blank" },
             { title: "硬核指南", url: "https://yinghezhinan.com/", desc: "影视资源大全", target: "_blank" },
             { title: "EmojiAll", url: "https://www.emojiall.com/zh-hans", desc: "emoji 大全", target: "_blank" },
             { title: "regex101", url: "https://regex101.com/", desc: "正则表达式测试与调试", target: "_blank" }
+          ]
+        },
+        {
+          name: "效率与写作",
+          links: [
+            { title: "DeepL", url: "https://www.deepl.com/translator", desc: "翻译与润色", target: "_blank" },
+            { title: "秘塔写作猫", url: "https://xiezuocat.com/", desc: "中文文本校对", target: "_blank" },
+            { title: "Excalidraw", url: "https://excalidraw.com/", desc: "手绘风白板画图", target: "_blank" },
+            { title: "ProcessOn", url: "https://www.processon.com/", desc: "流程图、脑图、协作图表", target: "_blank" },
+            { title: "JSON Editor Online", url: "https://jsoneditoronline.org/", desc: "JSON 查看与格式化", target: "_blank" }
           ]
         },
         {
@@ -99,8 +112,17 @@ const SITE_DATA = {
             { title: "改图宝", url: "https://www.gaitubao.com/", desc: "在线图片编辑", target: "_blank" },
             { title: "做好图", url: "http://www.zuohaotu.com/image-converter.aspx", desc: "图片格式转换", target: "_blank" },
             { title: "凡科快图", url: "https://kt.fkw.com/tools.html", desc: "在线图片处理工具", target: "_blank" },
+            { title: "Photopea", url: "https://www.photopea.com/", desc: "浏览器里的类 PS 编辑器", target: "_blank" },
+            { title: "Squoosh", url: "https://squoosh.app/", desc: "图片压缩与格式转换", target: "_blank" },
             { title: "Remove.bg", url: "https://www.remove.bg/zh", desc: "AI 背景去除", target: "_blank" },
             { title: "TinyPNG", url: "https://tinypng.com/", desc: "智能图片压缩", target: "_blank" }
+          ]
+        },
+        {
+          name: "趣味网站",
+          links: [
+            { title: "合乎周礼", url: "https://hehuzhouli.com/", desc: "网络热梗与趣味文本", target: "_blank" },
+            { title: "祖安分区", url: "https://caonima.de/", desc: "抽象嘴臭语料库", target: "_blank" }
           ]
         }
       ]
