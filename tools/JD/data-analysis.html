@@ -6686,6 +6686,12 @@
     $('manualRankingHead').innerHTML = '<tr><th>\u7ef4\u5ea6\uff08\u5546\u54c1\u7b80\u79f0\uff09</th>' +
       fields.map(function(key) { return '<th>' + esc(MANUAL_RANKING_FIELDS[key].label) + '</th>'; }).join('') +
       '</tr>';
+    if (!db) {
+      $('manualRankingBody').innerHTML = '<tr><td class="empty-row" colspan="' + (fields.length + 1) + '">\u672c\u5730\u5e93\u51c6\u5907\u4e2d...</td></tr>';
+      renderManualRankingFieldPanel();
+      enhanceAllResizableTables();
+      return;
+    }
     var skus = await getAll('sku_profiles');
     var records = await getAll('ranking_raw_metrics');
     var date = getManualRankingDate();
