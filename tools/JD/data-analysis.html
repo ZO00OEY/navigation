@@ -1012,6 +1012,66 @@
   box-shadow: none;
 }
 .finance-data-pane[hidden] { display: none; }
+.inventory-warehouse-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.inventory-warehouse-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 8px 0 12px;
+  border: 1px solid rgba(var(--tool-accent-rgb), 0.24);
+  border-radius: 999px;
+  background: rgba(var(--tool-accent-rgb), 0.07);
+  color: var(--text);
+  font-size: 0.78rem;
+}
+.inventory-warehouse-tag button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(217, 83, 79, 0.12);
+  color: #d9534f;
+  cursor: pointer;
+}
+.inventory-add-warehouse {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.inventory-add-warehouse .input {
+  width: 120px;
+  min-height: 30px;
+  padding: 5px 10px;
+}
+.inventory-sku-config { margin-top: 8px; }
+.inventory-sku-config .panel-title { margin-bottom: 6px; }
+.inventory-sku-textarea {
+  width: 100%;
+  min-height: 260px;
+  margin-top: 4px;
+  resize: vertical;
+}
+.inventory-table { min-width: 1420px; }
+.inventory-table td { vertical-align: top; }
+.inventory-table .inventory-fixed-cell { white-space: nowrap; }
+.inventory-warehouse-mini {
+  display: grid;
+  gap: 2px;
+  min-width: 118px;
+  white-space: normal;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+.inventory-warehouse-mini strong { color: var(--text); }
 .report-dim-picker {
   position: relative;
   display: inline-flex;
@@ -1861,6 +1921,38 @@
 .finance-rule-modal {
   width: min(980px, calc(100vw - 32px));
 }
+.finance-rule-actions {
+  align-items: center;
+  justify-content: flex-start;
+}
+.finance-custom-meta {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(220px, 1.4fr);
+  gap: 10px;
+  margin: 0 0 12px;
+}
+.finance-custom-meta[hidden] { display: none; }
+.finance-custom-meta label {
+  display: grid;
+  gap: 6px;
+  color: var(--text-tertiary);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.finance-custom-bulk {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.finance-custom-bulk[hidden] { display: none; }
+.finance-rule-submit {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-left: auto;
+}
 .finance-rule-modal .custom-mode-emphasis {
   color: var(--link-color);
   font-weight: 800;
@@ -2532,6 +2624,7 @@
         <button class="tab-btn active" data-page="shop-competitor">店铺与竞品<span class="tab-kicker">02</span></button>
         <button class="tab-btn" data-page="finance-data">毛保数据导入与分析<span class="tab-kicker">03</span></button>
         <button class="tab-btn" data-page="search-import">关键词搜索导入与分析<span class="tab-kicker">04</span></button>
+        <button class="tab-btn" data-page="inventory-turnover">库存周转导入与分析<span class="tab-kicker">05</span></button>
       </div>
       <div class="sidebar-archive">
         <div class="palette-card" aria-label="工具配色">
@@ -3121,6 +3214,78 @@
         </div>
       </section>
 
+      <section class="tool-page" id="inventory-turnover">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>库存周转导入与分析</h1>
+            <p>导入库存周转文件，按 SKU 抓取商品价格、全国库存指标和已配置仓库指标。</p>
+          </div>
+        </div>
+
+        <div class="finance-data-tabs">
+          <button class="finance-data-tab active" type="button" data-inventory-panel="import">数据导入</button>
+          <button class="finance-data-tab" type="button" data-inventory-panel="detail">库存明细</button>
+        </div>
+        <div class="panel finance-data-panel is-import-mode" id="inventoryTurnoverPanel">
+          <div class="finance-data-pane" id="inventoryImportPane">
+            <div class="finance-import-section">
+              <div class="panel-title">
+                <span>仓库配置</span>
+              </div>
+              <div class="inventory-warehouse-box">
+                <div class="inventory-warehouse-box" id="inventoryWarehouseTags"></div>
+                <span class="inventory-add-warehouse">
+                  <input class="input" id="inventoryWarehouseInput" placeholder="新增仓库">
+                  <button class="mapping-rule-action add" id="addInventoryWarehouseBtn" type="button" title="新增仓库">+</button>
+                </span>
+              </div>
+              <div class="msg" id="inventoryWarehouseMsg"></div>
+              <div class="inventory-sku-config">
+                <div class="panel-title">
+                  <span>SKU 配置</span>
+                </div>
+                <textarea class="input inventory-sku-textarea" id="inventorySkuInput" placeholder="每行一个需要加入周转计算的 SKU"></textarea>
+                <p class="panel-sub" style="margin-top:8px;">只导入这里配置的 SKU。留空时不会写入库存周转数据，避免误把全量 SKU 加进周转计算。</p>
+              </div>
+            </div>
+
+            <div class="finance-import-section">
+              <div class="panel-title">
+                <span>批量自动导入</span>
+              </div>
+              <div class="upload-zone" id="inventoryDropZone">
+                <strong>拖入库存周转 Excel / CSV 文件，或点击选择</strong>
+                <span>按当前仓库标签识别「仓库名 + 指标名」列。</span>
+              </div>
+              <input type="file" id="inventoryFileInput" accept=".xlsx,.xls,.csv" style="display:none">
+              <div class="msg" id="inventoryImportMsg"></div>
+              <div class="import-summary" id="inventoryImportSummary">
+                <span id="inventoryImportSummaryText">还没有导入文件</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="finance-data-pane" id="inventoryDetailPane" hidden>
+            <div class="finance-import-section">
+              <div class="panel-title">
+                <span>库存明细</span>
+                <div class="btn-row">
+                  <button class="btn" id="refreshInventoryTurnoverBtn" type="button">刷新</button>
+                  <button class="btn danger" id="clearInventoryTurnoverBtn" type="button">清表</button>
+                </div>
+              </div>
+              <div class="report-data-alert" id="inventoryDataAlert"></div>
+              <div class="table-wrap">
+                <table class="data-table inventory-table">
+                  <thead id="inventoryTurnoverHead"></thead>
+                  <tbody id="inventoryTurnoverBody"><tr><td class="empty-row" colspan="12">暂无库存周转数据</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="tool-page" id="cost">
         <div class="page-head">
           <div class="page-title">
@@ -3286,10 +3451,20 @@
     <p id="grossMarginRuleDesc">检测到当前文件匹配为毛保数据明细，请确认本次导入使用的计算规则。</p>
     <label class="mapping-preset-label" id="grossMarginRuleNameLabel" for="grossMarginRuleNameInput">已匹配到预设</label>
     <input class="input" id="grossMarginRuleNameInput" style="width:100%; margin:8px 0 14px;" value="综合毛保-手动配置全产品配件赠品" placeholder="请输入预设名称">
+    <div class="finance-custom-meta" id="grossMarginCustomMeta" hidden>
+      <label>导入时间<input class="input" id="grossMarginCustomImportDateInput" type="date"></label>
+      <label>数据库表名<input class="input" id="grossMarginCustomStoreInput" readonly></label>
+    </div>
     <div class="finance-custom-preview" id="grossMarginCustomPreview" hidden></div>
-    <div class="btn-row">
-      <button class="btn" id="grossMarginRuleCancelBtn" type="button">取消导入</button>
-      <button class="btn primary" id="grossMarginRuleOkBtn" type="button">确认导入</button>
+    <div class="btn-row finance-rule-actions">
+      <div class="finance-custom-bulk" id="grossMarginCustomBulkActions" hidden>
+        <label class="check-pill"><input type="checkbox" id="grossMarginCustomSelectAllToggle"><span id="grossMarginCustomSelectAllText">全选</span></label>
+        <button class="btn" id="grossMarginCustomInvertBtn" type="button">反选</button>
+      </div>
+      <div class="finance-rule-submit">
+        <button class="btn" id="grossMarginRuleCancelBtn" type="button">取消导入</button>
+        <button class="btn primary" id="grossMarginRuleOkBtn" type="button">确认导入</button>
+      </div>
     </div>
   </div>
 </div>
@@ -3434,7 +3609,7 @@
   }
 
   var DB_NAME = 'jdDataAnalysisTool';
-  var DB_VERSION = 4;
+  var DB_VERSION = 5;
   var SEARCH_ANALYSIS_SOURCE_URL = 'https://ppzh.jd.com/brandweb/brand/view/viewflow/flowKeywordAnalysisNew.html';
   var db = null;
   var skuImportTarget = 'own';
@@ -3445,6 +3620,26 @@
   var dbBrowserMode = localStorage.getItem('jdDbBrowserMode') === 'schema' ? 'schema' : 'records';
   var skuArchiveView = 'all';
   var skuSortState = JSON.parse(localStorage.getItem('jdSkuSortState') || '{"own":null,"competitor":null}');
+  var DEFAULT_INVENTORY_WAREHOUSES = ['北京', '上海', '广州', '成都', '武汉', '沈阳', '西安', '德州', '杭州', '南京', '郑州'];
+  var inventoryWarehouses = sanitizeInventoryWarehouses(JSON.parse(localStorage.getItem('jdInventoryWarehouses') || 'null') || DEFAULT_INVENTORY_WAREHOUSES);
+  var inventorySkuList = sanitizeInventorySkus(JSON.parse(localStorage.getItem('jdInventorySkuList') || '[]'));
+  var INVENTORY_NATIONAL_FIELDS = [
+    { key: 'itemPrice', label: '商品价格', aliases: ['商品价格', '商品售价', '售价', '京东价', '价格'] },
+    { key: 'nationalPurchasePrice', label: '全国采购价', aliases: ['全国采购价', '采购价'] },
+    { key: 'nationalSpotStock', label: '全国现货库存', aliases: ['全国现货库存'] },
+    { key: 'nationalOrderableStock', label: '全国可订购库存', aliases: ['全国可订购库存'] },
+    { key: 'nationalPurchasePending', label: '全国采购未到货', aliases: ['全国采购未到货'] },
+    { key: 'nationalTransferTransit', label: '全国内配在途库存', aliases: ['全国内配在途库存'] },
+    { key: 'nationalTransferIn', label: '全国内配入', aliases: ['全国内配入'] },
+    { key: 'nationalTransferOut', label: '全国内配出', aliases: ['全国内配出'] }
+  ];
+  var INVENTORY_WAREHOUSE_FIELDS = [
+    { key: 'orderableStock', label: '可订购库存', aliases: ['可订购库存', '可用库存', '可售库存'] },
+    { key: 'outbound1', label: '近1天日出库商品件数', days: 1, aliases: ['近1天日出库商品件数', '近1天出库商品件数', '近1日出库商品件数', '昨日出库商品件数'] },
+    { key: 'outbound7', label: '近7天日出库商品件数', days: 7, aliases: ['近7天日出库商品件数', '近7日出库商品件数', '近7日出库件数', '近7天出库商品件数', '近7日出库商品件数'] },
+    { key: 'outbound14', label: '近14天日出库商品件数', days: 14, aliases: ['近14天日出库商品件数', '近14日出库商品件数', '近14日出库件数', '近14天出库商品件数', '近14日出库商品件数'] },
+    { key: 'outbound28', label: '近28天日出库商品件数', days: 28, aliases: ['近28天日出库商品件数', '近28日出库商品件数', '近28日出库件数', '近28天出库商品件数', '近28日出库商品件数'] }
+  ];
 
   var labels = {
     sourceType: {
@@ -3457,7 +3652,8 @@
       finance_gross_margin_order: '毛保数据-综合毛保-订单明细数据',
       finance_gross_margin_ad: '毛保数据-综合毛保-广告数据明细',
       finance_gross_margin_rebate: '毛保数据-综合毛保-已抵消返利明细',
-      search_analysis: '其他分析-搜索数据'
+      search_analysis: '其他分析-搜索数据',
+      inventory_turnover: '库存周转-库存周转表'
     },
     periodType: { unknown: '待确认', day: '单日', period: '跨期' },
     itemType: { own: '本品', competitor: '竞品' }
@@ -3470,6 +3666,7 @@
     'competitor_estimates',
     'finance_metrics',
     'gross_margin_estimates',
+    'inventory_turnover_metrics',
     'app_settings'
   ];
   var DATA_DATE_HINT_KEY = 'jdDataDateHint';
@@ -3481,6 +3678,7 @@
     competitor_estimates: '竞品追踪',
     finance_metrics: '毛保数据',
     gross_margin_estimates: '毛保预估表',
+    inventory_turnover_metrics: '库存周转',
     app_settings: '应用设置'
   };
   var DEFAULT_IMPORT_MAPPINGS = {
@@ -4515,6 +4713,22 @@
     if (datePickers.analyzed) datePickers.analyzed.render();
   }
 
+  function bindDbConnection(database) {
+    db = database;
+    db.onversionchange = function() {
+      db.close();
+    };
+    return db;
+  }
+
+  function openLatestDb() {
+    return new Promise(function(resolve, reject) {
+      var req = indexedDB.open(DB_NAME);
+      req.onsuccess = function() { resolve(bindDbConnection(req.result)); };
+      req.onerror = function() { reject(req.error); };
+    });
+  }
+
   function openDb() {
     return new Promise(function(resolve, reject) {
       var req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -4561,6 +4775,12 @@
           grossEstimate.createIndex('sku', 'sku', { unique: false });
           grossEstimate.createIndex('startDate', 'startDate', { unique: false });
         }
+        if (!database.objectStoreNames.contains('inventory_turnover_metrics')) {
+          var inventory = database.createObjectStore('inventory_turnover_metrics', { keyPath: 'id', autoIncrement: true });
+          inventory.createIndex('sku', 'sku', { unique: false });
+          inventory.createIndex('snapshotId', 'snapshotId', { unique: false });
+          inventory.createIndex('startDate', 'startDate', { unique: false });
+        }
         if (!database.objectStoreNames.contains('app_settings')) {
           database.createObjectStore('app_settings', { keyPath: 'key' });
         }
@@ -4569,11 +4789,35 @@
         reject(new Error('本地数据库升级被其它已打开页面占用，请关闭同一工具的其它标签页后刷新。'));
       };
       req.onsuccess = function() {
-        db = req.result;
-        db.onversionchange = function() {
-          db.close();
-        };
-        resolve(db);
+        resolve(bindDbConnection(req.result));
+      };
+      req.onerror = function() {
+        if (req.error && req.error.name === 'VersionError') {
+          openLatestDb().then(resolve).catch(reject);
+          return;
+        }
+        reject(req.error);
+      };
+    });
+  }
+
+  function ensureCustomObjectStore(storeName) {
+    if (!storeName) return Promise.reject(new Error('自定义预设缺少数据库表名'));
+    if (db && db.objectStoreNames.contains(storeName)) return Promise.resolve();
+    var nextVersion = Math.max((db && db.version || DB_VERSION) + 1, DB_VERSION + 1);
+    if (db) db.close();
+    return new Promise(function(resolve, reject) {
+      var req = indexedDB.open(DB_NAME, nextVersion);
+      req.onupgradeneeded = function(event) {
+        var database = event.target.result;
+        if (!database.objectStoreNames.contains(storeName)) database.createObjectStore(storeName, { autoIncrement: true });
+      };
+      req.onblocked = function() {
+        reject(new Error('创建自定义预设表被其它已打开页面占用，请关闭同一工具的其它标签页后重试。'));
+      };
+      req.onsuccess = function() {
+        bindDbConnection(req.result);
+        resolve();
       };
       req.onerror = function() { reject(req.error); };
     });
@@ -4653,14 +4897,44 @@
   function collectLatestBackupDataDate(payload) {
     if (!payload || !payload.stores) return '';
     var latest = '';
-    ['analyzed_metrics', 'ranking_raw_metrics', 'competitor_estimates', 'finance_metrics', 'gross_margin_estimates', 'raw_snapshots'].forEach(function(store) {
+    Object.keys(payload.stores || {}).forEach(function(store) {
       var rows = Array.isArray(payload.stores[store]) ? payload.stores[store] : [];
       rows.forEach(function(row) {
-        var candidate = canonicalYmd(row && (row.endDate || row.startDate || row.date));
+        var candidate = canonicalYmd(row && (row.endDate || row.startDate || row.date || row['导入时间']));
         if (candidate && (!latest || candidate > latest)) latest = candidate;
       });
     });
     return latest;
+  }
+
+  function financeCustomPresets() {
+    try {
+      return JSON.parse(localStorage.getItem('jdFinanceCustomImportPresets') || '[]').filter(function(item) {
+        return item && item.tableName;
+      });
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function saveFinanceCustomPresets(list) {
+    localStorage.setItem('jdFinanceCustomImportPresets', JSON.stringify(list || []));
+  }
+
+  function financeCustomPresetForStore(store) {
+    return financeCustomPresets().find(function(item) { return item.tableName === store; }) || null;
+  }
+
+  function rememberFinanceCustomPreset(preset) {
+    if (!preset || !preset.tableName) return;
+    var list = financeCustomPresets().filter(function(item) { return item.tableName !== preset.tableName; });
+    list.push(preset);
+    saveFinanceCustomPresets(list);
+  }
+
+  function dbStoreLabel(store) {
+    var preset = financeCustomPresetForStore(store);
+    return preset ? (preset.name || store) : (DB_STORE_LABELS[store] || store);
   }
 
   async function exportDatabaseBackup() {
@@ -4678,8 +4952,9 @@
       stores: {},
       localStorage: collectBackupLocalStorage()
     };
-    for (var i = 0; i < BACKUP_STORES.length; i++) {
-      var store = BACKUP_STORES[i];
+    var stores = getDbBrowserStores();
+    for (var i = 0; i < stores.length; i++) {
+      var store = stores[i];
       if (db.objectStoreNames.contains(store)) payload.stores[store] = await getAll(store);
     }
     var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
@@ -4703,9 +4978,10 @@
         setDbBackupMsg('备份文件格式不正确。', true);
         return;
       }
-      for (var i = 0; i < BACKUP_STORES.length; i++) {
-        var store = BACKUP_STORES[i];
-        if (!db.objectStoreNames.contains(store)) continue;
+      var stores = Object.keys(payload.stores || {});
+      for (var i = 0; i < stores.length; i++) {
+        var store = stores[i];
+        if (!db.objectStoreNames.contains(store)) await ensureCustomObjectStore(store);
         await clearStore(store);
         var rows = Array.isArray(payload.stores[store]) ? payload.stores[store] : [];
         for (var r = 0; r < rows.length; r++) await put(store, rows[r]);
@@ -4821,7 +5097,7 @@
     var current = select.value;
     var stores = getDbBrowserStores();
     select.innerHTML = stores.map(function(store) {
-      var label = DB_STORE_LABELS[store] || store;
+      var label = dbStoreLabel(store);
       return '<option value="' + esc(store) + '">' + esc(label + ' / ' + store) + '</option>';
     }).join('');
     if (current && stores.indexOf(current) !== -1) select.value = current;
@@ -4837,7 +5113,7 @@
   }
 
   function getDbBrowserColumns(rows) {
-    var preferred = ['id', 'key', 'sku', 'itemType', 'shortName', 'sourceType', 'periodType', 'startDate', 'endDate', 'fileName', 'importedAt'];
+    var preferred = ['导入时间', 'id', 'key', 'sku', 'itemType', 'shortName', 'sourceType', 'periodType', 'startDate', 'endDate', 'fileName', 'importedAt'];
     var seen = {};
     var columns = [];
     preferred.forEach(function(key) {
@@ -4933,6 +5209,29 @@
 
   function buildDbSchemaRows(store, rows) {
     var fields = {};
+    var customPreset = financeCustomPresetForStore(store);
+    if (customPreset) {
+      addSchemaField(fields, {
+        key: '导入时间',
+        commonName: '导入时间',
+        sourceHeaders: ['弹窗时间选择器'],
+        sources: [customPreset.name || store],
+        note: '自定义预设导入时选择的时间',
+        origin: '自定义预设固定字段'
+      });
+      (customPreset.sheets || []).forEach(function(sheet) {
+        (sheet.fields || []).forEach(function(field) {
+          addSchemaField(fields, {
+            key: field.key,
+            commonName: field.label || field.key,
+            sourceHeaders: [field.header],
+            sources: [sheet.name || customPreset.name || store],
+            note: '由自定义预设自动生成',
+            origin: '自定义预设字段'
+          });
+        });
+      });
+    }
     sourceTypesForStore(store).forEach(function(type) {
       var section = mappingSections.find(function(item) { return item.type === type; }) || {};
       var schemaName = mappingSectionSchemaName(section);
@@ -5033,7 +5332,7 @@
       });
     });
     return Object.keys(fields).sort(function(a, b) {
-      var preferred = ['id', 'key', 'sku', 'itemType', 'shortName', 'sourceType', 'periodType', 'startDate', 'endDate'];
+      var preferred = ['导入时间', 'id', 'key', 'sku', 'itemType', 'shortName', 'sourceType', 'periodType', 'startDate', 'endDate'];
       var ai = preferred.indexOf(a), bi = preferred.indexOf(b);
       if (ai === -1) ai = 999;
       if (bi === -1) bi = 999;
@@ -5073,7 +5372,7 @@
         '<td>' + esc(row.origin) + '</td>' +
       '</tr>';
     }).join('') : '<tr><td class="empty-row" colspan="' + columns.length + '">暂无字段结构</td></tr>';
-    var storeLabel = DB_STORE_LABELS[store] || store;
+    var storeLabel = dbStoreLabel(store);
     $('dbBrowserMeta').textContent = storeLabel + '：字段 ' + schemaRows.length + ' 个；通用名称用于跨页面统一理解字段含义。';
     $('dbBrowserDetail').textContent = schemaRows.length ? '点击任意字段查看结构 JSON。' : '暂无可预览字段。';
   }
@@ -5081,7 +5380,7 @@
   async function exportDbBrowserCurrent() {
     var store = $('dbBrowserStoreSelect').value;
     if (!store) return;
-    var storeLabel = DB_STORE_LABELS[store] || store;
+    var storeLabel = dbStoreLabel(store);
     if (dbBrowserMode === 'schema') {
       exportRows('京东数据分析工具_' + storeLabel + '_表结构字典_' + today() + '.xlsx', buildDbSchemaRows(store, await getAll(store)));
       return;
@@ -5127,7 +5426,7 @@
         }).join('') + '</tr>';
       }).join('');
     }
-    var storeLabel = DB_STORE_LABELS[store] || store;
+    var storeLabel = dbStoreLabel(store);
     $('dbBrowserMeta').textContent = storeLabel + '：共 ' + rows.length + ' 条，当前显示 ' + dbBrowserRows.length + ' 条。';
     $('dbBrowserDetail').textContent = dbBrowserRows.length ? '点击任意行查看完整 JSON。' : '暂无可预览记录。';
   }
@@ -6177,12 +6476,28 @@
     return tabs + panels;
   }
 
+  function newFinanceCustomStoreName() {
+    return 'finance_custom_' + Date.now().toString(36);
+  }
+
+  function cleanFinanceCustomFieldKey(value, fallback) {
+    var key = String(value || '').trim().replace(/\s+/g, '_').replace(/[^\w\u4e00-\u9fa5]/g, '_').replace(/^_+|_+$/g, '');
+    return key || fallback;
+  }
+
   function saveFinanceCustomDraft(fileName, sheets) {
     var preview = $('grossMarginCustomPreview');
     var nameInput = $('grossMarginRuleNameInput');
+    var importDateInput = $('grossMarginCustomImportDateInput');
+    var storeInput = $('grossMarginCustomStoreInput');
+    var seenKeys = {};
+    var tableName = storeInput && storeInput.value ? storeInput.value : newFinanceCustomStoreName();
     var payload = {
+      id: tableName,
+      tableName: tableName,
       fileName: fileName || '',
       name: nameInput ? nameInput.value.trim() || '自定义毛保预设' : '自定义毛保预设',
+      importDate: canonicalYmd(importDateInput && importDateInput.value) || today(),
       createdAt: new Date().toISOString(),
       sheets: (sheets || []).map(function(sheet, si) {
         var headers = sheet.headers || Object.keys((sheet.rows && sheet.rows[0]) || {});
@@ -6191,20 +6506,76 @@
           fields: headers.map(function(header, hi) {
             var key = si + ':' + hi;
             var checked = preview ? preview.querySelector('[data-finance-custom-field="' + key + '"]') : null;
+            if (checked && !checked.checked) return null;
             var label = preview ? preview.querySelector('[data-finance-custom-label="' + key + '"]') : null;
             var dbKey = preview ? preview.querySelector('[data-finance-custom-db-key="' + key + '"]') : null;
+            var fallback = 'custom_' + (si + 1) + '_' + (hi + 1);
+            var fieldKey = cleanFinanceCustomFieldKey(dbKey ? dbKey.value : '', fallback);
+            if (seenKeys[fieldKey]) {
+              seenKeys[fieldKey] += 1;
+              fieldKey += '_' + seenKeys[fieldKey];
+            } else {
+              seenKeys[fieldKey] = 1;
+            }
             return {
               header: header,
               label: label ? label.value.trim() || header : header,
-              key: dbKey ? dbKey.value.trim() || ('custom_' + (si + 1) + '_' + (hi + 1)) : ('custom_' + (si + 1) + '_' + (hi + 1)),
+              key: fieldKey,
               enabled: checked ? checked.checked : true
             };
-          }).filter(function(field) { return field.enabled; })
+          }).filter(Boolean)
         };
       })
     };
     localStorage.setItem('jdFinanceCustomImportDraft', JSON.stringify(payload));
+    rememberFinanceCustomPreset(payload);
     return payload;
+  }
+
+  async function saveFinanceCustomPresetMetrics(file, snapshotId, preset, sheets) {
+    if (!preset || !preset.tableName) throw new Error('自定义预设缺少数据库表名');
+    await ensureCustomObjectStore(preset.tableName);
+    rememberFinanceCustomPreset(preset);
+    var saved = 0;
+    var skipped = 0;
+    for (var si = 0; si < (sheets || []).length; si++) {
+      var sheet = sheets[si];
+      var presetSheet = (preset.sheets || [])[si] || {};
+      var fields = (presetSheet.fields || []).filter(function(field) { return field && field.key && field.header; });
+      if (!fields.length) {
+        skipped += (sheet.rows || []).length;
+        continue;
+      }
+      var rows = sheet.rows || [];
+      for (var ri = 0; ri < rows.length; ri++) {
+        var row = rows[ri];
+        var record = { '导入时间': preset.importDate || today() };
+        var hasValue = false;
+        fields.forEach(function(field) {
+          var value = exactRowValue(row, field.header);
+          record[field.key] = value;
+          if (String(value == null ? '' : value).trim() !== '') hasValue = true;
+        });
+        if (!hasValue) {
+          skipped++;
+          continue;
+        }
+        await put(preset.tableName, record);
+        saved++;
+      }
+    }
+    var note = '自定义预设“' + (preset.name || preset.tableName) + '”写入 ' + saved + ' 行；数据表：' + preset.tableName;
+    if (skipped) note += '；跳过空行 ' + skipped + ' 行';
+    return {
+      saved: saved,
+      skipped: skipped,
+      replaced: 0,
+      dayCount: saved,
+      periodCount: 0,
+      startDate: preset.importDate || today(),
+      endDate: preset.importDate || today(),
+      note: note
+    };
   }
 
   async function normalizeCompetitorSkuDefaults() {
@@ -6231,6 +6602,13 @@
       var nameLabel = $('grossMarginRuleNameLabel');
       var preview = $('grossMarginCustomPreview');
       var okBtn = $('grossMarginRuleOkBtn');
+      var customMeta = $('grossMarginCustomMeta');
+      var importDateInput = $('grossMarginCustomImportDateInput');
+      var storeInput = $('grossMarginCustomStoreInput');
+      var bulkActions = $('grossMarginCustomBulkActions');
+      var selectAllToggle = $('grossMarginCustomSelectAllToggle');
+      var selectAllText = $('grossMarginCustomSelectAllText');
+      var invertBtn = $('grossMarginCustomInvertBtn');
       var match = financeSheetMatchReport(Array.isArray(sheets) ? sheets : []);
       if (title) title.textContent = match.canImport ? '已匹配到预设' : '新建自定义预设';
       if (desc) {
@@ -6255,20 +6633,49 @@
         preview.hidden = match.canImport;
         preview.innerHTML = match.canImport ? '' : renderFinanceCustomPreview(sheets || []);
       }
-      if (okBtn) okBtn.textContent = match.canImport ? '确认导入' : '新建自定义规则';
+      if (customMeta) customMeta.hidden = match.canImport;
+      if (importDateInput) importDateInput.value = today();
+      if (storeInput) storeInput.value = match.canImport ? '' : newFinanceCustomStoreName();
+      if (okBtn) okBtn.textContent = match.canImport ? '确认导入' : '创建并导入';
       modal.classList.add('open');
       modal.setAttribute('aria-hidden', 'false');
+      syncFinanceCustomBulkState();
+      function financeCustomBoxes() {
+        return preview ? Array.prototype.slice.call(preview.querySelectorAll('[data-finance-custom-field]')) : [];
+      }
+      function syncFinanceCustomBulkState() {
+        if (bulkActions) bulkActions.hidden = match.canImport;
+        if (!selectAllToggle) return;
+        var boxes = financeCustomBoxes();
+        var selected = boxes.filter(function(box) { return box.checked; }).length;
+        selectAllToggle.checked = boxes.length > 0 && selected === boxes.length;
+        selectAllToggle.indeterminate = selected > 0 && selected < boxes.length;
+        if (selectAllText) selectAllText.textContent = selectAllToggle.checked ? '取消全选' : '全选';
+        if (invertBtn) invertBtn.disabled = !boxes.length;
+      }
+      function setFinanceCustomAllFromToggle() {
+        var checked = !!selectAllToggle.checked;
+        financeCustomBoxes().forEach(function(box) { box.checked = checked; });
+        syncFinanceCustomBulkState();
+      }
+      function invertFinanceCustomSelection() {
+        financeCustomBoxes().forEach(function(box) { box.checked = !box.checked; });
+        syncFinanceCustomBulkState();
+      }
       function close() {
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden', 'true');
         $('grossMarginRuleOkBtn').removeEventListener('click', ok);
         $('grossMarginRuleCancelBtn').removeEventListener('click', cancel);
+        if (selectAllToggle) selectAllToggle.removeEventListener('change', setFinanceCustomAllFromToggle);
+        if (invertBtn) invertBtn.removeEventListener('click', invertFinanceCustomSelection);
+        if (preview) preview.removeEventListener('change', syncFinanceCustomBulkState);
       }
       function ok() {
         if (!match.canImport) {
-          saveFinanceCustomDraft(fileName, sheets || []);
+          var customPreset = saveFinanceCustomDraft(fileName, sheets || []);
           close();
-          reject(new Error('已生成自定义规则草稿，请到导入规则里确认字段后再导入：' + (fileName || '')));
+          resolve({ customPreset: customPreset });
           return;
         }
         var value = '综合毛保';
@@ -6284,12 +6691,16 @@
       }
       $('grossMarginRuleOkBtn').addEventListener('click', ok);
       $('grossMarginRuleCancelBtn').addEventListener('click', cancel);
+      if (selectAllToggle) selectAllToggle.addEventListener('change', setFinanceCustomAllFromToggle);
+      if (invertBtn) invertBtn.addEventListener('click', invertFinanceCustomSelection);
+      if (preview) preview.addEventListener('change', syncFinanceCustomBulkState);
     });
   }
 
   function metricImportStatus(sourceType, result) {
     if (sourceType === 'unknown') return 'pending';
-    if (sourceType === 'sales_detail' || sourceType === 'onsite_cost' || sourceType === 'offsite_cps_cost' || sourceType === 'industry_ranking' || sourceType === 'finance_gross_margin' || sourceType === 'search_analysis') {
+    if (String(sourceType || '').indexOf('finance_custom_') === 0) return result && result.saved > 0 ? 'success' : 'failed';
+    if (sourceType === 'sales_detail' || sourceType === 'onsite_cost' || sourceType === 'offsite_cps_cost' || sourceType === 'industry_ranking' || sourceType === 'finance_gross_margin' || sourceType === 'search_analysis' || sourceType === 'inventory_turnover') {
       return result && result.saved > 0 ? 'success' : 'failed';
     }
     return 'recorded';
@@ -9290,7 +9701,7 @@
 
   async function clearDbTable(store, renderFn, label) {
     var rows = await getAll(store);
-    var name = label || DB_STORE_LABELS[store] || store;
+    var name = label || dbStoreLabel(store);
     if (!rows.length) return;
     if (!await confirmAction('确认清空' + name + '？', '将删除 ' + rows.length + ' 条数据，删除后无法恢复。')) return;
     await clearStore(store);
@@ -10027,6 +10438,475 @@
     var number = Number(value);
     if (!isFinite(number)) return value || '';
     return (number * 100).toLocaleString('zh-CN', { maximumFractionDigits: 2 }) + '%';
+  }
+
+  function sanitizeInventoryWarehouses(list) {
+    var seen = {};
+    return (Array.isArray(list) ? list : []).map(function(item) {
+      return String(item || '').trim();
+    }).filter(function(item) {
+      if (!item || seen[item]) return false;
+      seen[item] = true;
+      return true;
+    });
+  }
+
+  function saveInventoryWarehouses() {
+    inventoryWarehouses = sanitizeInventoryWarehouses(inventoryWarehouses);
+    localStorage.setItem('jdInventoryWarehouses', JSON.stringify(inventoryWarehouses));
+  }
+
+  function sanitizeInventorySkus(list) {
+    var seen = {};
+    return (Array.isArray(list) ? list : []).map(normalizeSkuValue).filter(function(item) {
+      if (!item || seen[item]) return false;
+      seen[item] = true;
+      return true;
+    });
+  }
+
+  function parseInventorySkuText(text) {
+    return sanitizeInventorySkus(String(text || '').split(/[\r\n,，;；]+/));
+  }
+
+  function saveInventorySkus() {
+    inventorySkuList = sanitizeInventorySkus(inventorySkuList);
+    localStorage.setItem('jdInventorySkuList', JSON.stringify(inventorySkuList));
+  }
+
+  function syncInventorySkusFromInput() {
+    var input = $('inventorySkuInput');
+    if (!input) return inventorySkuList;
+    inventorySkuList = parseInventorySkuText(input.value);
+    saveInventorySkus();
+    return inventorySkuList;
+  }
+
+  function currentInventorySkuSet() {
+    var list = syncInventorySkusFromInput();
+    var set = {};
+    list.forEach(function(sku) { set[sku] = true; });
+    return set;
+  }
+
+  function renderInventorySkuConfig() {
+    var input = $('inventorySkuInput');
+    if (!input || document.activeElement === input) return;
+    input.value = inventorySkuList.join('\n');
+  }
+
+  function cleanInventoryHeader(value) {
+    return String(value == null ? '' : value).trim().replace(/\s+/g, '').replace(/[()（）]/g, '');
+  }
+
+  function findInventoryColumn(headers, aliases) {
+    var normalized = {};
+    headers.forEach(function(header) { normalized[cleanInventoryHeader(header)] = header; });
+    for (var i = 0; i < aliases.length; i++) {
+      var key = cleanInventoryHeader(aliases[i]);
+      if (normalized[key]) return normalized[key];
+    }
+    return '';
+  }
+
+  function findInventoryWarehouseColumn(headers, warehouse, metricLabel, aliases) {
+    aliases = aliases && aliases.length ? aliases : [metricLabel];
+    var exactAliases = [];
+    aliases.forEach(function(alias) {
+      exactAliases.push(warehouse + alias, warehouse + '仓' + alias, warehouse + '仓库' + alias);
+    });
+    var exact = findInventoryColumn(headers, exactAliases);
+    if (exact) return exact;
+    var cleanWarehouse = cleanInventoryHeader(warehouse);
+    var cleanAliases = aliases.map(cleanInventoryHeader).filter(Boolean);
+    return headers.find(function(header) {
+      var clean = cleanInventoryHeader(header);
+      return clean.indexOf(cleanWarehouse) !== -1 && cleanAliases.some(function(alias) {
+        return clean.indexOf(alias) !== -1;
+      });
+    }) || '';
+  }
+
+  function inventorySheetDays(name) {
+    var text = String(name || '');
+    var match = text.match(/(?:周转计算|近)\s*[-_－—]?\s*(1|7|14|28)\s*(?:天|日)?/);
+    return match ? Number(match[1]) : 0;
+  }
+
+  function resolveInventoryColumns(headers, sheetName) {
+    var sheetDays = inventorySheetDays(sheetName);
+    var columns = {
+      sku: findInventoryColumn(headers, ['SKU', 'SKU ID', 'skuId', 'SKU编码', '商品编号', '商品编码', '商品编号SKU', '商品编码SKU']),
+      skuName: findInventoryColumn(headers, ['商品简称', '简称', '商品名称', 'SKU名称', 'SKU 名称']),
+      warehouse: findInventoryColumn(headers, ['配送中心', '配送中心名称', '仓库', '仓库名称', '区域', '城市']),
+      national: {},
+      warehouses: {},
+      rowMetrics: {}
+    };
+    INVENTORY_NATIONAL_FIELDS.forEach(function(field) {
+      columns.national[field.key] = findInventoryColumn(headers, field.aliases || [field.label]);
+    });
+    inventoryWarehouses.forEach(function(warehouse) {
+      columns.warehouses[warehouse] = {};
+      INVENTORY_WAREHOUSE_FIELDS.forEach(function(field) {
+        var aliases = (field.aliases || [field.label]).slice();
+        if (field.days && field.days === sheetDays) aliases.push('日出库商品件数', '出库商品件数');
+        columns.warehouses[warehouse][field.key] = findInventoryWarehouseColumn(headers, warehouse, field.label, aliases);
+      });
+    });
+    INVENTORY_WAREHOUSE_FIELDS.forEach(function(field) {
+      var aliases = (field.aliases || [field.label]).slice();
+      if (field.days && field.days === sheetDays) aliases.push('日出库商品件数', '出库商品件数');
+      columns.rowMetrics[field.key] = findInventoryColumn(headers, aliases);
+    });
+    return columns;
+  }
+
+  function inventoryImportDate(file, sheets) {
+    var parts = [file && file.name ? file.name : ''];
+    (sheets || []).forEach(function(sheet) {
+      parts.push(sheet.name || '');
+      var rows = (sheet.rows || []).slice(0, 80);
+      var headers = Object.keys(rows[0] || {});
+      var dateColumns = headers.filter(function(header) {
+        return /日期|时间|统计|查询/.test(String(header || ''));
+      });
+      rows.forEach(function(row) {
+        dateColumns.forEach(function(column) {
+          parts.push(exactRowValue(row, column));
+        });
+      });
+    });
+    var dates = extractDatesFromText(parts.join(' '));
+    return dates[dates.length - 1] || today();
+  }
+
+  function matchInventoryWarehouse(value) {
+    var cleanValue = cleanInventoryHeader(value);
+    if (!cleanValue) return '';
+    return inventoryWarehouses.find(function(warehouse) {
+      var cleanWarehouse = cleanInventoryHeader(warehouse);
+      return cleanValue.indexOf(cleanWarehouse) !== -1 || cleanWarehouse.indexOf(cleanValue) !== -1;
+    }) || '';
+  }
+
+  function ensureInventoryRecord(groups, sku, file, snapshotId, importDate) {
+    if (!groups[sku]) {
+      groups[sku] = {
+        sourceType: 'inventory_turnover',
+        periodType: 'day',
+        startDate: importDate,
+        endDate: importDate,
+        sku: sku,
+        skuName: '',
+        importedAt: new Date().toISOString(),
+        snapshotId: snapshotId,
+        fileName: file.name,
+        warehouses: {}
+      };
+      INVENTORY_NATIONAL_FIELDS.forEach(function(field) { groups[sku][field.key] = ''; });
+      inventoryWarehouses.forEach(function(warehouse) {
+        groups[sku].warehouses[warehouse] = {};
+        INVENTORY_WAREHOUSE_FIELDS.forEach(function(field) {
+          groups[sku].warehouses[warehouse][field.key] = '';
+        });
+      });
+    }
+    return groups[sku];
+  }
+
+  function setInventoryValue(target, key, value) {
+    if (value === '' || value == null) return;
+    target[key] = value;
+  }
+
+  async function saveInventoryTurnoverMetrics(sheets, file, snapshotId) {
+    sheets = (Array.isArray(sheets) && sheets[0] && Object.prototype.hasOwnProperty.call(sheets[0], 'rows'))
+      ? sheets
+      : [{ name: file.name, rows: sheets || [] }];
+    var skuSet = currentInventorySkuSet();
+    var skuCount = Object.keys(skuSet).length;
+    var totalRows = sheets.reduce(function(sum, sheet) { return sum + ((sheet.rows || []).length); }, 0);
+    if (!skuCount) {
+      return { saved: 0, skipped: totalRows, replaced: 0, note: '未配置 SKU，请先在 SKU 配置中每行填写一个需要抓取的 SKU' };
+    }
+    var importDate = inventoryImportDate(file, sheets);
+    var groups = {};
+    var skipped = 0;
+    var seenColumns = {};
+    var sampleHeaders = [];
+    sheets.forEach(function(sheet) {
+      var rows = sheet.rows || [];
+      var headers = Object.keys(rows[0] || {});
+      if (!sampleHeaders.length && headers.length) sampleHeaders = headers;
+      var columns = resolveInventoryColumns(headers, sheet.name || file.name);
+      if (!columns.sku) {
+        skipped += rows.length;
+        return;
+      }
+      INVENTORY_NATIONAL_FIELDS.forEach(function(field) {
+        if (columns.national[field.key]) seenColumns['national:' + field.key] = true;
+      });
+      inventoryWarehouses.forEach(function(warehouse) {
+        INVENTORY_WAREHOUSE_FIELDS.forEach(function(field) {
+          if (columns.warehouses[warehouse][field.key]) seenColumns[warehouse + ':' + field.key] = true;
+        });
+      });
+      INVENTORY_WAREHOUSE_FIELDS.forEach(function(field) {
+        if (columns.rowMetrics[field.key]) seenColumns['rowMetric:' + field.key] = true;
+      });
+      rows.forEach(function(row) {
+        var sku = normalizeSkuValue(exactRowValue(row, columns.sku));
+        if (!sku || sku === '合计' || sku === '汇总' || sku === '0' || sku === 'SKU' || !skuSet[sku]) {
+          skipped++;
+          return;
+        }
+        var record = ensureInventoryRecord(groups, sku, file, snapshotId, importDate);
+        if (columns.skuName) {
+          var skuName = exactRowValue(row, columns.skuName);
+          if (skuName) record.skuName = skuName;
+        }
+        INVENTORY_NATIONAL_FIELDS.forEach(function(field) {
+          var column = columns.national[field.key];
+          if (column) setInventoryValue(record, field.key, parseMetricNumber(exactRowValue(row, column)));
+        });
+        inventoryWarehouses.forEach(function(warehouse) {
+          INVENTORY_WAREHOUSE_FIELDS.forEach(function(field) {
+            var column = columns.warehouses[warehouse][field.key];
+            if (column) setInventoryValue(record.warehouses[warehouse], field.key, parseMetricNumber(exactRowValue(row, column)));
+          });
+        });
+        var rowWarehouse = columns.warehouse ? matchInventoryWarehouse(exactRowValue(row, columns.warehouse)) : '';
+        if (rowWarehouse) {
+          INVENTORY_WAREHOUSE_FIELDS.forEach(function(field) {
+            var column = columns.rowMetrics[field.key];
+            if (column) setInventoryValue(record.warehouses[rowWarehouse], field.key, parseMetricNumber(exactRowValue(row, column)));
+          });
+        }
+      });
+    });
+    var groupRows = Object.keys(groups).map(function(key) { return groups[key]; });
+    if (!groupRows.length) {
+      return { saved: 0, skipped: skipped, replaced: 0, startDate: importDate, endDate: importDate, note: '没有匹配到 SKU 配置中的 SKU；识别到的表头：' + sampleHeaders.slice(0, 12).join('、') };
+    }
+    var missing = [];
+    INVENTORY_NATIONAL_FIELDS.forEach(function(field) {
+      if (!seenColumns['national:' + field.key]) missing.push(field.label);
+    });
+    inventoryWarehouses.forEach(function(warehouse) {
+      INVENTORY_WAREHOUSE_FIELDS.forEach(function(field) {
+        if (!seenColumns[warehouse + ':' + field.key] && !seenColumns['rowMetric:' + field.key]) missing.push(warehouse + field.label);
+      });
+    });
+    var existing = await getAll('inventory_turnover_metrics');
+    var replaced = 0;
+    for (var e = 0; e < existing.length; e++) {
+      if (existing[e].startDate === importDate) {
+        await remove('inventory_turnover_metrics', existing[e].id);
+        replaced++;
+      }
+    }
+    for (var i = 0; i < groupRows.length; i++) await put('inventory_turnover_metrics', groupRows[i]);
+    var noteParts = ['写入 ' + groupRows.length + ' 条库存周转'];
+    noteParts.push('SKU 配置 ' + skuCount + ' 个');
+    noteParts.push('仓库 ' + inventoryWarehouses.length + ' 个');
+    if (replaced) noteParts.push('覆盖同日旧数据 ' + replaced + ' 条');
+    if (skipped) noteParts.push('跳过 ' + skipped + ' 行');
+    if (missing.length) noteParts.push('未匹配列：' + missing.slice(0, 12).join('、') + (missing.length > 12 ? ' 等 ' + missing.length + ' 项' : ''));
+    return { saved: groupRows.length, skipped: skipped, replaced: replaced, dayCount: groupRows.length, periodCount: 0, startDate: importDate, endDate: importDate, note: noteParts.join('；') };
+  }
+
+  function inventoryMetricText(value, decimals) {
+    if (value === '' || value == null) return '-';
+    return formatMetric(value, decimals == null ? 0 : decimals);
+  }
+
+  function renderInventoryWarehouseCell(row, warehouse) {
+    var metrics = row.warehouses && row.warehouses[warehouse] ? row.warehouses[warehouse] : {};
+    return '<div class="inventory-warehouse-mini">' +
+      '<strong>' + esc(warehouse) + '</strong>' +
+      '<span>可订 ' + esc(inventoryMetricText(metrics.orderableStock)) + '</span>' +
+      '<span>1日(昨日) ' + esc(inventoryMetricText(metrics.outbound1)) + '</span>' +
+      '<span>7日 ' + esc(inventoryMetricText(metrics.outbound7)) + '</span>' +
+      '<span>14日 ' + esc(inventoryMetricText(metrics.outbound14)) + '</span>' +
+      '<span>28日 ' + esc(inventoryMetricText(metrics.outbound28)) + '</span>' +
+    '</div>';
+  }
+
+  function renderInventoryWarehouses() {
+    var box = $('inventoryWarehouseTags');
+    if (!box) return;
+    box.innerHTML = inventoryWarehouses.map(function(name) {
+      return '<span class="inventory-warehouse-tag">' + esc(name) +
+        '<button type="button" data-remove-inventory-warehouse="' + esc(name) + '" title="移除仓库">×</button></span>';
+    }).join('');
+  }
+
+  function addInventoryWarehouse() {
+    var input = $('inventoryWarehouseInput');
+    var name = input ? input.value.trim() : '';
+    var msg = $('inventoryWarehouseMsg');
+    if (!name) return;
+    if (inventoryWarehouses.indexOf(name) !== -1) {
+      if (msg) {
+        msg.textContent = '仓库已存在：' + name;
+        msg.className = 'msg err';
+      }
+      return;
+    }
+    inventoryWarehouses.push(name);
+    saveInventoryWarehouses();
+    if (input) input.value = '';
+    if (msg) {
+      msg.textContent = '已新增仓库：' + name;
+      msg.className = 'msg ok';
+    }
+    renderInventoryWarehouses();
+    renderInventoryTurnoverData();
+  }
+
+  async function renderInventoryTurnoverData() {
+    var head = $('inventoryTurnoverHead');
+    var body = $('inventoryTurnoverBody');
+    var alert = $('inventoryDataAlert');
+    if (!head || !body) return;
+    var table = head.closest('table');
+    function enhanceInventoryTable() {
+      if (!table) return;
+      table.classList.remove('resizable-table');
+      var oldColgroup = table.querySelector('colgroup');
+      if (oldColgroup) oldColgroup.remove();
+      table.style.width = '';
+      enhanceResizableTable(table, 'inventoryTurnover');
+    }
+    if (!db || !db.objectStoreNames.contains('inventory_turnover_metrics')) {
+      body.innerHTML = '<tr><td class="empty-row" colspan="12">本地库存周转表还未准备好</td></tr>';
+      return;
+    }
+    var rows = await getAll('inventory_turnover_metrics');
+    var latest = rows.reduce(function(best, row) {
+      return !best || String(row.importedAt || '') > String(best.importedAt || '') ? row : best;
+    }, null);
+    var latestRows = latest ? rows.filter(function(row) { return row.snapshotId === latest.snapshotId; }) : [];
+    latestRows.sort(function(a, b) { return String(a.sku || '').localeCompare(String(b.sku || ''), 'zh-CN'); });
+    var skuRows = await getAll('sku_profiles');
+    var skuMap = {};
+    skuRows.forEach(function(item) { skuMap[normalizeSkuValue(item.sku)] = item; });
+    var fixedHeads = ['SKU', '商品简称', '商品价格', '全国采购价', '全国现货库存', '全国可订购库存', '全国采购未到货', '全国内配在途库存', '全国内配入', '全国内配出'];
+    head.innerHTML = '<tr>' + fixedHeads.concat(inventoryWarehouses).map(function(label) { return '<th>' + esc(label) + '</th>'; }).join('') + '</tr>';
+    if (!latestRows.length) {
+      body.innerHTML = '<tr><td class="empty-row" colspan="' + (fixedHeads.length + inventoryWarehouses.length) + '">暂无库存周转数据</td></tr>';
+      if (alert) alert.textContent = '';
+      enhanceInventoryTable();
+      return;
+    }
+    if (alert) alert.textContent = '当前显示最新一次导入：' + (latest.fileName || '-') + '，' + (latest.startDate || '-') + '，共 ' + latestRows.length + ' 个 SKU。';
+    body.innerHTML = latestRows.map(function(row) {
+      var profile = skuMap[normalizeSkuValue(row.sku)] || {};
+      var shortName = row.skuName || profile.shortName || profile.name || '';
+      var fixed = [
+        row.sku,
+        shortName,
+        inventoryMetricText(row.itemPrice, 2),
+        inventoryMetricText(row.nationalPurchasePrice, 2),
+        inventoryMetricText(row.nationalSpotStock),
+        inventoryMetricText(row.nationalOrderableStock),
+        inventoryMetricText(row.nationalPurchasePending),
+        inventoryMetricText(row.nationalTransferTransit),
+        inventoryMetricText(row.nationalTransferIn),
+        inventoryMetricText(row.nationalTransferOut)
+      ].map(function(value) { return '<td class="inventory-fixed-cell">' + esc(value) + '</td>'; }).join('');
+      var warehouseCells = inventoryWarehouses.map(function(warehouse) {
+        return '<td>' + renderInventoryWarehouseCell(row, warehouse) + '</td>';
+      }).join('');
+      return '<tr>' + fixed + warehouseCells + '</tr>';
+    }).join('');
+    enhanceInventoryTable();
+  }
+
+  async function clearInventoryTurnoverData() {
+    var rows = await getAll('inventory_turnover_metrics');
+    if (!rows.length) return;
+    if (!await confirmAction('确认清空库存周转？', '将删除 ' + rows.length + ' 条库存周转数据，删除后无法恢复。')) return;
+    await clearStore('inventory_turnover_metrics');
+    await renderInventoryTurnoverData();
+    await renderDbBrowser();
+    await refreshCounts();
+  }
+
+  async function handleInventoryImportFiles(files) {
+    var file = Array.prototype.slice.call(files || []).filter(Boolean)[0];
+    if (!file) return;
+    var msg = $('inventoryImportMsg');
+    var summary = $('inventoryImportSummary');
+    var summaryText = $('inventoryImportSummaryText');
+    if (msg) {
+      msg.textContent = '正在读取库存周转文件...';
+      msg.className = 'msg';
+    }
+    if (summary && summaryText) {
+      summary.className = 'import-summary show';
+      summaryText.textContent = '正在处理：' + file.name;
+    }
+    try {
+      var sheets = await parseWorkbookSheets(file);
+      var rowCount = sheets.reduce(function(sum, sheet) { return sum + ((sheet.rows || []).length); }, 0);
+      var importDate = inventoryImportDate(file, sheets);
+      var snapshotRecord = {
+        sourceType: 'inventory_turnover',
+        periodType: 'day',
+        startDate: importDate,
+        endDate: importDate,
+        fileName: file.name,
+        importedAt: new Date().toISOString(),
+        rowCount: rowCount,
+        detectNote: '按库存周转导入',
+        importStatus: 'processing',
+        statusNote: '按库存周转导入'
+      };
+      var snapshotId = await put('raw_snapshots', snapshotRecord);
+      var result = await saveInventoryTurnoverMetrics(sheets, file, snapshotId);
+      snapshotRecord.id = snapshotId;
+      snapshotRecord.importStatus = metricImportStatus('inventory_turnover', result);
+      snapshotRecord.statusNote = result.note;
+      snapshotRecord.detectNote = result.note;
+      snapshotRecord.startDate = result.startDate || importDate;
+      snapshotRecord.endDate = result.endDate || importDate;
+      await put('raw_snapshots', snapshotRecord);
+      if (msg) {
+        msg.textContent = snapshotRecord.importStatus === 'success' ? '库存周转导入完成。' : '库存周转导入失败。';
+        msg.className = 'msg ' + (snapshotRecord.importStatus === 'success' ? 'ok' : 'err');
+      }
+      if (summary && summaryText) {
+        summary.className = 'import-summary show ' + (snapshotRecord.importStatus === 'success' ? 'ok' : 'err');
+        summaryText.textContent = file.name + '：' + result.note;
+      }
+      await renderInventoryTurnoverData();
+      await renderSnapshots();
+      await renderDbBrowser();
+      await refreshCounts();
+    } catch (err) {
+      await put('raw_snapshots', {
+        sourceType: 'inventory_turnover',
+        periodType: 'unknown',
+        startDate: '',
+        endDate: '',
+        fileName: file.name,
+        importedAt: new Date().toISOString(),
+        rowCount: 0,
+        detectNote: err.message,
+        importStatus: 'failed',
+        statusNote: err.message
+      });
+      if (msg) {
+        msg.textContent = '导入失败：' + (err && err.message ? err.message : String(err));
+        msg.className = 'msg err';
+      }
+      if (summary && summaryText) {
+        summary.className = 'import-summary show err';
+        summaryText.textContent = file.name + '：' + (err && err.message ? err.message : String(err));
+      }
+    }
   }
 
   async function saveSalesDetailMetrics(rows, file, snapshotId) {
@@ -10851,9 +11731,21 @@
         if (fileRuleType === 'search_analysis') throw new Error('搜索分析数据请到左侧“其他分析 > 搜索导入与分析”页导入：' + file.name);
         var financeSheets = fileRuleType === 'finance_gross_margin' ? await readWorkbookSheetPreview(file) : null;
         var grossMarginRule = fileRuleType === 'finance_gross_margin' ? await chooseGrossMarginRule(file.name, financeSheets) : '';
-        var rows = await parseWorkbook(file);
-        var meta = detectImportMeta(file, rows);
-        if (fileRuleType === 'finance_gross_margin') meta.sourceType = 'finance_gross_margin';
+        var customFinancePreset = grossMarginRule && grossMarginRule.customPreset;
+        var customFinanceSheets = customFinancePreset ? await parseWorkbookSheets(file) : null;
+        var rows = customFinancePreset
+          ? customFinanceSheets.reduce(function(list, sheet) { return list.concat(sheet.rows || []); }, [])
+          : await parseWorkbook(file);
+        var meta = customFinancePreset
+          ? {
+              sourceType: customFinancePreset.tableName,
+              periodType: 'day',
+              startDate: customFinancePreset.importDate || today(),
+              endDate: customFinancePreset.importDate || today(),
+              note: '自定义预设“' + (customFinancePreset.name || customFinancePreset.tableName) + '”'
+            }
+          : detectImportMeta(file, rows);
+        if (fileRuleType === 'finance_gross_margin' && !customFinancePreset) meta.sourceType = 'finance_gross_margin';
         var snapshotRecord = {
           sourceType: meta.sourceType,
           periodType: meta.periodType,
@@ -10900,6 +11792,14 @@
           meta.endDate = rankingResult.endDate || meta.endDate;
           meta.note = rankingResult.note;
           finalStatus = metricImportStatus(meta.sourceType, rankingResult);
+        } else if (customFinancePreset) {
+          var customFinanceResult = await saveFinanceCustomPresetMetrics(file, snapshotId, customFinancePreset, customFinanceSheets);
+          importResult = customFinanceResult;
+          meta.periodType = 'day';
+          meta.startDate = customFinanceResult.startDate || meta.startDate;
+          meta.endDate = customFinanceResult.endDate || meta.endDate;
+          meta.note = customFinanceResult.note;
+          finalStatus = metricImportStatus(meta.sourceType, customFinanceResult);
         } else if (meta.sourceType === 'finance_gross_margin') {
           var financeResult = await saveFinanceGrossMarginMetrics(file, snapshotId, grossMarginRule);
           importResult = financeResult;
@@ -12685,6 +13585,11 @@
       renderSearchAnalysisSettings();
       renderSearchData();
     }
+    if (page === 'inventory-turnover') {
+      renderInventoryWarehouses();
+      renderInventorySkuConfig();
+      renderInventoryTurnoverData();
+    }
     if (page === 'import-settings') {
       renderAllImportMappings();
       requestAnimationFrame(scrollToImportRules);
@@ -14162,10 +15067,12 @@
       e.preventDefault();
       dropZone.classList.remove('dragover');
       if (scope === 'search') handleSearchImportFiles(e.dataTransfer.files);
+      else if (scope === 'inventory') handleInventoryImportFiles(e.dataTransfer.files);
       else handleImportFiles(e.dataTransfer.files, scope);
     });
     input.addEventListener('change', function() {
       if (scope === 'search') handleSearchImportFiles(input.files);
+      else if (scope === 'inventory') handleInventoryImportFiles(input.files);
       else handleImportFiles(input.files, scope);
       input.value = '';
     });
@@ -14173,6 +15080,46 @@
   bindImportUpload('dropZone', 'fileInput', 'shop');
   bindImportUpload('financeDropZone', 'financeFileInput', 'finance');
   bindImportUpload('searchDropZone', 'searchFileInput', 'search');
+  bindImportUpload('inventoryDropZone', 'inventoryFileInput', 'inventory');
+  renderInventoryWarehouses();
+  renderInventorySkuConfig();
+  if ($('addInventoryWarehouseBtn')) $('addInventoryWarehouseBtn').addEventListener('click', addInventoryWarehouse);
+  if ($('inventoryWarehouseInput')) {
+    $('inventoryWarehouseInput').addEventListener('keydown', function(e) {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      addInventoryWarehouse();
+    });
+  }
+  if ($('inventorySkuInput')) {
+    $('inventorySkuInput').addEventListener('blur', syncInventorySkusFromInput);
+    $('inventorySkuInput').addEventListener('change', syncInventorySkusFromInput);
+  }
+  if ($('inventoryWarehouseTags')) {
+    $('inventoryWarehouseTags').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-remove-inventory-warehouse]');
+      if (!btn) return;
+      var name = btn.getAttribute('data-remove-inventory-warehouse');
+      inventoryWarehouses = inventoryWarehouses.filter(function(item) { return item !== name; });
+      saveInventoryWarehouses();
+      renderInventoryWarehouses();
+      renderInventoryTurnoverData();
+    });
+  }
+  document.querySelectorAll('[data-inventory-panel]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var panel = btn.getAttribute('data-inventory-panel') || 'import';
+      document.querySelectorAll('.finance-data-tab[data-inventory-panel]').forEach(function(item) {
+        item.classList.toggle('active', item.getAttribute('data-inventory-panel') === panel);
+      });
+      if ($('inventoryImportPane')) $('inventoryImportPane').hidden = panel !== 'import';
+      if ($('inventoryDetailPane')) $('inventoryDetailPane').hidden = panel !== 'detail';
+      if ($('inventoryTurnoverPanel')) $('inventoryTurnoverPanel').classList.toggle('is-import-mode', panel === 'import');
+      if (panel === 'detail') renderInventoryTurnoverData();
+    });
+  });
+  if ($('refreshInventoryTurnoverBtn')) $('refreshInventoryTurnoverBtn').addEventListener('click', renderInventoryTurnoverData);
+  if ($('clearInventoryTurnoverBtn')) $('clearInventoryTurnoverBtn').addEventListener('click', clearInventoryTurnoverData);
   if ($('viewImportRecordsBtn')) {
     $('viewImportRecordsBtn').addEventListener('click', function() {
       handlePageNavigation(replacePageHash('raw-snapshots'));
@@ -14387,6 +15334,11 @@
     if (currentPage === 'search-import') {
       renderSearchAnalysisSettings();
       await renderSearchData();
+    }
+    if (currentPage === 'inventory-turnover') {
+      renderInventoryWarehouses();
+      renderInventorySkuConfig();
+      await renderInventoryTurnoverData();
     }
     if (currentPage === 'import-settings') {
       renderAllImportMappings();
