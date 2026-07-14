@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>截图照片裁边 - 芝士的摸鱼站</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="../../guides/shared.css">
+<style>
+.app { max-width: 980px; }
+.tool-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px var(--card-shadow);
+  padding: 28px;
+}
+.tool-card h1 { font-size: 1.25rem; line-height: 1.35; margin-bottom: 6px; }
+.subtitle { color: var(--text-secondary); font-size: 0.84rem; line-height: 1.8; margin-bottom: 22px; }
+.drop-zone {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+  border: 1.5px dashed var(--card-hover-border);
+  border-radius: 12px;
+  background: var(--code-bg);
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 24px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.drop-zone.dragging { border-color: var(--link-color); background: var(--btn-link-bg); }
+.drop-zone strong { color: var(--text); font-size: 0.96rem; display: block; margin-bottom: 6px; }
+.file-input { display: none; }
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 18px 0;
+}
+.btn {
+  border: 1px solid var(--btn-link-border);
+  background: var(--btn-link-bg);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 0.84rem;
+  text-decoration: none;
+}
+.btn:hover { background: var(--btn-link-hover-bg); }
+.btn[disabled] { opacity: 0.45; pointer-events: none; }
+.range-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+.range-label input { width: 150px; }
+.status { color: var(--text-tertiary); font-size: 0.78rem; min-height: 1.6em; }
+.thumb-list {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px 0 12px;
+}
+.thumb {
+  flex: 0 0 86px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--code-bg);
+  color: var(--text-secondary);
+  padding: 6px;
+  cursor: pointer;
+}
+.thumb:hover, .thumb.active { border-color: var(--link-color); }
+.thumb canvas {
+  width: 72px;
+  height: 88px;
+  margin: 0 auto 5px;
+  background: rgba(0,0,0,0.18);
+}
+.thumb span {
+  display: block;
+  overflow: hidden;
+  font-size: 0.7rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.result-list { display: grid; gap: 20px; margin-top: 18px; }
+.result-card {
+  border-top: 1px solid var(--card-border);
+  padding-top: 18px;
+}
+.result-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.file-name {
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  word-break: break-all;
+}
+.meta { color: var(--text-tertiary); font-size: 0.78rem; }
+.item-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.overlay-toggle {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.preview h2 {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.canvas-wrap {
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: rgba(0,0,0,0.22);
+  overflow: hidden;
+}
+canvas { display: block; width: 100%; height: auto; }
+.footer { text-align: center; margin-top: 40px; }
+.footer span { color: var(--text-tertiary); font-size: 0.72rem; opacity: 0.65; }
+@media (max-width: 720px) {
+  .tool-card { padding: 20px 16px; }
+  .preview-grid { grid-template-columns: 1fr; }
+  .controls { align-items: stretch; flex-direction: column; }
+  .btn { text-align: center; }
+  .range-label { justify-content: space-between; }
+}
+</style>
+</head>
+<body>
+<div class="float-wrapper" id="floatWrapper">
+  <div class="float-stack open" id="floatStack">
+    <div class="bookmark-strip">
+      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
+      <div class="bookmark-buttons">
+        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
+        <a href="../../index.html" class="float-btn" title="返回导航">⌂</a>
+        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
+      </div>
+    </div>
+  </div>
+  <div class="float-w"></div>
+</div>
+
+<div class="app">
+  <a class="back-link" href="../../detail.html?page=tools">← 返回工具目录</a>
+
+  <main class="tool-card">
+    <h1>截图照片裁边</h1>
+    <p class="subtitle">上传手机截图后，自动找出中间连续的照片区域，裁掉上下方黑边或白边。小面积按钮、数字、时间戳会被当作界面杂物忽略。</p>
+
+    <label class="drop-zone" id="dropZone">
+      <input class="file-input" id="fileInput" type="file" accept="image/*" multiple>
+      <span><strong>点击或拖入图片</strong>可一次选择多张，本地处理，不上传到服务器</span>
+    </label>
+
+    <div class="controls">
+      <button class="btn" id="downloadAllBtn" type="button" disabled>下载全部</button>
+      <button class="btn" id="clearAllBtn" type="button" disabled>清除全部</button>
+      <label class="range-label">
+        识别灵敏度
+        <input id="sensitivity" type="range" min="1" max="8" value="3">
+      </label>
+      <span class="status" id="status">等待图片</span>
+    </div>
+
+    <div class="thumb-list" id="thumbList" aria-label="裁剪结果快速预览"></div>
+    <div class="result-list" id="resultList"></div>
+  </main>
+
+  <footer class="footer"><span>🐾 通用摸鱼小工具</span></footer>
+</div>
+
+<script src="../../guides/shared.js"></script>
+<script>
+(function() {
+  var fileInput = document.getElementById('fileInput');
+  var dropZone = document.getElementById('dropZone');
+  var sensitivity = document.getElementById('sensitivity');
+  var statusText = document.getElementById('status');
+  var downloadAllBtn = document.getElementById('downloadAllBtn');
+  var clearAllBtn = document.getElementById('clearAllBtn');
+  var thumbList = document.getElementById('thumbList');
+  var resultList = document.getElementById('resultList');
+  var items = [];
+
+  function setStatus(text) {
+    statusText.textContent = text;
+  }
+
+  function setHasItems(hasItems) {
+    downloadAllBtn.disabled = !hasItems;
+    clearAllBtn.disabled = !hasItems;
+  }
+
+  function loadFiles(fileList) {
+    var files = Array.prototype.filter.call(fileList, function(file) {
+      return file.type.match(/^image\//);
+    });
+    files.forEach(loadFile);
+    if (files.length) setStatus('正在处理 ' + files.length + ' 张图片');
+  }
+
+  function loadFile(file) {
+    if (!file || !file.type.match(/^image\//)) return;
+    var reader = new FileReader();
+    reader.onload = function() {
+      var img = new Image();
+      img.onload = function() {
+        addItem(file, img);
+        setStatus('已处理 ' + items.length + ' 张图片');
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function rowStats(imageData) {
+    var data = imageData.data;
+    var width = imageData.width;
+    var height = imageData.height;
+    var step = Math.max(1, Math.floor(width / 320));
+    var stats = new Array(height);
+    for (var y = 0; y < height; y++) {
+      var background = 0;
+      var total = 0;
+      for (var x = 0; x < width; x += step) {
+        var i = (y * width + x) * 4;
+        var r = data[i];
+        var g = data[i + 1];
+        var b = data[i + 2];
+        var max = Math.max(r, g, b);
+        var min = Math.min(r, g, b);
+        var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        var nearlyBlack = luma < 24 && max - min < 22;
+        var nearlyWhite = luma > 238 && max - min < 22;
+        if (nearlyBlack || nearlyWhite) background++;
+        total++;
+      }
+      stats[y] = { background: background / total };
+    }
+    return stats;
+  }
+
+  function smooth(values, radius) {
+    var out = new Array(values.length);
+    var sum = 0;
+    for (var i = 0; i < values.length; i++) {
+      sum += values[i];
+      if (i > radius * 2) sum -= values[i - radius * 2 - 1];
+      out[i] = sum / Math.min(i + 1, radius * 2 + 1);
+    }
+    return out;
+  }
+
+  function findCrop(stats, height) {
+    var backgroundLimit = 0.91 + Number(sensitivity.value) * 0.01;
+    var background = stats.map(function(row) { return row.background; });
+    var active = smooth(background, 5).map(function(score) { return score <= backgroundLimit; });
+    var best = { start: 0, end: height - 1, len: 0 };
+    var start = -1;
+    var gap = 0;
+    for (var y = 0; y < height; y++) {
+      if (active[y]) {
+        if (start < 0) start = y;
+        gap = 0;
+      } else if (start >= 0 && ++gap > 16) {
+        var end = y - gap;
+        if (end - start > best.len) best = { start: start, end: end, len: end - start };
+        start = -1;
+        gap = 0;
+      }
+    }
+    if (start >= 0 && height - 1 - start > best.len) best = { start: start, end: height - 1, len: height - 1 - start };
+    if (best.len < height * 0.2) return { top: 0, bottom: height };
+    while (best.start < best.end && stats[best.start].background > backgroundLimit) best.start++;
+    while (best.end > best.start && stats[best.end].background > backgroundLimit) best.end--;
+    return {
+      top: best.start,
+      bottom: best.end + 1
+    };
+  }
+
+  function includeConnectedOverlay(imageData, crop) {
+    var width = imageData.width;
+    var height = imageData.height;
+    var data = imageData.data;
+    var step = Math.max(1, Math.ceil(width / 320));
+    var gridWidth = Math.ceil(width / step);
+
+    function classify(x, y) {
+      var i = (Math.min(height - 1, y * step) * width + Math.min(width - 1, x * step)) * 4;
+      var r = data[i];
+      var g = data[i + 1];
+      var b = data[i + 2];
+      var max = Math.max(r, g, b);
+      var min = Math.min(r, g, b);
+      var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      return max - min < 24 ? (luma < 30 ? 1 : (luma > 232 ? 2 : 0)) : 0;
+    }
+
+    function connectedEdge(seedY, minY, maxY) {
+      if (seedY < minY || seedY > maxY) return null;
+      var gridHeight = Math.ceil(height / step);
+      var startY = Math.max(0, Math.floor(minY / step));
+      var endY = Math.min(gridHeight - 1, Math.floor(maxY / step));
+      var y = Math.min(endY, Math.max(startY, Math.floor(seedY / step)));
+      var counts = [0, 0, 0];
+      for (var x = 0; x < gridWidth; x++) counts[classify(x, y)]++;
+      var color = counts[1] >= counts[2] ? 1 : 2;
+      if (counts[color] < gridWidth * 0.35) return null;
+
+      var visited = new Uint8Array(gridWidth * (endY - startY + 1));
+      var queue = [];
+      for (x = 0; x < gridWidth; x++) {
+        if (classify(x, y) === color) queue.push([x, y]);
+      }
+      var minFound = y;
+      var maxFound = y;
+      for (var q = 0; q < queue.length; q++) {
+        var point = queue[q];
+        x = point[0];
+        y = point[1];
+        var key = (y - startY) * gridWidth + x;
+        if (visited[key] || classify(x, y) !== color) continue;
+        visited[key] = 1;
+        minFound = Math.min(minFound, y);
+        maxFound = Math.max(maxFound, y);
+        if (x > 0) queue.push([x - 1, y]);
+        if (x + 1 < gridWidth) queue.push([x + 1, y]);
+        if (y > startY) queue.push([x, y - 1]);
+        if (y < endY) queue.push([x, y + 1]);
+      }
+      return { min: minFound * step, max: Math.min(height, (maxFound + 1) * step) };
+    }
+
+    function bottomOverlayTop(bottom) {
+      var sampleStep = Math.max(1, Math.ceil(width / 600));
+      var minY = Math.max(crop.top + 1, bottom - Math.min(Math.round(height * 0.12), Math.round(width * 0.22)));
+      for (var y = minY; y < bottom; y++) {
+        var run = 0;
+        for (var x = 0; x < width; x += sampleStep) {
+          var current = (y * width + x) * 4;
+          var previous = ((y - 1) * width + x) * 4;
+          var difference = Math.abs(data[current] - data[previous]) +
+            Math.abs(data[current + 1] - data[previous + 1]) +
+            Math.abs(data[current + 2] - data[previous + 2]);
+          run = difference > 90 ? run + sampleStep : 0;
+          if (run >= width * 0.12) return y;
+        }
+      }
+      return bottom;
+    }
+
+    var reach = Math.round(height * 0.18);
+    if (crop.top > 0) {
+      var topOverlay = connectedEdge(crop.top - 1, 0, Math.min(height - 1, crop.top + reach));
+      if (topOverlay) crop.top = Math.max(crop.top, topOverlay.max);
+    }
+    if (crop.bottom < height) {
+      var originalBottom = crop.bottom;
+      var bottomOverlay = connectedEdge(crop.bottom, Math.max(0, crop.bottom - reach), height - 1);
+      if (bottomOverlay) crop.bottom = Math.min(crop.bottom, bottomOverlay.min);
+      if (!bottomOverlay || originalBottom - crop.bottom < width * 0.03) crop.bottom = bottomOverlayTop(originalBottom);
+    }
+    if (crop.bottom - crop.top < height * 0.2) return findCrop(rowStats(imageData), height);
+    return crop;
+  }
+
+  function addItem(file, img) {
+    var card = document.createElement('section');
+    card.className = 'result-card';
+    card.innerHTML =
+      '<div class="result-head">' +
+        '<div><div class="file-name"></div><div class="meta"></div></div>' +
+        '<div class="item-actions">' +
+          '<label class="overlay-toggle"><input type="checkbox">去掉边缘按钮和文字</label>' +
+          '<button class="btn" type="button">下载这张</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="preview-grid">' +
+        '<section class="preview"><h2>原图</h2><div class="canvas-wrap"><canvas></canvas></div></section>' +
+        '<section class="preview"><h2>裁剪后</h2><div class="canvas-wrap"><canvas></canvas></div></section>' +
+      '</div>';
+    resultList.appendChild(card);
+
+    var thumb = document.createElement('button');
+    thumb.className = 'thumb';
+    thumb.type = 'button';
+    thumb.title = file.name;
+    thumb.innerHTML = '<canvas width="72" height="88"></canvas><span></span>';
+    thumb.querySelector('span').textContent = file.name;
+    thumbList.appendChild(thumb);
+
+    var canvases = card.querySelectorAll('canvas');
+    var item = {
+      file: file,
+      img: img,
+      card: card,
+      sourceCanvas: canvases[0],
+      resultCanvas: canvases[1],
+      thumb: thumb,
+      thumbCanvas: thumb.querySelector('canvas'),
+      overlayToggle: card.querySelector('input[type="checkbox"]'),
+      downloadBtn: card.querySelector('.btn'),
+      meta: card.querySelector('.meta'),
+      url: ''
+    };
+    card.querySelector('.file-name').textContent = file.name;
+    item.downloadBtn.addEventListener('click', function() { downloadItem(item); });
+    item.overlayToggle.addEventListener('change', function() { cropItem(item); });
+    thumb.addEventListener('click', function() {
+      document.querySelectorAll('.thumb.active').forEach(function(node) { node.classList.remove('active'); });
+      thumb.classList.add('active');
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    items.push(item);
+    setHasItems(true);
+    cropItem(item);
+  }
+
+  function drawThumb(canvas, source) {
+    var ctx = canvas.getContext('2d');
+    var scale = Math.min(canvas.width / source.width, canvas.height / source.height);
+    var width = source.width * scale;
+    var height = source.height * scale;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(source, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
+  }
+
+  function cropItem(item) {
+    var sourceCanvas = item.sourceCanvas;
+    var resultCanvas = item.resultCanvas;
+    var sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+    var resultCtx = resultCanvas.getContext('2d');
+    sourceCanvas.width = item.img.naturalWidth;
+    sourceCanvas.height = item.img.naturalHeight;
+    sourceCtx.drawImage(item.img, 0, 0);
+    var imageData = sourceCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+    var crop = findCrop(rowStats(imageData), sourceCanvas.height);
+    if (item.overlayToggle.checked) crop = includeConnectedOverlay(imageData, crop);
+    var cropHeight = crop.bottom - crop.top;
+    resultCanvas.width = sourceCanvas.width;
+    resultCanvas.height = cropHeight;
+    resultCtx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+    resultCtx.drawImage(sourceCanvas, 0, crop.top, sourceCanvas.width, cropHeight, 0, 0, sourceCanvas.width, cropHeight);
+    drawThumb(item.thumbCanvas, resultCanvas);
+    if (item.url) URL.revokeObjectURL(item.url);
+    resultCanvas.toBlob(function(blob) {
+      item.url = URL.createObjectURL(blob);
+    }, 'image/png');
+    item.meta.textContent = '已裁掉顶部 ' + crop.top + 'px，底部 ' + (sourceCanvas.height - crop.bottom) + 'px' +
+      (item.overlayToggle.checked ? '，已去掉边缘按钮和文字' : '');
+  }
+
+  function cropAll() {
+    items.forEach(cropItem);
+    if (items.length) setStatus('已重新处理 ' + items.length + ' 张图片');
+  }
+
+  function croppedName(name) {
+    return name.replace(/\.[^.]+$/, '') + '-cropped.png';
+  }
+
+  function downloadItem(item) {
+    if (!item.url) return;
+    var a = document.createElement('a');
+    a.href = item.url;
+    a.download = croppedName(item.file.name);
+    a.click();
+  }
+
+  function clearAll() {
+    items.forEach(function(item) {
+      if (item.url) URL.revokeObjectURL(item.url);
+    });
+    items = [];
+    resultList.innerHTML = '';
+    thumbList.innerHTML = '';
+    fileInput.value = '';
+    setHasItems(false);
+    setStatus('等待图片');
+  }
+
+  dropZone.addEventListener('dragover', function(event) {
+    event.preventDefault();
+    dropZone.classList.add('dragging');
+  });
+  dropZone.addEventListener('dragleave', function() {
+    dropZone.classList.remove('dragging');
+  });
+  dropZone.addEventListener('drop', function(event) {
+    event.preventDefault();
+    dropZone.classList.remove('dragging');
+    loadFiles(event.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', function() {
+    loadFiles(fileInput.files);
+  });
+  sensitivity.addEventListener('input', cropAll);
+  clearAllBtn.addEventListener('click', clearAll);
+  downloadAllBtn.addEventListener('click', function() {
+    items.forEach(function(item, index) {
+      setTimeout(function() { downloadItem(item); }, index * 120);
+    });
+  });
+})();
+</script>
+</body>
+</html>
