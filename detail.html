@@ -150,10 +150,8 @@ button, input { font: inherit; }
 }
 
 .page-header {
-  display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(260px, auto);
+  display: block;
   align-items: center;
-  gap: 14px;
   margin-bottom: 10px;
   padding: 14px 16px;
   border: 1px solid var(--detail-line);
@@ -181,84 +179,6 @@ button, input { font: inherit; }
   font-size: 0.78rem;
   font-weight: 400;
 }
-.page-meta {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 5px;
-  color: var(--detail-muted);
-  font-size: 0.84rem;
-  line-height: 1.45;
-  text-align: right;
-}
-.meta-line {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 5px 9px;
-  border: 1px solid var(--detail-line);
-  border-radius: 3px;
-  background: var(--detail-surface-strong);
-  color: var(--detail-ink);
-}
-.meta-count {
-  color: var(--detail-accent);
-  font-variant-numeric: tabular-nums;
-}
-.overview {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  margin: 0 0 10px;
-  padding: 0;
-}
-.overview:empty,
-.overview.is-empty {
-  display: none;
-}
-.stat-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.stat-row:empty { display: none; }
-.stat-pill,
-.category-chip {
-  min-height: 28px;
-  padding: 6px 9px;
-  border: 1px solid var(--detail-line);
-  border-radius: 3px;
-  color: var(--detail-muted);
-  background: rgba(255, 253, 251, 0.42);
-  font-size: 0.74rem;
-  line-height: 1.2;
-}
-[data-theme="dark"] .stat-pill,
-[data-theme="dark"] .category-chip {
-  background: rgba(27, 28, 37, 0.42);
-}
-.category-strip {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.category-chip {
-  color: var(--detail-ink);
-  text-decoration: none;
-  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
-}
-.category-chip:hover,
-.category-chip:focus-visible {
-  border-color: color-mix(in srgb, var(--detail-accent) 46%, transparent);
-  color: var(--detail-accent);
-  background: var(--detail-accent-soft);
-  outline: none;
-}
-.category-strip:empty { display: none; }
-
 .resource-panel {
   position: relative;
   border: 0;
@@ -308,7 +228,7 @@ button, input { font: inherit; }
 }
 .link-item {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) 24px;
+  grid-template-columns: 24px minmax(0, 1fr);
   align-items: start;
   gap: 4px 8px;
   min-height: 66px;
@@ -348,20 +268,6 @@ button, input { font: inherit; }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.link-arrow {
-  width: 22px;
-  height: 22px;
-  border-radius: 3px;
-  color: var(--detail-faint);
-  display: grid;
-  place-items: center;
-  font-size: 0.82rem;
-  transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
-}
-.link-item:hover .link-arrow {
-  color: var(--detail-accent);
-  background: rgba(var(--detail-accent-rgb), 0.12);
-}
 .link-item.hidden,
 .detail-subcat-header.hidden { display: none; }
 .empty-state {
@@ -381,18 +287,8 @@ button, input { font: inherit; }
   .detail-shell {
     width: min(100% - 24px, 760px);
   }
-  .page-header { grid-template-columns: 1fr; gap: 14px; }
-  .page-meta {
-    justify-items: start;
-    text-align: left;
-  }
-  .overview {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .category-strip { justify-content: flex-start; }
   .link-item {
-    grid-template-columns: 24px minmax(0, 1fr) 24px;
+    grid-template-columns: 24px minmax(0, 1fr);
     align-items: start;
     gap: 4px 8px;
     padding: 9px 10px;
@@ -400,10 +296,6 @@ button, input { font: inherit; }
   .link-desc {
     grid-column: 2 / 3;
     white-space: normal;
-  }
-  .link-arrow {
-    grid-column: 3;
-    grid-row: 1 / span 2;
   }
 }
 
@@ -449,13 +341,7 @@ button, input { font: inherit; }
       <div class="page-kicker">目录</div>
       <h1 class="page-title" id="pageTitle"></h1>
     </div>
-    <p class="page-meta" id="pageMeta"></p>
   </header>
-
-  <div class="overview" id="overview">
-    <div class="stat-row" id="statRow"></div>
-    <nav class="category-strip" id="categoryStrip" aria-label="分类跳转"></nav>
-  </div>
 
   <section class="resource-panel" id="resourcePanel" aria-label="链接列表">
     <div class="card-inner" id="linkList"></div>
@@ -503,15 +389,11 @@ button, input { font: inherit; }
     return '<a href="' + esc(link.url) + '" class="link-item"' + (link.target ? ' target="' + link.target + '" rel="noopener"' : '') + '>' +
       '<span class="link-num">' + (i + 1).toString().padStart(2, '0') + '</span>' +
       '<span class="link-title">' + esc(link.title) + '</span>' +
-      (link.desc ? '<span class="link-desc">' + esc(link.desc) + '</span>' : '<span class="link-desc"></span>') +
-      '<span class="link-arrow">↗</span></a>';
+      (link.desc ? '<span class="link-desc">' + esc(link.desc) + '</span>' : '<span class="link-desc"></span>') + '</a>';
   }
 
   const titleEl = document.getElementById('pageTitle');
-  const metaEl = document.getElementById('pageMeta');
   const listEl = document.getElementById('linkList');
-  const statRow = document.getElementById('statRow');
-  const categoryStrip = document.getElementById('categoryStrip');
 
   if (subcat) {
     document.title = parentName + ' / ' + subcat.name + ' - 芝士的摸鱼站';
@@ -521,31 +403,21 @@ button, input { font: inherit; }
     titleEl.textContent = block.name;
   } else {
     titleEl.textContent = '未找到';
-    metaEl.textContent = '请从导航页进入。';
-    statRow.innerHTML = '<span class="stat-pill">0 项</span>';
     listEl.innerHTML = '<div class="empty-state">这里暂时没有可显示的内容。</div>';
     return;
   }
 
   const groups = subcat ? [subcat] : parentBlock.subcategories.filter(function(s) { return s.links.length; });
-  metaEl.innerHTML = groups.map(function(group) {
-    return '<span class="meta-line">' + esc(group.name) + '<span class="meta-count">· ' + group.links.length + '</span></span>';
-  }).join('');
-  statRow.innerHTML = '';
-  document.getElementById('overview').classList.toggle('is-empty', groups.length <= 1);
 
-  let chipHtml = '';
   let html = '';
   groups.forEach(function(group, gi) {
     if (!group.links.length) return;
     const id = slug(group.name, gi);
-    if (groups.length > 1) chipHtml += '<a class="category-chip" href="#' + esc(id) + '">' + esc(group.name) + '</a>';
     html += '<div class="detail-subcat-header" id="' + esc(id) + '"><span>' + esc(group.name) + '</span><span class="detail-subcat-count">· ' + group.links.length + '</span></div>';
     group.links.forEach(function(link, i) {
       html += renderLinkItem(link, i);
     });
   });
-  categoryStrip.innerHTML = chipHtml;
   listEl.innerHTML = html || '<div class="empty-state">这个分类还在慢慢补内容。</div>';
 
   const searchInput = document.getElementById('detailSearch');

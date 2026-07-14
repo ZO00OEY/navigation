@@ -2629,13 +2629,13 @@
 .icon-btn:hover { background: rgba(var(--tool-accent-rgb), 0.24); transform: translateY(-1px); }
 .row-delete-btn {
   min-width: 0; width: 26px; height: 26px; padding: 0;
-  border-radius: 3px; color: #fff;
-  background: #e34d4d;
-  border-color: #e34d4d;
+  border-radius: 3px; color: rgba(var(--tool-accent-rgb), 0.68);
+  background: #fff;
+  border-color: rgba(var(--tool-accent-rgb), 0.26);
 }
 .row-delete-btn:hover {
-  background: #d93c3c;
-  border-color: #d93c3c;
+  background: #e34d4d;
+  border-color: #e34d4d;
   color: #fff;
   transform: none;
 }
@@ -3513,7 +3513,6 @@
             <div class="filter-right">
               <div class="filter-actions">
                 <button class="btn" id="refreshSearchDataBtn" type="button">刷新</button>
-                <button class="btn danger" id="cleanupLegacySearchFieldsBtn" type="button">检查并清理旧字段</button>
                 <button class="btn danger" id="clearSearchDataBtn" type="button">清空当前</button>
               </div>
             </div>
@@ -8365,15 +8364,19 @@
     renderSearchCustomTerms();
   }
 
-  function searchCustomTermTitle(index) {
-    return '词组' + (index + 1);
+  function searchCustomTermTitlePlaceholder(index) {
+    return [
+      '例如产品词',
+      '例如颜色词',
+      '例如礼品词'
+    ][index] || '例如自定义词';
   }
 
   function searchCustomTermWordsPlaceholder(index) {
     return [
       '例如：苹果 15、苹果 18、华强北 18、小米 18',
       '例如：土豪金、活力橙、远峰蓝、星光色',
-      '例如：米白、珍珠白、月光银、浅粉'
+      '例如：礼盒、赠品、套装、加送'
     ][index] || '例如：关键词1、关键词2、关键词3';
   }
 
@@ -8382,7 +8385,7 @@
       var title = String(term.title || '').trim();
       return {
         id: String(term.id || ('term_' + Date.now() + '_' + index)),
-        title: (!title || title === '示例' || /^产品词\s*\d+$/.test(title)) ? searchCustomTermTitle(index) : title,
+        title: (title === '示例' || /^产品词\s*\d+$/.test(title) || /^词组\s*\d+$/.test(title)) ? '' : title,
         words: parseWordList(Array.isArray(term.words) ? term.words.join('，') : term.words)
       };
     });
@@ -8400,7 +8403,7 @@
     var disabled = searchCustomTermsEnabled ? '' : ' disabled';
     box.innerHTML = searchCustomTerms.map(function(term, index) {
       return '<div class="search-term-card" data-search-term-index="' + index + '">' +
-        '<input class="input" data-search-term-title value="' + esc(term.title) + '" placeholder="' + esc(searchCustomTermTitle(index)) + '"' + disabled + '>' +
+        '<input class="input" data-search-term-title value="' + esc(term.title) + '" placeholder="' + esc(searchCustomTermTitlePlaceholder(index)) + '"' + disabled + '>' +
         '<textarea class="input" data-search-term-words placeholder="' + esc(searchCustomTermWordsPlaceholder(index)) + '"' + disabled + '>' + esc(term.words.join('，')) + '</textarea>' +
         '<button class="icon-btn row-delete-btn" type="button" data-search-term-delete title="删除"' + disabled + '>' + iconTrash() + '</button>' +
       '</div>';
@@ -8862,40 +8865,6 @@
     await remove('search_analysis_metrics', id);
     await renderSearchData();
     await refreshCounts();
-  }
-
-  async function cleanupLegacySearchFields() {
-    var button = $('cleanupLegacySearchFieldsBtn');
-    if (button) button.disabled = true;
-    try {
-      var legacyFields = [
-        'categoryKeywordCount', 'categoryVisitorCount', 'categorySalesAmount', 'categoryOrderQty', 'categoryConversionRate',
-        'productWords', 'productKeywordCount', 'productVisitorCount', 'productSalesAmount', 'productOrderQty', 'productConversionRate',
-        'industryWords', 'migratedIndustryAt'
-      ];
-      var rows = await getAll('search_analysis_metrics');
-      var foundFields = legacyFields.filter(function(key) {
-        return rows.some(function(row) { return Object.prototype.hasOwnProperty.call(row, key); });
-      });
-      var targets = rows.filter(function(row) {
-        return legacyFields.some(function(key) { return Object.prototype.hasOwnProperty.call(row, key); });
-      });
-      if (!targets.length) {
-        $('searchDataAlert').className = 'report-data-alert ok';
-        $('searchDataAlert').textContent = '搜索分析表中没有多余的历史字段。';
-        return;
-      }
-      if (!await confirmAction('确认清理搜索分析旧字段？', '发现 ' + targets.length + ' 条记录包含这些旧字段：' + foundFields.join('、') + '。只会删除废弃属性，不会删除记录或当前行业、品牌、产品词指标。')) return;
-      for (var i = 0; i < targets.length; i++) {
-        legacyFields.forEach(function(key) { delete targets[i][key]; });
-        await put('search_analysis_metrics', targets[i]);
-      }
-      $('searchDataAlert').className = 'report-data-alert ok';
-      $('searchDataAlert').textContent = '已清理 ' + targets.length + ' 条记录中的历史冗余字段：' + foundFields.join('、') + '。';
-      await renderDbBrowser();
-    } finally {
-      if (button) button.disabled = false;
-    }
   }
 
   async function clearCurrentSearchData() {
@@ -17142,7 +17111,7 @@
   if ($('addSearchTermGroupBtn')) {
     $('addSearchTermGroupBtn').addEventListener('click', function() {
       if (!searchCustomTermsEnabled) return;
-      searchCustomTerms.push({ id: 'term_' + Date.now(), title: searchCustomTermTitle(searchCustomTerms.length), words: [] });
+      searchCustomTerms.push({ id: 'term_' + Date.now(), title: '', words: [] });
       saveSearchAnalysisSettings();
       renderSearchAnalysisSettings();
       renderSearchData();
@@ -17154,7 +17123,7 @@
       if (!card) return;
       var term = searchCustomTerms[Number(card.getAttribute('data-search-term-index'))];
       if (!term) return;
-      term.title = (card.querySelector('[data-search-term-title]').value || '').trim() || searchCustomTermTitle(Number(card.getAttribute('data-search-term-index')));
+      term.title = (card.querySelector('[data-search-term-title]').value || '').trim();
       term.words = parseWordList(card.querySelector('[data-search-term-words]').value);
       saveSearchAnalysisSettings();
       renderSearchData();
@@ -17170,7 +17139,6 @@
     });
   }
   if ($('refreshSearchDataBtn')) $('refreshSearchDataBtn').addEventListener('click', renderSearchData);
-  if ($('cleanupLegacySearchFieldsBtn')) $('cleanupLegacySearchFieldsBtn').addEventListener('click', cleanupLegacySearchFields);
   if ($('clearSearchDataBtn')) $('clearSearchDataBtn').addEventListener('click', clearCurrentSearchData);
   if ($('searchDataBody')) {
     $('searchDataBody').addEventListener('click', function(e) {
