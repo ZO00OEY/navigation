@@ -420,6 +420,41 @@
   line-height: 1.7;
 }
 .confirm-modal .btn-row { justify-content: flex-end; }
+.sku-unknown-modal { width: min(760px, 100%); }
+.sku-unknown-list {
+  max-height: 46vh;
+  overflow: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+.sku-unknown-row {
+  display: grid;
+  grid-template-columns: 72px minmax(120px, 1fr) minmax(120px, 1fr) minmax(160px, 1fr);
+  gap: 8px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+.sku-unknown-row:last-child { border-bottom: 0; }
+.sku-unknown-head {
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.sku-unknown-row input:not([type="checkbox"]) {
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font: inherit;
+}
+.sku-unknown-row input:focus {
+  outline: none;
+  border-color: rgba(var(--tool-accent-rgb), 0.5);
+  box-shadow: 0 0 0 3px rgba(var(--tool-accent-rgb), 0.12);
+}
+.sku-unknown-skip { display: inline-flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.78rem; }
+.sku-unknown-row.is-skipped input:not([type="checkbox"]) { opacity: 0.45; }
 .finance-gift-rule-modal {
   width: min(660px, 100%);
   padding: 22px 20px;
@@ -647,6 +682,7 @@
   display: grid;
   gap: 16px;
 }
+.report-filter-panel { margin-top: 0; }
 .report-detail-header {
   display: flex;
   align-items: flex-start;
@@ -1012,6 +1048,142 @@
   box-shadow: none;
 }
 .finance-data-pane[hidden] { display: none; }
+.sku-lookup-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+.sku-lookup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 240px));
+  gap: 12px;
+  justify-content: start;
+}
+.sku-lookup-card {
+  min-width: 0;
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+}
+.sku-lookup-head,
+.sku-lookup-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sku-lookup-head { margin-bottom: 8px; }
+.sku-lookup-title { flex: 1; min-width: 0; font-weight: 700; }
+.sku-lookup-box {
+  display: grid;
+  gap: 6px;
+}
+.sku-lookup-copy {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+}
+.sku-lookup-copy svg {
+  width: 15px;
+  height: 15px;
+}
+.sku-lookup-input {
+  width: 100%;
+  height: 305px;
+  min-height: 305px;
+  resize: vertical;
+  line-height: 1.55;
+}
+.sku-lookup-msg { margin-left: auto; }
+.sku-lookup-empty {
+  padding: 28px 12px;
+  border: 1px dashed var(--line-medium, var(--card-border));
+  border-radius: 8px;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+.search-term-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.search-term-groups {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+.search-term-card {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(220px, 1fr) auto;
+  gap: 8px;
+  align-items: start;
+}
+.search-term-panel { transition: background-color 0.18s ease, border-color 0.18s ease; }
+.search-term-panel.is-disabled { background: #f4f5f7; }
+[data-theme="dark"] .search-term-panel.is-disabled { background: #272830; }
+.search-term-panel.is-disabled .search-term-groups,
+.search-term-panel.is-disabled .search-term-add { opacity: 0.46; }
+.search-toggle { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.search-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.search-toggle-track {
+  width: 38px;
+  height: 22px;
+  padding: 2px;
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 999px;
+  background: #d7dbe2;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+.search-toggle-track::after {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(33, 38, 48, 0.2);
+  transition: transform 0.18s ease;
+}
+.search-toggle input:checked + .search-toggle-track { border-color: var(--link-color); background: var(--link-color); }
+.search-toggle input:checked + .search-toggle-track::after { transform: translateX(16px); }
+.search-toggle input:focus-visible + .search-toggle-track { outline: 2px solid var(--link-color); outline-offset: 2px; }
+.search-term-add {
+  width: 100%;
+  min-height: 38px;
+  margin-top: 10px;
+  border: 1px dashed var(--line-medium, var(--card-border));
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.search-term-add:disabled { cursor: not-allowed; }
+.search-term-add:not(:disabled):hover { border-color: var(--link-color); color: var(--link-color); background: rgba(var(--tool-accent-rgb), 0.05); }
+.search-data-table th.search-group-neutral,
+.search-data-table td.search-group-neutral {
+  background: #f4f5f7;
+}
+.search-data-table th.search-group-accent,
+.search-data-table td.search-group-accent {
+  background: rgba(var(--tool-accent-rgb), 0.08);
+}
+.search-data-table th,
+.search-data-table td {
+  text-align: center;
+}
+.search-data-table {
+  width: max-content;
+  min-width: 100%;
+  table-layout: auto;
+}
+.search-data-table .search-group-end {
+  border-right: 2px solid var(--line-medium, var(--card-border));
+}
 .inventory-warehouse-box {
   display: flex;
   flex-wrap: wrap;
@@ -2342,15 +2514,39 @@
 }
 .filter-left { max-width: 320px; }
 #db-analyzed .filter-left { max-width: 420px; display: flex; align-items: flex-end; gap: 8px; }
-#db-estimates .filter-strip { grid-template-columns: max-content minmax(260px, 340px) minmax(325px, 350px) 1fr; }
-#db-estimates.estimate-mode-date .filter-strip { grid-template-columns: max-content max-content 1fr; align-items: center; }
-#db-estimates.estimate-mode-date .filter-left { max-width: none; }
-#db-estimates .filter-right { min-width: max-content; justify-self: end; align-items: flex-end; }
-#db-estimates .filter-actions { flex-wrap: nowrap; align-items: center; }
-#db-estimates .filter-actions .check-pill { white-space: nowrap; }
+#ranking-raw .panel-title,
+#db-estimates .panel-title { margin-bottom: 6px; }
+#ranking-raw .ranking-panel-sub,
+#db-estimates .estimate-panel-sub { margin: 0 0 18px; }
+#ranking-raw .ranking-filter-strip,
+#db-estimates .estimate-filter-strip {
+  grid-template-columns: max-content minmax(325px, 350px) 1fr;
+  align-items: center;
+  gap: 14px 28px;
+}
+#ranking-raw.ranking-mode-product .ranking-filter-strip,
+#db-estimates.estimate-mode-product .estimate-filter-strip {
+  grid-template-columns: max-content minmax(260px, 330px) minmax(325px, 350px) 1fr;
+}
+#ranking-raw .ranking-filter-strip .filter-left,
+#db-estimates .estimate-filter-strip .filter-left { max-width: none; }
+#ranking-raw .field,
+#db-estimates .field {
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+}
+#ranking-raw .field.date-picker-field,
+#db-estimates .field.date-picker-field {
+  --date-picker-width: 285px;
+  grid-template-columns: 64px var(--date-picker-width);
+}
+#ranking-raw .estimate-mode-switch,
+#db-estimates .estimate-mode-switch { height: 45px; }
+#ranking-raw #rankingProductSelect,
+#db-estimates #estimateProductSelect { min-width: 0; width: 100%; }
 @media (min-width: 821px) {
-  #db-estimates .filter-right { grid-column: 4; }
-  #db-estimates.estimate-mode-date .filter-right { grid-column: 3; }
+  #ranking-raw.ranking-mode-date .ranking-filter-strip .filter-left:nth-child(3) { grid-column: 2; }
+  #db-estimates.estimate-mode-date .estimate-filter-strip .filter-left:nth-child(3) { grid-column: 2; }
 }
 .filter-right { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
 .filter-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
@@ -2645,6 +2841,17 @@
   .filter-strip { grid-template-columns: 1fr; }
   .filter-left { max-width: none; }
   .filter-right, .filter-actions { align-items: flex-start; justify-content: flex-start; }
+  #ranking-raw .ranking-filter-strip,
+  #ranking-raw.ranking-mode-product .ranking-filter-strip,
+  #db-estimates .estimate-filter-strip,
+  #db-estimates.estimate-mode-product .estimate-filter-strip { grid-template-columns: 1fr; }
+  #ranking-raw .field,
+  #ranking-raw .field.date-picker-field,
+  #db-estimates .field,
+  #db-estimates .field.date-picker-field { grid-template-columns: 1fr; }
+  #ranking-raw .estimate-mode-switch,
+  #db-estimates .estimate-mode-switch { width: max-content; }
+  .search-term-card { grid-template-columns: 1fr; }
   .grid-2, .grid-3, .search-analysis-grid, .metric-row, .form-grid, .management-grid, .db-browser-toolbar, .report-toolbar { grid-template-columns: 1fr; }
   .field, .manual-control { grid-template-columns: 1fr; gap: 6px; align-items: stretch; }
   .field > .input,
@@ -2711,7 +2918,7 @@
         <div class="page-head">
           <div class="page-title">
             <h1>数据导入中心</h1>
-            <p class="import-reminder-line">数据导入提醒：按所需维度导入 <a class="import-reminder-link" href="https://jdsz.jd.com/szweb/view/product/productDetail.html" target="_blank" rel="noopener">商品明细</a>、<a class="import-reminder-link" href="https://jzt.jd.com/custom-report/#/overview" target="_blank" rel="noopener">站内花费</a>、<a class="import-reminder-link" href="https://jzt.jd.com/jtk/#/order-detail" target="_blank" rel="noopener">站外 CPS</a>、<a class="import-reminder-link" href="https://jdsz.jd.com/szweb/view/industry/industry-product-rank-temp.html" target="_blank" rel="noopener">商品榜单</a>。</p>
+            <p class="import-reminder-line">按业务模块导入经营数据。建议先维护 SKU 档案，再依次导入商品明细、站内花费、站外 CPS、行业榜单和竞品追踪数据；系统会按 SKU、日期和维度字段进行匹配分析。</p>
           </div>
         </div>
 
@@ -2720,6 +2927,7 @@
             <span>批量自动导入</span>
             <button class="btn import-config-btn" type="button" data-management-link="import-settings">查看导入规则</button>
           </div>
+          <p class="panel-sub">批量导入已配置规则的 Excel / CSV 文件。适合日常更新商品明细、站内花费、站外 CPS 和榜单数据；未配置的数据源请先到导入规则中确认字段。</p>
           <div class="upload-zone" id="dropZone">
             <strong>拖入已配置的 Excel / CSV 文件，或点击选择</strong>
             <span>支持一次选择多个文件；列位置可以变，页面会按文件名、工作表名和表头自动判断。</span>
@@ -2739,12 +2947,9 @@
           <div class="panel-title">
             <span>&#25163;&#21160;&#25968;&#25454;&#24405;&#20837;</span>
           </div>
+          <p class="panel-sub">手动录入重点竞品的日增长率。适合没有模板文件时，补充成交金额增长率和成交件数增长率。</p>
           <div class="manual-ranking-toolbar">
             <div class="manual-control date-picker-field" id="manualRankingDatePickerField"></div>
-            <div class="manual-control">
-              <span class="manual-control-label">&#26174;&#31034;&#33539;&#22260;</span>
-              <label class="manual-control-box"><input type="checkbox" id="manualRankingTrackedOnlyCheck" checked>&#21482;&#30475;&#36861;&#36394;&#31454;&#21697;</label>
-            </div>
           </div>
           <div class="table-wrap" style="margin-top:12px;">
             <table class="data-table manual-entry-table">
@@ -2775,16 +2980,12 @@
         <div class="page-head">
           <div class="page-title">
             <h1>周日报看板</h1>
-            <div class="page-guide">
-              <ol>
-                <li>本页支持查看竞品及不同维度的本品数据。竞品仅支持 SKU 维度查看，数据取自竞品追踪；本品数据可按大系列、小系列或加号中勾选的其他维度查看。</li>
-                <li>可先导出模板，在 Excel 的“模板”页中用 <span class="formula-help" title="当前支持：XLOOKUP/_xlfn.XLOOKUP、SUMIF、SUMIFS、SUM(区域)、ROUND、IFERROR、跨表单元格引用，以及简单加法/四则运算。">支持公式</span> 获取竞品及本品分支标签页内的数据，制作固定版式。</li>
-              </ol>
-            </div>
+            <p class="import-reminder-line">按业务模块导入经营数据。建议先维护 SKU 档案，再依次导入商品明细、站内花费、站外 CPS、行业榜单和竞品追踪数据；系统会按 SKU、日期和维度字段进行匹配分析。</p>
           </div>
         </div>
 
-        <div class="panel" style="margin-top:14px;">
+        <div class="panel report-filter-panel">
+          <p class="panel-sub">按不同维度输出本品与重点竞品数据，并可导出为模板。在 Excel 的“模板”页中用简单运算、SUMIF/SUMIFS、XLOOKUP 等公式抓取各数据页内容，制作固定版式后再导入；网页会预览模板页结果，并可设置需要快速复制的行。</p>
           <div class="report-detail-topbar">
             <div class="report-detail-left">
               <div class="field date-picker-field" id="reportDatePickerField"></div>
@@ -2799,7 +3000,6 @@
             <div class="report-detail-header">
             <div class="report-detail-title" id="reportOutputTitle">报表明细</div>
             <div class="report-detail-actions">
-              <button class="btn report-competitor-toggle" id="reportCompetitorScope" type="button" aria-pressed="true" title="切换竞品标签页显示范围"></button>
               <button class="btn quick-copy-toggle" id="reportQuickCopyToggle" type="button" aria-pressed="true" title="显示或隐藏快速复制列">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
@@ -2926,12 +3126,13 @@
             <path d="M12 7.5v5.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
             <path d="M12 16.4h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>
           </svg>
-          <div><strong>SKU &#21644;&#31616;&#31216;&#26159;&#24517;&#22635;&#39033;&#12290;</strong>&#25903;&#25345;&#32473;&#21830;&#21697;&#26631;&#35760;&#31995;&#21015;&#65292;&#24182;&#26597;&#30475;&#31995;&#21015;&#32500;&#24230;&#24635;&#25968;&#25454;&#65307;Brand &#21487;&#29992;&#20110;&#21306;&#20998;&#24215;&#38138;&#12289;&#20135;&#21697;&#32447;&#65307;&#22914;&#38656;&#22686;&#21152;&#26032;&#31995;&#21015;&#65292;&#21482;&#38656;&#22312;&#23548;&#20837;&#26102;&#22312;&#34920;&#20869;&#22686;&#21152;&#26032;&#21015;&#21363;&#21487;&#12290;</div>
+          <div><strong>&#20808;&#32500;&#25252; SKU &#26723;&#26696;&#65292;&#20877;&#23548;&#20837;&#32463;&#33829;&#25968;&#25454;&#12290;</strong>SKU &#21644;&#31616;&#31216;&#26159;&#24517;&#22635;&#39033;&#65307;&#31995;&#32479;&#20250;&#25353; SKU &#21305;&#37197;&#21830;&#21697;&#65292;&#25353;&#22823;&#31995;&#21015;&#12289;&#23567;&#31995;&#21015;&#12289;Brand &#31561;&#32500;&#24230;&#27719;&#24635;&#20998;&#26512;&#12290;</div>
         </div>
 
         <div class="finance-data-tabs sku-tabs" id="skuArchiveTabs">
           <button class="finance-data-tab active" type="button" data-sku-tab="own">本品 SKU</button>
           <button class="finance-data-tab" type="button" data-sku-tab="competitor">竞品 SKU</button>
+          <button class="finance-data-tab" type="button" data-sku-tab="rules">导入规则</button>
         </div>
 
         <div class="sku-board">
@@ -2939,9 +3140,10 @@
             <div class="sku-titlebar">
               <div>
                 <h2>&#26412;&#21697; SKU &#21015;&#34920;</h2>
-                <p>&#40664;&#35748;&#21015;&#65306;SKU&#12289;&#31616;&#31216;&#12289;&#22823;&#31995;&#21015;&#12289;&#23567;&#31995;&#21015;&#65307;&#21152;&#21495;&#21487;&#26032;&#22686;&#31579;&#36873;&#32500;&#24230;&#21015;&#12290;</p>
+                <p>&#23548;&#20837;&#25110;&#32500;&#25252;&#26412;&#24215;&#21830;&#21697;&#12290;&#34917;&#20805;&#31995;&#21015;&#12289;Brand&#12289;&#29289;&#26009;&#32534;&#30721;&#12289;&#31665;&#35268;&#12289;&#20027;&#36192;&#21697;&#21697;&#23646;&#24615;&#21518;&#65292;&#21487;&#29992;&#20110;&#21830;&#21697;&#20998;&#26512;&#12289;&#27611;&#20445;&#35745;&#31639;&#21644;&#24211;&#23384;&#21608;&#36716;&#34917;&#36135;&#12290;</p>
               </div>
               <div class="sku-actions">
+                <button class="btn" data-cleanup-sku-cols="own">删除空列</button>
                 <button class="btn" data-import-sku="own">&#23548;&#20837;</button>
                 <button class="btn" data-export-sku="own">&#23548;&#20986;</button>
                 <button class="btn danger" data-clear-sku="own">&#28165;&#34920;</button>
@@ -2958,9 +3160,10 @@
             <div class="sku-titlebar">
               <div>
                 <h2>&#31454;&#21697; SKU &#21015;&#34920;</h2>
-                <p>&#20165;&#23545;&#37325;&#28857;&#36861;&#36394;&#30340;&#31454;&#21697;&#36827;&#34892;&#21518;&#32493;&#30340;&#25968;&#25454;&#20272;&#31639;&#65307;Brand &#21487;&#29992;&#20110;&#21306;&#20998;&#24215;&#38138;&#12289;&#20135;&#21697;&#32447;&#12290;</p>
+                <p>&#23548;&#20837;&#25110;&#32500;&#25252;&#38656;&#35201;&#23545;&#27604;&#30340;&#31454;&#21697;&#12290;&#21246;&#36873;&#8220;&#26159;&#21542;&#36861;&#36394;&#8221;&#30340; SKU &#20250;&#21442;&#19982;&#21518;&#32493;&#31454;&#21697;&#20272;&#31639;&#65307;Brand &#21487;&#29992;&#20110;&#21306;&#20998;&#31454;&#21697;&#24215;&#38138;&#25110;&#20135;&#21697;&#32447;&#12290;</p>
               </div>
               <div class="sku-actions">
+                <button class="btn" data-cleanup-sku-cols="competitor">删除空列</button>
                 <button class="btn" data-import-sku="competitor">&#23548;&#20837;</button>
                 <button class="btn" data-export-sku="competitor">&#23548;&#20986;</button>
                 <button class="btn danger" data-clear-sku="competitor">&#28165;&#34920;</button>
@@ -2972,6 +3175,17 @@
               <table class="data-table sku-table" id="competitorSkuTable"></table>
             </div>
           </div>
+          <div class="panel sku-panel is-hidden" data-sku-section="rules">
+            <div class="sku-titlebar">
+              <div>
+                <h2>SKU 导入规则</h2>
+                <p>&#26597;&#30475;&#24403;&#21069;&#25903;&#25345;&#30340;&#34920;&#22836;&#21644;&#25968;&#25454;&#24211;&#23383;&#27573;&#12290;&#23548;&#20837;&#36935;&#21040;&#26410;&#30693;&#34920;&#22836;&#26102;&#65292;&#21487;&#25209;&#37327;&#36873;&#25321;&#23548;&#20837;&#25110;&#36339;&#36807;&#65292;&#24182;&#20026;&#26032;&#21015;&#35774;&#32622;&#33521;&#25991; key&#12290;</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="skuImportRulesTable"></table>
+            </div>
+          </div>
           <input class="ghost-file" type="file" id="skuImportInput" accept=".xlsx,.xls,.csv">
           <div class="msg" id="skuMsg"></div>
         </div>
@@ -2981,16 +3195,12 @@
         <div class="page-head">
           <div class="page-title">
             <h1>本店商品明细</h1>
-            <div class="page-guide">
-              <ol>
-                <li>数据来自导入的 <a class="import-reminder-link" href="https://jdsz.jd.com/szweb/view/product/productDetail.html" target="_blank" rel="noopener">商品明细表</a>，并合并 <a class="import-reminder-link" href="https://jzt.jd.com/custom-report/#/overview" target="_blank" rel="noopener">站内花费</a> 与 <a class="import-reminder-link" href="https://jzt.jd.com/jtk/#/order-detail" target="_blank" rel="noopener">站外 CPS</a>，用于查看本店商品经营数据。</li>
-                <li>如果想给表格增加全新的维度，需要先修改 <a class="import-reminder-link" href="#import-setting">自定义导入规则</a>。</li>
-              </ol>
-            </div>
+            <p class="import-reminder-line">按业务模块导入经营数据。建议先维护 SKU 档案，再依次导入商品明细、站内花费、站外 CPS、行业榜单和竞品追踪数据；系统会按 SKU、日期和维度字段进行匹配分析。</p>
           </div>
         </div>
 
         <div class="panel">
+          <p class="panel-sub">查看本店商品的销售、访客和花费表现。可按小系列、大系列、商品简称等维度切换汇总，结合 SKU 档案中的 Brand 和系列信息定位产品线变化。</p>
           <div class="filter-strip">
             <div class="filter-left">
               <div class="field date-picker-field" id="analyzedDatePickerField"></div>
@@ -3018,26 +3228,32 @@
         <div class="page-head">
           <div class="page-title">
             <h1>行业商品榜单</h1>
-            <div class="page-guide">
-              <ol>
-                <li>数据来自导入的 <a class="import-reminder-link" href="https://jdsz.jd.com/szweb/view/industry/industry-product-rank-temp.html" target="_blank" rel="noopener">行业商品榜单</a>，用于查看排名、金额区间、件数区间等榜单数据。</li>
-                <li>上方页签用于切换查看维度，表格内容会跟随当前页签变化。</li>
-                <li>右侧加号可选择更多维度；如果想增加全新的维度，需要先修改 <a class="import-reminder-link" href="#import-setting">自定义导入规则</a>。</li>
-              </ol>
-            </div>
+            <p class="import-reminder-line">按业务模块导入经营数据。建议先维护 SKU 档案，再依次导入商品明细、站内花费、站外 CPS、行业榜单和竞品追踪数据；系统会按 SKU、日期和维度字段进行匹配分析。</p>
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-title">
-            <span></span>
+            <span>榜单明细</span>
             <div class="btn-row">
-              <label class="check-pill"><input type="checkbox" id="rankingShowTrackedCompetitorsCheck" checked>只看追踪竞品</label>
               <button class="btn" id="refreshRankingRawBtn">&#21047;&#26032;</button>
               <button class="btn danger" id="clearRankingRawBtn">&#28165;&#34920;</button>
             </div>
           </div>
-          <div class="filter-strip">
+          <p class="panel-sub ranking-panel-sub">观察重点竞品的商品排名、成交区间和增长率；切到单品可看单个 SKU 的日期走势。</p>
+          <div class="filter-strip ranking-filter-strip">
+            <div class="filter-left">
+              <div class="estimate-mode-switch" aria-label="行业榜单查看方式">
+                <button class="estimate-mode-btn active" type="button" data-ranking-view-mode="date">日期</button>
+                <button class="estimate-mode-btn" type="button" data-ranking-view-mode="product">单品</button>
+              </div>
+            </div>
+            <div class="filter-left" id="rankingProductField" hidden>
+              <div class="field">
+                <label>产品</label>
+                <select class="select" id="rankingProductSelect"></select>
+              </div>
+            </div>
             <div class="filter-left">
               <div class="field date-picker-field" id="rankingDatePickerField"></div>
             </div>
@@ -3057,12 +3273,20 @@
         <div class="page-head">
           <div class="page-title">
             <h1>竞品追踪</h1>
-            <p>本页支持从时间维度查看选中时间内所有商品的相关数据，也支持单独查看某一商品在选中时间内的日变化。数据会参考 <a class="import-reminder-link" href="https://jdsz.jd.com/szweb/view/product/productDetail.html" target="_blank" rel="noopener">商品明细表</a>、<a class="import-reminder-link" href="https://jzt.jd.com/custom-report/#/overview" target="_blank" rel="noopener">站内花费</a>、<a class="import-reminder-link" href="https://jzt.jd.com/jtk/#/order-detail" target="_blank" rel="noopener">站外 CPS</a>、<a class="import-reminder-link" href="https://jdsz.jd.com/szweb/view/industry/industry-product-rank-temp.html" target="_blank" rel="noopener">行业商品榜单</a>，并包含手动录入的竞品增长率数据。</p>
+            <p class="import-reminder-line">按业务模块导入经营数据。建议先维护 SKU 档案，再依次导入商品明细、站内花费、站外 CPS、行业榜单和竞品追踪数据；系统会按 SKU、日期和维度字段进行匹配分析。</p>
           </div>
         </div>
 
         <div class="panel">
-          <div class="filter-strip">
+          <div class="panel-title">
+            <span>竞品明细</span>
+            <div class="btn-row">
+              <button class="btn" id="importEstimatesBtn">导入</button>
+              <button class="btn" id="exportEstimatesBtn">导出</button>
+            </div>
+          </div>
+          <p class="panel-sub estimate-panel-sub">维护重点竞品的排名、成交区间和估算数据；切到单品可看单个 SKU 的日期走势。</p>
+          <div class="filter-strip estimate-filter-strip">
             <div class="filter-left">
               <div class="estimate-mode-switch" aria-label="竞品追踪查看方式">
                 <button class="estimate-mode-btn active" type="button" data-estimate-view-mode="date">日期</button>
@@ -3078,16 +3302,16 @@
             <div class="filter-left">
               <div class="field date-picker-field" id="estimateDatePickerField"></div>
             </div>
-            <div class="filter-right">
-              <div class="filter-actions">
-                <label class="check-pill"><input type="checkbox" id="estimateTrackedOnlyCheck" checked>仅显示重点追踪竞品</label>
-                <button class="btn" id="importEstimatesBtn">导入</button>
-                <button class="btn" id="exportEstimatesBtn">导出</button>
-              </div>
-            </div>
           </div>
           <input class="ghost-file" type="file" id="estimateImportInput" accept=".xlsx,.xls">
           <div class="msg" id="estimateImportMsg"></div>
+          <div class="report-data-alert" id="estimateDataAlert"></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead id="estimatesDbHead"><tr><th>产品</th><th>日期</th><th>排名</th><th>金额</th><th>件数</th><th>金额区间</th><th>件数区间</th><th>备注</th></tr></thead>
+              <tbody id="estimatesDbBody"><tr><td class="empty-row" colspan="8">暂无竞品追踪</td></tr></tbody>
+            </table>
+          </div>
           <details class="import-rule-card estimate-template-card">
             <summary>导入字段对照</summary>
             <div class="rule-desc">竞品追踪使用固定模板导入。每个标签页代表一个竞品，优先用标签页名称匹配 SKU；导入时会读取每个标签页。</div>
@@ -3104,13 +3328,6 @@
               </table>
             </div>
           </details>
-          <div class="report-data-alert" id="estimateDataAlert"></div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead id="estimatesDbHead"><tr><th>产品</th><th>日期</th><th>排名</th><th>金额</th><th>件数</th><th>金额区间</th><th>件数区间</th><th>备注</th></tr></thead>
-              <tbody id="estimatesDbBody"><tr><td class="empty-row" colspan="8">暂无竞品追踪</td></tr></tbody>
-            </table>
-          </div>
         </div>
       </section>
 
@@ -3219,13 +3436,14 @@
         <div class="page-head">
           <div class="page-title">
             <h1>关键词搜索导入与分析</h1>
-            <p>导入关键词汇总表，只按定义的产品词汇总访客、成交金额和订单量，不保存原始关键词明细。</p>
+            <p>导入关键词汇总表，按品牌词、行业词和自定义产品词汇总访客、成交金额和订单量，不保存原始关键词明细。</p>
           </div>
         </div>
 
         <div class="finance-data-tabs">
           <button class="finance-data-tab active" type="button" data-search-panel="import">导入与设置</button>
           <button class="finance-data-tab" type="button" data-search-panel="detail">搜索数据明细</button>
+          <button class="finance-data-tab" type="button" data-search-panel="skuLookup">SKU 速查</button>
         </div>
         <div class="panel finance-data-panel is-import-mode" id="searchAnalysisPanel">
           <div class="finance-data-pane" id="searchImportPane">
@@ -3234,6 +3452,7 @@
             <div class="panel-title">
               <span>批量自动导入</span>
             </div>
+            <p class="panel-sub">可以为不同的产品词设置匹配关键词，对搜索词进行分类；未命中任何产品词匹配关键词的搜索词，将统一归为行业词。</p>
           <div class="upload-zone" id="searchDropZone">
             <strong>拖入关键词汇总 Excel / CSV 文件，或点击选择</strong>
             <span>导入使用下方搜索数据明细的日期范围；导入后会让你选择档案维度和值。</span>
@@ -3253,7 +3472,21 @@
               <span>品牌词设置</span>
             </div>
             <textarea class="input" id="searchBrandWordsInput" style="width:100%; min-height:82px; resize:vertical;" placeholder="例如：华为、小米、vivo、红米、苹果"></textarea>
-            <p class="panel-sub" style="margin-top:8px;">包含以上关键词的行为“品牌词”，其余归为“品类词”。用逗号、分号、顿号或换行分隔，支持手动修改，失焦后自动保存。</p>
+            <p class="panel-sub" style="margin-top:8px;">包含以上关键词的行为“品牌词”。用逗号、分号、顿号或换行分隔，支持手动修改，失焦后自动保存。</p>
+          </div>
+
+          <div class="panel search-term-panel" id="searchProductTermsPanel">
+            <div class="search-term-head">
+              <div class="panel-title"><span>产品词设置</span></div>
+              <label class="search-toggle">
+                <input type="checkbox" id="searchCustomTermsEnabled">
+                <span class="search-toggle-track" aria-hidden="true"></span>
+                <span>启用</span>
+              </label>
+            </div>
+            <div class="search-term-groups" id="searchTermGroups"></div>
+            <button class="search-term-add" type="button" id="addSearchTermGroupBtn" title="增加产品词">＋ 增加产品词</button>
+            <p class="panel-sub" style="margin-top:8px;">每组左侧填写显示名称，右侧填写匹配关键词。启用后会按组追加到“搜索数据明细”。</p>
           </div>
         </div>
 
@@ -3270,18 +3503,33 @@
             <div class="filter-right">
               <div class="filter-actions">
                 <button class="btn" id="refreshSearchDataBtn" type="button">刷新</button>
+                <button class="btn danger" id="cleanupLegacySearchFieldsBtn" type="button">检查并清理旧字段</button>
                 <button class="btn danger" id="clearSearchDataBtn" type="button">清空当前</button>
               </div>
             </div>
           </div>
           <div class="report-data-alert" id="searchDataAlert"></div>
           <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr><th>日期</th><th>维度</th><th>具体值</th><th>总访客</th><th>总单量</th><th>总成交金额</th><th>品类词访客</th><th>品类词转化率</th><th>品类词单量</th><th>品类词成交金额</th><th>品牌词访客</th><th>品牌词转化率</th><th>品牌词单量</th><th>品牌词成交金额</th></tr></thead>
-              <tbody id="searchDataBody"><tr><td class="empty-row" colspan="14">暂无搜索数据</td></tr></tbody>
+            <table class="data-table search-data-table">
+              <thead id="searchDataHead"></thead>
+              <tbody id="searchDataBody"><tr><td class="empty-row" colspan="15">暂无搜索数据</td></tr></tbody>
             </table>
           </div>
         </div>
+          </div>
+          <div class="finance-data-pane" id="skuLookupPane" hidden>
+            <div class="finance-import-section">
+              <div class="sku-lookup-toolbar">
+                <div>
+                  <div class="panel-title"><span>SKU 速查</span></div>
+                  <p class="panel-sub">按系列或临时分组保存 SKU，点击复制即可复制当前组内全部 SKU。</p>
+                </div>
+                <button class="btn primary" type="button" id="addSkuLookupGroupBtn">新增组</button>
+              </div>
+              <div class="sku-lookup-grid" id="skuLookupGroups"></div>
+              <div class="sku-lookup-empty" id="skuLookupEmpty" hidden>暂无 SKU 组，点击“新增组”开始填写。</div>
+              <div class="msg" id="skuLookupMsg"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -3605,6 +3853,19 @@
   </div>
 </div>
 
+<div class="modal-backdrop" id="skuUnknownHeadersModal" aria-hidden="true">
+  <div class="confirm-modal sku-unknown-modal" role="dialog" aria-modal="true" aria-labelledby="skuUnknownHeadersTitle">
+    <h2 id="skuUnknownHeadersTitle">确认未知导入表头</h2>
+    <p>检测到未定义过的表头，请一次性确认字段简称和英文数据库字段名；取消勾选“导入”则不导入该列。</p>
+    <div class="sku-unknown-list" id="skuUnknownHeadersList"></div>
+    <p class="msg" id="skuUnknownHeadersMsg"></p>
+    <div class="btn-row">
+      <button class="btn" id="skuUnknownHeadersCancelBtn" type="button">取消</button>
+      <button class="btn primary" id="skuUnknownHeadersOkBtn" type="button">确认导入</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="grossMarginRuleModal" aria-hidden="true">
   <div class="confirm-modal finance-rule-modal" role="dialog" aria-modal="true" aria-labelledby="grossMarginRuleTitle">
     <h2 id="grossMarginRuleTitle">确认毛保计算规则</h2>
@@ -3809,7 +4070,7 @@
   }
 
   var DB_NAME = 'jdDataAnalysisTool';
-  var DB_VERSION = 5;
+  var DB_VERSION = 7;
   var SEARCH_ANALYSIS_SOURCE_URL = 'https://ppzh.jd.com/brandweb/brand/view/viewflow/flowKeywordAnalysisNew.html';
   var db = null;
   var skuImportTarget = 'own';
@@ -3880,23 +4141,27 @@
     'sku_profiles',
     'raw_snapshots',
     'analyzed_metrics',
+    'search_analysis_metrics',
     'ranking_raw_metrics',
     'competitor_estimates',
     'finance_metrics',
     'gross_margin_estimates',
     'inventory_turnover_metrics',
+    'sku_lookup_groups',
     'app_settings'
   ];
   var DATA_DATE_HINT_KEY = 'jdDataDateHint';
   var DB_STORE_LABELS = {
     sku_profiles: 'SKU 档案',
     raw_snapshots: '导入记录',
-    analyzed_metrics: '本店/搜索分析明细',
+    analyzed_metrics: '本店商品明细',
+    search_analysis_metrics: '搜索分析明细',
     ranking_raw_metrics: '行业商品榜单',
     competitor_estimates: '竞品追踪',
     finance_metrics: '毛保数据',
     gross_margin_estimates: '毛保预估表',
     inventory_turnover_metrics: '库存周转',
+    sku_lookup_groups: 'SKU 速查',
     app_settings: '应用设置'
   };
   var DEFAULT_IMPORT_MAPPINGS = {
@@ -3996,6 +4261,7 @@
   var rankingSelectedDimensions = JSON.parse(rankingSelectedDimensionsRaw || '["shortName"]');
   var rankingActiveDimension = localStorage.getItem('jdRankingActiveDimension') || 'shortName';
   var rankingAttributeColumns = JSON.parse(localStorage.getItem('jdRankingAttributeColumns') || '[]');
+  var rankingViewMode = sessionStorage.getItem('jdRankingViewMode') === 'product' ? 'product' : 'date';
   var grossMarginProfileColumns = JSON.parse(localStorage.getItem('jdGrossMarginProfileColumns') || '["mainSeries","subSeries","shortName"]');
   var grossMarginDefaultDimensions = ['sku', 'mainSeries', 'subSeries', 'shortName'];
   var grossMarginSelectedDimensionsRaw = localStorage.getItem('jdGrossMarginSelectedDimensions');
@@ -4018,28 +4284,26 @@
   var financeGiftSkuNameMap = {};
   var searchAnalysisFilterWords = JSON.parse(localStorage.getItem('jdSearchAnalysisFilterWords') || '[]');
   var searchAnalysisBrandWords = JSON.parse(localStorage.getItem('jdSearchAnalysisBrandWords') || '[]');
+  var searchCustomTermsEnabled = localStorage.getItem('jdSearchCustomTermsEnabled') === 'true';
+  var searchCustomTerms = sanitizeSearchCustomTerms(JSON.parse(localStorage.getItem('jdSearchCustomTerms') || '[]'));
   var searchAnalysisLastDimension = localStorage.getItem('jdSearchAnalysisDimension') || 'mainSeries';
   var searchAnalysisLastValue = localStorage.getItem('jdSearchAnalysisValue') || '';
   if (!grossMarginAvailableDimensionsRaw && !grossMarginSelectedDimensionsRaw && grossMarginProfileColumns.length) {
     grossMarginAvailableDimensions = ['sku'].concat(grossMarginProfileColumns);
     grossMarginActiveDimensions = grossMarginAvailableDimensions.slice();
   }
-  if (!localStorage.getItem('jdRankingDimensionDefaultMigrated') && (!rankingSelectedDimensionsRaw || JSON.stringify(rankingSelectedDimensions) === '["subSeries"]')) {
-    rankingSelectedDimensions = ['shortName', 'mainSeries'];
+  if (!localStorage.getItem('jdRankingSingleDefaultMigrated') && (!rankingSelectedDimensionsRaw || ['["subSeries"]', '["shortName","mainSeries"]'].indexOf(JSON.stringify(rankingSelectedDimensions)) !== -1)) {
+    rankingSelectedDimensions = ['shortName'];
     localStorage.setItem('jdRankingSelectedDimensions', JSON.stringify(rankingSelectedDimensions));
-    localStorage.setItem('jdRankingDimensionDefaultMigrated', 'true');
+    localStorage.setItem('jdRankingSingleDefaultMigrated', 'true');
   }
-  if (rankingSelectedDimensions.indexOf('mainSeries') === -1) {
-    rankingSelectedDimensions.splice(1, 0, 'mainSeries');
-    localStorage.setItem('jdRankingSelectedDimensions', JSON.stringify(rankingSelectedDimensions));
-  }
-  var rankingShowTrackedCompetitors = localStorage.getItem('jdRankingShowTrackedCompetitors') !== 'false';
+  var rankingShowTrackedCompetitors = true;
   var analyzedAttributeColumns = JSON.parse(localStorage.getItem('jdAnalyzedAttributeColumns') || '[]');
   var estimateAttributeColumns = JSON.parse(localStorage.getItem('jdEstimateAttributeColumns') || '[]');
   var manualRankingExtraFields = JSON.parse(localStorage.getItem('jdManualRankingExtraFields') || '[]');
   var manualRankingSelectedFields = JSON.parse(localStorage.getItem('jdManualRankingSelectedFields') || 'null');
-  var manualRankingTrackedOnly = localStorage.getItem('jdManualRankingTrackedOnly') !== 'false';
-  var reportCompetitorScope = localStorage.getItem('jdReportCompetitorScope') === 'all' ? 'all' : 'tracked';
+  var manualRankingTrackedOnly = true;
+  var reportCompetitorScope = 'tracked';
   var analyzedHideZeroSales = localStorage.getItem('jdAnalyzedHideZeroSales') === 'true';
   var reportExtraDimensions = JSON.parse(localStorage.getItem('jdReportExtraDimensions') || '[]');
   var reportSelectedDimensions = JSON.parse(localStorage.getItem('jdReportSelectedDimensions') || 'null') || ['mainSeries', 'subSeries'].concat(reportExtraDimensions);
@@ -4058,7 +4322,7 @@
   var grossMarginDashboardHideZeroSales = localStorage.getItem('jdGrossMarginDashboardHideZeroSales') === 'true';
   var estimateSavedRange = JSON.parse(sessionStorage.getItem('jdEstimateDateRange') || 'null');
   var estimateViewMode = sessionStorage.getItem('jdEstimateViewMode') === 'date' ? 'date' : 'product';
-  var estimateTrackedOnly = localStorage.getItem('jdEstimateTrackedOnly') !== 'false';
+  var estimateTrackedOnly = true;
   var estimateAutoGenerating = false;
   var estimateAutoAttemptedKeys = {};
   var enableOrderDimension = localStorage.getItem('jdEnableOrderDimension') === 'true';
@@ -4972,6 +5236,11 @@
           analyzed.createIndex('periodType', 'periodType', { unique: false });
           analyzed.createIndex('startDate', 'startDate', { unique: false });
         }
+        if (!database.objectStoreNames.contains('search_analysis_metrics')) {
+          var search = database.createObjectStore('search_analysis_metrics', { keyPath: 'id', autoIncrement: true });
+          search.createIndex('periodType', 'periodType', { unique: false });
+          search.createIndex('startDate', 'startDate', { unique: false });
+        }
         if (!database.objectStoreNames.contains('ranking_raw_metrics')) {
           var ranking = database.createObjectStore('ranking_raw_metrics', { keyPath: 'id', autoIncrement: true });
           ranking.createIndex('sku', 'sku', { unique: false });
@@ -5000,6 +5269,9 @@
           inventory.createIndex('sku', 'sku', { unique: false });
           inventory.createIndex('snapshotId', 'snapshotId', { unique: false });
           inventory.createIndex('startDate', 'startDate', { unique: false });
+        }
+        if (!database.objectStoreNames.contains('sku_lookup_groups')) {
+          database.createObjectStore('sku_lookup_groups', { keyPath: 'id', autoIncrement: true });
         }
         if (!database.objectStoreNames.contains('app_settings')) {
           database.createObjectStore('app_settings', { keyPath: 'key' });
@@ -5048,6 +5320,34 @@
     return new Promise(function(resolve, reject) {
       var req = tx(store).getAll();
       req.onsuccess = function() { resolve(req.result || []); };
+      req.onerror = function() { reject(req.error); };
+    });
+  }
+  function readDbBrowserPreview(store, limit, keyword) {
+    keyword = String(keyword || '').trim().toLowerCase();
+    return new Promise(function(resolve, reject) {
+      var rows = [];
+      var matched = 0;
+      var scanned = 0;
+      var req = tx(store).openCursor();
+      req.onsuccess = function(event) {
+        var cursor = event.target.result;
+        if (!cursor) {
+          resolve({ rows: rows, matched: matched, scanned: scanned, fullScan: !!keyword });
+          return;
+        }
+        var row = cursor.value;
+        scanned++;
+        if (!keyword || stringifyDbValue(row).toLowerCase().indexOf(keyword) !== -1) {
+          matched++;
+          if (rows.length < limit) rows.push(row);
+        }
+        if (!keyword && rows.length >= limit) {
+          resolve({ rows: rows, matched: matched, scanned: scanned, fullScan: false });
+          return;
+        }
+        cursor.continue();
+      };
       req.onerror = function() { reject(req.error); };
     });
   }
@@ -5390,7 +5690,8 @@
   }
 
   function sourceTypesForStore(store) {
-    if (store === 'analyzed_metrics') return ['sales_detail', 'onsite_cost', 'offsite_cps_cost', 'search_analysis'];
+    if (store === 'analyzed_metrics') return ['sales_detail', 'onsite_cost', 'offsite_cps_cost'];
+    if (store === 'search_analysis_metrics') return ['search_analysis'];
     if (store === 'ranking_raw_metrics') return ['industry_ranking'];
     if (store === 'finance_metrics') return ['finance_gross_margin_order', 'finance_gross_margin_ad', 'finance_gross_margin_rebate'];
     return [];
@@ -5420,6 +5721,9 @@
       sku: ['SKU', '商品ID', '商品编号', '商品编码', 'skuId'],
       shortName: ['简称', '商品简称', '名称', '商品名称', 'SKU名称'],
       brand: ['品牌', '竞品品牌', 'Brand', 'brand'],
+      materialCode: ['物料编码', '物料编号', '物料号', 'materialCode', 'material_code'],
+      packageSpec: ['箱规', '装箱数', '装箱规格', '箱装', 'packageSpec', 'package_spec', 'casePack', 'case_pack'],
+      mainorsub: ['主赠品品属性', '主赠品属性', '主赠品', 'mainorsub'],
       mainSeries: ['大系列', '大类'],
       subSeries: ['小系列', '小类'],
       isTrackedCompetitor: ['重点追踪', '重点竞品', '是否重点追踪']
@@ -5472,6 +5776,9 @@
         { key: 'shortName', commonName: '简称', note: '页面展示和匹配用商品简称' },
         { key: 'itemType', commonName: '商品类型', note: '区分本品和竞品' },
         { key: 'brand', commonName: 'Brand', note: '竞品 SKU 默认品牌为“竞品”' },
+        { key: 'materialCode', commonName: '物料编码', note: '内部物料编号；数据库字段名固定为 materialCode' },
+        { key: 'packageSpec', commonName: '箱规', note: '装箱规格；用于补货建议按箱规取整' },
+        { key: 'mainorsub', commonName: '主赠品品属性', note: '区分主品/赠品属性；数据库字段名固定为 mainorsub' },
         { key: 'isTrackedCompetitor', commonName: '是否追踪', note: '是否作为重点追踪竞品参与估算和筛选' },
         { key: 'mainSeries', commonName: '大系列', note: 'SKU 默认归类维度，用于商品归类、筛选和报表展示' },
         { key: 'subSeries', commonName: '小系列', note: 'SKU 默认归类维度，用于商品归类、筛选和报表展示' }
@@ -5481,8 +5788,7 @@
         field.origin = '内置字段';
         addSchemaField(fields, field);
       });
-      skuDimensionColumns.forEach(function(key) {
-        if (key === 'mainSeries' || key === 'subSeries') return;
+      extraSkuDimensionColumns().forEach(function(key) {
         addSchemaField(fields, {
           key: key,
           commonName: skuColumnLabels[key] || key,
@@ -5623,17 +5929,16 @@
       $('dbBrowserMeta').textContent = '没有数据表。';
       return;
     }
-    var rows = await getAll(store);
     if (dbBrowserMode === 'schema') {
+      var rows = await getAll(store);
       renderDbSchemaBrowser(store, rows);
       return;
     }
     var keyword = ($('dbBrowserSearch').value || '').trim().toLowerCase();
-    var filtered = keyword ? rows.filter(function(row) {
-      return stringifyDbValue(row).toLowerCase().indexOf(keyword) !== -1;
-    }) : rows;
     var limit = Math.max(10, Math.min(1000, Number($('dbBrowserLimit').value) || 100));
-    dbBrowserRows = filtered.slice(0, limit);
+    var total = await countStore(store);
+    var preview = await readDbBrowserPreview(store, limit, keyword);
+    dbBrowserRows = preview.rows;
     var columns = getDbBrowserColumns(dbBrowserRows);
     renderDbTable(columns, dbBrowserRows, function(row, key) { return key === '记录' ? row : row[key]; });
     if (!dbBrowserRows.length) {
@@ -5647,7 +5952,7 @@
       }).join('');
     }
     var storeLabel = dbStoreLabel(store);
-    $('dbBrowserMeta').textContent = storeLabel + '：共 ' + rows.length + ' 条，当前显示 ' + dbBrowserRows.length + ' 条。';
+    $('dbBrowserMeta').textContent = storeLabel + '：共 ' + total + ' 条，当前显示 ' + dbBrowserRows.length + ' 条' + (keyword ? '，匹配 ' + preview.matched + ' 条（搜索会扫描全表）。' : '。');
     $('dbBrowserDetail').textContent = dbBrowserRows.length ? '点击任意行查看完整 JSON。' : '暂无可预览记录。';
   }
 
@@ -5657,11 +5962,12 @@
     renderSkuTable('own', rows.filter(function(row) { return row.itemType !== 'competitor'; }));
     renderSkuTable('competitor', rows.filter(function(row) { return row.itemType === 'competitor'; }));
     renderTrackedCompetitors(rows);
+    renderSkuImportRules();
     applySkuArchiveView();
   }
 
   function setSkuArchiveView(view) {
-    skuArchiveView = view === 'competitor' ? 'competitor' : 'own';
+    skuArchiveView = ['own', 'competitor', 'rules'].indexOf(view) !== -1 ? view : 'own';
     applySkuArchiveView();
   }
 
@@ -5675,8 +5981,42 @@
     });
     var title = document.querySelector('#db-sku .page-title h1');
     if (title) {
-      title.textContent = skuArchiveView === 'competitor' ? '竞品 SKU 档案' : '本品 SKU 档案';
+      title.textContent = skuArchiveView === 'rules' ? 'SKU 导入规则' : skuArchiveView === 'competitor' ? '竞品 SKU 档案' : '本品 SKU 档案';
     }
+  }
+
+  function renderSkuImportRules() {
+    var table = $('skuImportRulesTable');
+    if (!table) return;
+    var rules = [
+      { key: 'sku', label: 'SKU', required: '是', note: '主键；同 SKU 导入会覆盖原记录' },
+      { key: 'shortName', label: '简称', required: '是', note: '页面展示和匹配用商品简称' },
+      { key: 'mainSeries', label: '大系列', required: '否', note: '用于从系列维度查看产品数据' },
+      { key: 'subSeries', label: '小系列', required: '否', note: '用于从系列维度查看产品数据' },
+      { key: 'brand', label: 'Brand', required: '否', note: '用于区分店铺、产品线，并从不同维度查看产品数据；竞品未填时默认“竞品”' },
+      { key: 'materialCode', label: '物料编码', required: '否', note: '内部物料编号' },
+      { key: 'packageSpec', label: '箱规', required: '否', note: '填最小可用规格，用于库存周转中的补货计算' },
+      { key: 'mainorsub', label: '主赠品品属性', required: '否', note: '主品填“主”，赠品留空；用于毛保计算' },
+      { key: 'isTrackedCompetitor', label: '是否追踪', required: '否', note: '仅竞品 SKU 使用；是/true/1/yes 会识别为追踪' }
+    ];
+    var customRules = extraSkuDimensionColumns().map(function(key) {
+      return { key: key, label: skuColumnLabels[key] || key, required: '否', note: '自定义导入字段' };
+    });
+    var rows = rules.concat(customRules);
+    table.innerHTML =
+      '<thead><tr><th>字段简称</th><th>数据库字段名</th><th>可识别表头</th><th>必填</th><th>说明</th></tr></thead>' +
+      '<tbody>' + rows.map(function(rule) {
+        return '<tr>' +
+          '<td>' + esc(rule.label) + '</td>' +
+          '<td><code>' + esc(rule.key) + '</code></td>' +
+          '<td>' + esc(skuHeaderAliases(rule.key, rule.label).join(' / ') || rule.label) + '</td>' +
+          '<td>' + esc(rule.required) + '</td>' +
+          '<td>' + esc(rule.note) + '</td>' +
+        '</tr>';
+      }).join('') +
+      '<tr><td>未定义表头</td><td><code>手动确认</code></td><td>不在上方规则内的表头</td><td>否</td><td>导入前会批量弹窗，必须填写有含义的英文 key。</td></tr>' +
+      '</tbody>';
+    enhanceResizableTable(table, 'skuImportRules');
   }
 
   function renderSkuTable(type, rows) {
@@ -5684,15 +6024,20 @@
     rows = sortSkuRows(type, rows);
     var columns = [
       { key: 'sku', label: 'SKU', required: true },
-      { key: 'shortName', label: '简称', required: true }
+      { key: 'shortName', label: '简称', required: true },
+      { key: 'mainSeries', label: '大系列' },
+      { key: 'subSeries', label: '小系列' },
+      { key: 'brand', label: 'Brand' },
+      { key: 'materialCode', label: '物料编码' },
+      { key: 'packageSpec', label: '箱规' },
+      { key: 'mainorsub', label: '主赠品品属性' }
     ];
     if (type === 'competitor') {
       columns = columns.concat([
-        { key: 'brand', label: 'Brand' },
         { key: 'isTrackedCompetitor', label: '\u662f\u5426\u8ffd\u8e2a' }
       ]);
     }
-    columns = columns.concat(skuDimensionColumns.map(function(key) {
+    columns = columns.concat(extraSkuDimensionColumns().map(function(key) {
       return { key: key, label: skuColumnLabels[key] || key, dimension: true };
     }));
 
@@ -5712,7 +6057,7 @@
       cls = cls.trim() ? ' class="' + cls.trim() + '"' : '';
       var sortAttr = ' data-sort-col="' + esc(col.key) + '"';
       if (!col.dimension) return '<th' + cls + sortAttr + ' data-col-key="' + esc(col.key) + '">' + sortLabel(type, col.key, col.label) + resizeHandle(type, col.key) + '</th>';
-      return '<th draggable="true" data-drag-col="' + esc(col.key) + '"' + sortAttr + ' title="鎷栧姩璋冩暣椤哄簭锛屽弻鍑诲悕绉板彲缂栬緫">' +
+      return '<th draggable="true" data-drag-col="' + esc(col.key) + '"' + sortAttr + ' title="拖动调整顺序，双击名称可编辑">' +
         '<span class="sku-col-head">' +
           '<span class="sku-col-label" data-col-label="' + esc(col.key) + '">' + esc(col.label) + '</span>' +
           sortTools(type, col.key) +
@@ -5720,10 +6065,7 @@
         resizeHandle(type, col.key) +
       '</th>';
     }).join('') + '<th class="add-col-head" data-col-key="' + addColKey + '">' +
-      '<span class="report-dim-picker">' +
-        '<button class="small-plus" data-add-col="' + type + '" title="选择新增维度列">+</button>' +
-        '<span class="report-dim-popover" data-sku-add-popover="' + type + '">' + skuColumnAddOptionsHtml(type) + '</span>' +
-      '</span>' +
+      '<button class="small-plus" data-add-col="' + type + '" title="新建自定义列">+</button>' +
       resizeHandle(type, addColKey) +
     '</th>';
 
@@ -5786,7 +6128,7 @@
   }
 
   function getSkuColumnWidth(type, key) {
-    var fallback = key === '__add__' ? 48 : key === 'sku' ? 180 : key === 'shortName' ? 360 : key === 'isTrackedCompetitor' ? 92 : key === 'brand' ? 92 : 128;
+    var fallback = key === '__add__' ? 48 : key === 'sku' ? 180 : key === 'shortName' ? 360 : key === 'materialCode' ? 130 : key === 'packageSpec' ? 96 : key === 'mainorsub' ? 140 : key === 'isTrackedCompetitor' ? 92 : key === 'brand' ? 92 : 128;
     return Math.max(48, Number(skuColumnWidths[type + ':' + key] || fallback));
   }
 
@@ -5838,25 +6180,32 @@
     saveSkuColumnState();
   }
 
-  async function mergeDuplicateBrandColumns() {
-    var duplicateKeys = skuDimensionColumns.filter(function(key) {
-      return key !== 'brand' && headerAlias(skuColumnLabels[key] || key) === 'brand';
+  async function mergeDuplicateBuiltinSkuColumns() {
+    var builtins = ['brand', 'materialCode', 'packageSpec', 'mainorsub'];
+    var duplicateMap = {};
+    builtins.forEach(function(targetKey) {
+      duplicateMap[targetKey] = skuDimensionColumns.filter(function(key) {
+        return key !== targetKey && headerAlias(skuColumnLabels[key] || key) === targetKey;
+      });
     });
+    var duplicateKeys = builtins.reduce(function(all, key) { return all.concat(duplicateMap[key]); }, []);
     if (!duplicateKeys.length) return;
 
     var rows = await getAll('sku_profiles');
     for (var i = 0; i < rows.length; i++) {
       var row = rows[i];
       var changed = false;
-      duplicateKeys.forEach(function(key) {
-        if (!row.brand && row[key]) {
-          row.brand = row[key];
-          changed = true;
-        }
-        if (key in row) {
-          delete row[key];
-          changed = true;
-        }
+      builtins.forEach(function(targetKey) {
+        duplicateMap[targetKey].forEach(function(key) {
+          if (!row[targetKey] && row[key]) {
+            row[targetKey] = row[key];
+            changed = true;
+          }
+          if (key in row) {
+            delete row[key];
+            changed = true;
+          }
+        });
       });
       if (changed) await put('sku_profiles', row);
     }
@@ -5892,12 +6241,19 @@
     localStorage.setItem('jdSkuDimensionColumns', JSON.stringify(skuDimensionColumns));
   }
 
+  function extraSkuDimensionColumns() {
+    var fixed = ['brand', 'mainSeries', 'subSeries', 'materialCode', 'packageSpec', 'mainorsub', 'isTrackedCompetitor'];
+    return skuDimensionColumns.filter(function(key) {
+      return fixed.indexOf(key) === -1 && fixed.indexOf(headerAlias(skuColumnLabels[key] || key)) === -1;
+    });
+  }
+
   function normalizeSkuColumnKey(key) {
     return String(key || '').trim().toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '').replace(/^_+|_+$/g, '').slice(0, 32);
   }
 
   function isReservedSkuColumnKey(key) {
-    return ['sku', 'shortname', 'brand', 'istrackedcompetitor', 'itemtype', 'updatedat', 'mainseries', 'subseries'].indexOf(String(key || '').toLowerCase()) !== -1;
+    return ['sku', 'shortname', 'brand', 'materialcode', 'packagespec', 'mainorsub', 'istrackedcompetitor', 'itemtype', 'updatedat', 'mainseries', 'subseries'].indexOf(String(key || '').toLowerCase()) !== -1;
   }
 
   function uniqueSkuColumnKey(key, oldKey) {
@@ -5962,17 +6318,6 @@
       var expected = uniqueSkuColumnKey(label, key);
       if (expected !== key && /^custom_\u65b0\u7ef4\u5ea6(?:_\d+)?$/.test(key)) await renameSkuColumnKey(key, label);
     }
-  }
-
-  function skuColumnAddOptionsHtml(type) {
-    var fixed = type === 'competitor' ? ['sku', 'shortName', 'brand', 'isTrackedCompetitor'] : ['sku', 'shortName', 'brand'];
-    var candidates = getAnalyzedAttributeCandidates().filter(function(key) {
-      return fixed.indexOf(key) === -1 && skuDimensionColumns.indexOf(key) === -1;
-    });
-    var html = candidates.map(function(key) {
-      return '<button class="report-dim-option" type="button" data-sku-add-option="' + esc(key) + '">' + esc(analyzedDimensionLabel(key)) + '</button>';
-    }).join('');
-    return html + '<button class="report-dim-option custom-dimension" type="button" data-sku-add-option="__custom__">自定义维度</button>';
   }
 
   async function addSkuColumn(type, key) {
@@ -6216,7 +6561,7 @@
     ].forEach(function(pair) {
       enhanceResizableTableByBody(pair[0], pair[1]);
     });
-    document.querySelectorAll('.tool-page .table-wrap table.data-table:not(.sku-table):not(.manual-entry-table):not(.db-browser-table):not(.replenishment-table):not(.resizable-table)').forEach(function(table, index) {
+    document.querySelectorAll('.tool-page .table-wrap table.data-table:not(.sku-table):not(.manual-entry-table):not(.db-browser-table):not(.replenishment-table):not(.search-data-table):not(.resizable-table)').forEach(function(table, index) {
       var page = table.closest('.tool-page');
       enhanceResizableTable(table, 'autoTable:' + (page ? page.id : 'page') + ':' + index);
     });
@@ -6280,7 +6625,7 @@
 
   function headerAlias(name) {
     var n = normalizeHeader(name);
-    var keys = ['sku', 'shortName', 'brand', 'mainSeries', 'subSeries', 'isTrackedCompetitor'];
+    var keys = ['sku', 'shortName', 'brand', 'materialCode', 'packageSpec', 'mainorsub', 'mainSeries', 'subSeries', 'isTrackedCompetitor'];
     for (var i = 0; i < keys.length; i++) {
       if (skuHeaderAliases(keys[i]).map(normalizeHeader).indexOf(n) !== -1) return keys[i];
     }
@@ -6321,6 +6666,7 @@
 
   function importMappingStore(type) {
     if (type === 'finance_gross_margin' || financeSheetRuleTypes().indexOf(type) !== -1) return 'finance_metrics';
+    if (type === 'search_analysis') return 'search_analysis_metrics';
     return type === 'industry_ranking' ? 'ranking_raw_metrics' : 'analyzed_metrics';
   }
 
@@ -6461,7 +6807,7 @@
   }
 
   function isSkuDimensionKey(key) {
-    return ['sku', 'shortName', 'brand', 'isTrackedCompetitor'].indexOf(key) === -1;
+    return ['sku', 'shortName', 'brand', 'mainSeries', 'subSeries', 'materialCode', 'packageSpec', 'mainorsub', 'isTrackedCompetitor'].indexOf(key) === -1;
   }
 
   function ensureSkuDimensionColumn(key, label) {
@@ -6470,19 +6816,139 @@
     if (skuDimensionColumns.indexOf(key) === -1) skuDimensionColumns.push(key);
   }
 
-  function buildSkuImportHeaderPlan(rows) {
+  function suggestedBatchSkuColumnKey(label, used) {
+    var base = normalizeSkuColumnKey(label) || 'custom_field';
+    var key = base;
+    var i = 2;
+    while (used[key] || isReservedSkuColumnKey(key) || skuDimensionColumns.indexOf(key) !== -1 || Object.prototype.hasOwnProperty.call(skuColumnLabels, key)) {
+      key = base + '_' + i++;
+    }
+    used[key] = true;
+    return key;
+  }
+
+  function askUnknownSkuHeaders(headers) {
+    return new Promise(function(resolve) {
+      var modal = $('skuUnknownHeadersModal');
+      var list = $('skuUnknownHeadersList');
+      var msg = $('skuUnknownHeadersMsg');
+      if (!modal || !list) {
+        resolve(null);
+        return;
+      }
+      var used = {};
+      list.innerHTML = '<div class="sku-unknown-row sku-unknown-head"><span>处理</span><span>原表头</span><span>字段简称</span><span>数据库字段名（英文）</span></div>' +
+        headers.map(function(header, index) {
+          return '<div class="sku-unknown-row" data-unknown-header="' + esc(header) + '">' +
+            '<label class="sku-unknown-skip"><input type="checkbox" data-unknown-import checked>导入</label>' +
+            '<input type="text" value="' + esc(header) + '" readonly>' +
+            '<input type="text" data-unknown-label value="' + esc(header) + '" maxlength="24">' +
+            '<input type="text" data-unknown-key value="' + esc(suggestedBatchSkuColumnKey(header, used)) + '" maxlength="32">' +
+          '</div>';
+        }).join('');
+      if (msg) {
+        msg.textContent = '';
+        msg.className = 'msg';
+      }
+      function close(value) {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        $('skuUnknownHeadersCancelBtn').removeEventListener('click', cancel);
+        $('skuUnknownHeadersOkBtn').removeEventListener('click', ok);
+        list.removeEventListener('input', normalizeKeyInput);
+        list.removeEventListener('change', toggleImportRow);
+        modal.removeEventListener('click', backdrop);
+        resolve(value);
+      }
+      function cancel() { close(null); }
+      function normalizeKeyInput(e) {
+        if (e.target.matches('[data-unknown-key]')) e.target.value = normalizeSkuColumnKey(e.target.value);
+      }
+      function toggleImportRow(e) {
+        if (!e.target.matches('[data-unknown-import]')) return;
+        var row = e.target.closest('[data-unknown-header]');
+        row.classList.toggle('is-skipped', !e.target.checked);
+        row.querySelectorAll('[data-unknown-label], [data-unknown-key]').forEach(function(input) {
+          input.disabled = !e.target.checked;
+        });
+      }
+      function ok() {
+        var keyMap = {};
+        var seenKeys = {};
+        var error = '';
+        Array.from(list.querySelectorAll('[data-unknown-header]')).some(function(row) {
+          var header = row.getAttribute('data-unknown-header');
+          if (!row.querySelector('[data-unknown-import]').checked) {
+            keyMap[header] = null;
+            return false;
+          }
+          var labelInput = row.querySelector('[data-unknown-label]');
+          var keyInput = row.querySelector('[data-unknown-key]');
+          var label = (labelInput.value || '').trim();
+          var key = normalizeSkuColumnKey(keyInput.value);
+          error = !label ? '请填写字段简称。' : skuColumnKeyError(key);
+          if (!error && /^custom_field(?:_\d+)?$/.test(key)) error = '未知表头请把数据库字段名改成有含义的英文 key，不要直接使用 custom_field。';
+          if (!error && seenKeys[key]) error = '数据库字段名重复：' + key;
+          if (error) {
+            (label ? keyInput : labelInput).focus();
+            return true;
+          }
+          seenKeys[key] = true;
+          keyMap[header] = { label: label, key: key };
+          return false;
+        });
+        if (error) {
+          if (msg) {
+            msg.textContent = error;
+            msg.className = 'msg err';
+          }
+          return;
+        }
+        close(keyMap);
+      }
+      function backdrop(e) { if (e.target === modal) cancel(); }
+      $('skuUnknownHeadersCancelBtn').addEventListener('click', cancel);
+      $('skuUnknownHeadersOkBtn').addEventListener('click', ok);
+      list.addEventListener('input', normalizeKeyInput);
+      list.addEventListener('change', toggleImportRow);
+      modal.addEventListener('click', backdrop);
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      setTimeout(function() {
+        var firstKey = list.querySelector('[data-unknown-key]');
+        if (firstKey) {
+          firstKey.focus();
+          firstKey.select();
+        }
+      }, 0);
+    });
+  }
+
+  async function buildSkuImportHeaderPlan(rows) {
     var seen = {};
     var plan = [];
-    rows.forEach(function(row) {
-      Object.keys(row).forEach(function(header) {
-        if (seen[header]) return;
+    var unknownHeaders = [];
+    for (var i = 0; i < rows.length; i++) {
+      var headers = Object.keys(rows[i]);
+      for (var j = 0; j < headers.length; j++) {
+        var header = headers[j];
+        if (seen[header]) continue;
         seen[header] = true;
         var mapped = headerAlias(header);
-        if (!mapped) mapped = makeColumnKey(header);
-        ensureSkuDimensionColumn(mapped, header);
-        plan.push({ header: header, key: mapped });
+        if (mapped) plan.push({ header: header, key: mapped });
+        else unknownHeaders.push(header);
+      }
+    }
+    if (unknownHeaders.length) {
+      var customFields = await askUnknownSkuHeaders(unknownHeaders);
+      if (!customFields) return null;
+      unknownHeaders.forEach(function(header) {
+        var field = customFields[header];
+        if (!field) return;
+        plan.push({ header: header, key: makeColumnKey(field.label, field.key) });
       });
-    });
+    }
+    plan.forEach(function(col) { ensureSkuDimensionColumn(col.key, col.header); });
     return plan;
   }
 
@@ -6491,7 +6957,11 @@
     try {
       var rows = await parseWorkbook(file);
       var debug = rows.__debug || {};
-      var headerPlan = buildSkuImportHeaderPlan(rows);
+      var headerPlan = await buildSkuImportHeaderPlan(rows);
+      if (!headerPlan) {
+        setSkuMsg(type, '已取消导入。');
+        return;
+      }
       var existingMap = {};
       (await getAll('sku_profiles')).forEach(function(row) {
         if (row.sku) existingMap[normalizeSkuValue(row.sku)] = true;
@@ -6576,6 +7046,36 @@
     await renderSkus();
     await refreshCounts();
     setSkuMsg(type, '已清空' + label + ' SKU 列表。');
+  }
+
+  async function cleanupEmptySkuColumns(type) {
+    var rows = await getAll('sku_profiles');
+    var emptyKeys = extraSkuDimensionColumns().filter(function(key) {
+      return rows.every(function(row) {
+        return !String(row && row[key] != null ? row[key] : '').trim();
+      });
+    });
+    if (!emptyKeys.length) {
+      setSkuMsg(type, '没有可删除的空列。');
+      return;
+    }
+    var labelsText = emptyKeys.map(function(key) { return skuColumnLabels[key] || key; }).join('、');
+    if (!await confirmAction('确认删除空列？', '将删除这些没有任何值的列：' + labelsText + '。')) return;
+    skuDimensionColumns = skuDimensionColumns.filter(function(key) {
+      return emptyKeys.indexOf(key) === -1;
+    });
+    emptyKeys.forEach(function(key) {
+      delete skuColumnLabels[key];
+      ['own', 'competitor'].forEach(function(itemType) {
+        delete skuColumnWidths[itemType + ':' + key];
+        if (skuSortState[itemType] && skuSortState[itemType].key === key) skuSortState[itemType] = null;
+      });
+    });
+    saveSkuColumnState();
+    saveSkuColumnWidths();
+    localStorage.setItem('jdSkuSortState', JSON.stringify(skuSortState));
+    await renderSkus();
+    setSkuMsg(type, '已删除空列：' + labelsText);
   }
 
   function renderTrackedCompetitors(rows) {
@@ -6981,12 +7481,11 @@
 
   function applyRankingDimensionSelection() {
     renderRankingDimensionControls();
-    if ($('rankingShowTrackedCompetitorsCheck')) $('rankingShowTrackedCompetitorsCheck').checked = rankingShowTrackedCompetitors;
     renderRankingRawHead();
   }
 
   function getRankingDimensionCandidates() {
-    var base = ['shortName', 'mainSeries', 'subSeries', 'brand', 'sku'];
+    var base = ['shortName', 'mainSeries', 'subSeries', 'brand', 'materialCode', 'packageSpec', 'mainorsub', 'sku'];
     return base.concat(skuDimensionColumns).filter(function(key, index, arr) {
       return key && arr.indexOf(key) === index;
     });
@@ -6998,7 +7497,6 @@
 
   function getVisibleRankingDimensions() {
     rankingSelectedDimensions = normalizedAnalyzedSelection(rankingSelectedDimensions, getRankingDimensionCandidates(), 'shortName');
-    if (rankingSelectedDimensions.indexOf('mainSeries') === -1) rankingSelectedDimensions.splice(1, 0, 'mainSeries');
     return rankingSelectedDimensions.length ? rankingSelectedDimensions : ['shortName'];
   }
 
@@ -7017,7 +7515,7 @@
     var candidates = getRankingDimensionCandidates();
     rankingSelectedDimensions = normalizedAnalyzedSelection(rankingSelectedDimensions, candidates, 'shortName');
     rankingExtraDimensions = rankingSelectedDimensions.filter(function(key) {
-      return ['shortName', 'mainSeries', 'subSeries', 'brand', 'sku'].indexOf(key) === -1;
+      return ['shortName', 'mainSeries', 'subSeries', 'brand', 'materialCode', 'packageSpec', 'mainorsub', 'sku'].indexOf(key) === -1;
     });
     rememberRankingDimensionSelection();
     saveRankingExtraDimensions();
@@ -7039,9 +7537,11 @@
   function renderRankingRawHead() {
     var labelsText = analyzedDimensionLabel(getActiveRankingDimension());
     var attrHeads = getSelectedRankingAttributes().map(function(key) { return '<th>' + esc(analyzedDimensionLabel(key)) + '</th>'; }).join('');
-    $('rankingRawHead').innerHTML = '<tr><th>日期</th><th>维度（' + esc(labelsText) + '）</th>' + attrHeads + '<th>排名</th><th>金额区间</th><th>件数区间</th><th>访客区间</th><th>转化率区间</th><th>客单价区间</th><th class="analyzed-add-head"><span class="report-dim-picker"><button class="small-plus" id="addRankingAttrBtn" type="button" title="选择属性列">+</button><span class="report-dim-popover" id="rankingAttrPopover"></span></span></th></tr>';
+    var secondHead = rankingViewMode === 'product' ? '' : '<th>维度（' + esc(labelsText) + '）</th>';
+    $('rankingRawHead').innerHTML = '<tr><th>日期</th>' + secondHead + attrHeads + '<th>排名</th><th>金额区间</th><th>件数区间</th><th>访客区间</th><th>转化率区间</th><th>客单价区间</th><th class="analyzed-add-head"><span class="report-dim-picker"><button class="small-plus" id="addRankingAttrBtn" type="button" title="选择属性列">+</button><span class="report-dim-popover" id="rankingAttrPopover"></span></span></th></tr>';
     renderRankingDimensionControls();
     renderRankingAttributeControls();
+    syncRankingViewControls();
   }
 
   function getSelectedRankingAttributes() {
@@ -7054,6 +7554,31 @@
 
   function renderRankingAttributeControls() {
     renderChecklistPopover($('rankingAttrPopover'), getAnalyzedAttributeCandidates(), rankingAttributeColumns, 'data-ranking-attr-option');
+  }
+
+  function syncRankingViewControls() {
+    var rankingPage = $('ranking-raw');
+    if (rankingPage) {
+      rankingPage.classList.toggle('ranking-mode-date', rankingViewMode === 'date');
+      rankingPage.classList.toggle('ranking-mode-product', rankingViewMode === 'product');
+    }
+    document.querySelectorAll('[data-ranking-view-mode]').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-ranking-view-mode') === rankingViewMode);
+    });
+    if ($('rankingProductField')) $('rankingProductField').hidden = rankingViewMode !== 'product';
+    if ($('rankingDimList')) $('rankingDimList').hidden = rankingViewMode !== 'date';
+  }
+
+  function applyRankingProductDefaultRange() {
+    var range = rangeForShortcut('7') || { start: yesterday(), end: yesterday() };
+    if (datePickers.ranking) {
+      datePickers.ranking.setCalendarMonth(dateFromYmd(range.start) || new Date());
+      datePickers.ranking.setRange(range.start, range.end, { silent: true });
+      return;
+    }
+    $('rankingStartDate').value = range.start;
+    $('rankingEndDate').value = range.end;
+    $('rankingDateInput').value = range.start === range.end ? range.start : range.start + ' 至 ' + range.end;
   }
 
   function saveEstimateAttributeColumns() {
@@ -7106,7 +7631,7 @@
       return;
     }
     var tracked = (skuRows || []).filter(function(row) {
-      return !rankingShowTrackedCompetitors || (row.itemType === 'competitor' && row.isTrackedCompetitor);
+      return row.itemType === 'competitor' && row.isTrackedCompetitor;
     }).map(function(row) {
       return { sku: normalizeSkuValue(row.sku), name: row.shortName || normalizeSkuValue(row.sku) };
     }).filter(function(row) { return row.sku; });
@@ -7133,6 +7658,43 @@
     box.innerHTML = renderGroupedDataWarnings(warnings);
   }
 
+  function fillRankingProductOptions(skuRows, rows) {
+    var select = $('rankingProductSelect');
+    if (!select) return '';
+    var skuMap = {};
+    (skuRows || []).forEach(function(row) { if (row.sku) skuMap[normalizeSkuValue(row.sku)] = row; });
+    var optionMap = {};
+    (skuRows || []).forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      if (row.itemType === 'competitor' && row.isTrackedCompetitor && sku) {
+        optionMap[sku] = { sku: sku, label: row.shortName || sku };
+      }
+    });
+    (rows || []).forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      var profile = skuMap[sku] || {};
+      if (!sku || profile.itemType !== 'competitor' || !profile.isTrackedCompetitor) return;
+      optionMap[sku] = optionMap[sku] || { sku: sku, label: profile.shortName || row.shortName || sku };
+    });
+    var options = Object.values(optionMap).sort(function(a, b) {
+      return String(a.label || a.sku || '').localeCompare(String(b.label || b.sku || ''), 'zh-Hans-CN', { numeric: true });
+    });
+    var current = normalizeSkuValue(select.value || localStorage.getItem('jdRankingSelectedSku') || '');
+    if (!current || !options.some(function(row) { return normalizeSkuValue(row.sku) === current; })) {
+      current = options.length ? normalizeSkuValue(options[0].sku) : '';
+    }
+    select.innerHTML = options.length
+      ? options.map(function(row) {
+          var sku = normalizeSkuValue(row.sku);
+          var label = row.label && row.label !== sku ? row.label + '（' + sku + '）' : sku;
+          return '<option value="' + esc(sku) + '"' + (sku === current ? ' selected' : '') + '>' + esc(label) + '</option>';
+        }).join('')
+      : '<option value="">暂无重点追踪竞品</option>';
+    select.value = current;
+    if (current) localStorage.setItem('jdRankingSelectedSku', current);
+    return current;
+  }
+
   async function renderRankingRaw() {
     var rows = await getAll('ranking_raw_metrics');
     var allRows = rows.slice();
@@ -7144,14 +7706,49 @@
     var dims = getSelectedRankingDims();
     var skuMap = {};
     skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
-    if (rankingShowTrackedCompetitors) {
-      rows = rows.filter(function(row) {
-        var profile = skuMap[normalizeSkuValue(row.sku)] || {};
-        return profile.itemType === 'competitor' && profile.isTrackedCompetitor;
+    rows = rows.filter(function(row) {
+      var profile = skuMap[normalizeSkuValue(row.sku)] || {};
+      return profile.itemType === 'competitor' && profile.isTrackedCompetitor;
+    });
+    var selectedSku = fillRankingProductOptions(skuRows, allRows);
+    syncRankingViewControls();
+    if (rankingViewMode === 'product') {
+      var productColspan = 8 + getSelectedRankingAttributes().length;
+      if (!selectedSku) {
+        $('rankingRawBody').innerHTML = '<tr><td class="empty-row" colspan="' + productColspan + '">暂无重点追踪竞品，请先维护竞品 SKU 档案</td></tr>';
+        enhanceAllResizableTables();
+        return;
+      }
+      rows = rows.filter(function(row) { return normalizeSkuValue(row.sku) === selectedSku; });
+      rows.sort(function(a, b) {
+        return String(a.startDate || '').localeCompare(String(b.startDate || '')) || Number(a.rank || 999999) - Number(b.rank || 999999);
       });
+      if (!rows.length) {
+        $('rankingRawBody').innerHTML = '<tr><td class="empty-row" colspan="' + productColspan + '">当前产品和日期范围内暂无行业榜单数据</td></tr>';
+        enhanceAllResizableTables();
+        return;
+      }
+      $('rankingRawBody').innerHTML = rows.slice(0, 200).map(function(row) {
+        var attrCells = getSelectedRankingAttributes().map(function(key) {
+          return '<td>' + esc(resolveAnalyzedAttributeValue({ skus: [selectedSku] }, skuRows, key)) + '</td>';
+        }).join('');
+        return '<tr>' +
+          '<td>' + esc(rangeText(row)) + '</td>' +
+          attrCells +
+          '<td>' + esc(row.rank || '-') + '</td>' +
+          '<td>' + rankingRangeCell(row, 'amountMin', 'amountMax', 0, 'amountGrowthRate', 'amountGrowthRateRaw') + '</td>' +
+          '<td>' + rankingRangeCell(row, 'qtyMin', 'qtyMax', 0, 'qtyGrowthRate', 'qtyGrowthRateRaw') + '</td>' +
+          '<td>' + rankingRangeCell(row, 'visitorMin', 'visitorMax', 0, 'visitorGrowthRate', 'visitorGrowthRateRaw') + '</td>' +
+          '<td>' + rankingRangeCell(row, 'conversionMin', 'conversionMax', 2, 'conversionGrowthRate', 'conversionGrowthRateRaw', true) + '</td>' +
+          '<td>' + rankingRangeCell(row, 'customerPriceMin', 'customerPriceMax', 0, 'customerPriceGrowthRate', 'customerPriceGrowthRateRaw') + '</td>' +
+          '<td class="analyzed-add-cell"></td>' +
+        '</tr>';
+      }).join('');
+      enhanceAllResizableTables();
+      return;
     }
     if (!rows.length) {
-      $('rankingRawBody').innerHTML = '<tr><td class="empty-row" colspan="' + (9 + getSelectedRankingAttributes().length) + '">' + (rankingShowTrackedCompetitors ? '\u6682\u65e0\u8ffd\u8e2a\u7ade\u54c1\u7684\u699c\u5355\u539f\u59cb\u6307\u6807' : '\u6682\u65e0\u699c\u5355\u539f\u59cb\u6307\u6807') + '</td></tr>';
+      $('rankingRawBody').innerHTML = '<tr><td class="empty-row" colspan="' + (9 + getSelectedRankingAttributes().length) + '">\u6682\u65e0\u8ffd\u8e2a\u7ade\u54c1\u7684\u699c\u5355\u539f\u59cb\u6307\u6807</td></tr>';
       enhanceAllResizableTables();
       return;
     }
@@ -7205,7 +7802,7 @@
       }
       var group = groups[key];
       if (row.sku && group.skus.indexOf(normalizeSkuValue(row.sku)) === -1) group.skus.push(normalizeSkuValue(row.sku));
-      if (row.rank && (!group.rank || Number(row.rank) < Number(group.rank))) group.rank = row.rank;
+      if (dims.length === 1 && ['sku', 'shortName'].indexOf(dims[0]) !== -1 && group.skus.length === 1) group.rank = row.rank || '';
       addMinMax(group, row, 'amountMin', 'amountMax', 'sum');
       addMinMax(group, row, 'qtyMin', 'qtyMax', 'sum');
       addMinMax(group, row, 'visitorMin', 'visitorMax', 'sum');
@@ -7218,7 +7815,7 @@
       });
     });
     var grouped = Object.keys(groups).map(function(key) { return groups[key]; }).sort(function(a, b) {
-      return String(b.startDate || '').localeCompare(String(a.startDate || '')) || Number(a.rank || 999999) - Number(b.rank || 999999);
+      return String(b.startDate || '').localeCompare(String(a.startDate || '')) || String(a.dimensionName || '').localeCompare(String(b.dimensionName || ''), 'zh-Hans-CN', { numeric: true });
     });
     $('rankingRawBody').innerHTML = grouped.slice(0, 200).map(function(row) {
       var attrCells = getSelectedRankingAttributes().map(function(key) {
@@ -7228,7 +7825,7 @@
         '<td>' + esc(rangeText(row)) + '</td>' +
         '<td>' + esc(row.dimensionName || '-') + '</td>' +
         attrCells +
-        '<td>' + esc(row.rank || '-') + '</td>' +
+        '<td>' + esc((row.skus || []).length === 1 ? (row.rank || '-') : '-') + '</td>' +
         '<td>' + rankingRangeCell(row, 'amountMin', 'amountMax', 0, 'amountGrowthRate', 'amountGrowthRateRaw') + '</td>' +
         '<td>' + rankingRangeCell(row, 'qtyMin', 'qtyMax', 0, 'qtyGrowthRate', 'qtyGrowthRateRaw') + '</td>' +
         '<td>' + rankingRangeCell(row, 'visitorMin', 'visitorMax', 0, 'visitorGrowthRate', 'visitorGrowthRateRaw') + '</td>' +
@@ -7350,7 +7947,6 @@
     if (!$('manualRankingHead')) return;
     updateManualGrowthOptions('');
     var fields = visibleManualRankingFields();
-    if ($('manualRankingTrackedOnlyCheck')) $('manualRankingTrackedOnlyCheck').checked = manualRankingTrackedOnly;
     $('manualRankingHead').innerHTML = '<tr><th>\u7ef4\u5ea6\uff08\u5546\u54c1\u7b80\u79f0\uff09</th>' +
       fields.map(function(key) { return '<th>' + esc(MANUAL_RANKING_FIELDS[key].label) + '</th>'; }).join('') +
       '</tr>';
@@ -7364,7 +7960,7 @@
     var records = await getAll('ranking_raw_metrics');
     var date = getManualRankingDate();
     var competitors = skus.filter(function(row) {
-      return row.itemType === 'competitor' && (row.shortName || row.sku) && (!manualRankingTrackedOnly || row.isTrackedCompetitor);
+      return row.itemType === 'competitor' && row.isTrackedCompetitor && (row.shortName || row.sku);
     }).sort(function(a, b) {
       return String(a.shortName || a.sku || '').localeCompare(String(b.shortName || b.sku || ''), 'zh-Hans-CN', { numeric: true });
     });
@@ -7726,6 +8322,9 @@
       { key: 'subSeries', label: '小系列' },
       { key: 'shortName', label: '商品简称' },
       { key: 'brand', label: 'Brand' },
+      { key: 'materialCode', label: '物料编码' },
+      { key: 'packageSpec', label: '箱规' },
+      { key: 'mainorsub', label: '主赠品品属性' },
       { key: 'sku', label: 'SKU' }
     ];
     return base.concat(skuDimensionColumns.map(function(key) {
@@ -7738,6 +8337,8 @@
   function saveSearchAnalysisSettings() {
     localStorage.setItem('jdSearchAnalysisFilterWords', JSON.stringify(searchAnalysisFilterWords));
     localStorage.setItem('jdSearchAnalysisBrandWords', JSON.stringify(searchAnalysisBrandWords));
+    localStorage.setItem('jdSearchCustomTermsEnabled', searchCustomTermsEnabled ? 'true' : 'false');
+    localStorage.setItem('jdSearchCustomTerms', JSON.stringify(searchCustomTerms));
     localStorage.setItem('jdSearchAnalysisDimension', searchAnalysisLastDimension || 'mainSeries');
     localStorage.setItem('jdSearchAnalysisValue', searchAnalysisLastValue || '');
   }
@@ -7750,6 +8351,37 @@
 
   function renderSearchAnalysisSettings() {
     if ($('searchBrandWordsInput')) $('searchBrandWordsInput').value = searchAnalysisBrandWords.join('，');
+    if ($('searchCustomTermsEnabled')) $('searchCustomTermsEnabled').checked = searchCustomTermsEnabled;
+    renderSearchCustomTerms();
+  }
+
+  function sanitizeSearchCustomTerms(terms) {
+    return (Array.isArray(terms) ? terms : []).map(function(term, index) {
+      return {
+        id: String(term.id || ('term_' + Date.now() + '_' + index)),
+        title: String(term.title || '').trim() || ('产品词 ' + (index + 1)),
+        words: parseWordList(Array.isArray(term.words) ? term.words.join('，') : term.words)
+      };
+    });
+  }
+
+  function enabledSearchCustomTerms() {
+    return searchCustomTermsEnabled ? searchCustomTerms.filter(function(term) { return term.title && term.words.length; }) : [];
+  }
+
+  function renderSearchCustomTerms() {
+    var box = $('searchTermGroups');
+    if (!box) return;
+    if ($('searchProductTermsPanel')) $('searchProductTermsPanel').classList.toggle('is-disabled', !searchCustomTermsEnabled);
+    if ($('addSearchTermGroupBtn')) $('addSearchTermGroupBtn').disabled = !searchCustomTermsEnabled;
+    var disabled = searchCustomTermsEnabled ? '' : ' disabled';
+    box.innerHTML = searchCustomTerms.map(function(term, index) {
+      return '<div class="search-term-card" data-search-term-index="' + index + '">' +
+        '<input class="input" data-search-term-title value="' + esc(term.title) + '" placeholder="例如：示例"' + disabled + '>' +
+        '<textarea class="input" data-search-term-words style="min-height:58px; resize:vertical;" placeholder="例如：iPhone 18、华强北 18、小米 18"' + disabled + '>' + esc(term.words.join('，')) + '</textarea>' +
+        '<button class="icon-btn row-delete-btn" type="button" data-search-term-delete title="删除"' + disabled + '>' + iconTrash() + '</button>' +
+      '</div>';
+    }).join('');
   }
 
   function normalizeSearchText(text) {
@@ -7770,6 +8402,18 @@
       word = normalizeSearchText(word).trim();
       return word && normalized.indexOf(word) !== -1;
     });
+  }
+
+  function hasSearchCustomTermWord(text, term) {
+    var normalized = normalizeSearchText(text);
+    return (term.words || []).some(function(word) {
+      word = normalizeSearchText(word).trim();
+      return word && normalized.indexOf(word) !== -1;
+    });
+  }
+
+  function newSearchMetricBucket() {
+    return { keywordCount: 0, visitorCount: 0, salesAmount: 0, orderQty: 0 };
   }
 
   function resolveSearchColumn(headers, aliases) {
@@ -7964,6 +8608,7 @@
     }
     var range = datePickers.searchImport ? datePickers.searchImport.getRange() : { start: today(), end: today() };
     var query = normalizedQueryRange(range);
+    var customTerms = enabledSearchCustomTerms();
     var total = {
       visitorCount: 0,
       salesAmount: 0,
@@ -7971,13 +8616,16 @@
       keywords: {},
       skipped: 0,
       brandKeywords: 0,
-      categoryKeywords: 0,
+      industryKeywords: 0,
       brandVisitorCount: 0,
       brandSalesAmount: 0,
       brandOrderQty: 0,
-      categoryVisitorCount: 0,
-      categorySalesAmount: 0,
-      categoryOrderQty: 0
+      industryVisitorCount: 0,
+      industrySalesAmount: 0,
+      industryOrderQty: 0,
+      customTerms: customTerms.map(function(term) {
+        return Object.assign({ id: term.id, title: term.title, words: term.words.slice() }, newSearchMetricBucket());
+      })
     };
     rows.forEach(function(row) {
       var keyword = String(exactRowValue(row, keywordCol) || '').trim();
@@ -7989,22 +8637,33 @@
       var amount = Number(parseMetricNumber(exactRowValue(row, amountCol))) || 0;
       var orders = Number(parseMetricNumber(exactRowValue(row, orderCol))) || 0;
       total.keywords[keyword] = true;
-      if (hasSearchBrandWord(keyword)) {
+      var isBrand = hasSearchBrandWord(keyword);
+      if (isBrand) {
         total.brandKeywords++;
         total.brandVisitorCount += visitors;
         total.brandSalesAmount += amount;
         total.brandOrderQty += orders;
-      } else {
-        total.categoryKeywords++;
-        total.categoryVisitorCount += visitors;
-        total.categorySalesAmount += amount;
-        total.categoryOrderQty += orders;
+      }
+      var matchedProductTerm = false;
+      total.customTerms.forEach(function(term) {
+        if (!hasSearchCustomTermWord(keyword, term)) return;
+        matchedProductTerm = true;
+        term.keywordCount++;
+        term.visitorCount += visitors;
+        term.salesAmount += amount;
+        term.orderQty += orders;
+      });
+      if (!matchedProductTerm) {
+        total.industryKeywords++;
+        total.industryVisitorCount += visitors;
+        total.industrySalesAmount += amount;
+        total.industryOrderQty += orders;
       }
       total.visitorCount += visitors;
       total.salesAmount += amount;
       total.orderQty += orders;
     });
-    var existing = await getAll('analyzed_metrics');
+    var existing = await getAll('search_analysis_metrics');
     var duplicates = existing.filter(function(item) {
       return item.sourceType === 'search_analysis' &&
         item.startDate === query.start &&
@@ -8012,14 +8671,14 @@
         item.dimensionKey === target.dimension &&
         item.dimensionValue === target.value;
     });
-    for (var i = 0; i < duplicates.length; i++) await remove('analyzed_metrics', duplicates[i].id);
+    for (var i = 0; i < duplicates.length; i++) await remove('search_analysis_metrics', duplicates[i].id);
     var keywordCount = Object.keys(total.keywords).length;
     if (!keywordCount) {
       return { saved: 0, skipped: rows.length, replaced: duplicates.length, note: '没有可计算的搜索词' };
     }
     var brandConversionRate = total.brandVisitorCount ? total.brandOrderQty / total.brandVisitorCount : 0;
-    var categoryConversionRate = total.categoryVisitorCount ? total.categoryOrderQty / total.categoryVisitorCount : 0;
-    await put('analyzed_metrics', {
+    var industryConversionRate = total.industryVisitorCount ? total.industryOrderQty / total.industryVisitorCount : 0;
+    await put('search_analysis_metrics', {
       sourceType: 'search_analysis',
       periodType: inferPeriodType(query.start, query.end),
       startDate: query.start,
@@ -8034,16 +8693,22 @@
       matchedKeyword: target.matchedKeyword || '',
       filterWords: searchAnalysisFilterWords.slice(),
       brandWords: searchAnalysisBrandWords.slice(),
+      searchCustomTermsEnabled: searchCustomTermsEnabled,
+      searchCustomTerms: total.customTerms.map(function(term) {
+        return Object.assign({}, term, {
+          conversionRate: term.visitorCount ? term.orderQty / term.visitorCount : 0
+        });
+      }),
       brandKeywordCount: total.brandKeywords,
-      categoryKeywordCount: total.categoryKeywords,
+      industryKeywordCount: total.industryKeywords,
       brandVisitorCount: total.brandVisitorCount,
       brandSalesAmount: total.brandSalesAmount,
       brandOrderQty: total.brandOrderQty,
       brandConversionRate: brandConversionRate,
-      categoryVisitorCount: total.categoryVisitorCount,
-      categorySalesAmount: total.categorySalesAmount,
-      categoryOrderQty: total.categoryOrderQty,
-      categoryConversionRate: categoryConversionRate,
+      industryVisitorCount: total.industryVisitorCount,
+      industrySalesAmount: total.industrySalesAmount,
+      industryOrderQty: total.industryOrderQty,
+      industryConversionRate: industryConversionRate,
       importedAt: new Date().toISOString(),
       snapshotId: snapshotId,
       fileName: file.name
@@ -8061,15 +8726,20 @@
       searchTable.style.width = '';
     }
     var range = datePickers.searchData ? datePickers.searchData.getRange() : { start: today(), end: today() };
-    var rows = filterMetricRowsByDateRange((await getAll('analyzed_metrics')).filter(function(row) {
+    var rows = filterMetricRowsByDateRange((await getAll('search_analysis_metrics')).filter(function(row) {
       return row.sourceType === 'search_analysis';
     }), normalizedQueryRange(range));
+    var customTerms = enabledSearchCustomTerms();
+    var colspan = 15 + customTerms.length * 4;
+    var industryGroupClass = searchGroupClass(1 + customTerms.length);
+    var brandGroupClass = searchGroupClass(2 + customTerms.length);
+    if ($('searchDataHead')) renderSearchDataHead(customTerms);
     if ($('searchDataAlert')) {
       $('searchDataAlert').className = rows.length ? 'report-data-alert ok' : 'report-data-alert warn';
       $('searchDataAlert').textContent = rows.length ? '当前范围显示 ' + rows.length + ' 条搜索汇总。' : '当前范围暂无搜索数据。';
     }
     if (!rows.length) {
-      $('searchDataBody').innerHTML = '<tr><td class="empty-row" colspan="14">暂无搜索数据</td></tr>';
+      $('searchDataBody').innerHTML = '<tr><td class="empty-row" colspan="' + colspan + '">暂无搜索数据</td></tr>';
       enhanceAllResizableTables();
       return;
     }
@@ -8077,34 +8747,144 @@
       return String(b.startDate || '').localeCompare(String(a.startDate || '')) || String(a.dimensionValue || '').localeCompare(String(b.dimensionValue || ''), 'zh-Hans-CN');
     });
     $('searchDataBody').innerHTML = rows.map(function(row) {
+      var industry = searchMetricValues(row, 'industry');
+      var customCells = customTerms.map(function(term, index) {
+        return searchMetricCells(searchCustomMetricValues(row, term), searchGroupClass(1 + index));
+      }).join('');
       return '<tr><td>' + esc(rangeText(row)) + '</td>' +
         '<td>' + esc(row.dimensionLabel || row.dimensionKey || '-') + '</td>' +
         '<td>' + esc(row.dimensionValue || '-') + '</td>' +
-        '<td>' + esc(formatMetric(row.visitorCount, 0)) + '</td>' +
-        '<td>' + esc(formatMetric(row.orderQty, 0)) + '</td>' +
-        '<td>' + esc(formatMetric(row.salesAmount, 2)) + '</td>' +
-        '<td>' + esc(formatMetric(row.categoryVisitorCount || 0, 0)) + '</td>' +
-        '<td>' + esc(formatPercent(row.categoryConversionRate || 0)) + '</td>' +
-        '<td>' + esc(formatMetric(row.categoryOrderQty || 0, 0)) + '</td>' +
-        '<td>' + esc(formatMetric(row.categorySalesAmount || 0, 2)) + '</td>' +
-        '<td>' + esc(formatMetric(row.brandVisitorCount || 0, 0)) + '</td>' +
-        '<td>' + esc(formatPercent(row.brandConversionRate || 0)) + '</td>' +
-        '<td>' + esc(formatMetric(row.brandOrderQty || 0, 0)) + '</td>' +
-        '<td>' + esc(formatMetric(row.brandSalesAmount || 0, 2)) + '</td></tr>';
+        '<td class="' + searchGroupClass(0) + '">' + esc(formatMetric(row.visitorCount, 0)) + '</td>' +
+        '<td class="' + searchGroupClass(0) + '">' + esc(formatMetric(row.orderQty, 0)) + '</td>' +
+        '<td class="' + searchGroupClass(0) + ' search-group-end">' + esc(formatMetric(row.salesAmount, 2)) + '</td>' +
+        customCells +
+        searchMetricCells(industry, industryGroupClass) +
+        '<td class="' + brandGroupClass + '">' + esc(formatMetric(row.brandVisitorCount || 0, 0)) + '</td>' +
+        '<td class="' + brandGroupClass + '">' + esc(formatPercent(row.brandConversionRate || 0)) + '</td>' +
+        '<td class="' + brandGroupClass + '">' + esc(formatMetric(row.brandOrderQty || 0, 0)) + '</td>' +
+        '<td class="' + brandGroupClass + ' search-group-end">' + esc(formatMetric(row.brandSalesAmount || 0, 2)) + '</td>' +
+        '<td><button class="icon-btn row-delete-btn" data-search-row-delete="' + esc(row.id) + '" type="button" title="删除这一行" aria-label="删除这一行">' + iconTrash() + '</button></td></tr>';
     }).join('');
     enhanceAllResizableTables();
+  }
+
+  function renderSearchDataHead(customTerms) {
+    var customTop = customTerms.map(function(term, index) {
+      return '<th class="' + searchGroupClass(index + 1) + '" colspan="4">' + esc(term.title) + '</th>';
+    }).join('');
+    var customBottom = customTerms.map(function(term, index) {
+      return searchMetricHeadCells(searchGroupClass(index + 1));
+    }).join('');
+    var industryClass = searchGroupClass(1 + customTerms.length);
+    var brandClass = searchGroupClass(2 + customTerms.length);
+    $('searchDataHead').innerHTML =
+      '<tr>' +
+        '<th rowspan="2">日期</th><th rowspan="2">维度</th><th rowspan="2">具体值</th>' +
+        '<th class="' + searchGroupClass(0) + ' search-group-end" colspan="3">总体</th>' +
+        customTop +
+        '<th class="' + industryClass + '" colspan="4">行业</th>' +
+        '<th class="' + brandClass + '" colspan="4">品牌</th>' +
+        '<th rowspan="2">操作</th>' +
+      '</tr>' +
+      '<tr>' +
+        '<th class="' + searchGroupClass(0) + '">访客</th><th class="' + searchGroupClass(0) + '">单量</th><th class="' + searchGroupClass(0) + ' search-group-end">成交金额</th>' +
+        customBottom +
+        searchMetricHeadCells(industryClass) +
+        searchMetricHeadCells(brandClass) +
+      '</tr>';
+  }
+
+  function searchGroupClass(index) {
+    return index % 2 ? 'search-group-accent' : 'search-group-neutral';
+  }
+
+  function searchMetricHeadCells(className) {
+    return '<th class="' + className + '">访客</th>' +
+      '<th class="' + className + '">转化率</th>' +
+      '<th class="' + className + '">单量</th>' +
+      '<th class="' + className + ' search-group-end">成交金额</th>';
+  }
+
+  function searchMetricValues(row, prefix) {
+    if (prefix === 'industry') {
+      return {
+        visitorCount: row.industryVisitorCount,
+        conversionRate: row.industryConversionRate,
+        orderQty: row.industryOrderQty,
+        salesAmount: row.industrySalesAmount
+      };
+    }
+    return row || {};
+  }
+
+  function searchCustomMetricValues(row, term) {
+    var found = (row.searchCustomTerms || []).find(function(item) {
+      return item.id === term.id || item.title === term.title;
+    }) || {};
+    return searchMetricValues(found);
+  }
+
+  function searchMetricCells(metric, className) {
+    className = className || '';
+    return '<td class="' + className + '">' + esc(formatMetric(metric.visitorCount || 0, 0)) + '</td>' +
+      '<td class="' + className + '">' + esc(formatPercent(metric.conversionRate || 0)) + '</td>' +
+      '<td class="' + className + '">' + esc(formatMetric(metric.orderQty || 0, 0)) + '</td>' +
+      '<td class="' + className + ' search-group-end">' + esc(formatMetric(metric.salesAmount || 0, 2)) + '</td>';
+  }
+
+  async function deleteSearchDataRow(id) {
+    id = Number(id);
+    if (!id) return;
+    if (!await confirmAction('确认删除这一行？', '此删除会影响数据库内数据。')) return;
+    await remove('search_analysis_metrics', id);
+    await renderSearchData();
+    await refreshCounts();
+  }
+
+  async function cleanupLegacySearchFields() {
+    var button = $('cleanupLegacySearchFieldsBtn');
+    if (button) button.disabled = true;
+    try {
+      var legacyFields = [
+        'categoryKeywordCount', 'categoryVisitorCount', 'categorySalesAmount', 'categoryOrderQty', 'categoryConversionRate',
+        'productWords', 'productKeywordCount', 'productVisitorCount', 'productSalesAmount', 'productOrderQty', 'productConversionRate',
+        'industryWords', 'migratedIndustryAt'
+      ];
+      var rows = await getAll('search_analysis_metrics');
+      var foundFields = legacyFields.filter(function(key) {
+        return rows.some(function(row) { return Object.prototype.hasOwnProperty.call(row, key); });
+      });
+      var targets = rows.filter(function(row) {
+        return legacyFields.some(function(key) { return Object.prototype.hasOwnProperty.call(row, key); });
+      });
+      if (!targets.length) {
+        $('searchDataAlert').className = 'report-data-alert ok';
+        $('searchDataAlert').textContent = '搜索分析表中没有多余的历史字段。';
+        return;
+      }
+      if (!await confirmAction('确认清理搜索分析旧字段？', '发现 ' + targets.length + ' 条记录包含这些旧字段：' + foundFields.join('、') + '。只会删除废弃属性，不会删除记录或当前行业、品牌、产品词指标。')) return;
+      for (var i = 0; i < targets.length; i++) {
+        legacyFields.forEach(function(key) { delete targets[i][key]; });
+        await put('search_analysis_metrics', targets[i]);
+      }
+      $('searchDataAlert').className = 'report-data-alert ok';
+      $('searchDataAlert').textContent = '已清理 ' + targets.length + ' 条记录中的历史冗余字段：' + foundFields.join('、') + '。';
+      await renderDbBrowser();
+    } finally {
+      if (button) button.disabled = false;
+    }
   }
 
   async function clearCurrentSearchData() {
     var range = datePickers.searchData ? datePickers.searchData.getRange() : { start: today(), end: today() };
     var query = normalizedQueryRange(range);
-    var rows = await getAll('analyzed_metrics');
+    var rows = await getAll('search_analysis_metrics');
     var targets = rows.filter(function(row) {
       return row.sourceType === 'search_analysis' && !(query.start && (row.endDate || row.startDate) < query.start) && !(query.end && (row.startDate || row.endDate) > query.end);
     });
     if (!targets.length) return;
     if (!await confirmAction('确认清空当前搜索数据？', '将删除当前日期范围内 ' + targets.length + ' 条搜索汇总，删除后无法恢复。')) return;
-    for (var i = 0; i < targets.length; i++) await remove('analyzed_metrics', targets[i].id);
+    for (var i = 0; i < targets.length; i++) await remove('search_analysis_metrics', targets[i].id);
     await renderSearchData();
     await refreshCounts();
   }
@@ -8114,6 +8894,9 @@
       { key: 'mainSeries', label: '大系列' },
       { key: 'subSeries', label: '小系列' },
       { key: 'brand', label: 'Brand' },
+      { key: 'materialCode', label: '物料编码' },
+      { key: 'packageSpec', label: '箱规' },
+      { key: 'mainorsub', label: '主赠品品属性' },
       { key: 'shortName', label: '商品简称' }
     ];
     return fixed.concat(skuDimensionColumns.map(function(key) {
@@ -8142,7 +8925,10 @@
       { key: 'mainSeries', label: '大系列' },
       { key: 'subSeries', label: '小系列' },
       { key: 'sku', label: 'SKU' },
-      { key: 'shortName', label: '商品简称' }
+      { key: 'shortName', label: '商品简称' },
+      { key: 'materialCode', label: '物料编码' },
+      { key: 'packageSpec', label: '箱规' },
+      { key: 'mainorsub', label: '主赠品品属性' }
     ].concat(skuDimensionColumns.map(function(key) {
       return { key: key, label: skuColumnLabels[key] || key };
     })).filter(function(option, index, arr) {
@@ -9736,7 +10522,6 @@
       btn.classList.toggle('active', btn.getAttribute('data-estimate-view-mode') === estimateViewMode);
     });
     if ($('estimateProductField')) $('estimateProductField').hidden = estimateViewMode !== 'product';
-    if ($('estimateTrackedOnlyCheck')) $('estimateTrackedOnlyCheck').checked = estimateTrackedOnly;
   }
 
   function estimateProductLabel(sku, skuMap, fallback) {
@@ -9759,7 +10544,7 @@
     var optionMap = {};
     skuRows.forEach(function(row) {
       var sku = normalizeSkuValue(row.sku);
-      if (row.itemType === 'competitor' && (!estimateTrackedOnly || row.isTrackedCompetitor) && sku) {
+      if (row.itemType === 'competitor' && row.isTrackedCompetitor && sku) {
         optionMap[sku] = { sku: sku, label: row.shortName || sku };
       }
     });
@@ -9767,7 +10552,7 @@
       var sku = normalizeSkuValue(row.sku);
       if (!sku) return;
       var profile = skuMap[sku] || {};
-      if (estimateTrackedOnly && !profile.isTrackedCompetitor) return;
+      if (!profile.isTrackedCompetitor) return;
       optionMap[sku] = optionMap[sku] || { sku: sku, label: profile.shortName || row.sourceSheet || sku };
     });
     var estimateOptions = Object.values(optionMap).sort(function(a, b) {
@@ -9809,7 +10594,7 @@
       }
       var dateRows = filterMetricRowsByDateRange(rows, range).filter(function(row) {
         var profile = skuMap[normalizeSkuValue(row.sku)] || {};
-        return !estimateTrackedOnly || profile.isTrackedCompetitor;
+        return profile.isTrackedCompetitor;
       });
       var queryRange = normalizedQueryRange(range);
       var rankBySkuRange = {};
@@ -9835,6 +10620,7 @@
         skuMap: skuMap,
         analyzedRows: analyzedRows
       });
+      var showGroupedRank = !range || !range.end || range.end === range.start;
       var grouped = {};
       dateRows.forEach(function(row) {
         var amount = estimateRange(row, ['estimatedAmountMin', 'amountMin', 'salesAmountMin'], ['estimatedAmountMax', 'amountMax', 'salesAmountMax'], ['estimatedAmountRange', 'amountRange', 'salesAmountRange']);
@@ -9847,7 +10633,7 @@
           group = grouped[key] = {
             sku: sku,
             label: estimateProductLabel(sku, skuMap, row.sourceSheet),
-            rank: rankBySkuRange[sku] || '',
+            rank: showGroupedRank ? (rankBySkuRange[sku] || '') : '',
             amountMid: 0,
             qtyMid: 0,
             amountMin: 0,
@@ -11242,7 +12028,7 @@
 
   function replenishmentCasePack(profile) {
     profile = profile || {};
-    var directKeys = ['casePack', 'packSize', 'boxSpec', 'cartonQty'];
+    var directKeys = ['packageSpec', 'casePack', 'packSize', 'boxSpec', 'cartonQty'];
     var key = directKeys.find(function(item) { return profile[item] !== '' && profile[item] != null; });
     if (!key) {
       key = Object.keys(skuColumnLabels).find(function(item) {
@@ -12846,7 +13632,7 @@
   function saveReportDimensions() {
     localStorage.setItem('jdReportSelectedDimensions', JSON.stringify(reportSelectedDimensions));
     localStorage.setItem('jdReportExtraDimensions', JSON.stringify(reportSelectedDimensions.filter(function(key) {
-      return ['mainSeries', 'subSeries'].indexOf(key) === -1;
+      return ['mainSeries', 'subSeries', 'materialCode', 'packageSpec', 'mainorsub'].indexOf(key) === -1;
     })));
     reportOutputDimensions = getSelectedReportDimensions();
   }
@@ -12917,7 +13703,7 @@
   }
 
   function collectSkuDimensionKeys(skuRows) {
-    var keys = ['all', 'mainSeries', 'subSeries', 'shortName', 'sku', 'brand'];
+    var keys = ['all', 'mainSeries', 'subSeries', 'shortName', 'sku', 'brand', 'materialCode', 'packageSpec', 'mainorsub'];
     (skuRows || []).forEach(function(row) {
       Object.keys(row || {}).forEach(function(key) {
         if (key.indexOf('custom_') === 0 && keys.indexOf(key) === -1) keys.push(key);
@@ -13012,7 +13798,8 @@
     var dates = isRangeSummary ? [range.start || ''] : datesInRange(range.start, range.end || range.start);
     var label = range.start || '';
     if (range.end && range.end !== range.start) label = range.start + ' 至 ' + range.end;
-    var rankMap = rankLookupForRows(rankingRows);
+    var canShowRank = !isRangeSummary && ['sku', 'shortName'].indexOf(dim) !== -1;
+    var rankMap = canShowRank ? rankLookupForRows(rankingRows) : {};
     var output = [['日期', '星期', reportDimensionLabel(dim), '销售金额', '销售数量', '访客/点击', '转化率', '站内花费', '站外花费', '排名']];
     dates.forEach(function(date) {
       var dayRows = isRangeSummary
@@ -13028,14 +13815,13 @@
         }
         if (sku && groups[value].skus.indexOf(sku) === -1) groups[value].skus.push(sku);
         addOwnMetricTotals(groups[value], row);
-        var rank = Number(row.rank || 0);
-        if (rank && (!groups[value].rank || rank < Number(groups[value].rank))) groups[value].rank = rank;
+        if (canShowRank && groups[value].skus.length === 1) groups[value].rank = row.rank || '';
       });
       Object.keys(groups).sort(function(a, b) {
         return String(a).localeCompare(String(b), 'zh-Hans-CN', { numeric: true });
       }).forEach(function(value) {
         var group = groups[value];
-        var reportRank = isRangeSummary ? '' : (group.rank || bestRankForSkuSet(group.skus, date, rankMap));
+        var reportRank = canShowRank && group.skus.length === 1 ? (group.rank || bestRankForSkuSet(group.skus, date, rankMap)) : '';
         output.push([
           isRangeSummary ? label : date,
           isRangeSummary ? '汇总' : weekdayText(date),
@@ -13647,15 +14433,6 @@
     if (preview) preview.classList.toggle('copy-tools-hidden', !reportQuickCopyVisible);
   }
 
-  function syncReportCompetitorToggle() {
-    var btn = $('reportCompetitorScope');
-    if (!btn) return;
-    var trackedOnly = reportCompetitorScope !== 'all';
-    btn.classList.toggle('is-off', !trackedOnly);
-    btn.setAttribute('aria-pressed', trackedOnly ? 'true' : 'false');
-    btn.innerHTML = eyeSvgIcon(trackedOnly) + '<span>' + (trackedOnly ? '仅显示重点追踪竞品' : '显示所有有数据竞品') + '</span>';
-  }
-
   function toggleReportQuickCopyVisible() {
     reportQuickCopyVisible = !reportQuickCopyVisible;
     localStorage.setItem('jdReportQuickCopyVisible', reportQuickCopyVisible ? 'true' : 'false');
@@ -13831,7 +14608,6 @@
     if (!$('reportOutputTitle')) return;
     $('reportOutputTitle').textContent = '报表明细';
     if ($('reportOutput')) $('reportOutput').innerHTML = '<div class="report-template-empty">正在准备报表预览，请稍等…</div>';
-    syncReportCompetitorToggle();
     if (!window.XLSX) {
       if (reportRenderRetryCount >= 25) {
         if ($('reportMsg')) $('reportMsg').textContent = '表格组件还没加载完成，请稍后刷新页面重试。';
@@ -13880,6 +14656,129 @@
     textarea.remove();
   }
 
+  function defaultSkuLookupGroup() {
+    return {
+      title: 'SKU 组',
+      boxes: [{ label: '', value: '' }],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  async function ensureSkuLookupStore() {
+    if (db && db.objectStoreNames.contains('sku_lookup_groups')) return;
+    var nextVersion = Math.max((db && db.version || DB_VERSION) + 1, DB_VERSION + 1);
+    if (db) db.close();
+    await new Promise(function(resolve, reject) {
+      var req = indexedDB.open(DB_NAME, nextVersion);
+      req.onupgradeneeded = function(event) {
+        var database = event.target.result;
+        if (!database.objectStoreNames.contains('sku_lookup_groups')) {
+          database.createObjectStore('sku_lookup_groups', { keyPath: 'id', autoIncrement: true });
+        }
+      };
+      req.onblocked = function() {
+        reject(new Error('创建 SKU 速查表被其它已打开页面占用，请关闭同一工具的其它标签页后重试。'));
+      };
+      req.onsuccess = function() {
+        bindDbConnection(req.result);
+        resolve();
+      };
+      req.onerror = function() { reject(req.error); };
+    });
+  }
+
+  function skuLookupSkus(group) {
+    return (group.boxes || []).map(function(box) { return box.value || ''; }).join('\n')
+      .split(/[\s,，;；、]+/)
+      .map(normalizeSkuValue)
+      .filter(Boolean);
+  }
+
+  function setSkuLookupMsg(text, isErr) {
+    var msg = $('skuLookupMsg');
+    if (!msg) return;
+    msg.textContent = text || '';
+    msg.className = 'msg ' + (isErr ? 'err' : 'ok');
+  }
+
+  function readSkuLookupCard(card) {
+    var group = {
+      id: Number(card.getAttribute('data-sku-lookup-id')) || undefined,
+      title: (card.querySelector('[data-sku-lookup-title]') || {}).value || 'SKU 组',
+      boxes: [],
+      updatedAt: new Date().toISOString()
+    };
+    group.boxes.push({ label: '', value: (card.querySelector('[data-sku-lookup-value]') || {}).value || '' });
+    return group;
+  }
+
+  async function saveSkuLookupCard(card) {
+    await ensureSkuLookupStore();
+    var group = readSkuLookupCard(card);
+    if (group.id) {
+      var old = await getOne('sku_lookup_groups', group.id);
+      group.createdAt = old && old.createdAt || new Date().toISOString();
+    } else {
+      group.createdAt = new Date().toISOString();
+    }
+    var id = await put('sku_lookup_groups', group);
+    if (!group.id) card.setAttribute('data-sku-lookup-id', id);
+    setSkuLookupMsg('已自动保存。');
+  }
+
+  function skuLookupValue(group) {
+    return (group.boxes || []).map(function(box) { return box.value || ''; }).filter(Boolean).join('\n');
+  }
+
+  function renderSkuLookupBox(group) {
+    return '<div class="sku-lookup-box" data-sku-lookup-box>' +
+      '<textarea class="input sku-lookup-input" data-sku-lookup-value placeholder="此处放 SKU，一行一个或用逗号分隔">' + esc(skuLookupValue(group)) + '</textarea>' +
+    '</div>';
+  }
+
+  async function renderSkuLookupGroups() {
+    if (!$('skuLookupGroups')) return;
+    await ensureSkuLookupStore();
+    var groups = await getAll('sku_lookup_groups');
+    groups.sort(function(a, b) {
+      return String(a.createdAt || '').localeCompare(String(b.createdAt || '')) || Number(a.id || 0) - Number(b.id || 0);
+    });
+    if (!groups.length) {
+      await put('sku_lookup_groups', defaultSkuLookupGroup());
+      groups = await getAll('sku_lookup_groups');
+    }
+    $('skuLookupEmpty').hidden = !!groups.length;
+    $('skuLookupGroups').innerHTML = groups.map(function(group) {
+      return '<div class="sku-lookup-card" data-sku-lookup-id="' + esc(group.id || '') + '">' +
+        '<div class="sku-lookup-head">' +
+          '<input class="input sku-lookup-title" data-sku-lookup-title value="' + esc(group.title || 'SKU 组') + '" placeholder="组标题">' +
+          '<button class="icon-btn sku-lookup-copy" type="button" data-sku-lookup-copy title="复制本组 SKU" aria-label="复制本组 SKU">' + copySvgIcon() + '</button>' +
+          '<button class="icon-btn row-delete-btn" type="button" data-sku-lookup-delete title="删除组">' + iconTrash() + '</button>' +
+        '</div>' +
+        renderSkuLookupBox(group) +
+      '</div>';
+    }).join('');
+  }
+
+  async function addSkuLookupGroup() {
+    await ensureSkuLookupStore();
+    await put('sku_lookup_groups', defaultSkuLookupGroup());
+    await renderSkuLookupGroups();
+    setSkuLookupMsg('已新增 SKU 组。');
+  }
+
+  async function copySkuLookupGroup(card) {
+    var group = readSkuLookupCard(card);
+    var skus = skuLookupSkus(group);
+    if (!skus.length) {
+      setSkuLookupMsg('当前组没有可复制的 SKU。', true);
+      return;
+    }
+    await copyText(skus.join('\n'));
+    setSkuLookupMsg('已复制 ' + skus.length + ' 个 SKU。');
+  }
+
   function playReportCopySuccess(btn) {
     if (!btn) return;
     btn.classList.remove('is-success');
@@ -13921,13 +14820,14 @@
           onsiteCost: 0,
           offsiteCost: 0,
           rank: '',
+          rankable: !summaryRange && dims.length === 1 && ['sku', 'shortName'].indexOf(dims[0]) !== -1,
           skus: []
         };
       }
       var normalizedSku = normalizeSkuValue(row.sku);
       if (normalizedSku && groups[key].skus.indexOf(normalizedSku) === -1) groups[key].skus.push(normalizedSku);
       addOwnMetricTotals(groups[key], row);
-      if (row.rank) groups[key].rank = row.rank;
+      if (groups[key].rankable && groups[key].skus.length === 1) groups[key].rank = row.rank || '';
     }
     rows.forEach(function(row) {
       if (enableOrderDimension && row.sourceType === 'offsite_cps_cost' && row.extraMetrics && Array.isArray(row.extraMetrics.orders) && row.extraMetrics.orders.length) {
@@ -13983,6 +14883,10 @@
       rankBySku[sku].push(row);
     });
     groups.forEach(function(group) {
+      if (!group.rankable || (group.skus || []).length !== 1) {
+        group.rank = '';
+        return;
+      }
       var bestRank = Number(group.rank || 0) || 0;
       (group.skus || []).forEach(function(sku) {
         (rankBySku[normalizeSkuValue(sku)] || []).forEach(function(row) {
@@ -14001,7 +14905,10 @@
       shortName: '商品简称',
       mainSeries: '大系列',
       subSeries: '小系列',
-      brand: '竞品'
+      brand: '竞品',
+      materialCode: '物料编码',
+      packageSpec: '箱规',
+      mainorsub: '主赠品品属性'
     }[dim] || dim;
   }
 
@@ -14077,7 +14984,7 @@
       var conversion = total.visitors ? total.qty / total.visitors : '';
       return '<tr data-index="' + index + '">' +
         '<td><select class="select monitor-dim">' +
-          ['subSeries', 'mainSeries', 'shortName', 'sku', 'brand'].map(function(dim) {
+          ['subSeries', 'mainSeries', 'shortName', 'sku', 'brand', 'materialCode', 'packageSpec', 'mainorsub'].map(function(dim) {
             return '<option value="' + dim + '"' + (track.dimension === dim ? ' selected' : '') + '>' + monitorDimensionLabel(dim) + '</option>';
           }).join('') +
         '</select></td>' +
@@ -14137,6 +15044,9 @@
       subSeries: '\u5c0f\u7cfb\u5217',
       shortName: '\u5546\u54c1\u7b80\u79f0',
       brand: 'Brand',
+      materialCode: '\u7269\u6599\u7f16\u7801',
+      packageSpec: '\u7bb1\u89c4',
+      mainorsub: '\u4e3b\u8d60\u54c1\u54c1\u5c5e\u6027',
       sku: 'SKU',
       campaignPlan: '\u6240\u5c5e\u8ba1\u5212/\u6d3b\u52a8',
       affiliatePin: '\u63a8\u5ba2 pin',
@@ -14171,7 +15081,7 @@
   }
 
   function getAnalyzedAttributeCandidates() {
-    var base = ['mainSeries', 'subSeries', 'shortName', 'brand', 'sku'];
+    var base = ['mainSeries', 'subSeries', 'shortName', 'brand', 'materialCode', 'packageSpec', 'mainorsub', 'sku'];
     var extras = skuDimensionColumns.filter(function(key) {
       return base.indexOf(key) === -1;
     });
@@ -14181,7 +15091,7 @@
   }
 
   function getAnalyzedDimensionCandidates() {
-    var base = ['subSeries', 'mainSeries', 'shortName', 'brand', 'sku'];
+    var base = ['subSeries', 'mainSeries', 'shortName', 'brand', 'materialCode', 'packageSpec', 'mainorsub', 'sku'];
     var order = enableOrderDimension ? ['campaignPlan', 'affiliatePin', 'orderId'] : [];
     return base.concat(order, skuDimensionColumns).filter(function(key, index, arr) {
       return key && arr.indexOf(key) === index;
@@ -14333,7 +15243,7 @@
     var candidates = getAnalyzedDimensionCandidates();
     analyzedSelectedDimensions = normalizedAnalyzedSelection(analyzedSelectedDimensions, candidates, 'subSeries');
     analyzedExtraDimensions = analyzedSelectedDimensions.filter(function(key) {
-      return ['subSeries', 'mainSeries', 'shortName', 'brand', 'sku'].indexOf(key) === -1;
+      return ['subSeries', 'mainSeries', 'shortName', 'brand', 'materialCode', 'packageSpec', 'mainorsub', 'sku'].indexOf(key) === -1;
     });
     saveAnalyzedSelectedDimensions();
     saveAnalyzedExtraDimensions();
@@ -14371,7 +15281,12 @@
   function getSkuExportColumns(type) {
     var columns = [
       { key: 'sku', label: 'SKU' },
-      { key: 'shortName', label: '简称' }
+      { key: 'shortName', label: '简称' },
+      { key: 'mainSeries', label: '大系列' },
+      { key: 'subSeries', label: '小系列' },
+      { key: 'materialCode', label: '物料编码' },
+      { key: 'packageSpec', label: '箱规' },
+      { key: 'mainorsub', label: '主赠品品属性' }
     ];
     if (type === 'competitor') {
       columns = columns.concat([
@@ -14379,7 +15294,7 @@
         { key: 'isTrackedCompetitor', label: '\u662f\u5426\u8ffd\u8e2a' }
       ]);
     }
-    return columns.concat(skuDimensionColumns.map(function(key) {
+    return columns.concat(extraSkuDimensionColumns().map(function(key) {
       return { key: key, label: skuColumnLabels[key] || key };
     }));
   }
@@ -14673,6 +15588,22 @@
       renderEstimatesDb();
     });
   }
+  if ($('rankingProductSelect')) {
+    $('rankingProductSelect').addEventListener('change', function(e) {
+      localStorage.setItem('jdRankingSelectedSku', normalizeSkuValue(e.target.value || ''));
+      renderRankingRaw();
+    });
+  }
+  document.querySelectorAll('[data-ranking-view-mode]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var nextMode = btn.getAttribute('data-ranking-view-mode') === 'product' ? 'product' : 'date';
+      var enteringProduct = rankingViewMode !== 'product' && nextMode === 'product';
+      rankingViewMode = nextMode;
+      sessionStorage.setItem('jdRankingViewMode', rankingViewMode);
+      if (enteringProduct) applyRankingProductDefaultRange();
+      renderRankingRaw();
+    });
+  });
   document.querySelectorAll('[data-estimate-view-mode]').forEach(function(btn) {
     btn.addEventListener('click', function() {
       estimateViewMode = btn.getAttribute('data-estimate-view-mode') === 'date' ? 'date' : 'product';
@@ -14680,13 +15611,6 @@
       renderEstimatesDb();
     });
   });
-  if ($('estimateTrackedOnlyCheck')) {
-    $('estimateTrackedOnlyCheck').addEventListener('change', function(e) {
-      estimateTrackedOnly = e.target.checked;
-      localStorage.setItem('jdEstimateTrackedOnly', estimateTrackedOnly ? 'true' : 'false');
-      renderEstimatesDb();
-    });
-  }
   if ($('exportReportTemplateBtn')) {
     $('exportReportTemplateBtn').addEventListener('click', exportReportTemplate);
   }
@@ -14695,16 +15619,6 @@
     syncReportQuickCopyToggle();
   }
 
-  function toggleReportCompetitorScope() {
-    reportCompetitorScope = reportCompetitorScope === 'all' ? 'tracked' : 'all';
-    localStorage.setItem('jdReportCompetitorScope', reportCompetitorScope);
-    syncReportCompetitorToggle();
-    renderReportOutput();
-  }
-  if ($('reportCompetitorScope')) {
-    $('reportCompetitorScope').addEventListener('click', toggleReportCompetitorScope);
-    syncReportCompetitorToggle();
-  }
   if ($('importReportTemplateBtn')) {
     $('importReportTemplateBtn').addEventListener('click', function() {
       $('reportTemplateInput').click();
@@ -14834,16 +15748,21 @@
     return '';
   }
 
-  function askCustomDimensionName(defaultValue) {
+  function askCustomDimensionName(defaultValue, options) {
+    options = options || {};
     return new Promise(function(resolve) {
       var modal = $('customDimensionModal');
       var input = $('customDimensionInput');
       var keyInput = $('customDimensionKeyInput');
       var msg = $('customDimensionMsg');
+      var title = $('customDimensionTitle');
+      var desc = modal && modal.querySelector('p');
       if (!modal || !input) {
         resolve(null);
         return;
       }
+      if (title) title.textContent = options.title || '自定义维度';
+      if (desc) desc.textContent = options.description || '确认字段简称和数据库字段名。字段名保存后用于数据库和报表引用，建议使用英文小写和下划线。';
       input.value = defaultValue || '';
       if (keyInput) keyInput.value = suggestedSkuColumnKey(defaultValue || '');
       if (msg) {
@@ -14875,6 +15794,7 @@
         var label = input.value.trim();
         var key = normalizeSkuColumnKey(keyInput && keyInput.value);
         var error = !label ? '请填写字段简称。' : skuColumnKeyError(key);
+        if (!error && options.requireNamedKey && /^custom_field(?:_\d+)?$/.test(key)) error = '未知表头请把数据库字段名改成有含义的英文 key，不要直接使用 custom_field。';
         if (error) {
           if (msg) {
             msg.textContent = error;
@@ -14902,7 +15822,11 @@
       modal.addEventListener('click', backdrop);
       modal.classList.add('open');
       modal.setAttribute('aria-hidden', 'false');
-      setTimeout(function() { input.focus(); input.select(); }, 0);
+      setTimeout(function() {
+        var target = options.requireNamedKey && keyInput && /^custom_field(?:_\d+)?$/.test(keyInput.value) ? keyInput : input;
+        target.focus();
+        target.select();
+      }, 0);
     });
   }
 
@@ -15331,11 +16255,6 @@
       renderEstimatesDb();
     });
   }
-  $('rankingShowTrackedCompetitorsCheck').addEventListener('change', function(e) {
-    rankingShowTrackedCompetitors = e.target.checked;
-    localStorage.setItem('jdRankingShowTrackedCompetitors', rankingShowTrackedCompetitors ? 'true' : 'false');
-    renderRankingRaw();
-  });
   if ($('manualRankingFieldToggle')) {
     $('manualRankingFieldToggle').addEventListener('click', function(e) {
       e.preventDefault();
@@ -15364,11 +16283,6 @@
     if (picker && !picker.contains(e.target) && $('manualRankingFieldPanel')) {
       $('manualRankingFieldPanel').classList.remove('open');
     }
-  });
-  $('manualRankingTrackedOnlyCheck').addEventListener('change', function(e) {
-    manualRankingTrackedOnly = e.target.checked;
-    localStorage.setItem('jdManualRankingTrackedOnly', manualRankingTrackedOnly ? 'true' : 'false');
-    renderManualRankingEntry();
   });
   $('manualRankingBody').addEventListener('click', function(e) {
     var entryCell = e.target.closest('.manual-entry-cell');
@@ -15930,6 +16844,11 @@
       exportSkuRows(type, rows);
     });
   });
+  document.querySelectorAll('[data-cleanup-sku-cols]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      cleanupEmptySkuColumns(btn.getAttribute('data-cleanup-sku-cols'));
+    });
+  });
   document.querySelectorAll('[data-clear-sku]').forEach(function(btn) {
     btn.addEventListener('click', function() {
       clearSkuTable(btn.getAttribute('data-clear-sku'));
@@ -15955,21 +16874,12 @@
     });
     table.addEventListener('click', async function(e) {
       var addCol = e.target.closest('[data-add-col]');
-      var addOption = e.target.closest('[data-sku-add-option]');
       var rowDelete = e.target.closest('[data-row-delete]');
       var sortCol = e.target.closest('[data-sort-col]');
       var sortDir = e.target.closest('[data-sort-dir]');
       if (addCol) {
         e.stopPropagation();
-        togglePopover(addCol.closest('.report-dim-picker').querySelector('.report-dim-popover'));
-        return;
-      }
-      if (addOption) {
-        e.stopPropagation();
-        var optionPicker = addOption.closest('.report-dim-picker');
-        var optionType = optionPicker.querySelector('[data-add-col]').getAttribute('data-add-col');
-        closeAllPopovers();
-        await addSkuColumn(optionType, addOption.getAttribute('data-sku-add-option'));
+        await addSkuColumn(addCol.getAttribute('data-add-col'), '__custom__');
         return;
       }
       if (rowDelete) {
@@ -16198,8 +17108,54 @@
       renderSearchAnalysisSettings();
     });
   }
+  if ($('searchCustomTermsEnabled')) {
+    $('searchCustomTermsEnabled').addEventListener('change', function(e) {
+      searchCustomTermsEnabled = e.target.checked;
+      saveSearchAnalysisSettings();
+      renderSearchAnalysisSettings();
+      renderSearchData();
+    });
+  }
+  if ($('addSearchTermGroupBtn')) {
+    $('addSearchTermGroupBtn').addEventListener('click', function() {
+      if (!searchCustomTermsEnabled) return;
+      searchCustomTerms.push({ id: 'term_' + Date.now(), title: '示例', words: [] });
+      saveSearchAnalysisSettings();
+      renderSearchAnalysisSettings();
+      renderSearchData();
+    });
+  }
+  if ($('searchTermGroups')) {
+    $('searchTermGroups').addEventListener('focusout', function(e) {
+      var card = e.target.closest('[data-search-term-index]');
+      if (!card) return;
+      var term = searchCustomTerms[Number(card.getAttribute('data-search-term-index'))];
+      if (!term) return;
+      term.title = (card.querySelector('[data-search-term-title]').value || '').trim() || '示例';
+      term.words = parseWordList(card.querySelector('[data-search-term-words]').value);
+      saveSearchAnalysisSettings();
+      renderSearchData();
+    });
+    $('searchTermGroups').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-search-term-delete]');
+      if (!btn) return;
+      var card = btn.closest('[data-search-term-index]');
+      searchCustomTerms.splice(Number(card.getAttribute('data-search-term-index')), 1);
+      saveSearchAnalysisSettings();
+      renderSearchAnalysisSettings();
+      renderSearchData();
+    });
+  }
   if ($('refreshSearchDataBtn')) $('refreshSearchDataBtn').addEventListener('click', renderSearchData);
+  if ($('cleanupLegacySearchFieldsBtn')) $('cleanupLegacySearchFieldsBtn').addEventListener('click', cleanupLegacySearchFields);
   if ($('clearSearchDataBtn')) $('clearSearchDataBtn').addEventListener('click', clearCurrentSearchData);
+  if ($('searchDataBody')) {
+    $('searchDataBody').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-search-row-delete]');
+      if (!btn) return;
+      deleteSearchDataRow(btn.getAttribute('data-search-row-delete'));
+    });
+  }
   document.querySelectorAll('[data-search-panel]').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var panel = btn.getAttribute('data-search-panel') || 'import';
@@ -16208,10 +17164,34 @@
       });
       if ($('searchImportPane')) $('searchImportPane').hidden = panel !== 'import';
       if ($('searchDetailPane')) $('searchDetailPane').hidden = panel !== 'detail';
+      if ($('skuLookupPane')) $('skuLookupPane').hidden = panel !== 'skuLookup';
       if ($('searchAnalysisPanel')) $('searchAnalysisPanel').classList.toggle('is-import-mode', panel === 'import');
       if (panel === 'detail') renderSearchData();
+      if (panel === 'skuLookup') renderSkuLookupGroups();
     });
   });
+  if ($('addSkuLookupGroupBtn')) $('addSkuLookupGroupBtn').addEventListener('click', addSkuLookupGroup);
+  if ($('skuLookupGroups')) {
+    $('skuLookupGroups').addEventListener('focusout', function(e) {
+      if (!e.target.matches('[data-sku-lookup-title], [data-sku-lookup-value]')) return;
+      var card = e.target.closest('[data-sku-lookup-id]');
+      if (card) saveSkuLookupCard(card);
+    });
+    $('skuLookupGroups').addEventListener('click', async function(e) {
+      var card = e.target.closest('[data-sku-lookup-id]');
+      if (!card) return;
+      if (e.target.closest('[data-sku-lookup-copy]')) {
+        await copySkuLookupGroup(card);
+        return;
+      }
+      if (e.target.closest('[data-sku-lookup-delete]')) {
+        if (!await confirmAction('确认删除这个 SKU 组？', '此删除会影响数据库内数据。')) return;
+        await remove('sku_lookup_groups', Number(card.getAttribute('data-sku-lookup-id')));
+        await renderSkuLookupGroups();
+        setSkuLookupMsg('已删除 SKU 组。');
+      }
+    });
+  }
   if ($('refreshGrossMarginBtn')) {
     $('refreshGrossMarginBtn').addEventListener('click', renderGrossMarginData);
   }
@@ -16271,6 +17251,7 @@
   }
 
   var defaultAnalyzedDate = yesterday();
+  var defaultSearchDataRange = rangeForShortcut('week', addDays(dateFromYmd(today()), -7));
   $('analyzedStartDate').value = defaultAnalyzedDate;
   $('analyzedEndDate').value = defaultAnalyzedDate;
   $('analyzedDateInput').value = defaultAnalyzedDate;
@@ -16291,9 +17272,9 @@
   $('grossMarginEndDate').value = defaultGrossMarginRange.end;
   $('grossMarginDateInput').value = defaultGrossMarginRange.start + ' 至 ' + defaultGrossMarginRange.end;
   if ($('searchDataStartDate')) {
-    $('searchDataStartDate').value = defaultAnalyzedDate;
-    $('searchDataEndDate').value = defaultAnalyzedDate;
-    $('searchDataDateInput').value = defaultAnalyzedDate;
+    $('searchDataStartDate').value = defaultSearchDataRange.start;
+    $('searchDataEndDate').value = defaultSearchDataRange.end;
+    $('searchDataDateInput').value = defaultSearchDataRange.start + ' 至 ' + defaultSearchDataRange.end;
   }
   if ($('searchImportStartDate')) {
     $('searchImportStartDate').value = defaultAnalyzedDate;
@@ -16317,6 +17298,7 @@
     datePickers.ranking.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
     datePickers.ranking.sync();
     datePickers.ranking.render();
+    if (rankingViewMode === 'product') applyRankingProductDefaultRange();
   }
   if (datePickers.estimate) {
     datePickers.estimate.setCalendarMonth(dateFromYmd(defaultEstimateStart) || new Date());
@@ -16329,7 +17311,7 @@
     datePickers.grossMargin.render();
   }
   if (datePickers.searchData) {
-    datePickers.searchData.setCalendarMonth(dateFromYmd(defaultAnalyzedDate) || new Date());
+    datePickers.searchData.setCalendarMonth(dateFromYmd(defaultSearchDataRange.start) || new Date());
     datePickers.searchData.sync();
     datePickers.searchData.render();
   }
@@ -16384,7 +17366,7 @@
     await stripRawSnapshotRows();
     await normalizeCompetitorSkuDefaults();
     await mergeDuplicateSeriesColumns();
-    await mergeDuplicateBrandColumns();
+    await mergeDuplicateBuiltinSkuColumns();
     await normalizeSkuCustomColumnKeys();
     renderAnalyzedDimensionControls();
     updateAnalyzedDimensionHint();

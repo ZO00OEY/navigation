@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>杜一帆 - 现代电子名片</title>
+  <style>
+    :root {
+      --navy: #071a2c;
+      --blue: #123e5f;
+      --teal: #12a39c;
+      --ice: #edf5f5;
+      --ink: #102335;
+      --muted: #5b7180;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 1400px;
+      height: 720px;
+      margin: 0;
+      overflow: hidden;
+      font-family: "Microsoft YaHei UI", "PingFang SC", sans-serif;
+      background: #dce7e9;
+    }
+
+    .card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      width: 1400px;
+      height: 720px;
+      overflow: hidden;
+      background: #fbfdfd;
+    }
+
+    .profile {
+      position: relative;
+      z-index: 2;
+      padding: 42px 32px 34px 44px;
+      color: white;
+      background:
+        radial-gradient(circle at 8% 95%, rgba(18, 163, 156, .34), transparent 34%),
+        linear-gradient(155deg, var(--navy), var(--blue));
+    }
+
+    .profile::after {
+      content: "";
+      position: absolute;
+      z-index: 4;
+      top: 0;
+      right: -14px;
+      width: 28px;
+      height: 100%;
+      background:
+        radial-gradient(circle, #79ddd8 0 5px, #0b3148 6px 8px, transparent 9px) center 36px / 28px 90px repeat-y,
+        linear-gradient(#5fc8c3, #5fc8c3) center / 2px 100% no-repeat;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      border: 2px solid #62d6d0;
+      transform: rotate(45deg);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      background: #62d6d0;
+    }
+
+    .brand-mark::before { inset: 9px 21px; }
+    .brand-mark::after { inset: 21px 9px; }
+
+    .brand-cn {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 7px;
+    }
+
+    .brand-en {
+      margin-top: 2px;
+      font: 600 12px/1.2 "Segoe UI", sans-serif;
+      letter-spacing: 3.5px;
+      color: #62d6d0;
+    }
+
+    .identity { margin-top: 30px; }
+
+    .name {
+      font-size: 54px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 9px;
+    }
+
+    .role {
+      margin-top: 10px;
+      padding-left: 15px;
+      border-left: 3px solid #62d6d0;
+      font-size: 20px;
+      letter-spacing: 4px;
+      color: #d7eeee;
+    }
+
+    .contacts {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+      font-size: 16px;
+      color: rgba(255, 255, 255, .9);
+    }
+
+    .contact {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      line-height: 1.45;
+    }
+
+    .icon {
+      display: grid;
+      flex: 0 0 30px;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border: 1px solid rgba(98, 214, 208, .7);
+      border-radius: 50%;
+      font: 700 12px/1 "Segoe UI", sans-serif;
+      color: #62d6d0;
+    }
+
+    .qr-section {
+      position: absolute;
+      left: 44px;
+      bottom: 40px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .qr-wrap {
+      width: 184px;
+      height: 184px;
+      padding: 8px;
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, .25);
+    }
+
+    .qr-wrap img {
+      display: block;
+      width: 168px;
+      height: 168px;
+    }
+
+    .qr-copy {
+      width: 132px;
+      font-size: 15px;
+      line-height: 1.8;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, .88);
+    }
+
+    .qr-copy strong {
+      display: block;
+      margin-bottom: 7px;
+      color: #62d6d0;
+      font-size: 17px;
+    }
+
+    .company {
+      position: relative;
+      padding: 38px 42px 32px 52px;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(18, 163, 156, .035) 1px, transparent 1px),
+        linear-gradient(rgba(18, 163, 156, .035) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    .company::before {
+      content: "";
+      position: absolute;
+      right: -170px;
+      bottom: -440px;
+      width: 760px;
+      height: 760px;
+      border: 120px solid rgba(18, 163, 156, .045);
+      border-radius: 50%;
+    }
+
+    .company-header,
+    .intro,
+    .timeline,
+    .details { position: relative; z-index: 1; }
+
+    .company-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--teal);
+    }
+
+    .company-title {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 5px;
+    }
+
+    .company-title small {
+      margin-left: 12px;
+      font: 600 12px/1 "Segoe UI", sans-serif;
+      letter-spacing: 3px;
+      color: var(--teal);
+    }
+
+    .website {
+      font-size: 13px;
+      color: var(--blue);
+    }
+
+    .website strong { color: var(--teal); }
+
+    .intro {
+      margin: 15px 0;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #344e5f;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .milestone {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 9px 15px;
+      border-left: 3px solid var(--teal);
+      background: #eaf3f3;
+    }
+
+    .milestone strong {
+      font: 700 23px/1 "Segoe UI", sans-serif;
+      color: var(--blue);
+    }
+
+    .milestone span {
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px 14px;
+    }
+
+    .detail {
+      min-height: 92px;
+      padding: 12px 16px 13px;
+      border: 1px solid #d5e5e6;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .9);
+    }
+
+    .detail:nth-child(1) { grid-column: span 4; }
+    .detail:nth-child(2) { grid-column: span 2; }
+    .detail.wide { grid-column: 1 / -1; }
+    .detail:nth-child(4) { grid-column: span 4; min-height: 108px; }
+    .detail:nth-child(5) { grid-column: span 2; min-height: 108px; }
+
+    .detail.accent {
+      border-color: rgba(18, 163, 156, .38);
+      background: linear-gradient(135deg, rgba(18, 163, 156, .11), rgba(255, 255, 255, .94));
+    }
+
+    .detail-title {
+      display: inline-block;
+      margin-bottom: 4px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--navy);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .detail p {
+      margin: 0;
+      font-size: 15.5px;
+      line-height: 1.5;
+      color: #294252;
+    }
+
+    .motto {
+      position: absolute;
+      z-index: 1;
+      right: 52px;
+      bottom: 27px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: #758a93;
+      font-size: 16px;
+      letter-spacing: 3px;
+    }
+
+    .motto::before {
+      content: "";
+      width: 68px;
+      height: 2px;
+      background: var(--teal);
+    }
+
+    .motto strong {
+      font: 600 12px/1 "Bahnschrift", "Segoe UI", sans-serif;
+      letter-spacing: 3px;
+      color: var(--teal);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <section class="profile">
+      <header class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <div class="brand-cn">汇得科技</div>
+          <div class="brand-en">HUIDE TECHNOLOGY</div>
+        </div>
+      </header>
+
+      <div class="identity">
+        <div class="name">杜一帆</div>
+        <div class="role">采购专员</div>
+      </div>
+
+      <div class="contacts">
+        <div class="contact"><span class="icon">T</span><span>138 1798 6893</span></div>
+        <div class="contact"><span class="icon">E</span><span>duyf@huide.com</span></div>
+        <div class="contact"><span class="icon">A</span><span>上海市金山区金山卫镇<br>春华路 180 号</span></div>
+      </div>
+
+      <div class="qr-section">
+        <div class="qr-wrap"><img src="qr-code.png" alt="杜一帆企业微信二维码"></div>
+        <div class="qr-copy"><strong>企业微信</strong>扫码添加<br>我的企业微信</div>
+      </div>
+    </section>
+
+    <section class="company">
+      <header class="company-header">
+        <div class="company-title">企业介绍 <small>COMPANY PROFILE</small></div>
+        <div class="website"><strong>官网直达</strong> 汇得科技-用科技革新美好生活（huide.com）</div>
+      </header>
+
+      <p class="intro">经过二十多年的发展和积累，汇得科技具备了一定的品牌优势、研发优势、人才优势、资金优势和管理优势，推动公司可持续稳健发展。</p>
+
+      <div class="timeline" aria-label="创建历程">
+        <div class="milestone"><strong>1997</strong><span>公司创立</span></div>
+        <div class="milestone"><strong>2007</strong><span>落户上海金山</span></div>
+        <div class="milestone"><strong>2018</strong><span>正式上市</span></div>
+      </div>
+
+      <div class="details">
+        <article class="detail">
+          <div class="detail-title">主营业务</div>
+          <p>聚氨酯树脂产品的研发、生产、销售、技术服务</p>
+        </article>
+        <article class="detail accent">
+          <div class="detail-title">重点拓展</div>
+          <p>低碳可降解聚氨酯材料</p>
+        </article>
+        <article class="detail wide">
+          <div class="detail-title">主要产品</div>
+          <p>革用聚氨酯、聚酯多元醇、聚氨酯弹性体、胶黏剂、聚氨酯发泡制件</p>
+        </article>
+        <article class="detail">
+          <div class="detail-title">荣誉</div>
+          <p>国家专精特新小巨人企业、高新技术企业、国家绿色工厂、省级技术研发中心</p>
+        </article>
+        <article class="detail">
+          <div class="detail-title">专利</div>
+          <p>66项授权发明专利、19项实用新型专利、14项高科技成果转化项目</p>
+        </article>
+      </div>
+
+      <div class="motto"><strong>HUIDE TECHNOLOGY</strong><span>用科技革新美好生活</span></div>
+    </section>
+  </main>
+</body>
+</html>
