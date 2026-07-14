@@ -1108,9 +1108,9 @@
 .search-term-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 10px;
 }
 .search-term-groups {
   display: grid;
@@ -1128,11 +1128,20 @@
 [data-theme="dark"] .search-term-panel.is-disabled { background: #272830; }
 .search-term-panel.is-disabled .search-term-groups,
 .search-term-panel.is-disabled .search-term-add { opacity: 0.46; }
-.search-toggle { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.search-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 700;
+  transform: translateY(2px);
+}
 .search-toggle input { position: absolute; opacity: 0; pointer-events: none; }
 .search-toggle-track {
-  width: 38px;
-  height: 22px;
+  width: 32px;
+  height: 18px;
   padding: 2px;
   border: 1px solid var(--line-medium, var(--card-border));
   border-radius: 999px;
@@ -1142,15 +1151,15 @@
 .search-toggle-track::after {
   content: "";
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 1px 3px rgba(33, 38, 48, 0.2);
   transition: transform 0.18s ease;
 }
 .search-toggle input:checked + .search-toggle-track { border-color: var(--link-color); background: var(--link-color); }
-.search-toggle input:checked + .search-toggle-track::after { transform: translateX(16px); }
+.search-toggle input:checked + .search-toggle-track::after { transform: translateX(14px); }
 .search-toggle input:focus-visible + .search-toggle-track { outline: 2px solid var(--link-color); outline-offset: 2px; }
 .search-term-add {
   width: 100%;
@@ -1164,6 +1173,7 @@
 }
 .search-term-add:disabled { cursor: not-allowed; }
 .search-term-add:not(:disabled):hover { border-color: var(--link-color); color: var(--link-color); background: rgba(var(--tool-accent-rgb), 0.05); }
+.search-term-card [data-search-term-words] { width: 100%; min-height: 82px; resize: vertical; }
 .search-data-table th.search-group-neutral,
 .search-data-table td.search-group-neutral {
   background: #f4f5f7;
@@ -3436,7 +3446,7 @@
         <div class="page-head">
           <div class="page-title">
             <h1>关键词搜索导入与分析</h1>
-            <p>导入关键词汇总表，按品牌词、行业词和自定义产品词汇总访客、成交金额和订单量，不保存原始关键词明细。</p>
+            <p>导入关键词汇总表，按品牌词、行业词和自定义词汇总访客、成交金额和订单量，不保存原始关键词明细。</p>
           </div>
         </div>
 
@@ -3452,7 +3462,7 @@
             <div class="panel-title">
               <span>批量自动导入</span>
             </div>
-            <p class="panel-sub">可以为不同的产品词设置匹配关键词，对搜索词进行分类；未命中任何产品词匹配关键词的搜索词，将统一归为行业词。</p>
+            <p class="panel-sub">可以为不同的自定义词设置匹配关键词，对搜索词进行分类；未命中任何自定义词匹配关键词的搜索词，将统一归为行业词。</p>
           <div class="upload-zone" id="searchDropZone">
             <strong>拖入关键词汇总 Excel / CSV 文件，或点击选择</strong>
             <span>导入使用下方搜索数据明细的日期范围；导入后会让你选择档案维度和值。</span>
@@ -3477,7 +3487,7 @@
 
           <div class="panel search-term-panel" id="searchProductTermsPanel">
             <div class="search-term-head">
-              <div class="panel-title"><span>产品词设置</span></div>
+              <div class="panel-title"><span>自定义词设置</span></div>
               <label class="search-toggle">
                 <input type="checkbox" id="searchCustomTermsEnabled">
                 <span class="search-toggle-track" aria-hidden="true"></span>
@@ -3485,7 +3495,7 @@
               </label>
             </div>
             <div class="search-term-groups" id="searchTermGroups"></div>
-            <button class="search-term-add" type="button" id="addSearchTermGroupBtn" title="增加产品词">＋ 增加产品词</button>
+            <button class="search-term-add" type="button" id="addSearchTermGroupBtn" title="增加自定义词">＋ 增加自定义词</button>
             <p class="panel-sub" style="margin-top:8px;">每组左侧填写显示名称，右侧填写匹配关键词。启用后会按组追加到“搜索数据明细”。</p>
           </div>
         </div>
@@ -8355,11 +8365,24 @@
     renderSearchCustomTerms();
   }
 
+  function searchCustomTermTitle(index) {
+    return '词组' + (index + 1);
+  }
+
+  function searchCustomTermWordsPlaceholder(index) {
+    return [
+      '例如：苹果 15、苹果 18、华强北 18、小米 18',
+      '例如：土豪金、活力橙、远峰蓝、星光色',
+      '例如：米白、珍珠白、月光银、浅粉'
+    ][index] || '例如：关键词1、关键词2、关键词3';
+  }
+
   function sanitizeSearchCustomTerms(terms) {
     return (Array.isArray(terms) ? terms : []).map(function(term, index) {
+      var title = String(term.title || '').trim();
       return {
         id: String(term.id || ('term_' + Date.now() + '_' + index)),
-        title: String(term.title || '').trim() || ('产品词 ' + (index + 1)),
+        title: (!title || title === '示例' || /^产品词\s*\d+$/.test(title)) ? searchCustomTermTitle(index) : title,
         words: parseWordList(Array.isArray(term.words) ? term.words.join('，') : term.words)
       };
     });
@@ -8377,8 +8400,8 @@
     var disabled = searchCustomTermsEnabled ? '' : ' disabled';
     box.innerHTML = searchCustomTerms.map(function(term, index) {
       return '<div class="search-term-card" data-search-term-index="' + index + '">' +
-        '<input class="input" data-search-term-title value="' + esc(term.title) + '" placeholder="例如：示例"' + disabled + '>' +
-        '<textarea class="input" data-search-term-words style="min-height:58px; resize:vertical;" placeholder="例如：iPhone 18、华强北 18、小米 18"' + disabled + '>' + esc(term.words.join('，')) + '</textarea>' +
+        '<input class="input" data-search-term-title value="' + esc(term.title) + '" placeholder="' + esc(searchCustomTermTitle(index)) + '"' + disabled + '>' +
+        '<textarea class="input" data-search-term-words placeholder="' + esc(searchCustomTermWordsPlaceholder(index)) + '"' + disabled + '>' + esc(term.words.join('，')) + '</textarea>' +
         '<button class="icon-btn row-delete-btn" type="button" data-search-term-delete title="删除"' + disabled + '>' + iconTrash() + '</button>' +
       '</div>';
     }).join('');
@@ -17119,7 +17142,7 @@
   if ($('addSearchTermGroupBtn')) {
     $('addSearchTermGroupBtn').addEventListener('click', function() {
       if (!searchCustomTermsEnabled) return;
-      searchCustomTerms.push({ id: 'term_' + Date.now(), title: '示例', words: [] });
+      searchCustomTerms.push({ id: 'term_' + Date.now(), title: searchCustomTermTitle(searchCustomTerms.length), words: [] });
       saveSearchAnalysisSettings();
       renderSearchAnalysisSettings();
       renderSearchData();
@@ -17131,7 +17154,7 @@
       if (!card) return;
       var term = searchCustomTerms[Number(card.getAttribute('data-search-term-index'))];
       if (!term) return;
-      term.title = (card.querySelector('[data-search-term-title]').value || '').trim() || '示例';
+      term.title = (card.querySelector('[data-search-term-title]').value || '').trim() || searchCustomTermTitle(Number(card.getAttribute('data-search-term-index')));
       term.words = parseWordList(card.querySelector('[data-search-term-words]').value);
       saveSearchAnalysisSettings();
       renderSearchData();
