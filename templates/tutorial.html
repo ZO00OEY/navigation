@@ -13,25 +13,6 @@
 </head>
 <body>
 
-<!-- 浮动工具栏（固定结构） -->
-<div class="float-wrapper" id="floatWrapper">
-  <div class="float-stack open" id="floatStack">
-    <div class="bookmark-strip">
-      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
-      <div class="bookmark-buttons">
-        <button class="toc-toggle float-btn" id="tocToggle" title="目录" aria-label="打开目录">☰</button>
-        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
-        <a href="index.html" class="float-btn" title="返回导航">⌂</a>
-        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
-      </div>
-    </div>
-  </div>
-  <div class="float-w"></div>
-</div>
-
-<!-- 移动端目录弹出层 -->
-<div class="toc-popup" id="tocPopup"></div>
-
 <!-- 背景装饰 -->
 <div class="bg-decor">
   <div class="blob blob-1"></div>
@@ -88,21 +69,6 @@
 <script src="shared.js"></script>
 <script>
 (function() {
-  // ========== TOC 移动端切换 ==========
-  var tocToggle = document.getElementById('tocToggle');
-  var tocPopup  = document.getElementById('tocPopup');
-  if (tocToggle && tocPopup) {
-    tocToggle.addEventListener('click', function(e) {
-      e.stopPropagation();
-      tocPopup.classList.toggle('open');
-    });
-    document.addEventListener('click', function(e) {
-      if (!tocPopup.contains(e.target) && e.target !== tocToggle) {
-        tocPopup.classList.remove('open');
-      }
-    });
-  }
-
   // ========== TOC 滚动高亮 ==========
   var tocItems = document.querySelectorAll('.toc-item');
   var sections = [];

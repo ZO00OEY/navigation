@@ -167,16 +167,6 @@
     applyShellPosition(calculateShellHome());
   }
 
-  function clearShellPosition() {
-    try {
-      window.localStorage.removeItem(shellPositionStorageKey);
-    } catch (error) {}
-    hasCustomShellPosition = false;
-    shell.style.removeProperty('--shell-left');
-    shell.style.removeProperty('--shell-bottom');
-    applyShellPosition(calculateShellHome());
-  }
-
   function readCurrentShellPosition(sceneRect, shellRect) {
     sceneRect = sceneRect || scene.getBoundingClientRect();
     shellRect = shellRect || shell.getBoundingClientRect();

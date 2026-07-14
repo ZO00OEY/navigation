@@ -7,22 +7,18 @@
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <link rel="stylesheet" href="../../guides/shared.css">
 <style>
-.app { max-width: 980px; }
+.app { max-width: 1120px; }
 .tool-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  box-shadow: 0 4px 24px var(--card-shadow);
-  padding: 28px;
+  padding: 0;
 }
-.tool-card h1 { font-size: 1.25rem; line-height: 1.35; margin-bottom: 6px; }
-.subtitle { color: var(--text-secondary); font-size: 0.84rem; line-height: 1.8; margin-bottom: 22px; }
+.tool-card h1 { font-size: 1.4rem; line-height: 1.35; margin-bottom: 8px; }
+.subtitle { color: var(--text-secondary); font-size: 0.84rem; line-height: 1.7; margin-bottom: 20px; }
 .drop-zone {
   display: grid;
   place-items: center;
-  min-height: 160px;
+  min-height: 132px;
   border: 1.5px dashed var(--card-hover-border);
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--code-bg);
   color: var(--text-secondary);
   text-align: center;
@@ -32,13 +28,22 @@
 .drop-zone.dragging { border-color: var(--link-color); background: var(--btn-link-bg); }
 .drop-zone strong { color: var(--text); font-size: 0.96rem; display: block; margin-bottom: 6px; }
 .file-input { display: none; }
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  margin: 18px 0;
+.workspace {
+  margin-top: 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  overflow: hidden;
 }
+.controls {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+}
+.primary-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.settings { display: grid; gap: 10px; justify-content: start; }
 .btn {
   border: 1px solid var(--btn-link-border);
   background: var(--btn-link-bg);
@@ -50,6 +55,8 @@
 }
 .btn:hover { background: var(--btn-link-hover-bg); }
 .btn[disabled] { opacity: 0.45; pointer-events: none; }
+.btn-primary { border-color: var(--link-color); color: var(--link-color); }
+.btn-quiet { background: transparent; }
 .range-label {
   display: inline-flex;
   align-items: center;
@@ -57,29 +64,89 @@
   color: var(--text-secondary);
   font-size: 0.82rem;
 }
-.range-label input { width: 150px; }
-.status { color: var(--text-tertiary); font-size: 0.78rem; min-height: 1.6em; }
-.thumb-list {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 2px 0 12px;
+.range-label input[type="range"] { width: 150px; }
+.toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  cursor: pointer;
 }
-.thumb {
-  flex: 0 0 86px;
+.toggle-label input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.toggle-track {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex: 0 0 auto;
+  border: 1px solid var(--card-hover-border);
+  border-radius: 999px;
+  background: var(--code-bg);
+  transition: background 0.18s, border-color 0.18s;
+}
+.toggle-track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  transition: transform 0.18s, background 0.18s;
+}
+.toggle-label input:checked + .toggle-track { border-color: var(--link-color); background: var(--btn-link-bg); }
+.toggle-label input:checked + .toggle-track::after { transform: translateX(16px); background: var(--link-color); }
+.toggle-label input:focus-visible + .toggle-track { outline: 2px solid var(--link-color); outline-offset: 2px; }
+.status { color: var(--text-tertiary); font-size: 0.78rem; text-align: right; white-space: nowrap; }
+.thumb-section {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  margin-top: 10px;
   border: 1px solid var(--card-border);
   border-radius: 8px;
-  background: var(--code-bg);
+  background: var(--bg);
+  box-shadow: 0 6px 18px var(--card-shadow);
+  padding: 12px 16px 14px;
+}
+.thumb-heading {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  margin-bottom: 10px;
+}
+.thumb-heading strong { color: var(--text); font-weight: 600; }
+.thumb-list {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 0 4px;
+}
+.thumb {
+  position: relative;
+  flex: 0 0 92px;
+  min-height: 124px;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  background: transparent;
   color: var(--text-secondary);
   padding: 6px;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
 }
 .thumb:hover, .thumb.active { border-color: var(--link-color); }
 .thumb canvas {
-  width: 72px;
-  height: 88px;
+  width: auto;
+  height: auto;
+  max-width: 78px;
+  max-height: 96px;
   margin: 0 auto 5px;
-  background: rgba(0,0,0,0.18);
+  background: transparent;
 }
 .thumb span {
   display: block;
@@ -88,17 +155,18 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.result-list { display: grid; gap: 20px; margin-top: 18px; }
+.result-list { display: grid; gap: 16px; margin-top: 20px; }
 .result-card {
-  border-top: 1px solid var(--card-border);
-  padding-top: 18px;
+  scroll-margin-top: 156px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  padding: 16px;
 }
 .result-head {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 10px;
-  align-items: center;
-  justify-content: space-between;
+  justify-items: start;
   margin-bottom: 12px;
 }
 .file-name {
@@ -109,17 +177,44 @@
 }
 .meta { color: var(--text-tertiary); font-size: 0.78rem; }
 .item-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.overlay-toggle {
+.item-setting {
   display: inline-flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
+  padding: 4px 2px;
+  cursor: pointer;
 }
+  .item-setting input {
+    -webkit-appearance: none;
+    appearance: none;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--card-hover-border);
+  border-radius: 5px;
+  background: var(--bg);
+  transition: background 0.16s, border-color 0.16s;
+}
+.item-setting input::after {
+  content: "✓";
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  transform: scale(0);
+  transition: transform 0.12s;
+}
+.item-setting input:checked { border-color: var(--link-color); background: var(--link-color); }
+.item-setting input:checked::after { transform: scale(1); }
+.item-setting input:focus-visible { outline: 2px solid var(--link-color); outline-offset: 2px; }
 .preview-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 .preview h2 {
   color: var(--text-secondary);
@@ -128,38 +223,29 @@
   margin-bottom: 8px;
 }
 .canvas-wrap {
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  background: rgba(0,0,0,0.22);
-  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  height: auto;
+  background: transparent;
+  padding: 0;
 }
-canvas { display: block; width: 100%; height: auto; }
+canvas { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; }
+.canvas-wrap canvas { max-height: 520px; border: 1px solid var(--card-border); border-radius: 4px; }
 .footer { text-align: center; margin-top: 40px; }
 .footer span { color: var(--text-tertiary); font-size: 0.72rem; opacity: 0.65; }
 @media (max-width: 720px) {
-  .tool-card { padding: 20px 16px; }
   .preview-grid { grid-template-columns: 1fr; }
-  .controls { align-items: stretch; flex-direction: column; }
+  .controls { grid-template-columns: 1fr; gap: 12px; }
+  .settings { justify-content: stretch; }
+  .status { text-align: left; }
   .btn { text-align: center; }
   .range-label { justify-content: space-between; }
+  .canvas-wrap canvas { max-height: 58vh; }
 }
 </style>
 </head>
 <body>
-<div class="float-wrapper" id="floatWrapper">
-  <div class="float-stack open" id="floatStack">
-    <div class="bookmark-strip">
-      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
-      <div class="bookmark-buttons">
-        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
-        <a href="../../index.html" class="float-btn" title="返回导航">⌂</a>
-        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
-      </div>
-    </div>
-  </div>
-  <div class="float-w"></div>
-</div>
-
 <div class="app">
   <a class="back-link" href="../../detail.html?page=tools">← 返回工具目录</a>
 
@@ -172,17 +258,35 @@ canvas { display: block; width: 100%; height: auto; }
       <span><strong>点击或拖入图片</strong>可一次选择多张，本地处理，不上传到服务器</span>
     </label>
 
-    <div class="controls">
-      <button class="btn" id="downloadAllBtn" type="button" disabled>下载全部</button>
-      <button class="btn" id="clearAllBtn" type="button" disabled>清除全部</button>
-      <label class="range-label">
-        识别灵敏度
-        <input id="sensitivity" type="range" min="1" max="8" value="3">
-      </label>
-      <span class="status" id="status">等待图片</span>
+    <section class="workspace" aria-label="批量处理设置">
+      <div class="controls">
+        <div class="primary-actions">
+          <button class="btn btn-primary" id="downloadAllBtn" type="button" disabled>下载全部</button>
+          <button class="btn btn-quiet" id="clearAllBtn" type="button" disabled>清除全部</button>
+        </div>
+        <div class="settings">
+          <label class="range-label">
+            识别灵敏度
+            <input id="sensitivity" type="range" min="1" max="8" value="3">
+          </label>
+          <label class="toggle-label">
+            <input id="overlayGlobalToggle" type="checkbox">
+            <span class="toggle-track" aria-hidden="true"></span>
+            <span>所有图片去掉边缘按钮和文字</span>
+          </label>
+          <label class="toggle-label">
+            <input id="sideCropToggle" type="checkbox">
+            <span class="toggle-track" aria-hidden="true"></span>
+            <span>所有图片裁剪左右侧空白</span>
+          </label>
+        </div>
+        <span class="status" id="status">等待图片</span>
+      </div>
+    </section>
+    <div class="thumb-section" id="thumbSection" hidden>
+      <div class="thumb-heading"><strong>图片导航</strong><span id="itemCount">共 0 张</span></div>
+      <div class="thumb-list" id="thumbList" aria-label="裁剪结果快速预览"></div>
     </div>
-
-    <div class="thumb-list" id="thumbList" aria-label="裁剪结果快速预览"></div>
     <div class="result-list" id="resultList"></div>
   </main>
 
@@ -195,9 +299,13 @@ canvas { display: block; width: 100%; height: auto; }
   var fileInput = document.getElementById('fileInput');
   var dropZone = document.getElementById('dropZone');
   var sensitivity = document.getElementById('sensitivity');
+  var overlayGlobalToggle = document.getElementById('overlayGlobalToggle');
+  var sideCropToggle = document.getElementById('sideCropToggle');
   var statusText = document.getElementById('status');
   var downloadAllBtn = document.getElementById('downloadAllBtn');
   var clearAllBtn = document.getElementById('clearAllBtn');
+  var thumbSection = document.getElementById('thumbSection');
+  var itemCount = document.getElementById('itemCount');
   var thumbList = document.getElementById('thumbList');
   var resultList = document.getElementById('resultList');
   var items = [];
@@ -209,6 +317,8 @@ canvas { display: block; width: 100%; height: auto; }
   function setHasItems(hasItems) {
     downloadAllBtn.disabled = !hasItems;
     clearAllBtn.disabled = !hasItems;
+    thumbSection.hidden = !hasItems;
+    itemCount.textContent = '共 ' + items.length + ' 张';
   }
 
   function loadFiles(fileList) {
@@ -297,6 +407,40 @@ canvas { display: block; width: 100%; height: auto; }
       top: best.start,
       bottom: best.end + 1
     };
+  }
+
+  function findSideCrop(imageData, crop) {
+    var data = imageData.data;
+    var width = imageData.width;
+    var height = imageData.height;
+    var step = Math.max(1, Math.floor((crop.bottom - crop.top) / 420));
+    var backgroundLimit = 0.91 + Number(sensitivity.value) * 0.01;
+
+    function columnBackground(x) {
+      var background = 0;
+      var total = 0;
+      for (var y = crop.top; y < crop.bottom; y += step) {
+        var i = (y * width + x) * 4;
+        var r = data[i];
+        var g = data[i + 1];
+        var b = data[i + 2];
+        var max = Math.max(r, g, b);
+        var min = Math.min(r, g, b);
+        var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        if ((luma < 24 || luma > 238) && max - min < 22) background++;
+        total++;
+      }
+      return background / total;
+    }
+
+    var left = 0;
+    var right = width - 1;
+    while (left < right && columnBackground(left) > backgroundLimit) left++;
+    while (right > left && columnBackground(right) > backgroundLimit) right--;
+    if (right - left < width * 0.2) return crop;
+    crop.left = left;
+    crop.right = right + 1;
+    return crop;
   }
 
   function includeConnectedOverlay(imageData, crop) {
@@ -392,8 +536,9 @@ canvas { display: block; width: 100%; height: auto; }
       '<div class="result-head">' +
         '<div><div class="file-name"></div><div class="meta"></div></div>' +
         '<div class="item-actions">' +
-          '<label class="overlay-toggle"><input type="checkbox">去掉边缘按钮和文字</label>' +
-          '<button class="btn" type="button">下载这张</button>' +
+          '<label class="item-setting"><input class="overlay-check" type="checkbox"><span>去掉边缘按钮和文字</span></label>' +
+          '<label class="item-setting"><input class="side-check" type="checkbox"><span>裁剪左右侧空白</span></label>' +
+          '<button class="btn download-item" type="button">下载这张</button>' +
         '</div>' +
       '</div>' +
       '<div class="preview-grid">' +
@@ -419,14 +564,18 @@ canvas { display: block; width: 100%; height: auto; }
       resultCanvas: canvases[1],
       thumb: thumb,
       thumbCanvas: thumb.querySelector('canvas'),
-      overlayToggle: card.querySelector('input[type="checkbox"]'),
-      downloadBtn: card.querySelector('.btn'),
+      overlayCheck: card.querySelector('.overlay-check'),
+      sideCheck: card.querySelector('.side-check'),
+      downloadBtn: card.querySelector('.download-item'),
       meta: card.querySelector('.meta'),
       url: ''
     };
+    item.overlayCheck.checked = overlayGlobalToggle.checked;
+    item.sideCheck.checked = sideCropToggle.checked;
     card.querySelector('.file-name').textContent = file.name;
     item.downloadBtn.addEventListener('click', function() { downloadItem(item); });
-    item.overlayToggle.addEventListener('change', function() { cropItem(item); });
+    item.overlayCheck.addEventListener('change', function() { cropItem(item); });
+    item.sideCheck.addEventListener('change', function() { cropItem(item); });
     thumb.addEventListener('click', function() {
       document.querySelectorAll('.thumb.active').forEach(function(node) { node.classList.remove('active'); });
       thumb.classList.add('active');
@@ -438,12 +587,12 @@ canvas { display: block; width: 100%; height: auto; }
   }
 
   function drawThumb(canvas, source) {
+    var scale = Math.min(78 / source.width, 96 / source.height);
+    canvas.width = Math.max(1, Math.round(source.width * scale));
+    canvas.height = Math.max(1, Math.round(source.height * scale));
     var ctx = canvas.getContext('2d');
-    var scale = Math.min(canvas.width / source.width, canvas.height / source.height);
-    var width = source.width * scale;
-    var height = source.height * scale;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(source, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
+    ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
   }
 
   function cropItem(item) {
@@ -455,25 +604,37 @@ canvas { display: block; width: 100%; height: auto; }
     sourceCanvas.height = item.img.naturalHeight;
     sourceCtx.drawImage(item.img, 0, 0);
     var imageData = sourceCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+    var removeOverlay = item.overlayCheck.checked;
+    var cropSides = item.sideCheck.checked;
     var crop = findCrop(rowStats(imageData), sourceCanvas.height);
-    if (item.overlayToggle.checked) crop = includeConnectedOverlay(imageData, crop);
+    if (removeOverlay) crop = includeConnectedOverlay(imageData, crop);
+    crop.left = 0;
+    crop.right = sourceCanvas.width;
+    if (cropSides) crop = findSideCrop(imageData, crop);
     var cropHeight = crop.bottom - crop.top;
-    resultCanvas.width = sourceCanvas.width;
+    var cropWidth = crop.right - crop.left;
+    resultCanvas.width = cropWidth;
     resultCanvas.height = cropHeight;
     resultCtx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
-    resultCtx.drawImage(sourceCanvas, 0, crop.top, sourceCanvas.width, cropHeight, 0, 0, sourceCanvas.width, cropHeight);
+    resultCtx.drawImage(sourceCanvas, crop.left, crop.top, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
     drawThumb(item.thumbCanvas, resultCanvas);
     if (item.url) URL.revokeObjectURL(item.url);
     resultCanvas.toBlob(function(blob) {
       item.url = URL.createObjectURL(blob);
     }, 'image/png');
     item.meta.textContent = '已裁掉顶部 ' + crop.top + 'px，底部 ' + (sourceCanvas.height - crop.bottom) + 'px' +
-      (item.overlayToggle.checked ? '，已去掉边缘按钮和文字' : '');
+      (cropSides ? '，左侧 ' + crop.left + 'px，右侧 ' + (sourceCanvas.width - crop.right) + 'px' : '') +
+      (removeOverlay ? '，已去掉边缘按钮和文字' : '');
   }
 
   function cropAll() {
     items.forEach(cropItem);
     if (items.length) setStatus('已重新处理 ' + items.length + ' 张图片');
+  }
+
+  function setAll(setting, checked) {
+    items.forEach(function(item) { item[setting].checked = checked; });
+    cropAll();
   }
 
   function croppedName(name) {
@@ -516,6 +677,8 @@ canvas { display: block; width: 100%; height: auto; }
     loadFiles(fileInput.files);
   });
   sensitivity.addEventListener('input', cropAll);
+  overlayGlobalToggle.addEventListener('change', function() { setAll('overlayCheck', overlayGlobalToggle.checked); });
+  sideCropToggle.addEventListener('change', function() { setAll('sideCheck', sideCropToggle.checked); });
   clearAllBtn.addEventListener('click', clearAll);
   downloadAllBtn.addEventListener('click', function() {
     items.forEach(function(item, index) {

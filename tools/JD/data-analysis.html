@@ -4372,12 +4372,6 @@
   function iconPlus() {
     return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
   }
-  function iconImport() {
-    return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v10m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 17v2h14v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-  }
-  function iconExport() {
-    return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 14V4m0 0L8 8m4-4l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 17v2h14v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-  }
   function iconPencil() {
     return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20h4.5L19 9.5 14.5 5 4 15.5V20Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13.5 6 18 10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
   }
@@ -5178,34 +5172,6 @@
     if (datePickers.analyzed) datePickers.analyzed.parse();
   }
 
-  function openAnalyzedDatePicker() {
-    if (datePickers.analyzed) datePickers.analyzed.open();
-  }
-
-  function closeAnalyzedDatePicker() {
-    if (datePickers.analyzed) datePickers.analyzed.close();
-  }
-
-  function setAnalyzedRange(start, end) {
-    if (datePickers.analyzed) datePickers.analyzed.setRange(start, end);
-  }
-
-  function getAnalyzedCurrentRange() {
-    return datePickers.analyzed ? datePickers.analyzed.getRange() : null;
-  }
-
-  function updateAnalyzedDateStepButtons() {
-    if (datePickers.analyzed) datePickers.analyzed.updateStepButtons();
-  }
-
-  function shiftAnalyzedDateRange(direction) {
-    if (datePickers.analyzed) datePickers.analyzed.shift(direction);
-  }
-
-  function renderAnalyzedDatePicker() {
-    if (datePickers.analyzed) datePickers.analyzed.render();
-  }
-
   function bindDbConnection(database) {
     db = database;
     db.onversionchange = function() {
@@ -5660,10 +5626,6 @@
       });
     });
     return columns.length ? columns : ['记录'];
-  }
-
-  function dbDisplayValue(value) {
-    return stringifyDbValue(value);
   }
 
   function dbColumnWidth(values) {
@@ -7937,21 +7899,6 @@
     return dates[0] || input.value || yesterday();
   }
 
-  function normalizeManualRankingRecordsByDate(records, trackedOnly) {
-    var dates = {};
-    var rowMap = {};
-    (records || []).forEach(function(row) {
-      var date = canonicalYmd(row && row.startDate);
-      var endDate = canonicalYmd(row && (row.endDate || row.startDate));
-      var sku = normalizeSkuValue(row && row.sku);
-      if (!date || !sku || date !== endDate) return;
-      if (trackedOnly && !row.isTrackedCompetitor) return;
-      dates[date] = true;
-      rowMap[date + '|' + sku] = row;
-    });
-    return { dates: Object.keys(dates).sort(function(a, b) { return b.localeCompare(a); }), rowMap: rowMap };
-  }
-
   async function renderManualRankingEntry() {
     if (!$('manualRankingHead')) return;
     updateManualGrowthOptions('');
@@ -8018,15 +7965,6 @@
     if (!$('manualRankingMsg')) return;
     $('manualRankingMsg').textContent = text || '';
     $('manualRankingMsg').className = 'msg ' + (isErr ? 'err' : 'ok');
-  }
-
-  function shiftManualRankingDate(days) {
-    var current = dateFromYmd(getManualRankingDate()) || dateFromYmd(yesterday());
-    if (!current) return;
-    var nextDate = ymd(addDays(current, days));
-    if (datePickers.manualRanking) datePickers.manualRanking.setRange(nextDate, nextDate);
-    else $('manualRankingDate').value = nextDate;
-    renderManualRankingEntry();
   }
 
   function manualRankingRowValueSignature(tr) {
@@ -8106,16 +8044,6 @@
     await renderRankingRaw();
   }
 
-  function otherData(row, knownKeys) {
-    var ignored = {};
-    knownKeys.concat(['id']).forEach(function(key) { ignored[key] = true; });
-    var rest = {};
-    Object.keys(row || {}).forEach(function(key) {
-      if (!ignored[key] && row[key] !== '' && row[key] != null) rest[key] = row[key];
-    });
-    return Object.keys(rest).length ? JSON.stringify(rest) : '';
-  }
-
   async function renderSkuDb() {
     var rows = await getAll('sku_profiles');
     rows.sort(function(a, b) {
@@ -8161,30 +8089,6 @@
       }).join('') + '</tr>';
     }).join('');
     enhanceAllResizableTables();
-  }
-
-  function compressDateRangesForText(dates) {
-    var sorted = Array.from(new Set(dates || [])).filter(Boolean).sort();
-    var parts = [];
-    var start = '';
-    var prev = '';
-    sorted.forEach(function(date) {
-      if (!start) {
-        start = date;
-        prev = date;
-        return;
-      }
-      var next = ymd(addDays(dateFromYmd(prev), 1));
-      if (date === next) {
-        prev = date;
-        return;
-      }
-      parts.push(start === prev ? start : start + ' 至 ' + prev);
-      start = date;
-      prev = date;
-    });
-    if (start) parts.push(start === prev ? start : start + ' 至 ' + prev);
-    return parts.join('、');
   }
 
   function renderGroupedDataWarnings(warnings) {
@@ -8905,11 +8809,6 @@
     }).sort(function(a, b) {
       return allowed.indexOf(a) - allowed.indexOf(b);
     });
-  }
-
-  function saveGrossMarginProfileColumns() {
-    normalizeGrossMarginProfileColumns();
-    localStorage.setItem('jdGrossMarginProfileColumns', JSON.stringify(grossMarginProfileColumns));
   }
 
   function grossMarginDimensionOptions() {
@@ -10344,35 +10243,6 @@
     box.innerHTML = renderGroupedDataWarnings(warnings);
   }
 
-  async function generateCompetitorEstimates() {
-    var range = datePickers.estimate ? datePickers.estimate.getRange() : normalizedRange($('estimateStartDate').value, $('estimateEndDate').value || $('estimateStartDate').value);
-    var dates = datesInRange(range.start, range.end || range.start);
-    var estimates = await getAll('competitor_estimates');
-    var rankings = await getAll('ranking_raw_metrics');
-    var skuRows = await getAll('sku_profiles');
-    var trackedSkus = skuRows.filter(function(row) {
-      return row.itemType === 'competitor' && row.isTrackedCompetitor && normalizeSkuValue(row.sku);
-    }).map(function(row) { return normalizeSkuValue(row.sku); });
-    var rankingSkus = rankings.map(function(row) { return normalizeSkuValue(row.sku); }).filter(Boolean);
-    var skus = Array.from(new Set(trackedSkus.concat(rankingSkus)));
-    var maps = buildEstimateRowMaps(estimates, rankings);
-    var touched = {};
-    dates.forEach(function(date) {
-      skus.forEach(function(sku) {
-        estimateMetricConfigs().forEach(function(config) {
-          generateEstimateForDate(sku, date, config, maps, touched);
-        });
-      });
-    });
-    var rows = Object.values(touched);
-    for (var i = 0; i < rows.length; i++) {
-      await put('competitor_estimates', rows[i]);
-    }
-    setEstimateMsg('已生成/修正 ' + rows.length + ' 条竞品追踪。');
-    await renderEstimatesDb();
-    await refreshCounts();
-  }
-
   function estimateRowComplete(row) {
     if (!row) return false;
     return !!metricRangeFromEstimate(row, estimateMetricConfigs()[0]) && !!metricRangeFromEstimate(row, estimateMetricConfigs()[1]);
@@ -10473,35 +10343,6 @@
     await renderDbBrowser();
     setDbBackupMsg('已清除全部数据库数据和本工具缓存设置。页面即将刷新。', false);
     setTimeout(function() { location.reload(); }, 700);
-  }
-
-  function collectMissingEstimateGrowthWarnings(skuRows, estimateRows, rankingRows, range) {
-    var normalized = normalizedRange(range && range.start, range && (range.end || range.start));
-    if (!normalized) return [];
-    var dates = datesInRange(normalized.start, normalized.end || normalized.start);
-    var trackedProfiles = (skuRows || []).filter(function(row) {
-      return row.itemType === 'competitor' && row.isTrackedCompetitor && normalizeSkuValue(row.sku);
-    });
-    var maps = buildEstimateRowMaps(estimateRows || [], rankingRows || []);
-    var missing = {};
-    dates.forEach(function(date) {
-      trackedProfiles.forEach(function(profile) {
-        var sku = normalizeSkuValue(profile.sku);
-        if (!sku) return;
-        var estimate = maps.estimateMap[estimateDateKey(sku, date)];
-        var ranking = maps.rankingMap[estimateDateKey(sku, date)];
-        if (!ranking) return;
-        estimateMetricConfigs().forEach(function(config) {
-          if (metricRangeFromEstimate(estimate, config)) return;
-          if (!metricRangeFromRanking(ranking, config)) return;
-          if (growthCoefficientRange(ranking, config)) return;
-          var name = profile.shortName || sku;
-          var key = date + '|' + config.key + '|' + sku;
-          missing[key] = date + ' ' + name + config.label + '增长率';
-        });
-      });
-    });
-    return Object.keys(missing).sort().map(function(key) { return missing[key]; });
   }
 
   function syncEstimateViewControls() {
@@ -13694,16 +13535,6 @@
     return workbook;
   }
 
-  function collectSkuDimensionKeys(skuRows) {
-    var keys = ['all', 'mainSeries', 'subSeries', 'shortName', 'sku', 'brand', 'materialCode', 'packageSpec', 'mainorsub'];
-    (skuRows || []).forEach(function(row) {
-      Object.keys(row || {}).forEach(function(key) {
-        if (key.indexOf('custom_') === 0 && keys.indexOf(key) === -1) keys.push(key);
-      });
-    });
-    return keys;
-  }
-
   function dimensionValueFromProfile(profile, sku, dim) {
     if (dim === 'all') return '';
     if (dim === 'sku') return sku || '';
@@ -14845,13 +14676,6 @@
     });
   }
 
-  function dateRangesOverlap(aStart, aEnd, bStart, bEnd) {
-    aEnd = aEnd || aStart;
-    bEnd = bEnd || bStart;
-    if (!aStart || !bStart) return false;
-    return aStart <= bEnd && bStart <= aEnd;
-  }
-
   function metricRowsShareExactDateScope(a, b) {
     var aBounds = rowDateBounds(a || {});
     var bBounds = rowDateBounds(b || {});
@@ -14902,99 +14726,6 @@
       packageSpec: '箱规',
       mainorsub: '主赠品品属性'
     }[dim] || dim;
-  }
-
-  async function renderMonitorTracks(analyzedRows, skuRows) {
-    analyzedRows = analyzedRows || await getAll('analyzed_metrics');
-    skuRows = skuRows || await getAll('sku_profiles');
-    if (!monitorTracks.length) {
-      $('monitorBody').innerHTML = '<tr><td class="empty-row" colspan="10">暂无追踪项</td></tr>';
-      $('monitorMsg').textContent = '';
-      enhanceAllResizableTables();
-      return;
-    }
-    var skuMap = {};
-    skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
-    function monitorComparableValue(dim, sku, profile) {
-      if (dim === 'sku') return sku;
-      if (dim === 'brand') return profile && profile.itemType === 'competitor' ? (profile.shortName || profile.sku || '') : '';
-      return profile ? (profile[dim] || '') : '';
-    }
-    function monitorValueOptions(dim) {
-      var map = {};
-      if (dim === 'brand') {
-        skuRows.forEach(function(profile) {
-          if (profile && profile.itemType === 'competitor') {
-            var value = profile.shortName || profile.sku || '';
-            if (value) map[String(value)] = true;
-          }
-        });
-        return Object.keys(map).sort(function(a, b) {
-          return a.localeCompare(b, 'zh-Hans-CN', { numeric: true });
-        });
-      }
-      analyzedRows.forEach(function(row) {
-        var sku = normalizeSkuValue(row.sku);
-        var profile = skuMap[sku] || {};
-        var value = monitorComparableValue(dim, sku, profile);
-        if (value) map[String(value)] = true;
-      });
-      return Object.keys(map).sort(function(a, b) {
-        return a.localeCompare(b, 'zh-Hans-CN', { numeric: true });
-      });
-    }
-    $('monitorBody').innerHTML = monitorTracks.map(function(track, index) {
-      var options = monitorValueOptions(track.dimension || 'subSeries');
-      var datalistId = 'monitorTargetOptions' + index;
-      var matchedSku = {};
-      if (track.dimension === 'brand') {
-        skuRows.forEach(function(profile) {
-          var sku = normalizeSkuValue(profile.sku);
-          var value = monitorComparableValue(track.dimension, sku, profile);
-          if (sku && String(value) === String(track.target || '')) matchedSku[sku] = true;
-        });
-      } else {
-        analyzedRows.forEach(function(row) {
-          var sku = normalizeSkuValue(row.sku);
-          var profile = skuMap[sku] || {};
-          var value = monitorComparableValue(track.dimension, sku, profile);
-          if (String(value) === String(track.target || '')) matchedSku[sku] = true;
-        });
-      }
-      var total = { qty: 0, amount: 0, visitors: 0, onsiteCost: 0, offsiteCost: 0 };
-      analyzedRows.forEach(function(row) {
-        var sku = normalizeSkuValue(row.sku);
-        if (!matchedSku[sku]) return;
-        var rowTotal = { salesQty: 0, salesAmount: 0, visitorCount: 0, onsiteCost: 0, offsiteCost: 0 };
-        addOwnMetricTotals(rowTotal, row);
-        total.qty += rowTotal.salesQty;
-        total.amount += rowTotal.salesAmount;
-        total.visitors += rowTotal.visitorCount;
-        total.onsiteCost += rowTotal.onsiteCost;
-        total.offsiteCost += rowTotal.offsiteCost;
-      });
-      var conversion = total.visitors ? total.qty / total.visitors : '';
-      return '<tr data-index="' + index + '">' +
-        '<td><select class="select monitor-dim">' +
-          ['subSeries', 'mainSeries', 'shortName', 'sku', 'brand', 'materialCode', 'packageSpec', 'mainorsub'].map(function(dim) {
-            return '<option value="' + dim + '"' + (track.dimension === dim ? ' selected' : '') + '>' + monitorDimensionLabel(dim) + '</option>';
-          }).join('') +
-        '</select></td>' +
-        '<td><input class="input monitor-target" list="' + datalistId + '" value="' + esc(track.target || track.name || '') + '" placeholder="搜索或选择' + esc(monitorDimensionLabel(track.dimension || 'subSeries')) + '">' +
-          '<datalist id="' + datalistId + '">' + options.map(function(value) { return '<option value="' + esc(value) + '"></option>'; }).join('') + '</datalist></td>' +
-        '<td></td>' +
-        '<td>' + esc(formatMetric(total.qty, 0)) + '</td>' +
-        '<td>' + esc(formatMetric(total.amount, 2)) + '</td>' +
-        '<td>' + esc(formatMetric(total.visitors, 0)) + '</td>' +
-        '<td>' + esc(formatPercent(conversion)) + '</td>' +
-        '<td>' + esc(formatMetric(total.onsiteCost, 2)) + '</td>' +
-        '<td>' + esc(formatMetric(total.offsiteCost, 2)) + '</td>' +
-        '<td><button class="icon-btn row-delete-btn monitor-delete" title="删除追踪项">' + iconTrash() + '</button></td>' +
-      '</tr>';
-    }).join('');
-    $('monitorMsg').textContent = '追踪名称按所选维度从当前日期范围内出现过的条目中选择，也可以输入后搜索。';
-    $('monitorMsg').className = 'msg';
-    enhanceAllResizableTables();
   }
 
   function updateMonitorTrackFromRow(row) {
@@ -15492,18 +15223,6 @@
       handlePageNavigation(replacePageHash(managementLink));
     });
   });
-  function focusManagedTarget() {
-    var target = sessionStorage.getItem('jdDataManagementFocus');
-    if (!target) return;
-    sessionStorage.removeItem('jdDataManagementFocus');
-    setTimeout(function() {
-      var node = $(target);
-      if (node) {
-        var panel = node.closest('.sku-panel') || node;
-        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 120);
-  }
   window.addEventListener('hashchange', function() {
     handlePageNavigation(readPageHash() || 'import');
   });
@@ -16314,140 +16033,6 @@
   $('clearRankingRawBtn').addEventListener('click', function() { clearDbTable('ranking_raw_metrics', renderRankingRaw); });
   if ($('clearSkuDbBtn')) $('clearSkuDbBtn').addEventListener('click', function() { clearDbTable('sku_profiles', renderSkuDb); });
   $('clearAnalyzedDbBtn').addEventListener('click', clearCurrentAnalyzedRows);
-  function editFinanceGiftRule(row, field) {
-    var modal = $('financeGiftRuleModal');
-    var body = $('financeGiftRuleModalBody');
-    var pasteInput = $('financeGiftRulePasteInput');
-    if (!modal || !body || !pasteInput) return;
-    var title = field === 'gifts' ? '配置赠品' : '配置配件';
-    $('financeGiftRuleTitle').textContent = title;
-    $('financeGiftRuleText').textContent = '当前主 SKU：' + (row.sku || '-') + '。按 SKU 和数量录入，数量默认为 1。';
-    var draft = JSON.parse(JSON.stringify(row[field] && row[field].length ? row[field] : [{ sku: '', qty: 1 }]));
-    function shortNamePreviewText(sku) {
-      sku = normalizeSkuValue(sku);
-      return sku && financeGiftSkuNameMap[sku] ? sku + '(' + financeGiftSkuNameMap[sku] + ')' : sku;
-    }
-    function setSkuInputDisplay(input, editing) {
-      if (!input) return;
-      var raw = normalizeSkuValue(input.dataset.rawSku != null ? input.dataset.rawSku : input.value);
-      input.dataset.rawSku = raw;
-      input.value = editing ? raw : shortNamePreviewText(raw);
-    }
-    function renderRows() {
-      body.innerHTML = draft.map(function(item, index) {
-        return '<tr data-finance-gift-rule-row="' + index + '">' +
-          '<td><input class="input" data-finance-gift-rule-sku data-raw-sku="' + esc(normalizeSkuValue(item.sku || '')) + '" value="' + esc(shortNamePreviewText(item.sku || '')) + '" placeholder="SKU"></td>' +
-          '<td><input class="input" data-finance-gift-rule-qty type="number" min="0" step="0.01" value="' + esc(item.qty || 1) + '"></td>' +
-          '<td><button class="icon-btn row-delete-btn" data-finance-gift-rule-delete type="button">' + iconTrash() + '</button></td>' +
-        '</tr>';
-      }).join('');
-    }
-    function syncDraft() {
-      body.querySelectorAll('[data-finance-gift-rule-row]').forEach(function(tr) {
-        var index = Number(tr.getAttribute('data-finance-gift-rule-row'));
-        var skuInput = tr.querySelector('[data-finance-gift-rule-sku]');
-        draft[index] = {
-          sku: normalizeSkuValue((skuInput && skuInput.dataset.rawSku) || (skuInput && skuInput.value) || ''),
-          qty: Number(tr.querySelector('[data-finance-gift-rule-qty]').value) || 1
-        };
-      });
-    }
-    function parsePastedSkus(text) {
-      return Array.from(new Set(String(text || '')
-        .split(/[\r\n\t,，;；\s]+/)
-        .map(function(part) {
-          return normalizeSkuValue(String(part || '').replace(/[（(].*$/, ''));
-        })
-        .filter(Boolean)));
-    }
-    function importPastedSkus(text) {
-      var skus = parsePastedSkus(text);
-      if (!skus.length) return;
-      syncDraft();
-      var existing = {};
-      draft.forEach(function(item) {
-        var sku = normalizeSkuValue(item && item.sku);
-        if (sku) existing[sku] = true;
-      });
-      var next = draft.filter(function(item) { return normalizeSkuValue(item && item.sku); });
-      skus.forEach(function(sku) {
-        if (existing[sku]) return;
-        existing[sku] = true;
-        next.push({ sku: sku, qty: 1 });
-      });
-      draft = next.length ? next : [{ sku: '', qty: 1 }];
-      renderRows();
-    }
-    async function close(save) {
-      modal.classList.remove('open');
-      modal.setAttribute('aria-hidden', 'true');
-      $('financeGiftRuleCancelBtn').removeEventListener('click', cancel);
-      $('financeGiftRuleOkBtn').removeEventListener('click', ok);
-      $('addFinanceGiftRuleRowBtn').removeEventListener('click', add);
-      body.removeEventListener('click', del);
-      body.removeEventListener('input', onInput);
-      body.removeEventListener('focusin', onFocusIn);
-      body.removeEventListener('focusout', onFocusOut);
-      pasteInput.removeEventListener('paste', onPaste);
-      pasteInput.removeEventListener('change', onPasteChange);
-      if (save) {
-        syncDraft();
-        row[field] = draft.filter(function(item) { return item.sku; });
-        await renderFinanceGiftRules(false);
-        await saveFinanceGiftRules();
-      }
-    }
-    function cancel() { close(false); }
-    function ok() { close(true); }
-    function add() {
-      syncDraft();
-      draft.push({ sku: '', qty: 1 });
-      renderRows();
-    }
-    function del(e) {
-      if (!e.target.closest('[data-finance-gift-rule-delete]')) return;
-      syncDraft();
-      draft.splice(Number(e.target.closest('[data-finance-gift-rule-row]').getAttribute('data-finance-gift-rule-row')), 1);
-      if (!draft.length) draft.push({ sku: '', qty: 1 });
-      renderRows();
-    }
-    function onInput(e) {
-      if (!e.target.matches('[data-finance-gift-rule-sku]')) return;
-      e.target.dataset.rawSku = normalizeSkuValue(e.target.value);
-    }
-    function onFocusIn(e) {
-      if (!e.target.matches('[data-finance-gift-rule-sku]')) return;
-      setSkuInputDisplay(e.target, true);
-    }
-    function onFocusOut(e) {
-      if (!e.target.matches('[data-finance-gift-rule-sku]')) return;
-      e.target.dataset.rawSku = normalizeSkuValue(e.target.value);
-      setSkuInputDisplay(e.target, false);
-    }
-    function onPaste() {
-      setTimeout(function() {
-        importPastedSkus(pasteInput.value);
-        pasteInput.value = '';
-      }, 0);
-    }
-    function onPasteChange() {
-      importPastedSkus(pasteInput.value);
-      pasteInput.value = '';
-    }
-    renderRows();
-    pasteInput.value = '';
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden', 'false');
-    $('financeGiftRuleCancelBtn').addEventListener('click', cancel);
-    $('financeGiftRuleOkBtn').addEventListener('click', ok);
-    $('addFinanceGiftRuleRowBtn').addEventListener('click', add);
-    body.addEventListener('click', del);
-    body.addEventListener('input', onInput);
-    body.addEventListener('focusin', onFocusIn);
-    body.addEventListener('focusout', onFocusOut);
-    pasteInput.addEventListener('paste', onPaste);
-    pasteInput.addEventListener('change', onPasteChange);
-  }
   if ($('financeGiftDimBtn')) {
     $('financeGiftDimBtn').addEventListener('click', function(e) {
       e.stopPropagation();

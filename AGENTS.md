@@ -126,8 +126,6 @@ navigation/
 典型结构包括：
 
 - 左侧桌面 TOC
-- 移动端 TOC popup
-- 浮动工具栏
 - `section.step`
 - `.step-img` 图片
 - 代码复制按钮 `copyCode(this)`
@@ -260,27 +258,18 @@ link -> { title, url, desc, target? }
 - 教程 / 工具体系下，`guides/shared.js` 会自动创建或更新 favicon
 - 首页没有依赖 `shared.js`，它自己维护 `meta[name="theme-color"]`
 
-### 7.3 浮动工具栏
+### 7.3 主题与页面导航
 
-以下页面体系默认依赖 `#floatWrapper`：
-
-- 教程页
-- 多数工具页
-
-如果页面使用 `shared.js` 中的浮动栏逻辑，就不要删除这些固定 ID：
-
-- `floatWrapper`
-- `floatStack`
-- `floatHandle`
-- `themeToggle`
-- `backToTop`
+- 右上角书签式浮动工具栏已于 2026-07-15 从教程页、工具页和模板中移除，不要在新页面中恢复固定的 `floatWrapper` 结构
+- 教程 / 工具页仍通过 `guides/shared.js` 读取 `localStorage.theme` 或系统主题
+- 页面返回入口使用正文顶部的 `.back-link`
 
 ### 7.4 Lightbox / TOC / 烟花
 
 `guides/shared.js` 提供：
 
 - `.step-img` 点击放大 lightbox
-- 桌面 TOC 克隆为移动端 popup
+- 桌面 TOC 滚动高亮
 - 回到顶部按钮显隐
 - 点击烟花粒子
 

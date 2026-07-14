@@ -254,20 +254,6 @@
 </head>
 <body>
 
-<div class="float-wrapper" id="floatWrapper">
-  <div class="float-stack open" id="floatStack">
-    <div class="bookmark-strip">
-      <div class="bookmark-tab" id="floatHandle" title="展开工具栏" aria-label="展开工具栏"></div>
-      <div class="bookmark-buttons">
-        <button class="theme-toggle" id="themeToggle" title="切换主题" aria-label="切换日夜间模式"></button>
-        <a href="../../../index.html" class="float-btn" title="返回导航">↩</a>
-        <button class="float-btn" id="backToTop" title="回到顶部">↑</button>
-      </div>
-    </div>
-  </div>
-  <div class="float-w"></div>
-</div>
-
 <div class="bg-decor"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
 
 <div class="app">
@@ -498,21 +484,6 @@
     if (blocked.test(text)) return false;
     return /^[\u4e00-\u9fa5]{2,12}$/.test(text);
   }
-  function isCityColumn(header, centers) {
-    var text = cleanCell(header);
-    if (!text) return false;
-    var blocked = /供应商|账期|商品|渠道|名称|单价|备注|属性|场景|时间|原因|合同|编码|SKU/i;
-    if (blocked.test(text)) return false;
-    if (centers.length) {
-      var matched = matchCenter(text, centers);
-      return normalize(matched) !== normalize(text) || centers.some(function(center) {
-        var key = normalize(center);
-        var source = normalize(text);
-        return key === source || key.indexOf(source) !== -1 || source.indexOf(key) !== -1;
-      });
-    }
-    return /^[\u4e00-\u9fa5]{2,8}$/.test(text);
-  }
   function extractCentersFromRows(rows) {
     var headerIndex = -1;
     var centerCol = -1;
@@ -541,11 +512,6 @@
       });
     }
     return values;
-  }
-  function importCentersFromWorkbook(workbook) {
-    var sheetName = workbook.SheetNames.find(isCenterSheetName) || workbook.SheetNames[0];
-    if (!sheetName) return [];
-    return saveCenters(extractCentersFromRows(sheetToRows(workbook.Sheets[sheetName])));
   }
   function extractTemplateHeaders(workbook) {
     var sheetName = workbook.SheetNames.find(isNewOrderSheetName);

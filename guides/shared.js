@@ -1,16 +1,3 @@
-/* ---- TOC popup: clone from desktop TOC ---- */
-(function() {
-  var toc = document.querySelector('.toc');
-  var popup = document.getElementById('tocPopup');
-  if (!toc || !popup) return;
-  // Clone TOC parts and items into popup (skip toc-label)
-  var children = toc.querySelectorAll('.toc-part, .toc-item');
-  children.forEach(function(el) {
-    var clone = el.cloneNode(true);
-    popup.appendChild(clone);
-  });
-})();
-
 /* ---- Lightbox ---- */
 (function() {
   var lb = document.getElementById('lightbox');
@@ -38,28 +25,6 @@ function copyCode(btn) {
   });
 }
 
-/* ---- Float stack toggle ---- */
-(function() {
-  var handle = document.getElementById('floatHandle');
-  var stack = document.getElementById('floatStack');
-  if (!handle || !stack) return;
-  handle.addEventListener('click', function() { stack.classList.toggle('open'); });
-})();
-
-/* ---- TOC toggle ---- */
-(function() {
-  var btn = document.getElementById('tocToggle');
-  var popup = document.getElementById('tocPopup');
-  if (!btn || !popup) return;
-  btn.addEventListener('click', function(e) { e.stopPropagation(); popup.classList.toggle('open'); });
-  popup.addEventListener('click', function(e) {
-    if (e.target.closest('.toc-item')) popup.classList.remove('open');
-  });
-  document.addEventListener('click', function(e) {
-    if (!popup.contains(e.target) && e.target !== btn) popup.classList.remove('open');
-  });
-})();
-
 /* ---- Scroll spy ---- */
 (function() {
   var steps = document.querySelectorAll('.step[id]');
@@ -74,9 +39,8 @@ function copyCode(btn) {
   });
 })();
 
-/* ---- Theme + Back to top + Firework ---- */
+/* ---- Theme + Firework ---- */
 (function() {
-  var toggle = document.getElementById('themeToggle');
   var html = document.documentElement;
   var LIGHT = 'light', DARK = 'dark';
   function getTheme() {
@@ -86,7 +50,6 @@ function copyCode(btn) {
   }
   function applyTheme(t) {
     html.setAttribute('data-theme', t);
-    toggle.innerHTML = t === LIGHT ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
     localStorage.setItem('theme', t);
     // Sync favicon with theme
     var favicon = document.getElementById('favicon');
@@ -102,20 +65,7 @@ function copyCode(btn) {
       favicon.href = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'%3E%3Cellipse cx=\'11\' cy=\'19\' rx=\'9\' ry=\'7\' fill=\'none\' stroke=\'' + fc + '\' stroke-width=\'2.5\'/%3E%3Cpolygon points=\'20,12 27,6 27,24 20,20\' fill=\'none\' stroke=\'' + fc + '\' stroke-width=\'2.5\' stroke-linejoin=\'round\'/%3E%3Ccircle cx=\'7\' cy=\'18\' r=\'1.8\' fill=\'' + fc + '\'/%3E%3C/svg%3E';
     }
   }
-  toggle.addEventListener('click', function() {
-    applyTheme(html.getAttribute('data-theme') === LIGHT ? DARK : LIGHT);
-  });
   applyTheme(getTheme());
-
-  var backToTop = document.getElementById('backToTop');
-  if (backToTop) {
-    backToTop.addEventListener('click', function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    window.addEventListener('scroll', function() {
-      backToTop.classList.toggle('visible', window.scrollY > 400);
-    });
-  }
 
   var HUES_PINK = [340,350,355,0,10,20,330,345,5,15,335,25];
   var HUES_COOL = [220,235,250,260,270,280,240,255,265,275,245,260];
