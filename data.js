@@ -44,7 +44,8 @@ const SITE_DATA = {
         {
           name: "通用摸鱼小工具",
           links: [
-            { title: "鼠标识别检测", url: "tools/dev/mouse-debug.html", desc: "光标热点校准 · 偏移量可视化" }
+            { title: "鼠标识别检测", url: "tools/dev/mouse-debug.html", desc: "光标热点校准 · 偏移量可视化" },
+            { title: "截图照片裁边", url: "tools/dev/photo-crop.html", desc: "自动裁掉截图上下黑白边" }
           ]
         }
       ]
