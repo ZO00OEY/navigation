@@ -764,6 +764,7 @@
   padding: 7px 13px;
   border-radius: 2px;
   cursor: pointer;
+  white-space: nowrap;
 }
 .estimate-mode-btn.active {
   background: rgba(var(--tool-accent-rgb), 0.12);
@@ -2523,7 +2524,10 @@
   align-items: end; margin-bottom: 10px;
 }
 .filter-left { max-width: 320px; }
-#db-analyzed .filter-left { max-width: 420px; display: flex; align-items: flex-end; gap: 8px; }
+#db-analyzed .filter-left { max-width: 420px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; }
+.own-rank-mode { display: flex; flex-basis: 100%; align-items: center; gap: 8px; margin-top: 2px; }
+.own-rank-mode > span { color: var(--text); font-size: 0.82rem; line-height: 1; white-space: nowrap; }
+.own-rank-mode .estimate-mode-switch { height: 36px; }
 #ranking-raw .panel-title,
 #db-estimates .panel-title { margin-bottom: 6px; }
 #ranking-raw .ranking-panel-sub,
@@ -2999,6 +3003,13 @@
           <div class="report-detail-topbar">
             <div class="report-detail-left">
               <div class="field date-picker-field" id="reportDatePickerField"></div>
+              <div class="own-rank-mode">
+                <span>排名口径</span>
+                <div class="estimate-mode-switch" aria-label="排名口径">
+                  <button class="estimate-mode-btn" type="button" data-own-rank-mode="main">全排名</button>
+                  <button class="estimate-mode-btn" type="button" data-own-rank-mode="best">系列最高排名</button>
+                </div>
+              </div>
             </div>
             <div class="report-detail-right">
               <div class="report-month-progress-hint" id="reportMonthProgressHint"></div>
@@ -3214,6 +3225,13 @@
           <div class="filter-strip">
             <div class="filter-left">
               <div class="field date-picker-field" id="analyzedDatePickerField"></div>
+              <div class="own-rank-mode">
+                <span>排名口径</span>
+                <div class="estimate-mode-switch" aria-label="排名口径">
+                  <button class="estimate-mode-btn" type="button" data-own-rank-mode="main">全排名</button>
+                  <button class="estimate-mode-btn" type="button" data-own-rank-mode="best">系列最高排名</button>
+                </div>
+              </div>
             </div>
             <div class="filter-right">
               <div class="filter-actions">
@@ -4294,7 +4312,7 @@
   var searchAnalysisFilterWords = JSON.parse(localStorage.getItem('jdSearchAnalysisFilterWords') || '[]');
   var searchAnalysisBrandWords = JSON.parse(localStorage.getItem('jdSearchAnalysisBrandWords') || '[]');
   var searchCustomTermsEnabled = localStorage.getItem('jdSearchCustomTermsEnabled') === 'true';
-  var searchCustomTerms = sanitizeSearchCustomTerms(JSON.parse(localStorage.getItem('jdSearchCustomTerms') || '[]'));
+  var searchCustomTerms = padSearchCustomTerms(sanitizeSearchCustomTerms(JSON.parse(localStorage.getItem('jdSearchCustomTerms') || '[]')));
   var searchAnalysisLastDimension = localStorage.getItem('jdSearchAnalysisDimension') || 'mainSeries';
   var searchAnalysisLastValue = localStorage.getItem('jdSearchAnalysisValue') || '';
   if (!grossMarginAvailableDimensionsRaw && !grossMarginSelectedDimensionsRaw && grossMarginProfileColumns.length) {
@@ -4327,6 +4345,7 @@
   var reportTemplateCopyRowsLoaded = false;
   var reportTemplateLoading = false;
   var reportRenderRetryTimer = 0;
+  var ownRankMode = localStorage.getItem('jdOwnRankMode') === 'best' ? 'best' : 'main';
   var reportRenderRetryCount = 0;
   var grossMarginDashboardHideZeroSales = localStorage.getItem('jdGrossMarginDashboardHideZeroSales') === 'true';
   var estimateSavedRange = JSON.parse(sessionStorage.getItem('jdEstimateDateRange') || 'null');
@@ -8183,6 +8202,7 @@
     var rows = await getAll('analyzed_metrics');
     var skuRows = await getAll('sku_profiles');
     var rankingRows = await getAll('ranking_raw_metrics');
+    syncOwnRankModeControls();
     syncAnalyzedHideZeroSalesToggle();
     var skuMap = {};
     skuRows.forEach(function(item) { if (item.sku) skuMap[normalizeSkuValue(item.sku)] = item; });
@@ -8293,6 +8313,12 @@
         words: parseWordList(Array.isArray(term.words) ? term.words.join('，') : term.words)
       };
     });
+  }
+
+  function padSearchCustomTerms(terms) {
+    terms = Array.isArray(terms) ? terms.slice() : [];
+    while (terms.length < 3) terms.push({ id: 'term_' + Date.now() + '_' + terms.length, title: '', words: [] });
+    return terms;
   }
 
   function enabledSearchCustomTerms() {
@@ -13551,6 +13577,21 @@
 
   function renderReportConfig() {
     saveReportDimensions();
+    syncOwnRankModeControls();
+  }
+
+  function syncOwnRankModeControls() {
+    document.querySelectorAll('[data-own-rank-mode]').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-own-rank-mode') === ownRankMode);
+    });
+  }
+
+  async function setOwnRankMode(mode) {
+    ownRankMode = mode === 'best' ? 'best' : 'main';
+    localStorage.setItem('jdOwnRankMode', ownRankMode);
+    syncOwnRankModeControls();
+    await renderAnalyzedDb();
+    if ((readPageHash() || 'import') === 'report') await renderReportOutput();
   }
 
   function isReportMetricRowForDate(row, date) {
@@ -13590,13 +13631,19 @@
     return rankMap;
   }
 
+  function rankTextForSkuSet(skus, date, rankMap) {
+    if (ownRankMode === 'best') return bestRankForSkuSet(skus, date, rankMap);
+    return (skus || []).map(function(sku) {
+      return rankMap[normalizeSkuValue(sku) + '|' + date] || '';
+    }).filter(Boolean).join('、');
+  }
+
   function bestRankForSkuSet(skus, date, rankMap) {
     var best = '';
-    (skus || []).some(function(sku) {
+    (skus || []).forEach(function(sku) {
       var rank = Number(rankMap[normalizeSkuValue(sku) + '|' + date] || 0);
-      if (!rank) return false;
+      if (!rank) return;
       best = !best || rank < Number(best) ? rank : best;
-      return true;
     });
     return best;
   }
@@ -13621,7 +13668,7 @@
     var dates = isRangeSummary ? [range.start || ''] : datesInRange(range.start, range.end || range.start);
     var label = range.start || '';
     if (range.end && range.end !== range.start) label = range.start + ' 至 ' + range.end;
-    var canShowRank = !isRangeSummary && ['sku', 'shortName'].indexOf(dim) !== -1;
+    var canShowRank = !isRangeSummary;
     var rankMap = canShowRank ? rankLookupForRows(rankingRows) : {};
     var output = [['日期', '星期', reportDimensionLabel(dim), '销售金额', '销售数量', '访客/点击', '转化率', '站内花费', '站外花费', '排名']];
     dates.forEach(function(date) {
@@ -13638,13 +13685,12 @@
         }
         if (sku && groups[value].skus.indexOf(sku) === -1) groups[value].skus.push(sku);
         addOwnMetricTotals(groups[value], row);
-        if (canShowRank && groups[value].skus.length === 1) groups[value].rank = row.rank || '';
       });
       Object.keys(groups).sort(function(a, b) {
         return String(a).localeCompare(String(b), 'zh-Hans-CN', { numeric: true });
       }).forEach(function(value) {
         var group = groups[value];
-        var reportRank = canShowRank && group.skus.length === 1 ? (group.rank || bestRankForSkuSet(group.skus, date, rankMap)) : '';
+        var reportRank = canShowRank ? rankTextForSkuSet(group.skus, date, rankMap) : '';
         output.push([
           isRangeSummary ? label : date,
           isRangeSummary ? '汇总' : weekdayText(date),
@@ -14688,30 +14734,30 @@
     return aBounds.start === bBounds.start;
   }
 
+  function rankTextForMetricGroup(group, rankingRows) {
+    var values = [];
+    (group.skus || []).forEach(function(sku) {
+      sku = normalizeSkuValue(sku);
+      var best = '';
+      (rankingRows || []).forEach(function(row) {
+        if (normalizeSkuValue(row.sku) !== sku || !metricRowsShareExactDateScope(group, row)) return;
+        var rank = Number(row.rank || 0);
+        if (rank && (!best || rank < Number(best))) best = rank;
+      });
+      if (best) values.push(best);
+    });
+    if (ownRankMode === 'best') {
+      return values.reduce(function(best, rank) {
+        return !best || Number(rank) < Number(best) ? rank : best;
+      }, '');
+    }
+    return values.join('、');
+  }
+
   function applyRankingToAnalyzedGroups(groups, rankingRows) {
     rankingRows = rankingRows || [];
-    var rankBySku = {};
-    rankingRows.forEach(function(row) {
-      var sku = normalizeSkuValue(row.sku);
-      var rank = Number(row.rank || 0);
-      if (!sku || !rank) return;
-      if (!rankBySku[sku]) rankBySku[sku] = [];
-      rankBySku[sku].push(row);
-    });
     groups.forEach(function(group) {
-      if (!group.rankable || (group.skus || []).length !== 1) {
-        group.rank = '';
-        return;
-      }
-      var bestRank = Number(group.rank || 0) || 0;
-      (group.skus || []).forEach(function(sku) {
-        (rankBySku[normalizeSkuValue(sku)] || []).forEach(function(row) {
-          if (!metricRowsShareExactDateScope(group, row)) return;
-          var rank = Number(row.rank || 0);
-          if (rank && (!bestRank || rank < bestRank)) bestRank = rank;
-        });
-      });
-      group.rank = bestRank || group.rank || '';
+      group.rank = rankTextForMetricGroup(group, rankingRows);
     });
   }
 
@@ -15221,6 +15267,11 @@
       if (target && !skuView) sessionStorage.setItem('jdDataManagementFocus', target);
       if (skuView) sessionStorage.setItem('jdSkuArchiveView', skuView);
       handlePageNavigation(replacePageHash(managementLink));
+    });
+  });
+  document.querySelectorAll('[data-own-rank-mode]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      setOwnRankMode(btn.getAttribute('data-own-rank-mode'));
     });
   });
   window.addEventListener('hashchange', function() {
@@ -16718,6 +16769,7 @@
       if (!btn) return;
       var card = btn.closest('[data-search-term-index]');
       searchCustomTerms.splice(Number(card.getAttribute('data-search-term-index')), 1);
+      searchCustomTerms = padSearchCustomTerms(searchCustomTerms);
       saveSearchAnalysisSettings();
       renderSearchAnalysisSettings();
       renderSearchData();
