@@ -1058,13 +1058,14 @@
   margin: 0 0 12px;
 }
 .sku-lookup-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 240px));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 12px;
-  justify-content: start;
 }
 .sku-lookup-card {
-  min-width: 0;
+  width: var(--sku-lookup-card-width, 240px);
+  max-width: 100%;
   border: 1px solid var(--line-medium, var(--card-border));
   border-radius: 8px;
   background: #fff;
@@ -1082,6 +1083,10 @@
   display: grid;
   gap: 6px;
 }
+.sku-lookup-editor { position: relative; --sku-row-height: 22px; }
+.sku-lookup-editor .replenishment-sku-name-viewport { inset: 9px 11px; }
+.sku-lookup-editor .replenishment-sku-name-layer,
+.sku-lookup-editor .replenishment-sku-name-row { top: -6px; line-height: var(--sku-row-height); }
 .sku-lookup-copy {
   width: 32px;
   height: 32px;
@@ -1095,8 +1100,15 @@
   width: 100%;
   height: 305px;
   min-height: 305px;
+  padding: 8px 10px;
+  overflow-x: hidden;
   resize: vertical;
-  line-height: 1.55;
+  color: var(--text);
+  background: transparent;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 13px;
+  line-height: 22px !important;
+  letter-spacing: 0;
 }
 .sku-lookup-msg { margin-left: auto; }
 .sku-lookup-empty {
@@ -1235,12 +1247,21 @@
   min-height: 30px;
   padding: 5px 10px;
 }
-.inventory-sku-config { margin-top: 8px; }
+.inventory-config-grid { display: grid; grid-template-columns: 460px minmax(0, 1fr); gap: 32px; align-items: start; }
+.inventory-config-column { min-width: 0; }
+.inventory-sku-config { min-width: 0; }
 .inventory-sku-config .panel-title { margin-bottom: 6px; }
+#inventorySkuInput { min-height: 240px; }
 .inventory-sku-textarea {
   width: 100%;
   min-height: 360px;
   margin-top: 4px;
+  padding: 8px 10px;
+  background: transparent;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 13px;
+  line-height: var(--sku-row-height, 22px) !important;
+  letter-spacing: 0;
   resize: vertical;
 }
 .inventory-table { min-width: 1420px; }
@@ -1254,39 +1275,139 @@
   color: var(--text-secondary);
   line-height: 1.45;
 }
-.replenishment-default-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  margin-top: 12px;
+.replenishment-settings-center { display: grid; grid-template-columns: 340px minmax(0, 1fr); min-height: 330px; margin-top: 10px; border-top: 1px solid var(--line-light, var(--card-border)); font-size: 14px; line-height: 1.5; }
+.replenishment-scope-panel { min-width: 0; padding: 16px 22px 8px 0; border-right: 1px solid var(--line-light, var(--card-border)); }
+.replenishment-scope-heading { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; margin-bottom: 10px; }
+.replenishment-config-title,
+.replenishment-scope-heading strong,
+.replenishment-setting-copy strong { font-size: 14px; }
+.replenishment-scope-heading small { color: var(--text-tertiary); font-size: 12px; }
+.replenishment-sku-editor { position: relative; --sku-row-height: 22px; }
+.replenishment-scope-panel .inventory-sku-textarea { position: relative; z-index: 1; min-height: 320px; resize: vertical; }
+.replenishment-sku-name-viewport { position: absolute; z-index: 2; inset: 8px 18px 8px 10px; overflow: hidden; pointer-events: none; }
+.replenishment-sku-name-layer { width: max-content; min-width: 100%; color: var(--text-tertiary); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; line-height: var(--sku-row-height, 22px); white-space: nowrap; }
+.replenishment-sku-name-row { position: relative; top: -3px; height: var(--sku-row-height, 22px); padding-left: 14ch; }
+.replenishment-sku-name-row.is-editing { visibility: hidden; }
+.replenishment-settings-main { min-width: 0; padding: 4px 0 8px 28px; }
+.replenishment-setting-row { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 20px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--line-light, var(--card-border)); }
+.replenishment-setting-row:last-child { border-bottom: 0; }
+.replenishment-setting-row > .replenishment-setting-copy { padding-top: 11px; }
+.replenishment-setting-copy strong { display: block; color: var(--text-secondary); font-weight: 600; }
+.replenishment-setting-control { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; min-width: 0; }
+.replenishment-setting-list { display: grid; width: 100%; }
+.replenishment-setting-list--inline { display: flex; flex-wrap: wrap; gap: 10px 34px; align-items: center; min-height: 40px; }
+.replenishment-setting-list--inline .replenishment-strategy-row { min-height: 40px; padding: 0; border-bottom: 0; }
+.replenishment-setting-list--inline .replenishment-strategy-label { min-width: auto; }
+.replenishment-setting-list--inline .replenishment-formula-description,
+.replenishment-setting-list--inline .replenishment-inline-note { display: none; }
+.replenishment-setting-list--compact .replenishment-formula-description,
+.replenishment-setting-list--compact .replenishment-inline-note { display: none; }
+.replenishment-setting-list--compact .replenishment-strategy-row { border-bottom: 0; }
+.replenishment-strategy-row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; min-height: 46px; padding: 6px 0; border-bottom: 1px solid var(--line-light, var(--card-border)); }
+.replenishment-strategy-row:last-of-type { border-bottom: 0; }
+.replenishment-strategy-label { min-width: 142px; color: var(--text-secondary); font-size: 13px; font-weight: 500; }
+.replenishment-strategy-row > .replenishment-setting-control { flex: 1; }
+.replenishment-inline-note { color: var(--text-tertiary); font-size: 12px; }
+.replenishment-text-options { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; }
+.replenishment-text-option { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 2px 0; border: 0; background: none; color: var(--text-secondary); font: inherit; font-size: 13px; cursor: pointer; }
+.replenishment-text-option::before { content: ""; flex: 0 0 auto; width: 12px; height: 12px; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 50%; background: #fff; }
+.replenishment-text-option.active { color: var(--link-color); }
+.replenishment-text-option.active::before { border: 3px solid var(--link-color); }
+.replenishment-text-option:focus-visible { outline: 2px solid rgba(var(--tool-accent-rgb), 0.28); outline-offset: 2px; }
+.replenishment-formula-link { max-width: 520px; padding: 2px 0; overflow: hidden; border: 0; border-bottom: 1px dashed var(--line-medium, var(--card-border)); background: none; color: var(--link-color); font-size: 12px; text-align: left; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.replenishment-formula-description { flex-basis: 100%; margin: -2px 0 0; color: var(--text-tertiary); font-size: 12px; line-height: 1.5; }
+.replenishment-settings-center .input,
+.replenishment-settings-center .btn,
+.replenishment-settings-center .replenishment-current-dimension button { font-size: 13px; }
+.replenishment-default-field { display: inline-flex; align-items: center; gap: 8px; }
+.replenishment-default-field > span { font-size: 13px; }
+.replenishment-default-field .input {
+  width: 44px;
+  min-height: 25px;
+  padding: 1px 0 2px;
+  border: 0;
+  border-bottom: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 0;
+  background: transparent;
+  appearance: textfield;
 }
-.replenishment-default-field {
-  display: grid;
-  grid-template-columns: max-content 120px;
-  gap: 10px;
-  align-items: center;
+.replenishment-default-field .input:focus { background: rgba(var(--tool-accent-rgb), 0.04); outline: 0; }
+.replenishment-default-field .input::-webkit-inner-spin-button,
+.replenishment-default-field .input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.replenishment-formula-setting { display: grid; gap: 7px; }
+.replenishment-formula-preview { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0; border: 0; background: transparent; }
+.replenishment-formula-preview strong { min-width: 0; overflow-wrap: anywhere; white-space: pre-line; font-size: 14px; line-height: 1.65; }
+.replenishment-b-warehouse-option { display: inline-flex; align-items: center; gap: 9px; min-height: 34px; cursor: pointer; }
+.replenishment-b-warehouse-option input {
+  appearance: none;
+  width: 34px;
+  height: 18px;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--line-medium, var(--card-border));
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s ease;
 }
-.replenishment-default-field .input { width: 120px; }
-.replenishment-formula-setting { display: grid; gap: 7px; margin-top: 14px; }
-.replenishment-formula-setting > span { font-weight: 600; }
-.replenishment-formula-preview { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border: 1px solid var(--line-medium, var(--card-border)); background: rgba(var(--tool-accent-rgb), 0.035); }
-.replenishment-formula-preview strong { min-width: 0; overflow-wrap: anywhere; white-space: pre-line; line-height: 1.7; }
-.replenishment-b-warehouse-option { display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; }
-.replenishment-b-warehouse-option input { accent-color: var(--link-color); }
-.replenishment-fill-setting { display: grid; gap: 8px; margin-top: 12px; }
-.replenishment-fill-setting > span { font-weight: 600; }
-.replenishment-metric-setting { display: grid; gap: 8px; margin-top: 12px; }
-.replenishment-metric-setting > span { font-weight: 600; }
-.replenishment-metric-options { display: flex; flex-wrap: wrap; gap: 8px 18px; }
-.replenishment-metric-options label { display: inline-flex; align-items: center; gap: 6px; }
-.replenishment-metric-options input { accent-color: var(--link-color); }
-.replenishment-dimension-setting { display: grid; gap: 8px; margin-top: 12px; }
-.replenishment-dimension-setting > span { font-weight: 600; }
-.replenishment-dimension-options { display: inline-flex; flex-wrap: wrap; align-items: center; width: fit-content; border: 1px solid var(--line-medium, var(--card-border)); }
-.replenishment-dimension-options button { min-height: 32px; padding: 5px 12px; border: 0; border-right: 1px solid var(--line-medium, var(--card-border)); background: #fff; color: var(--text-secondary); }
-.replenishment-dimension-options button:last-child { border-right: 0; }
-.replenishment-dimension-options button.active { color: var(--link-color); background: rgba(var(--tool-accent-rgb), 0.1); font-weight: 700; }
+.replenishment-b-warehouse-option input::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(34, 39, 48, 0.18);
+  transition: transform 0.15s ease;
+}
+.replenishment-b-warehouse-option input:checked { background: var(--link-color); }
+.replenishment-b-warehouse-option input:checked::after { transform: translateX(16px); }
+.replenishment-b-warehouse-option input:focus-visible { outline: 2px solid rgba(var(--tool-accent-rgb), 0.28); outline-offset: 2px; }
+.replenishment-b-warehouse-copy { display: flex; align-items: baseline; gap: 8px; }
+.replenishment-b-warehouse-copy strong { font-size: 13px; font-weight: 500; }
+.replenishment-b-warehouse-copy small { color: var(--text-tertiary); font-size: 12px; }
+.replenishment-metric-options { display: grid; gap: 8px; }
+.replenishment-metric-group { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 12px; align-items: start; }
+.replenishment-metric-group-title { padding-top: 5px; color: var(--text-tertiary); font-size: 12px; font-weight: 500; }
+.replenishment-metric-group-items { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.replenishment-metric-options label { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 2px 7px; border-radius: 3px; color: var(--text-secondary); font-size: 13px; cursor: pointer; }
+.replenishment-metric-options label:has(input:checked) { color: var(--link-color); }
+.replenishment-metric-options input {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 50%;
+  background: #fff;
+}
+.replenishment-metric-options input:checked { border: 3px solid var(--link-color); }
+.replenishment-metric-options input:focus-visible { outline: 2px solid rgba(var(--tool-accent-rgb), 0.28); outline-offset: 2px; }
+.replenishment-result-tabs { display: flex; gap: 4px; margin: -2px 0 14px; padding-left: 10px; border-bottom: 1px solid var(--line-medium, var(--card-border)); }
+.replenishment-result-tab { margin-bottom: -1px; padding: 9px 16px; border: 1px solid transparent; border-radius: 5px 5px 0 0; background: none; color: var(--text-tertiary); font: 400 13px/1.4 inherit; cursor: pointer; }
+.replenishment-result-tab.active { border-color: var(--line-medium, var(--card-border)); border-bottom-color: #fff; background: #fff; color: var(--link-color); }
+.replenishment-result-tab span { margin-left: 5px; color: inherit; font-size: 12px; }
+.replenishment-custom-tabs { display: contents; }
+.replenishment-custom-tab { display: inline-flex; align-items: center; margin-bottom: -1px; }
+.replenishment-custom-tab .replenishment-result-tab { margin-bottom: 0; padding-right: 7px; border-radius: 5px 0 0 0; }
+.replenishment-custom-tab-edit { align-self: stretch; display: inline-flex; align-items: center; padding: 0 8px 0 4px; border: 1px solid transparent; border-left: 0; border-radius: 0 5px 0 0; background: none; color: var(--text-tertiary); cursor: pointer; }
+.replenishment-custom-tab-edit svg { width: 13px; height: 13px; stroke: currentColor; }
+.replenishment-custom-tab.is-active .replenishment-custom-tab-edit { border-color: var(--line-medium, var(--card-border)); border-bottom-color: #fff; background: #fff; color: var(--link-color); }
+.replenishment-result-tab-add { width: 34px; padding-inline: 0; font-size: 18px; }
+.replenishment-tab-modal { width: min(760px, 100%); }
+.replenishment-tab-filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+.replenishment-tab-filter-group strong { display: block; margin-bottom: 6px; color: var(--text-secondary); font-size: 13px; font-weight: 500; }
+.replenishment-tab-filter-values { max-height: 180px; overflow: auto; padding: 7px; border: 1px solid var(--line-medium, var(--card-border)); }
+.replenishment-tab-filter-values label { display: flex; align-items: center; gap: 7px; min-height: 28px; font-size: 12px; cursor: pointer; }
+.replenishment-tab-filter-values input { accent-color: var(--link-color); }
+.replenishment-tab-sku-input { min-height: 110px; }
+.replenishment-current-turnover-control { display: inline-flex; align-items: center; }
+.replenishment-current-dimension { display: inline; color: var(--text-tertiary); white-space: nowrap; }
+.replenishment-current-dimension button { margin: 0 2px; padding: 0; border: 0; background: none; color: var(--text-secondary); cursor: pointer; }
+.replenishment-current-dimension button.active { color: var(--link-color); font-weight: inherit; }
+.replenishment-fill-options { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.replenishment-fill-options .replenishment-inline-note { margin-left: 12px; align-self: center; }
 .replenishment-default-modal { width: min(920px, calc(100vw - 32px)); }
 .replenishment-default-modal h2 { color: var(--text); }
 .replenishment-default-modal .table-wrap { margin: 12px 0; max-height: min(420px, 55vh); }
@@ -1308,35 +1429,176 @@
   gap: 16px;
   padding: 14px 16px;
   border-right: 1px solid var(--line-medium, var(--card-border));
+  font-size: 14px;
 }
 .replenishment-sku-fact { min-width: 0; }
-.replenishment-sku-fact span { display: block; margin-bottom: 4px; color: var(--text-tertiary); font-size: 0.72rem; }
-.replenishment-sku-fact strong { display: block; overflow-wrap: anywhere; }
+.replenishment-sku-fact span { display: block; margin-bottom: 4px; color: var(--text-tertiary); font-size: 12px; }
+.replenishment-sku-fact strong { display: block; overflow-wrap: anywhere; font-size: 14px; }
 .replenishment-sku-target .replenishment-number-input { max-width: 100%; }
+.replenishment-sku-block[data-replenishment-block-sku] { grid-template-columns: 300px minmax(0, 1fr); }
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-summary {
+  display: grid;
+  grid-template-columns: minmax(96px, 1fr) auto;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 11px 20px;
+  align-content: stretch;
+  padding: 15px 18px;
+  line-height: 1.45;
+}
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-head {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  gap: 6px;
+}
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-code {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-title {
+  min-width: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-fact span {
+  margin-bottom: 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-fact strong {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-pack,
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-target {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  white-space: nowrap;
+}
+.replenishment-sku-purchase {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  align-self: end;
+  display: grid;
+  gap: 3px;
+  padding: 8px 0 10px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+.replenishment-sku-purchase strong {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-metrics { grid-column: 1 / -1; grid-row: 4; align-self: end; }
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-pack { grid-column: 2; grid-row: 1; align-self: start; }
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-target { grid-column: 1; }
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-target .replenishment-number-input {
+  min-width: 0;
+  width: 38px;
+  height: 22px;
+  padding: 1px 0 2px;
+  border: 0;
+  border-bottom: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 0;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 400;
+  text-align: left;
+}
+.replenishment-sku-block[data-replenishment-block-sku] .replenishment-sku-target .replenishment-number-input:focus {
+  background: rgba(var(--tool-accent-rgb), 0.04);
+  outline: 0;
+}
+.replenishment-sku-metrics { position: relative; padding-top: 2px; border-top: 1px solid var(--line-medium, var(--card-border)); }
+.replenishment-sku-metric-trigger { display: grid; place-items: center; width: 28px; height: 28px; margin-top: 6px; padding: 0; border: 0; border-radius: 3px; background: none; color: var(--text-secondary); cursor: pointer; }
+.replenishment-sku-metric-trigger:hover,
+.replenishment-sku-metric-trigger:focus-visible { color: var(--link-color); background: rgba(var(--tool-accent-rgb), 0.07); outline: 0; }
+.replenishment-sku-metric-trigger svg { width: 16px; height: 16px; }
+.replenishment-sku-metric-popover { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; display: none; width: 290px; max-height: 360px; overflow: auto; padding: 12px; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 4px; background: #fff; box-shadow: 0 12px 28px rgba(40, 25, 32, 0.16); }
+.replenishment-sku-metrics:hover .replenishment-sku-metric-popover,
+.replenishment-sku-metrics:focus-within .replenishment-sku-metric-popover,
+.replenishment-sku-metrics.is-open .replenishment-sku-metric-popover { display: block; }
+.replenishment-sku-metric-options { display: grid; gap: 10px; }
+.replenishment-sku-metric-options .replenishment-metric-group { display: block; }
+.replenishment-sku-metric-options .replenishment-metric-group-title { display: block; margin-bottom: 5px; }
+.replenishment-sku-metric-options .replenishment-metric-group-items { display: flex; flex-wrap: wrap; gap: 5px 14px; }
+.replenishment-sku-metric-options label { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; line-height: 1.4; white-space: nowrap; }
+.replenishment-sku-metric-options label.is-custom { text-decoration: underline dotted var(--link-color); text-underline-offset: 4px; }
+.replenishment-sku-metric-options input { margin-top: 2px; accent-color: var(--link-color); }
+.replenishment-sku-metric-reset { margin-top: 10px; padding: 0; border: 0; background: none; color: var(--link-color); font-size: 12px; cursor: pointer; }
 .replenishment-sku-block .table-wrap { min-width: 0; border: 0; border-radius: 0; }
-.replenishment-table { table-layout: fixed; min-width: 0; }
+.replenishment-table { table-layout: fixed; min-width: 0; font-size: 13px; font-variant-numeric: tabular-nums; }
 .replenishment-table th, .replenishment-table td { vertical-align: middle; }
+.replenishment-table td { font-size: 13px; font-weight: 400; }
 .replenishment-table th:not(:first-child), .replenishment-table td:not(:first-child),
 .replenishment-table .replenishment-number-input { text-align: center; }
+.replenishment-table .replenishment-number-input { display: block; width: 56px; min-width: 0; margin: 0 auto; }
 .replenishment-table .replenishment-metric { font-weight: 600; white-space: nowrap; background: rgba(var(--tool-accent-rgb), 0.045); }
-.replenishment-turnover-value { display: inline-block; padding: 2px 7px; border-radius: 3px; }
+.replenishment-turnover-value { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 13px; font-weight: 400; }
 .replenishment-table .is-turnover-low { color: #15803d; background: rgba(21, 128, 61, 0.1); }
+.replenishment-table .is-turnover-fit { color: #2563eb; background: rgba(37, 99, 235, 0.1); }
 .replenishment-table .is-turnover-high { color: #dc2626; background: rgba(220, 38, 38, 0.1); }
 .replenishment-number-input {
   width: 100%;
   min-width: 74px;
   height: 30px;
-  border: 1px solid var(--line-medium, var(--card-border));
-  background: #fff;
+  border: 1px solid transparent;
+  background: transparent;
   color: var(--text);
   padding: 4px 7px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
 }
-.replenishment-number-input.is-custom { border-color: rgba(var(--tool-accent-rgb), 0.72); background: rgba(var(--tool-accent-rgb), 0.06); }
+.replenishment-number-input:hover,
+.replenishment-number-input:focus {
+  border-color: var(--line-medium, var(--card-border));
+  background: #fff;
+  outline: 0;
+}
+.replenishment-number-input.is-custom { border-color: rgba(var(--tool-accent-rgb), 0.42); background: rgba(var(--tool-accent-rgb), 0.045); }
+.replenishment-number-input.is-custom:hover,
+.replenishment-number-input.is-custom:focus { border-color: rgba(var(--tool-accent-rgb), 0.72); background: #fff; }
+.replenishment-copy-value {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+.replenishment-export-btn span {
+  color: var(--link-color);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
 .replenishment-empty { padding: 26px 16px; color: var(--text-tertiary); text-align: center; }
 @media (max-width: 860px) {
+  .inventory-config-grid { grid-template-columns: 1fr; }
+  .replenishment-settings-center { grid-template-columns: 1fr; }
+  .replenishment-scope-panel { padding: 14px 0 18px; border-right: 0; border-bottom: 1px solid var(--line-light, var(--card-border)); }
+  .replenishment-scope-panel .inventory-sku-textarea { min-height: 150px; }
+  .replenishment-settings-main { padding: 4px 0; }
+  .replenishment-setting-row { grid-template-columns: 1fr; gap: 8px; }
+  .replenishment-setting-list--inline { display: grid; gap: 4px; }
+  .replenishment-setting-list--inline .replenishment-strategy-label { min-width: 120px; }
+  .replenishment-strategy-label { min-width: 0; }
+  .replenishment-formula-description { margin-left: 0; }
+  .replenishment-metric-group { grid-template-columns: 1fr; gap: 5px; }
   .replenishment-sku-block { grid-template-columns: 1fr; }
+  .replenishment-sku-block[data-replenishment-block-sku] { grid-template-columns: 1fr; }
   .replenishment-sku-summary { border-right: 0; border-bottom: 1px solid var(--line-medium, var(--card-border)); }
-  .replenishment-default-field { grid-template-columns: 1fr 120px; width: 100%; }
+  .replenishment-default-field { width: auto; }
 }
 .report-dim-picker {
   position: relative;
@@ -1617,6 +1879,9 @@
   border-radius: 3px; padding: 0 14px; min-height: 36px; color: var(--text); background: #ffffff;
   outline: none; font-family: inherit; font-size: 0.82rem;
 }
+input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance: none; }
 .textarea { min-height: 72px; padding: 9px 14px; resize: vertical; line-height: 1.55; }
 .input:focus, .select:focus, .textarea:focus { border-color: var(--link-color); }
 .date-picker-field { --date-picker-width: 285px; position: relative; grid-template-columns: max-content var(--date-picker-width); }
@@ -2463,7 +2728,7 @@
   z-index: 4;
   background: #fff;
 }
-.sku-table-wrap { max-height: 690px; background: #ffffff; }
+.sku-table-wrap { min-height: 420px; max-height: 690px; background: #ffffff; }
 .sku-table-wrap thead { position: sticky; top: 0; z-index: 5; background: #ffffff; }
 .sku-table-wrap thead th {
   position: sticky; top: 0; z-index: 6;
@@ -2658,6 +2923,32 @@
 .sort-tools { display: inline-flex; align-items: center; margin-left: auto; opacity: 0; transition: opacity 0.14s; }
 .sku-table th[data-sort-col]:hover .sort-tools,
 .sku-table th[data-sort-col].sort-active .sort-tools { opacity: 1; }
+.sku-head-tools { display: inline-flex; align-items: center; margin-left: auto; }
+.sku-filter { position: relative; }
+.sku-filter > summary { display: flex; list-style: none; cursor: pointer; }
+.sku-filter > summary::-webkit-details-marker { display: none; }
+.sku-filter-tool {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; padding: 0; border: 0; border-radius: 3px;
+  background: transparent; color: var(--text-tertiary);
+}
+.sku-filter-tool svg { width: 14px; height: 14px; stroke: currentColor; }
+.sku-filter.active .sku-filter-tool,
+.sku-filter[open] .sku-filter-tool { color: var(--tool-accent-strong); background: rgba(var(--tool-accent-rgb), 0.1); }
+.sku-filter-popover {
+  position: absolute; top: calc(100% + 7px); right: 0; z-index: 40;
+  width: 240px; padding: 10px; border: 1px solid var(--line-medium, var(--card-border));
+  border-radius: 4px; background: #fff; box-shadow: 0 12px 28px rgba(40, 25, 32, 0.16);
+  color: var(--text); font-weight: 400; white-space: normal;
+}
+.sku-filter-search { width: 100%; min-height: 30px; padding: 5px 8px; font: inherit; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; }
+.sku-filter-values { max-height: 220px; margin-top: 8px; overflow: auto; border-block: 1px solid var(--line-light, var(--card-border)); }
+.sku-filter-values label { display: flex; align-items: center; gap: 8px; min-height: 30px; padding: 4px 3px; font-size: 12px; cursor: pointer; }
+.sku-filter-values label:hover { background: rgba(var(--tool-accent-rgb), 0.06); }
+.sku-filter-values input { accent-color: var(--link-color); }
+.sku-filter-actions { display: flex; justify-content: flex-end; gap: 7px; padding-top: 9px; }
+.sku-filter-actions button { min-height: 28px; padding: 4px 10px; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 3px; background: #fff; font: inherit; font-size: 12px; cursor: pointer; }
+.sku-filter-actions [data-sku-filter-apply] { border-color: var(--link-color); background: var(--link-color); color: #fff; }
 .sort-tool {
   display: inline-flex; align-items: center; justify-content: center;
   width: 24px; height: 24px; border: none; border-radius: 3px;
@@ -3580,23 +3871,26 @@
         <div class="panel finance-data-panel is-import-mode" id="inventoryTurnoverPanel">
           <div class="finance-data-pane" id="inventoryImportPane">
             <div class="finance-import-section">
-              <div class="panel-title">
-                <span>仓库配置</span>
-              </div>
-              <div class="inventory-warehouse-box">
-                <div class="inventory-warehouse-box" id="inventoryWarehouseTags"></div>
-                <span class="inventory-add-warehouse">
-                  <input class="input" id="inventoryWarehouseInput" placeholder="新增仓库">
-                  <button class="mapping-rule-action add" id="addInventoryWarehouseBtn" type="button" title="新增仓库">+</button>
-                </span>
-              </div>
-              <div class="msg" id="inventoryWarehouseMsg"></div>
-              <div class="inventory-sku-config">
-                <div class="panel-title">
-                  <span>SKU 配置</span>
+              <div class="inventory-config-grid">
+                <div class="inventory-sku-config">
+                  <div class="panel-title"><span>SKU 配置</span></div>
+                  <div class="replenishment-sku-editor">
+                    <textarea class="input inventory-sku-textarea" id="inventorySkuInput" placeholder="每行一个需要加入周转计算的 SKU" wrap="off"></textarea>
+                    <div class="replenishment-sku-name-viewport" aria-hidden="true"><div class="replenishment-sku-name-layer" id="inventorySkuNameLayer"></div></div>
+                  </div>
+                  <p class="panel-sub" style="margin-top:8px;">只导入这里配置的 SKU。留空时不会写入库存周转数据。</p>
                 </div>
-                <textarea class="input inventory-sku-textarea" id="inventorySkuInput" placeholder="每行一个需要加入周转计算的 SKU"></textarea>
-                <p class="panel-sub" style="margin-top:8px;">只导入这里配置的 SKU。留空时不会写入库存周转数据，避免误把全量 SKU 加进周转计算。</p>
+                <div class="inventory-config-column">
+                  <div class="panel-title"><span>仓库配置</span></div>
+                  <div class="inventory-warehouse-box">
+                    <div class="inventory-warehouse-box" id="inventoryWarehouseTags"></div>
+                    <span class="inventory-add-warehouse">
+                      <input class="input" id="inventoryWarehouseInput" placeholder="新增仓库">
+                      <button class="mapping-rule-action add" id="addInventoryWarehouseBtn" type="button" title="新增仓库">+</button>
+                    </span>
+                  </div>
+                  <div class="msg" id="inventoryWarehouseMsg"></div>
+                </div>
               </div>
             </div>
 
@@ -3637,45 +3931,55 @@
 
           <div class="finance-data-pane" id="inventoryReplenishmentPane" hidden>
             <div class="finance-import-section">
-              <div class="panel-title">
-                <span>补货 SKU 配置</span>
+              <div class="panel-title replenishment-config-title">
+                <span>补货计算设置</span>
               </div>
-              <textarea class="input inventory-sku-textarea" id="replenishmentSkuInput" placeholder="每行一个需要加入补货计算的 SKU"></textarea>
-              <p class="panel-sub" style="margin-top:8px;">SKU 清单和补货参数单独保存到应用设置，不写入库存周转导入表。</p>
-              <div class="replenishment-default-row">
-                <label class="replenishment-default-field">
-                  <span>默认目标周转（天）</span>
-                  <input class="input" id="replenishmentDefaultTurnoverInput" type="number" min="0" step="0.1" placeholder="留空">
-                </label>
-                <span class="msg" id="replenishmentConfigMsg"></span>
-              </div>
-              <div class="replenishment-formula-setting">
-                <span>推荐补货数计算规则</span>
-                <div class="replenishment-formula-preview">
-                  <strong id="replenishmentFormulaPreview"></strong>
-                  <button class="btn" id="editReplenishmentFormulaBtn" type="button">修改</button>
-                </div>
-              </div>
-              <div class="replenishment-dimension-setting">
-                <span>选择现货周转展现维度</span>
-                <div class="replenishment-dimension-options" role="group" aria-label="选择现货周转展现维度">
-                  <button type="button" data-spot-turnover-dimension="1">1天</button>
-                  <button type="button" data-spot-turnover-dimension="7">7天</button>
-                  <button type="button" data-spot-turnover-dimension="14">14天</button>
-                  <button type="button" data-spot-turnover-dimension="28">28天</button>
-                  <button type="button" data-spot-turnover-dimension="formula">系数预估</button>
-                </div>
-              </div>
-              <label class="replenishment-b-warehouse-option"><input id="replenishmentEnableBWarehouse" type="checkbox">启用单一B仓</label>
-              <div class="replenishment-metric-setting">
-                <span>显示指标</span>
-                <div class="replenishment-metric-options" id="replenishmentMetricOptions"></div>
-              </div>
-              <div class="replenishment-fill-setting">
-                <span>填入推荐补货数</span>
-                <div class="btn-row">
-                  <button class="btn" type="button" data-fill-replenishment="raw">直接填入推荐补货数</button>
-                  <button class="btn" type="button" data-fill-replenishment="boxized">填入箱规化的推荐补货数</button>
+              <div class="replenishment-settings-center">
+                <aside class="replenishment-scope-panel">
+                  <div class="replenishment-scope-heading"><strong>待计算 SKU</strong><small id="replenishmentScopeCount">0 个</small></div>
+                  <div class="replenishment-sku-editor">
+                    <textarea class="input inventory-sku-textarea" id="replenishmentSkuInput" placeholder="每行一个 SKU" wrap="off"></textarea>
+                    <div class="replenishment-sku-name-viewport" aria-hidden="true"><div class="replenishment-sku-name-layer" id="replenishmentSkuNameLayer"></div></div>
+                  </div>
+                </aside>
+                <div class="replenishment-settings-main">
+                  <section class="replenishment-setting-row">
+                    <div class="replenishment-setting-copy"><strong>基础设置</strong></div>
+                    <div class="replenishment-setting-list replenishment-setting-list--compact">
+                      <div class="replenishment-strategy-row">
+                        <span class="replenishment-strategy-label">目标周转</span>
+                        <div class="replenishment-setting-control"><label class="replenishment-default-field"><input class="input" id="replenishmentDefaultTurnoverInput" type="number" min="0" step="0.1" placeholder="留空"><span>天</span></label></div>
+                      </div>
+                      <div class="replenishment-strategy-row">
+                        <span class="replenishment-strategy-label">BBCC 模式</span>
+                        <div class="replenishment-setting-control"><label class="replenishment-b-warehouse-option"><input id="replenishmentEnableBWarehouse" type="checkbox"><span class="replenishment-b-warehouse-copy"><strong>启用</strong><small>暂支持 1B 仓</small></span></label></div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="replenishment-setting-row">
+                    <div class="replenishment-setting-copy"><strong>预测规则</strong></div>
+                    <div class="replenishment-setting-list replenishment-setting-list--compact">
+                      <div class="replenishment-strategy-row">
+                        <span class="replenishment-strategy-label">预测销量</span>
+                        <div class="replenishment-setting-control replenishment-text-options" id="replenishmentFormulaOptions" role="radiogroup" aria-label="选择预测销量模式"></div>
+                      </div>
+                      <div class="replenishment-strategy-row">
+                        <span class="replenishment-strategy-label">推荐补货数规则</span>
+                        <div class="replenishment-setting-control replenishment-fill-options">
+                          <button class="replenishment-text-option" type="button" role="radio" data-fill-replenishment="raw">不按箱规</button>
+                          <button class="replenishment-text-option" type="button" role="radio" data-fill-replenishment="boxized">按箱规</button>
+                          <small class="replenishment-inline-note">改目标或公式后，手动仓位仍锁定。</small>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="replenishment-setting-row">
+                    <div class="replenishment-setting-copy"><strong>显示规则</strong></div>
+                    <div class="replenishment-setting-control replenishment-metric-options" id="replenishmentMetricOptions"></div>
+                  </section>
+                  <span class="msg" id="replenishmentConfigMsg"></span>
                 </div>
               </div>
             </div>
@@ -3683,7 +3987,18 @@
             <div class="finance-import-section">
               <div class="panel-title">
                 <span>补货计算</span>
-                <button class="btn" id="refreshReplenishmentBtn" type="button">刷新</button>
+                <div class="btn-row">
+                  <button class="btn replenishment-export-btn" id="exportReplenishmentBtn" type="button" title="全部待计算商品的采购金额合计">
+                    导出需求 <span id="replenishmentExportTotal">· ¥0.00</span>
+                  </button>
+                  <button class="btn" id="refreshReplenishmentBtn" type="button">刷新</button>
+                </div>
+              </div>
+              <div class="replenishment-result-tabs" role="tablist" aria-label="补货计算结果分类">
+                <button class="replenishment-result-tab active" type="button" role="tab" aria-selected="true" data-replenishment-result-view="needed">建议补货<span id="replenishmentNeededCount">0</span></button>
+                <button class="replenishment-result-tab" type="button" role="tab" aria-selected="false" data-replenishment-result-view="monitor">无需补货（周转监控）<span id="replenishmentMonitorCount">0</span></button>
+                <span class="replenishment-custom-tabs" id="replenishmentCustomTabs"></span>
+                <button class="replenishment-result-tab replenishment-result-tab-add" id="addReplenishmentTabBtn" type="button" title="新增筛选标签页" aria-label="新增筛选标签页">＋</button>
               </div>
               <div class="replenishment-sku-output" id="replenishmentSkuOutput">
                 <div class="replenishment-empty">请先保存需要计算的 SKU</div>
@@ -3693,18 +4008,44 @@
 
           <div class="finance-data-pane" id="inventoryTransferPane" hidden>
             <div class="finance-import-section">
-              <div class="panel-title">
-                <span>内配 SKU 配置</span>
+              <div class="panel-title replenishment-config-title">
+                <span>内配计算设置</span>
               </div>
-              <textarea class="input inventory-sku-textarea" id="inventoryTransferSkuInput" placeholder="每行一个需要加入内配计算的 SKU"></textarea>
-              <div class="replenishment-formula-setting">
-                <span>预计日销量规则</span>
-                <div class="replenishment-formula-preview">
-                  <strong id="inventoryTransferFormulaPreview"></strong>
-                  <button class="btn" id="editInventoryTransferFormulaBtn" type="button">修改</button>
+              <div class="replenishment-settings-center">
+                <aside class="replenishment-scope-panel">
+                  <div class="replenishment-scope-heading"><strong>待计算 SKU</strong><small id="inventoryTransferScopeCount">0 个</small></div>
+                  <div class="replenishment-sku-editor">
+                    <textarea class="input inventory-sku-textarea" id="inventoryTransferSkuInput" placeholder="每行一个 SKU" wrap="off"></textarea>
+                    <div class="replenishment-sku-name-viewport" aria-hidden="true"><div class="replenishment-sku-name-layer" id="inventoryTransferSkuNameLayer"></div></div>
+                  </div>
+                </aside>
+                <div class="replenishment-settings-main">
+                  <section class="replenishment-setting-row">
+                    <div class="replenishment-setting-copy"><strong>基础设置</strong></div>
+                    <div class="replenishment-setting-list replenishment-setting-list--compact">
+                      <div class="replenishment-strategy-row">
+                        <span class="replenishment-strategy-label">B 仓是否参与内配</span>
+                        <div class="replenishment-setting-control">
+                          <label class="replenishment-b-warehouse-option">
+                            <input id="inventoryTransferIncludeLowWarehouse" type="checkbox">
+                            <span class="replenishment-b-warehouse-copy"><strong>参与</strong><small>有 B 仓数据时纳入均衡计算</small></span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                  <section class="replenishment-setting-row">
+                    <div class="replenishment-setting-copy"><strong>预测规则</strong></div>
+                    <div class="replenishment-setting-list replenishment-setting-list--compact">
+                      <div class="replenishment-strategy-row">
+                        <span class="replenishment-strategy-label">预测销量</span>
+                        <div class="replenishment-setting-control replenishment-text-options" id="inventoryTransferFormulaOptions" role="radiogroup" aria-label="选择内配预测销量模式"></div>
+                      </div>
+                    </div>
+                  </section>
+                  <span class="msg" id="inventoryTransferMsg"></span>
                 </div>
               </div>
-              <span class="msg" id="inventoryTransferMsg"></span>
             </div>
             <div class="finance-import-section">
               <div class="panel-title">
@@ -3938,9 +4279,31 @@
   </div>
 </div>
 
+<div class="modal-backdrop" id="replenishmentTabModal" aria-hidden="true">
+  <div class="confirm-modal replenishment-tab-modal" role="dialog" aria-modal="true" aria-labelledby="replenishmentTabModalTitle">
+    <h2 id="replenishmentTabModalTitle">新增补货标签页</h2>
+    <input class="input" id="replenishmentTabNameInput" style="width:100%;" maxlength="20" placeholder="标签页名称">
+    <div class="replenishment-tab-filter-grid">
+      <div class="replenishment-tab-filter-group"><strong>大系列</strong><div class="replenishment-tab-filter-values" id="replenishmentTabMainSeries"></div></div>
+      <div class="replenishment-tab-filter-group"><strong>小系列</strong><div class="replenishment-tab-filter-values" id="replenishmentTabSubSeries"></div></div>
+    </div>
+    <div class="replenishment-tab-filter-group">
+      <strong>指定 SKU</strong>
+      <textarea class="input replenishment-tab-sku-input" id="replenishmentTabSkuInput" placeholder="每行一个 SKU；会额外加入所选系列结果"></textarea>
+    </div>
+    <label style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px;"><input id="replenishmentTabExclusiveInput" type="checkbox" checked style="accent-color:var(--link-color);">从“建议补货”和“无需补货”中单独列出</label>
+    <p class="msg" id="replenishmentTabMsg"></p>
+    <div class="btn-row">
+      <button class="btn danger" id="deleteReplenishmentTabBtn" type="button" hidden>删除标签页</button>
+      <button class="btn" id="cancelReplenishmentTabBtn" type="button">取消</button>
+      <button class="btn primary" id="saveReplenishmentTabBtn" type="button">保存</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="replenishmentFormulaModal" aria-hidden="true">
   <div class="confirm-modal finance-formula-modal" role="dialog" aria-modal="true" aria-labelledby="replenishmentFormulaTitle">
-    <h2 id="replenishmentFormulaTitle">编辑推荐补货数计算规则</h2>
+    <h2 id="replenishmentFormulaTitle">编辑预测销量规则</h2>
     <div class="mapping-formula-field">
       <input class="input" id="replenishmentFormulaInput" style="width:100%;" placeholder="例如：daily7*0.7+daily14*0.3">
       <div class="mapping-formula-source">
@@ -4111,20 +4474,46 @@
   var DEFAULT_INVENTORY_WAREHOUSES = ['北京', '上海', '广州', '成都', '武汉', '沈阳', '西安', '德州', '杭州', '南京', '郑州'];
   var inventoryWarehouses = sanitizeInventoryWarehouses(JSON.parse(localStorage.getItem('jdInventoryWarehouses') || 'null') || DEFAULT_INVENTORY_WAREHOUSES);
   var inventorySkuList = sanitizeInventorySkus(JSON.parse(localStorage.getItem('jdInventorySkuList') || '[]'));
+  var inventorySkuProfileMap = {};
   var DEFAULT_REPLENISHMENT_FORMULA = 'daily7*0.7+daily14*0.3';
+  var REPLENISHMENT_FORMULA_PRESETS = [
+    { key: 'balanced', name: '均衡趋势（7日 70% + 14日 30%）', formula: DEFAULT_REPLENISHMENT_FORMULA, description: '预计日销量取近7天均值的 70% 与近14天均值的 30%。建议补货数按目标周转补足可订购库存。' },
+    { key: 'recent7', name: '近期趋势（近7日）', formula: 'daily7', description: '预计日销量使用近7天销量均值。建议补货数按目标周转补足可订购库存。' },
+    { key: 'stable14', name: '稳定趋势（近14日）', formula: 'daily14', description: '预计日销量使用近14天销量均值。建议补货数按目标周转补足可订购库存。' },
+    { key: 'long28', name: '长期趋势（近28日）', formula: 'daily28', description: '预计日销量使用近28天销量均值。建议补货数按目标周转补足可订购库存。' }
+  ];
   var REPLENISHMENT_METRIC_OPTIONS = [
-    { key: 'expectedInput', label: '预计补货数' },
-    { key: 'normalizedExpected', label: '预计补货数（箱规化）' },
-    { key: 'recommended', label: '推荐补货数' },
-    { key: 'available7', label: '补货后周转（7天）' },
-    { key: 'available14', label: '补货后周转（14天）' },
-    { key: 'available28', label: '补货后周转（28天）' },
-    { key: 'available1', label: '补货后周转（1天）' },
+    { key: 'purchaseAmount', label: '采购金额' },
+    { key: 'spotStock', label: '现货库存' },
+    { key: 'purchasePending', label: '采购未到货' },
+    { key: 'orderableStock', label: '可订购库存' },
+    { key: 'outboundFormula', label: '预测' },
+    { key: 'outbound1', label: '1天' },
+    { key: 'outbound7', label: '7天' },
+    { key: 'outbound14', label: '14天' },
+    { key: 'outbound28', label: '28天' },
+    { key: 'availableFormula', label: '预测' },
+    { key: 'available1', label: '1天' },
+    { key: 'available7', label: '7天' },
+    { key: 'available14', label: '14天' },
+    { key: 'available28', label: '28天' },
+    { key: 'currentOrderable', label: '当前可订购周转' },
     { key: 'currentSpot', label: '当前现货周转' }
   ];
-  var replenishmentState = { skus: [], transferSkus: [], defaultTurnover: '', recommendFormula: DEFAULT_REPLENISHMENT_FORMULA, transferFormula: DEFAULT_REPLENISHMENT_FORMULA, spotTurnoverDimension: '7', enableSingleBWarehouse: false, visibleMetrics: REPLENISHMENT_METRIC_OPTIONS.map(function(item) { return item.key; }), plans: {} };
+  var REPLENISHMENT_METRIC_GROUPS = [
+    { label: '金额', keys: ['purchaseAmount'] },
+    { label: '库存数量', keys: ['spotStock', 'purchasePending', 'orderableStock'] },
+    { label: '出库数量', keys: ['outboundFormula', 'outbound1', 'outbound7', 'outbound14', 'outbound28'] },
+    { label: '补货后周转', keys: ['availableFormula', 'available1', 'available7', 'available14', 'available28'] },
+    { label: '当前周转', keys: ['currentOrderable', 'currentSpot'] }
+  ];
+  var replenishmentState = { skus: [], transferSkus: [], defaultTurnover: '', recommendFormula: DEFAULT_REPLENISHMENT_FORMULA, transferFormula: DEFAULT_REPLENISHMENT_FORMULA, transferIncludeLowWarehouse: true, orderableTurnoverDimension: '1', spotTurnoverDimension: '1', enableSingleBWarehouse: false, autoFillMode: 'raw', visibleMetrics: REPLENISHMENT_METRIC_OPTIONS.map(function(item) { return item.key; }), plans: {} };
+  var replenishmentResultView = 'needed';
+  var replenishmentCustomTabs = sanitizeReplenishmentCustomTabs(JSON.parse(localStorage.getItem('jdReplenishmentCustomTabs') || '[]'));
+  var replenishmentEditingTabId = '';
   var replenishmentLoaded = false;
   var replenishmentFormulaTarget = 'recommendFormula';
+  var replenishmentProfileMap = {};
   var pendingReplenishmentDefaultChange = null;
   var INVENTORY_NATIONAL_FIELDS = [
     { key: 'itemPrice', label: '商品价格', aliases: ['商品价格', '商品售价', '售价', '京东价', '价格'] },
@@ -4358,6 +4747,9 @@
   var skuColumnLabels = JSON.parse(localStorage.getItem('jdSkuColumnLabels') || '{}');
   var skuDimensionColumns = JSON.parse(localStorage.getItem('jdSkuDimensionColumns') || '["mainSeries","subSeries"]');
   var skuColumnWidths = JSON.parse(localStorage.getItem('jdSkuColumnWidths') || '{}');
+  var skuFilterState = JSON.parse(localStorage.getItem('jdSkuFilterState') || '{"own":{},"competitor":{}}');
+  skuFilterState.own = skuFilterState.own || {};
+  skuFilterState.competitor = skuFilterState.competitor || {};
   var genericColumnWidths = JSON.parse(localStorage.getItem('jdGenericColumnWidthsManual') || '{}');
   Object.keys(skuColumnWidths).forEach(function(key) {
     var value = Number(skuColumnWidths[key]);
@@ -6011,7 +6403,7 @@
 
   function renderSkuTable(type, rows) {
     var table = $(type === 'competitor' ? 'competitorSkuTable' : 'ownSkuTable');
-    rows = sortSkuRows(type, rows);
+    var allRows = rows;
     var columns = [
       { key: 'sku', label: 'SKU', required: true },
       { key: 'shortName', label: '简称', required: true },
@@ -6030,6 +6422,7 @@
     columns = columns.concat(extraSkuDimensionColumns().map(function(key) {
       return { key: key, label: skuColumnLabels[key] || key, dimension: true };
     }));
+    rows = sortSkuRows(type, filterSkuRows(type, rows, columns));
 
     var addColKey = '__add__';
     var tableWidth = 0;
@@ -6046,11 +6439,11 @@
       var cls = (col.required ? 'required-head ' : '') + (isSortActive(type, col.key) ? 'sort-active' : '');
       cls = cls.trim() ? ' class="' + cls.trim() + '"' : '';
       var sortAttr = ' data-sort-col="' + esc(col.key) + '"';
-      if (!col.dimension) return '<th' + cls + sortAttr + ' data-col-key="' + esc(col.key) + '">' + sortLabel(type, col.key, col.label) + resizeHandle(type, col.key) + '</th>';
+      if (!col.dimension) return '<th' + cls + sortAttr + ' data-col-key="' + esc(col.key) + '">' + sortLabel(type, col.key, col.label, allRows) + resizeHandle(type, col.key) + '</th>';
       return '<th draggable="true" data-drag-col="' + esc(col.key) + '"' + sortAttr + ' title="拖动调整顺序，双击名称可编辑">' +
         '<span class="sku-col-head">' +
           '<span class="sku-col-label" data-col-label="' + esc(col.key) + '">' + esc(col.label) + '</span>' +
-          sortTools(type, col.key) +
+          skuHeadTools(type, col.key, col.label, allRows) +
         '</span>' +
         resizeHandle(type, col.key) +
       '</th>';
@@ -6067,8 +6460,59 @@
     table.style.width = tableWidth + 'px';
   }
 
-  function sortLabel(type, key, label) {
-    return '<span class="sort-head"><span>' + esc(label) + '</span>' + sortTools(type, key) + '</span>';
+  function sortLabel(type, key, label, rows) {
+    return '<span class="sort-head"><span>' + esc(label) + '</span>' + skuHeadTools(type, key, label, rows) + '</span>';
+  }
+
+  function isSkuFilterColumn(key, label) {
+    return key === 'mainSeries' || key === 'subSeries' || String(label || '').trim() === '夹层';
+  }
+
+  function skuHeadTools(type, key, label, rows) {
+    return '<span class="sku-head-tools">' + sortTools(type, key) + (isSkuFilterColumn(key, label) ? skuFilterHtml(type, key, filterSkuRows(type, rows, null, key)) : '') + '</span>';
+  }
+
+  function skuFilterValues(rows, key) {
+    return Array.from(new Set(rows.map(function(row) { return String(row[key] == null ? '' : row[key]).trim(); }))).sort(function(a, b) {
+      if (!a) return 1;
+      if (!b) return -1;
+      return a.localeCompare(b, 'zh-Hans-CN', { numeric: true });
+    });
+  }
+
+  function skuFilterHtml(type, key, rows) {
+    var values = skuFilterValues(rows, key);
+    var selected = skuFilterState[type][key];
+    var active = Array.isArray(selected);
+    return '<details class="sku-filter' + (active ? ' active' : '') + '" data-sku-filter="' + esc(key) + '">' +
+      '<summary class="sku-filter-tool" title="筛选" aria-label="筛选"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16l-6.4 7.2v4.7l-3.2 1.6v-6.3L4 6Z" stroke-width="1.7" stroke-linejoin="round"/></svg></summary>' +
+      '<div class="sku-filter-popover" data-sku-filter-popover>' +
+        '<input class="sku-filter-search" type="search" placeholder="搜索">' +
+        '<div class="sku-filter-values">' +
+          '<label><input type="checkbox" data-sku-filter-all' + (!active || selected.length === values.length ? ' checked' : '') + '>（全选）</label>' +
+          values.map(function(value) {
+            return '<label data-sku-filter-option><input type="checkbox" data-sku-filter-value value="' + esc(value) + '"' + (!active || selected.indexOf(value) !== -1 ? ' checked' : '') + '><span>' + esc(value || '（空白）') + '</span></label>';
+          }).join('') +
+        '</div>' +
+        '<div class="sku-filter-actions"><button type="button" data-sku-filter-clear>清除</button><button type="button" data-sku-filter-apply>确定</button></div>' +
+      '</div></details>';
+  }
+
+  function filterSkuRows(type, rows, columns, skipKey) {
+    var filterable = columns
+      ? columns.filter(function(col) { return isSkuFilterColumn(col.key, col.label); })
+      : Object.keys(skuFilterState[type]).map(function(key) { return { key: key, label: skuColumnLabels[key] || key }; });
+    return rows.filter(function(row) {
+      return filterable.every(function(col) {
+        if (col.key === skipKey) return true;
+        var selected = skuFilterState[type][col.key];
+        return !Array.isArray(selected) || selected.indexOf(String(row[col.key] == null ? '' : row[col.key]).trim()) !== -1;
+      });
+    });
+  }
+
+  function saveSkuFilterState() {
+    localStorage.setItem('jdSkuFilterState', JSON.stringify(skuFilterState));
   }
 
   function isSortActive(type, key) {
@@ -11394,10 +11838,23 @@
     return set;
   }
 
-  function renderInventorySkuConfig() {
+  function renderInventorySkuNameLayer() {
     var input = $('inventorySkuInput');
-    if (!input || document.activeElement === input) return;
-    input.value = inventorySkuList.join('\n');
+    var layer = $('inventorySkuNameLayer');
+    if (!input || !layer) return;
+    var activeLine = document.activeElement === input ? input.value.slice(0, input.selectionStart).split('\n').length - 1 : -1;
+    layer.innerHTML = replenishmentSkuNameRowsHtml(input.value.split(/\r?\n/), inventorySkuProfileMap, activeLine);
+    layer.style.transform = 'translate(' + (-input.scrollLeft) + 'px,' + (-input.scrollTop) + 'px)';
+  }
+
+  async function renderInventorySkuConfig() {
+    var input = $('inventorySkuInput');
+    if (!input) return;
+    if (!Object.keys(inventorySkuProfileMap).length) {
+      (await getAll('sku_profiles')).forEach(function(profile) { inventorySkuProfileMap[normalizeSkuValue(profile.sku)] = profile; });
+    }
+    if (document.activeElement !== input) input.value = inventorySkuList.join('\n');
+    renderInventorySkuNameLayer();
   }
 
   function cleanInventoryHeader(value) {
@@ -11782,8 +12239,174 @@
     }
   }
 
+  function replenishmentFormulaPreset(value) {
+    var formula = normalizeReplenishmentFormula(value);
+    return REPLENISHMENT_FORMULA_PRESETS.find(function(item) { return item.formula === formula; }) || null;
+  }
+
+  function sanitizeReplenishmentCustomTabs(value) {
+    return (Array.isArray(value) ? value : []).map(function(tab, index) {
+      return {
+        id: String(tab.id || ('tab_' + index)),
+        name: String(tab.name || '').trim().slice(0, 20),
+        mainSeries: Array.isArray(tab.mainSeries) ? tab.mainSeries.map(String).filter(Boolean) : [],
+        subSeries: Array.isArray(tab.subSeries) ? tab.subSeries.map(String).filter(Boolean) : [],
+        skus: sanitizeInventorySkus(tab.skus || []),
+        exclusive: tab.exclusive !== false
+      };
+    }).filter(function(tab) { return tab.name; });
+  }
+
+  function replenishmentCustomTabMatches(tab, sku, profile) {
+    var direct = tab.skus.indexOf(sku) !== -1;
+    var hasSeries = tab.mainSeries.length || tab.subSeries.length;
+    var series = hasSeries &&
+      (!tab.mainSeries.length || tab.mainSeries.indexOf(String(profile.mainSeries || '')) !== -1) &&
+      (!tab.subSeries.length || tab.subSeries.indexOf(String(profile.subSeries || '')) !== -1);
+    return direct || series;
+  }
+
+  function replenishmentCustomTabSkus(tab, skus, profileMap) {
+    return skus.filter(function(sku) { return replenishmentCustomTabMatches(tab, sku, profileMap[sku] || {}); });
+  }
+
+  function saveReplenishmentCustomTabs() {
+    localStorage.setItem('jdReplenishmentCustomTabs', JSON.stringify(replenishmentCustomTabs));
+  }
+
+  function replenishmentTabFilterValues(profileMap, key) {
+    return replenishmentState.skus.map(function(sku) { return String((profileMap[sku] || {})[key] || '').trim(); })
+      .filter(function(value, index, list) { return value && list.indexOf(value) === index; })
+      .sort(function(a, b) { return a.localeCompare(b, 'zh-Hans-CN', { numeric: true }); });
+  }
+
+  function replenishmentTabChecksHtml(values, selected, key) {
+    return values.map(function(value) {
+      return '<label><input type="checkbox" data-replenishment-tab-filter="' + key + '" value="' + esc(value) + '"' + (selected.indexOf(value) !== -1 ? ' checked' : '') + '>' + esc(value) + '</label>';
+    }).join('') || '<span class="panel-sub">暂无可选项</span>';
+  }
+
+  async function openReplenishmentTabModal(id) {
+    var maps = await replenishmentDataMaps();
+    var tab = replenishmentCustomTabs.find(function(item) { return item.id === id; }) || { name: '', mainSeries: [], subSeries: [], skus: [], exclusive: true };
+    replenishmentEditingTabId = id || '';
+    $('replenishmentTabModalTitle').textContent = id ? '编辑补货标签页' : '新增补货标签页';
+    $('replenishmentTabNameInput').value = tab.name;
+    $('replenishmentTabMainSeries').innerHTML = replenishmentTabChecksHtml(replenishmentTabFilterValues(maps.profileMap, 'mainSeries'), tab.mainSeries, 'mainSeries');
+    $('replenishmentTabSubSeries').innerHTML = replenishmentTabChecksHtml(replenishmentTabFilterValues(maps.profileMap, 'subSeries'), tab.subSeries, 'subSeries');
+    $('replenishmentTabSkuInput').value = tab.skus.join('\n');
+    $('replenishmentTabExclusiveInput').checked = tab.exclusive !== false;
+    $('deleteReplenishmentTabBtn').hidden = !id;
+    $('replenishmentTabMsg').textContent = '';
+    $('replenishmentTabModal').classList.add('open');
+    $('replenishmentTabModal').setAttribute('aria-hidden', 'false');
+    $('replenishmentTabNameInput').focus();
+  }
+
+  function closeReplenishmentTabModal() {
+    $('replenishmentTabModal').classList.remove('open');
+    $('replenishmentTabModal').setAttribute('aria-hidden', 'true');
+    replenishmentEditingTabId = '';
+  }
+
+  async function saveReplenishmentTab() {
+    var name = $('replenishmentTabNameInput').value.trim();
+    var mainSeries = Array.from(document.querySelectorAll('[data-replenishment-tab-filter="mainSeries"]:checked')).map(function(input) { return input.value; });
+    var subSeries = Array.from(document.querySelectorAll('[data-replenishment-tab-filter="subSeries"]:checked')).map(function(input) { return input.value; });
+    var skus = parseInventorySkuText($('replenishmentTabSkuInput').value);
+    var exclusive = $('replenishmentTabExclusiveInput').checked;
+    if (!name) {
+      $('replenishmentTabMsg').textContent = '请填写标签页名称';
+      return;
+    }
+    if (!mainSeries.length && !subSeries.length && !skus.length) {
+      $('replenishmentTabMsg').textContent = '请至少选择一个系列或填写一个 SKU';
+      return;
+    }
+    var tab = { id: replenishmentEditingTabId || ('tab_' + Date.now()), name: name, mainSeries: mainSeries, subSeries: subSeries, skus: skus, exclusive: exclusive };
+    var index = replenishmentCustomTabs.findIndex(function(item) { return item.id === tab.id; });
+    if (index === -1) replenishmentCustomTabs.push(tab);
+    else replenishmentCustomTabs[index] = tab;
+    saveReplenishmentCustomTabs();
+    replenishmentResultView = 'custom:' + tab.id;
+    closeReplenishmentTabModal();
+    await renderReplenishmentCalculator();
+  }
+
+  async function deleteReplenishmentTab() {
+    replenishmentCustomTabs = replenishmentCustomTabs.filter(function(tab) { return tab.id !== replenishmentEditingTabId; });
+    saveReplenishmentCustomTabs();
+    replenishmentResultView = 'needed';
+    closeReplenishmentTabModal();
+    await renderReplenishmentCalculator();
+  }
+
+  function renderReplenishmentCustomTabs(profileMap) {
+    var host = $('replenishmentCustomTabs');
+    if (!host) return;
+    host.innerHTML = replenishmentCustomTabs.map(function(tab) {
+      var view = 'custom:' + tab.id;
+      var active = replenishmentResultView === view;
+      var count = replenishmentCustomTabSkus(tab, replenishmentState.skus, profileMap).length;
+      return '<span class="replenishment-custom-tab' + (active ? ' is-active' : '') + '">' +
+        '<button class="replenishment-result-tab' + (active ? ' active' : '') + '" type="button" role="tab" aria-selected="' + active + '" data-replenishment-result-view="' + esc(view) + '">' + esc(tab.name) + '<span>' + count + '</span></button>' +
+        '<button class="replenishment-custom-tab-edit" type="button" data-edit-replenishment-tab="' + esc(tab.id) + '" title="编辑标签页" aria-label="编辑' + esc(tab.name) + '标签页"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z" stroke-width="1.8" stroke-linejoin="round"/><path d="m13.5 6.5 4 4" stroke-width="1.8"/></svg></button></span>';
+    }).join('');
+  }
+
+  function replenishmentFormulaOptionsHtml(target) {
+    var formula = replenishmentState[target];
+    var preset = replenishmentFormulaPreset(formula);
+    var options = [
+      { key: 'balanced', label: '均衡趋势' },
+      { key: 'stable14', label: '近期稳定' },
+      { key: 'long28', label: '长期' }
+    ];
+    var activeKey = preset && options.some(function(item) { return item.key === preset.key; }) ? preset.key : 'custom';
+    return options.concat({ key: 'custom', label: '自定义（' + replenishmentFormulaDisplay(formula) + '）' }).map(function(item) {
+      var active = item.key === activeKey;
+      return '<button class="replenishment-text-option' + (active ? ' active' : '') + '" type="button" role="radio" aria-checked="' + active + '" data-replenishment-formula-choice="' + esc(item.key) + '" data-replenishment-formula-target="' + esc(target) + '">' + esc(item.label) + '</button>';
+    }).join('');
+  }
+
+  function renderReplenishmentFormulaPreset() {
+    if ($('replenishmentFormulaOptions')) $('replenishmentFormulaOptions').innerHTML = replenishmentFormulaOptionsHtml('recommendFormula');
+    if ($('inventoryTransferFormulaOptions')) $('inventoryTransferFormulaOptions').innerHTML = replenishmentFormulaOptionsHtml('transferFormula');
+  }
+
+  async function applyReplenishmentFormulaPreset(key, target) {
+    target = target === 'transferFormula' ? 'transferFormula' : 'recommendFormula';
+    if (key === 'custom') {
+      openReplenishmentFormulaModal(target);
+      return;
+    }
+    var preset = REPLENISHMENT_FORMULA_PRESETS.find(function(item) { return item.key === key; });
+    if (!preset) return;
+    await loadReplenishmentState();
+    replenishmentState[target] = preset.formula;
+    await saveReplenishmentState();
+    if (target === 'transferFormula') await renderInventoryTransferCalculator();
+    else {
+      await refillAutomaticReplenishment(false);
+      await renderReplenishmentCalculator();
+    }
+  }
+
+  function sanitizeReplenishmentMetrics(value) {
+    var source = Array.isArray(value) ? value : [];
+    var metrics = source.filter(function(key) {
+      return REPLENISHMENT_METRIC_OPTIONS.some(function(item) { return item.key === key; });
+    });
+    if (source.indexOf('normalizedExpected') !== -1 && metrics.indexOf('currentOrderable') === -1) metrics.push('currentOrderable');
+    return metrics;
+  }
+
   function sanitizeReplenishmentState(value) {
     value = value && typeof value === 'object' ? value : {};
+    var globalMetrics = Array.isArray(value.visibleMetrics)
+      ? sanitizeReplenishmentMetrics(value.visibleMetrics)
+      : REPLENISHMENT_METRIC_OPTIONS.map(function(item) { return item.key; });
+    if (Number(value.displayRulesVersion || 0) < 1 && globalMetrics.indexOf('purchaseAmount') === -1) globalMetrics.unshift('purchaseAmount');
     var plans = {};
     Object.keys(value.plans || {}).forEach(function(sku) {
       var source = value.plans[sku] || {};
@@ -11791,12 +12414,26 @@
       var target = sourceTarget && typeof sourceTarget === 'object'
         ? Object.keys(sourceTarget).map(function(warehouse) { return replenishmentNumber(sourceTarget[warehouse]); }).find(function(number) { return number !== ''; })
         : replenishmentNumber(sourceTarget);
-      var plan = { targetTurnover: target === undefined ? '' : target, expectedReplenishment: {} };
+      var plan = { targetTurnover: target === undefined ? '' : target, expectedReplenishment: {}, manualExpected: {}, metricOverrides: {} };
       Object.keys(source.expectedReplenishment || {}).forEach(function(warehouse) {
         if (warehouse === '全国') return;
         var number = replenishmentSignedNumber(source.expectedReplenishment[warehouse]);
         if (number !== '') plan.expectedReplenishment[warehouse] = number;
       });
+      Object.keys(source.manualExpected || {}).forEach(function(warehouse) {
+        if (source.manualExpected[warehouse] === true) plan.manualExpected[warehouse] = true;
+      });
+      Object.keys(source.metricOverrides || {}).forEach(function(key) {
+        if (REPLENISHMENT_METRIC_OPTIONS.some(function(item) { return item.key === key; }) && typeof source.metricOverrides[key] === 'boolean') plan.metricOverrides[key] = source.metricOverrides[key];
+      });
+      if (Array.isArray(source.visibleMetrics)) {
+        var legacyVisible = sanitizeReplenishmentMetrics(source.visibleMetrics);
+        REPLENISHMENT_METRIC_OPTIONS.forEach(function(item) {
+          if (item.key === 'purchaseAmount') return;
+          var legacyState = legacyVisible.indexOf(item.key) !== -1;
+          if (legacyState !== (globalMetrics.indexOf(item.key) !== -1)) plan.metricOverrides[item.key] = legacyState;
+        });
+      }
       plans[normalizeSkuValue(sku)] = plan;
     });
     return {
@@ -11805,11 +12442,13 @@
       defaultTurnover: replenishmentNumber(value.defaultTurnover),
       recommendFormula: safeReplenishmentFormula(value.recommendFormula),
       transferFormula: safeReplenishmentFormula(value.transferFormula),
-      spotTurnoverDimension: ['1', '7', '14', '28', 'formula'].indexOf(String(value.spotTurnoverDimension || '7')) === -1 ? '7' : String(value.spotTurnoverDimension || '7'),
+      transferIncludeLowWarehouse: value.transferIncludeLowWarehouse !== false,
+      orderableTurnoverDimension: ['1', '7', '14', '28', 'formula'].indexOf(String(value.orderableTurnoverDimension || '1')) === -1 ? '1' : String(value.orderableTurnoverDimension || '1'),
+      spotTurnoverDimension: value.orderableTurnoverDimension == null || ['1', '7', '14', '28', 'formula'].indexOf(String(value.spotTurnoverDimension || '1')) === -1 ? '1' : String(value.spotTurnoverDimension || '1'),
       enableSingleBWarehouse: value.enableSingleBWarehouse === true,
-      visibleMetrics: Array.isArray(value.visibleMetrics)
-        ? value.visibleMetrics.filter(function(key) { return REPLENISHMENT_METRIC_OPTIONS.some(function(item) { return item.key === key; }); })
-        : REPLENISHMENT_METRIC_OPTIONS.map(function(item) { return item.key; }),
+      autoFillMode: value.autoFillMode === 'boxized' ? 'boxized' : 'raw',
+      displayRulesVersion: 1,
+      visibleMetrics: globalMetrics,
       plans: plans
     };
   }
@@ -11817,8 +12456,11 @@
   async function loadReplenishmentState() {
     if (replenishmentLoaded || !db || !db.objectStoreNames.contains('app_settings')) return;
     var saved = await getOne('app_settings', 'inventoryReplenishmentPlan');
-    replenishmentState = sanitizeReplenishmentState(saved && saved.value);
+    var savedValue = saved && saved.value;
+    var needsInitialFill = !savedValue || ['raw', 'boxized'].indexOf(savedValue.autoFillMode) === -1;
+    replenishmentState = sanitizeReplenishmentState(savedValue);
     replenishmentLoaded = true;
+    if (needsInitialFill && replenishmentState.skus.length) await refillAutomaticReplenishment(false);
   }
 
   async function saveReplenishmentState() {
@@ -11839,7 +12481,7 @@
   async function openReplenishmentFormulaModal(target) {
     await loadReplenishmentState();
     replenishmentFormulaTarget = target === 'transferFormula' ? 'transferFormula' : 'recommendFormula';
-    $('replenishmentFormulaTitle').textContent = replenishmentFormulaTarget === 'transferFormula' ? '编辑内配预计日销量规则' : '编辑推荐补货数计算规则';
+    $('replenishmentFormulaTitle').textContent = replenishmentFormulaTarget === 'transferFormula' ? '编辑内配预计日销量规则' : '编辑预测销量规则';
     $('replenishmentFormulaInput').value = replenishmentState[replenishmentFormulaTarget];
     $('replenishmentFormulaFieldList').innerHTML = renderReplenishmentFormulaOptions();
     $('replenishmentFormulaMsg').textContent = '';
@@ -11866,7 +12508,10 @@
     await saveReplenishmentState();
     closeReplenishmentFormulaModal();
     if (replenishmentFormulaTarget === 'transferFormula') await renderInventoryTransferCalculator();
-    else await renderReplenishmentCalculator();
+    else {
+      await refillAutomaticReplenishment(false);
+      await renderReplenishmentCalculator();
+    }
   }
 
   function replenishmentWarehouses() {
@@ -11880,8 +12525,9 @@
 
   function replenishmentPlanFor(sku) {
     if (!replenishmentState.plans[sku]) {
-      replenishmentState.plans[sku] = { targetTurnover: '', expectedReplenishment: {} };
+      replenishmentState.plans[sku] = { targetTurnover: '', expectedReplenishment: {}, manualExpected: {}, metricOverrides: {} };
     }
+    if (!replenishmentState.plans[sku].metricOverrides) replenishmentState.plans[sku].metricOverrides = {};
     return replenishmentState.plans[sku];
   }
 
@@ -11962,17 +12608,16 @@
     return target === '' || orderable === '' || forecastDailySales <= 0 ? '' : Math.max(0, Math.ceil(target * forecastDailySales - orderable));
   }
 
-  function replenishmentCurrentSpotTurnover(metrics) {
-    var dimension = replenishmentState.spotTurnoverDimension;
+  function replenishmentCurrentTurnover(metrics, stockField, dimension) {
     var dailySales = dimension === 'formula'
       ? replenishmentForecastDailySales(metrics, replenishmentState.recommendFormula)
       : replenishmentDailyAverage(metrics['outbound' + dimension], Number(dimension));
-    var spotStock = replenishmentNumber(metrics.spotStock);
-    return spotStock === '' || dailySales <= 0 ? '' : spotStock / dailySales;
+    var stock = replenishmentNumber(metrics[stockField]);
+    return stock === '' || dailySales <= 0 ? '' : stock / dailySales;
   }
 
-  function replenishmentCurrentSpotLabel() {
-    return '当前现货周转（' + (replenishmentState.spotTurnoverDimension === 'formula' ? '系数预估' : replenishmentState.spotTurnoverDimension + '天') + '）';
+  function replenishmentCurrentTurnoverLabel(name, dimension, note) {
+    return name + '（' + (dimension === 'formula' ? '预测' : dimension + '天') + (note || '') + '）';
   }
 
   function replenishmentResultText(value, decimals) {
@@ -11983,7 +12628,7 @@
     if (value === '' || target === '' || target == null || target <= 0) return '';
     if (value < target * 2 / 3) return ' is-turnover-low';
     if (value > target * 4 / 3) return ' is-turnover-high';
-    return '';
+    return ' is-turnover-fit';
   }
 
   function replenishmentExpected(plan, warehouse, warehouses) {
@@ -11995,6 +12640,40 @@
     }, 0);
   }
 
+  function replenishmentPurchaseAmount(plan, inventoryRow, warehouses) {
+    var quantity = replenishmentExpected(plan, '全国', warehouses);
+    var price = replenishmentNumber(inventoryRow && inventoryRow.nationalPurchasePrice);
+    return quantity > 0 && price > 0 ? quantity * price : '';
+  }
+
+  function replenishmentPurchaseAmountText(value) {
+    return value === '' ? '-' : '¥' + inventoryMetricText(value, 2);
+  }
+
+  function replenishmentTotalPurchaseAmount(skus, inventoryMap, warehouses) {
+    return skus.reduce(function(total, sku) {
+      var amount = replenishmentPurchaseAmount(replenishmentPlanFor(sku), inventoryMap[sku] || {}, warehouses);
+      return total + (amount === '' ? 0 : amount);
+    }, 0);
+  }
+
+  function replenishmentExportAoa(skus, profileMap, warehouses) {
+    return [['SKU', '商品简称', '商品编码'].concat(warehouses)].concat(skus.map(function(sku) {
+      var profile = profileMap[sku] || {};
+      var plan = replenishmentPlanFor(sku);
+      return [sku, profile.shortName || '', profile.materialCode || ''].concat(warehouses.map(function(warehouse) {
+        var value = replenishmentExpected(plan, warehouse, warehouses);
+        return value === '' || value === 0 ? '' : value;
+      }));
+    }));
+  }
+
+  function replenishmentHasExportDemand(plan, warehouses) {
+    return warehouses.some(function(warehouse) {
+      return warehouse !== '全国' && replenishmentSignedNumber(plan.expectedReplenishment[warehouse]) > 0;
+    });
+  }
+
   function replenishmentBoxized(value, casePack) {
     value = replenishmentSignedNumber(value);
     if (value === '') return '';
@@ -12002,10 +12681,64 @@
   }
 
   function replenishmentInputHtml(sku, warehouse, field, value, placeholder, custom) {
-    var step = field === 'targetTurnover' ? '0.1' : '1';
-    return '<input class="replenishment-number-input' + (custom ? ' is-custom' : '') + '" type="number"' + (field === 'targetTurnover' ? ' min="0"' : '') + ' step="' + step + '"' +
-      ' value="' + esc(value === '' || value == null ? '' : value) + '" placeholder="' + esc(placeholder || '') + '"' +
-      ' data-replenishment-field="' + esc(field) + '" data-replenishment-sku="' + esc(sku) + '" data-replenishment-warehouse="' + esc(warehouse) + '">';
+    var text = value === '' || value == null || (field === 'expectedReplenishment' && Number(value) === 0) ? '' : value;
+    return '<input class="replenishment-number-input' + (custom ? ' is-custom' : '') + '" type="text" inputmode="decimal" autocomplete="off"' +
+      ' value="' + esc(text) + '" placeholder="' + esc(placeholder || '') + '"' +
+      ' data-replenishment-field="' + esc(field) + '" data-replenishment-sku="' + esc(sku) + '" data-replenishment-warehouse="' + esc(warehouse) + '">' +
+      (field === 'expectedReplenishment' ? '<span class="replenishment-copy-value" aria-hidden="true">' + esc(text) + '</span>' : '');
+  }
+
+  function replenishmentVisibleMetrics(plan) {
+    var overrides = plan.metricOverrides || {};
+    return REPLENISHMENT_METRIC_OPTIONS.map(function(item) { return item.key; }).filter(function(key) {
+      return Object.prototype.hasOwnProperty.call(overrides, key) ? overrides[key] : replenishmentState.visibleMetrics.indexOf(key) !== -1;
+    });
+  }
+
+  function replenishmentNeedsReplenishment(inventoryRow, warehouses, target, casePack) {
+    var recommendations = warehouses.filter(function(warehouse) { return warehouse !== '全国'; }).map(function(warehouse) {
+      var value = replenishmentRecommendedQuantity(replenishmentInventoryMetrics(inventoryRow, warehouse), target);
+      return replenishmentState.autoFillMode === 'boxized' ? replenishmentBoxized(value, casePack) : value;
+    }).filter(function(value) { return value !== ''; });
+    return recommendations.some(function(value) { return value > 0; });
+  }
+
+  function replenishmentDimensionOptionsHtml(metric) {
+    return '<span class="replenishment-current-dimension" role="group" aria-label="选择' + esc(metric === 'currentOrderable' ? '当前可订购周转' : '当前现货周转') + '展现维度">（<button type="button" data-current-turnover-metric="' + esc(metric) + '" data-current-turnover-dimension="1">1天</button>/<button type="button" data-current-turnover-metric="' + esc(metric) + '" data-current-turnover-dimension="7">7天</button>/<button type="button" data-current-turnover-metric="' + esc(metric) + '" data-current-turnover-dimension="14">14天</button>/<button type="button" data-current-turnover-metric="' + esc(metric) + '" data-current-turnover-dimension="28">28天</button>/<button type="button" data-current-turnover-metric="' + esc(metric) + '" data-current-turnover-dimension="formula">预测</button>）</span>';
+  }
+
+  function replenishmentMetricOptionsHtml(visible, sku, overrides) {
+    return REPLENISHMENT_METRIC_GROUPS.map(function(group) {
+      var items = group.keys.map(function(key) {
+        return REPLENISHMENT_METRIC_OPTIONS.find(function(item) { return item.key === key; });
+      }).filter(Boolean).map(function(item) {
+        var attributes = sku
+          ? ' data-replenishment-sku-metric="' + esc(item.key) + '" data-replenishment-sku="' + esc(sku) + '"'
+          : ' data-replenishment-metric="' + esc(item.key) + '"';
+        var custom = sku && overrides && Object.prototype.hasOwnProperty.call(overrides, item.key);
+        var option = '<label' + (custom ? ' class="is-custom" title="此项使用单品设置"' : '') + '><input type="checkbox"' + attributes + (visible.indexOf(item.key) !== -1 ? ' checked' : '') + '>' + esc(item.label) + '</label>';
+        var dimension = !sku && (item.key === 'currentOrderable' || item.key === 'currentSpot') ? replenishmentDimensionOptionsHtml(item.key) : '';
+        return dimension ? '<span class="replenishment-current-turnover-control">' + option + dimension + '</span>' : option;
+      }).join('');
+      return '<div class="replenishment-metric-group"><span class="replenishment-metric-group-title">' + esc(group.label) + '</span><div class="replenishment-metric-group-items">' + items + '</div></div>';
+    }).join('');
+  }
+
+  function replenishmentSkuMetricOptions(sku, plan) {
+    return '<div class="replenishment-sku-metrics" data-replenishment-sku-metric-menu="' + esc(sku) + '">' +
+      '<button class="replenishment-sku-metric-trigger" type="button" title="设置显示指标" aria-label="设置显示指标">' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>' +
+      '</button>' +
+      '<div class="replenishment-sku-metric-popover"></div></div>';
+  }
+
+  function populateReplenishmentSkuMetricMenu(menu) {
+    var sku = normalizeSkuValue(menu && menu.getAttribute('data-replenishment-sku-metric-menu'));
+    var popover = menu && menu.querySelector('.replenishment-sku-metric-popover');
+    if (!sku || !popover || popover.hasChildNodes()) return;
+    var plan = replenishmentPlanFor(sku);
+    popover.innerHTML = '<div class="replenishment-sku-metric-options">' + replenishmentMetricOptionsHtml(replenishmentVisibleMetrics(plan), sku, plan.metricOverrides) +
+      '</div><button class="replenishment-sku-metric-reset" type="button" data-reset-replenishment-sku-metrics="' + esc(sku) + '">全部恢复跟随</button>';
   }
 
   function renderReplenishmentSkuBlock(sku, profile, inventoryRow, warehouses) {
@@ -12014,49 +12747,66 @@
     var defaultTurnover = replenishmentState.defaultTurnover;
     var hasTarget = plan.targetTurnover !== '' && plan.targetTurnover != null;
     var target = hasTarget ? replenishmentNumber(plan.targetTurnover) : defaultTurnover;
+    var visibleMetrics = replenishmentVisibleMetrics(plan);
+    var purchaseAmount = replenishmentPurchaseAmount(plan, inventoryRow, warehouses);
     var values = warehouses.map(function(warehouse) {
       var metrics = replenishmentInventoryMetrics(inventoryRow, warehouse);
       var expected = replenishmentExpected(plan, warehouse, warehouses);
       var orderable = replenishmentNumber(metrics.orderableStock);
       var availableAfterPlan = orderable === '' ? '' : orderable + (expected === '' ? 0 : expected);
-      var normalizedExpected = warehouse === '全国'
-        ? warehouses.reduce(function(total, item) {
-            if (item === '全国') return total;
-            var value = replenishmentBoxized(plan.expectedReplenishment[item], casePack.value);
-            return total + (value === '' ? 0 : value);
-          }, 0)
-        : replenishmentBoxized(expected, casePack.value);
-      var recommended = replenishmentRecommendedQuantity(metrics, target);
-      var currentSpot = replenishmentCurrentSpotTurnover(metrics);
+      var currentSpot = replenishmentCurrentTurnover(metrics, 'spotStock', replenishmentState.spotTurnoverDimension);
+      var currentOrderable = replenishmentCurrentTurnover(metrics, 'orderableStock', replenishmentState.orderableTurnoverDimension);
       var available1 = replenishmentTurnover(availableAfterPlan, metrics.outbound1, 1);
       var available7 = replenishmentTurnover(availableAfterPlan, metrics.outbound7, 7);
       var available14 = replenishmentTurnover(availableAfterPlan, metrics.outbound14, 14);
       var available28 = replenishmentTurnover(availableAfterPlan, metrics.outbound28, 28);
+      var outbound1 = replenishmentDailyAverage(metrics.outbound1, 1);
+      var outbound7 = replenishmentDailyAverage(metrics.outbound7, 7);
+      var outbound14 = replenishmentDailyAverage(metrics.outbound14, 14);
+      var outbound28 = replenishmentDailyAverage(metrics.outbound28, 28);
+      var forecastDailySales = replenishmentForecastDailySales(metrics, replenishmentState.recommendFormula);
+      var availableFormula = availableAfterPlan === '' || forecastDailySales <= 0 ? '' : availableAfterPlan / forecastDailySales;
       return {
-        expectedInput: warehouse === '全国' ? replenishmentResultText(expected, 0) : replenishmentInputHtml(sku, warehouse, 'expectedReplenishment', expected, '0', false),
-        normalizedExpected: replenishmentResultText(normalizedExpected, 0),
-        recommended: replenishmentResultText(recommended, 0),
+        expectedInput: warehouse === '全国' ? (expected === 0 ? '' : replenishmentResultText(expected, 0)) : replenishmentInputHtml(sku, warehouse, 'expectedReplenishment', expected, '', !!plan.manualExpected[warehouse]),
+        spotStock: replenishmentResultText(metrics.spotStock, 0),
+        purchasePending: replenishmentResultText(metrics.purchasePending, 0),
+        orderableStock: replenishmentResultText(metrics.orderableStock, 0),
+        outboundFormula: replenishmentResultText(forecastDailySales),
+        outbound1: replenishmentResultText(outbound1),
+        outbound7: replenishmentResultText(outbound7),
+        outbound14: replenishmentResultText(outbound14),
+        outbound28: replenishmentResultText(outbound28),
+        currentOrderable: replenishmentResultText(currentOrderable), currentOrderableValue: currentOrderable,
         currentSpot: replenishmentResultText(currentSpot), currentSpotValue: currentSpot,
         available1: replenishmentResultText(available1), available1Value: available1,
         available7: replenishmentResultText(available7), available7Value: available7,
         available14: replenishmentResultText(available14), available14Value: available14,
-        available28: replenishmentResultText(available28), available28Value: available28
+        available28: replenishmentResultText(available28), available28Value: available28,
+        availableFormula: replenishmentResultText(availableFormula), availableFormulaValue: availableFormula
       };
     });
     var rows = [
-      { label: '预计补货数', key: 'expectedInput' },
-      { label: '预计补货数（箱规化）', key: 'normalizedExpected' },
-      { label: '推荐补货数', key: 'recommended' },
+      { label: '建议补货数', key: 'expectedInput' },
+      { label: '现货库存', key: 'spotStock' },
+      { label: '采购未到货', key: 'purchasePending' },
+      { label: '可订购库存', key: 'orderableStock' },
+      { label: '日均出库（预测）', key: 'outboundFormula' },
+      { label: '日均出库（1天）', key: 'outbound1' },
+      { label: '日均出库（7天）', key: 'outbound7' },
+      { label: '日均出库（14天）', key: 'outbound14' },
+      { label: '日均出库（28天）', key: 'outbound28' },
+      { label: '补货后周转（预测）', key: 'availableFormula', valueKey: 'availableFormulaValue' },
       { label: '补货后周转（7天）', key: 'available7', valueKey: 'available7Value' },
       { label: '补货后周转（14天）', key: 'available14', valueKey: 'available14Value' },
       { label: '补货后周转（28天）', key: 'available28', valueKey: 'available28Value' },
       { label: '补货后周转（1天）', key: 'available1', valueKey: 'available1Value' },
-      { label: replenishmentCurrentSpotLabel(), key: 'currentSpot', valueKey: 'currentSpotValue' }
-    ].filter(function(row) { return replenishmentState.visibleMetrics.indexOf(row.key) !== -1; });
-    var metricWidth = Math.max(110, Math.min(220, Math.ceil(rows.reduce(function(max, row) {
+      { label: replenishmentCurrentTurnoverLabel('当前可订购周转', replenishmentState.orderableTurnoverDimension), key: 'currentOrderable', valueKey: 'currentOrderableValue' },
+      { label: replenishmentCurrentTurnoverLabel('当前现货周转', replenishmentState.spotTurnoverDimension), key: 'currentSpot', valueKey: 'currentSpotValue' }
+    ].filter(function(row) { return row.key === 'expectedInput' || visibleMetrics.indexOf(row.key) !== -1; });
+    var metricWidth = Math.max(100, Math.min(190, Math.ceil(rows.reduce(function(max, row) {
       return Math.max(max, textPixelEstimate(row.label));
-    }, textPixelEstimate('指标')) + 30)));
-    var width = metricWidth + warehouses.length * 94;
+    }, textPixelEstimate('指标')) + 20)));
+    var width = metricWidth + warehouses.length * 88;
     var cols = '<col style="width:' + metricWidth + 'px">' +
       warehouses.map(function() { return '<col>'; }).join('');
     var head = '<tr><th>指标</th>' +
@@ -12069,13 +12819,16 @@
           return '<td>' + value + '</td>';
         }).join('') + '</tr>';
     }).join('');
-    var targetInput = replenishmentInputHtml(sku, '', 'targetTurnover', hasTarget ? plan.targetTurnover : '', defaultTurnover === '' ? '默认未设置' : '默认 ' + defaultTurnover, hasTarget);
-    return '<section class="replenishment-sku-block">' +
+    var targetInput = replenishmentInputHtml(sku, '', 'targetTurnover', hasTarget ? plan.targetTurnover : '', defaultTurnover === '' ? '-' : defaultTurnover, hasTarget);
+    var purchaseAmountHtml = visibleMetrics.indexOf('purchaseAmount') === -1 ? '' :
+      '<div class="replenishment-sku-purchase"><span>采购金额</span><strong>' + esc(replenishmentPurchaseAmountText(purchaseAmount)) + '</strong></div>';
+    return '<section class="replenishment-sku-block" data-replenishment-block-sku="' + esc(sku) + '">' +
       '<div class="replenishment-sku-summary">' +
-        '<div class="replenishment-sku-fact"><span>SKU</span><strong>' + esc(sku) + '</strong></div>' +
-        '<div class="replenishment-sku-fact"><span>商品简称</span><strong>' + esc(profile.shortName || '-') + '</strong></div>' +
-        '<div class="replenishment-sku-fact"><span>箱规</span><strong>' + esc(casePack.text) + '</strong></div>' +
+        '<div class="replenishment-sku-head"><span class="replenishment-sku-code">' + esc(sku) + '</span><strong class="replenishment-sku-title">' + esc(profile.shortName || '-') + '</strong></div>' +
+        '<div class="replenishment-sku-fact replenishment-sku-pack"><span>箱规</span><strong>' + esc(casePack.text) + '</strong></div>' +
         '<label class="replenishment-sku-fact replenishment-sku-target"><span>目标周转（天）</span>' + targetInput + '</label>' +
+        purchaseAmountHtml +
+        replenishmentSkuMetricOptions(sku, plan) +
       '</div>' +
       '<div class="table-wrap"><table class="data-table replenishment-table" style="width:max(100%,' + width + 'px)">' +
       '<colgroup>' + cols + '</colgroup><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div></section>';
@@ -12095,72 +12848,184 @@
     return { profileMap: profileMap, inventoryMap: inventoryMap };
   }
 
-  async function renderReplenishmentCalculator() {
+  function replenishmentSkuNameRowsHtml(skus, profileMap, activeLine) {
+    return skus.map(function(sku, index) {
+      var shortName = String((profileMap[normalizeSkuValue(sku)] || {}).shortName || '').trim();
+      return '<div class="replenishment-sku-name-row' + (index === activeLine ? ' is-editing' : '') + '">' + (shortName ? esc('（' + shortName + '）') : '') + '</div>';
+    }).join('\n');
+  }
+
+  function renderReplenishmentSkuNameLayer() {
+    var input = $('replenishmentSkuInput');
+    var layer = $('replenishmentSkuNameLayer');
+    if (!input || !layer) return;
+    var activeLine = document.activeElement === input ? input.value.slice(0, input.selectionStart).split('\n').length - 1 : -1;
+    layer.innerHTML = replenishmentSkuNameRowsHtml(input.value.split(/\r?\n/), replenishmentProfileMap, activeLine);
+    layer.style.transform = 'translate(' + (-input.scrollLeft) + 'px,' + (-input.scrollTop) + 'px)';
+  }
+
+  function renderInventoryTransferSkuNameLayer() {
+    var input = $('inventoryTransferSkuInput');
+    var layer = $('inventoryTransferSkuNameLayer');
+    if (!input || !layer) return;
+    var activeLine = document.activeElement === input ? input.value.slice(0, input.selectionStart).split('\n').length - 1 : -1;
+    layer.innerHTML = replenishmentSkuNameRowsHtml(input.value.split(/\r?\n/), replenishmentProfileMap, activeLine);
+    layer.style.transform = 'translate(' + (-input.scrollLeft) + 'px,' + (-input.scrollTop) + 'px)';
+  }
+
+  async function renderReplenishmentCalculator(openMetricSku) {
     await loadReplenishmentState();
     var skuInput = $('replenishmentSkuInput');
     var defaultInput = $('replenishmentDefaultTurnoverInput');
     var bWarehouseInput = $('replenishmentEnableBWarehouse');
-    var formulaPreview = $('replenishmentFormulaPreview');
     var output = $('replenishmentSkuOutput');
     if (skuInput && document.activeElement !== skuInput) skuInput.value = replenishmentState.skus.join('\n');
+    if ($('replenishmentScopeCount')) $('replenishmentScopeCount').textContent = replenishmentState.skus.length + ' 个 SKU';
     if (defaultInput && document.activeElement !== defaultInput) defaultInput.value = replenishmentState.defaultTurnover;
     if (bWarehouseInput) bWarehouseInput.checked = replenishmentState.enableSingleBWarehouse;
-    if ($('replenishmentMetricOptions')) $('replenishmentMetricOptions').innerHTML = REPLENISHMENT_METRIC_OPTIONS.map(function(item) {
-      return '<label><input type="checkbox" data-replenishment-metric="' + esc(item.key) + '"' + (replenishmentState.visibleMetrics.indexOf(item.key) !== -1 ? ' checked' : '') + '>' + esc(item.label) + '</label>';
-    }).join('');
-    document.querySelectorAll('[data-spot-turnover-dimension]').forEach(function(btn) {
-      var active = btn.getAttribute('data-spot-turnover-dimension') === replenishmentState.spotTurnoverDimension;
+    if ($('replenishmentMetricOptions')) $('replenishmentMetricOptions').innerHTML = replenishmentMetricOptionsHtml(replenishmentState.visibleMetrics, '');
+    renderReplenishmentFormulaPreset();
+    document.querySelectorAll('[data-current-turnover-dimension]').forEach(function(btn) {
+      var stateKey = btn.getAttribute('data-current-turnover-metric') === 'currentOrderable' ? 'orderableTurnoverDimension' : 'spotTurnoverDimension';
+      var active = btn.getAttribute('data-current-turnover-dimension') === replenishmentState[stateKey];
       btn.classList.toggle('active', active);
       btn.setAttribute('aria-pressed', active ? 'true' : 'false');
     });
-    if (formulaPreview) formulaPreview.textContent = '预计日销量 = ' + replenishmentFormulaDisplay(replenishmentState.recommendFormula) + '\n推荐补货数 = max(0, 向上取整(目标周转 × 预计日销量 - 可订购库存))';
+    document.querySelectorAll('[data-fill-replenishment]').forEach(function(btn) {
+      var active = btn.getAttribute('data-fill-replenishment') === replenishmentState.autoFillMode;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      btn.setAttribute('aria-checked', active ? 'true' : 'false');
+    });
     if (!output) return;
     if (!replenishmentState.skus.length) {
+      if ($('replenishmentNeededCount')) $('replenishmentNeededCount').textContent = '0';
+      if ($('replenishmentMonitorCount')) $('replenishmentMonitorCount').textContent = '0';
+      if ($('replenishmentExportTotal')) $('replenishmentExportTotal').textContent = '· ¥0.00';
       output.innerHTML = '<div class="replenishment-empty">请先保存需要计算的 SKU</div>';
       return;
     }
     var maps = await replenishmentDataMaps();
+    replenishmentProfileMap = maps.profileMap;
+    renderReplenishmentSkuNameLayer();
     var warehouses = replenishmentWarehouses();
-    output.innerHTML = replenishmentState.skus.map(function(sku) {
+    if ($('replenishmentExportTotal')) {
+      $('replenishmentExportTotal').textContent = '· ' + replenishmentPurchaseAmountText(replenishmentTotalPurchaseAmount(replenishmentState.skus, maps.inventoryMap, warehouses));
+    }
+    var excludedSkus = {};
+    replenishmentCustomTabs.filter(function(tab) { return tab.exclusive; }).forEach(function(tab) {
+      replenishmentCustomTabSkus(tab, replenishmentState.skus, maps.profileMap).forEach(function(sku) { excludedSkus[sku] = true; });
+    });
+    var groupedSkus = replenishmentState.skus.reduce(function(result, sku) {
+      if (excludedSkus[sku]) return result;
+      var plan = replenishmentPlanFor(sku);
+      var target = plan.targetTurnover !== '' && plan.targetTurnover != null ? replenishmentNumber(plan.targetTurnover) : replenishmentState.defaultTurnover;
+      result[replenishmentNeedsReplenishment(maps.inventoryMap[sku] || {}, warehouses, target, replenishmentCasePack(maps.profileMap[sku]).value) ? 'needed' : 'monitor'].push(sku);
+      return result;
+    }, { needed: [], monitor: [] });
+    if ($('replenishmentNeededCount')) $('replenishmentNeededCount').textContent = groupedSkus.needed.length;
+    if ($('replenishmentMonitorCount')) $('replenishmentMonitorCount').textContent = groupedSkus.monitor.length;
+    renderReplenishmentCustomTabs(maps.profileMap);
+    document.querySelectorAll('[data-replenishment-result-view]').forEach(function(btn) {
+      var active = btn.getAttribute('data-replenishment-result-view') === replenishmentResultView;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    var customTab = replenishmentResultView.indexOf('custom:') === 0
+      ? replenishmentCustomTabs.find(function(tab) { return 'custom:' + tab.id === replenishmentResultView; })
+      : null;
+    var visibleSkus = customTab ? replenishmentCustomTabSkus(customTab, replenishmentState.skus, maps.profileMap) : groupedSkus[replenishmentResultView];
+    if (!visibleSkus) {
+      replenishmentResultView = 'needed';
+      visibleSkus = groupedSkus.needed;
+    }
+    output.innerHTML = visibleSkus.map(function(sku) {
       return renderReplenishmentSkuBlock(sku, maps.profileMap[sku] || {}, maps.inventoryMap[sku] || {}, warehouses);
-    }).join('');
+    }).join('') || '<div class="replenishment-empty">' + (customTab ? '当前标签页没有匹配商品' : (replenishmentResultView === 'monitor' ? '当前没有无需补货的商品' : '当前没有建议补货的商品')) + '</div>';
+    if (openMetricSku) {
+      Array.from(output.querySelectorAll('[data-replenishment-block-sku]')).some(function(block) {
+        if (block.getAttribute('data-replenishment-block-sku') !== openMetricSku) return false;
+        var menu = block.querySelector('.replenishment-sku-metrics');
+        if (menu) {
+          populateReplenishmentSkuMetricMenu(menu);
+          menu.classList.add('is-open');
+        }
+        return true;
+      });
+    }
   }
 
-  async function fillRecommendedReplenishment(boxized) {
+  async function exportReplenishmentDemand() {
+    if (!window.XLSX) {
+      setReplenishmentMsg('表格导出组件还没加载完成，请稍后重试', true);
+      return;
+    }
+    var activeInput = document.activeElement && document.activeElement.closest && document.activeElement.closest('[data-replenishment-field]');
+    if (activeInput) await updateReplenishmentInput(activeInput);
     await loadReplenishmentState();
+    var maps = await replenishmentDataMaps();
+    var warehouses = replenishmentWarehouses();
+    var skus = replenishmentState.skus.filter(function(sku) {
+      return replenishmentHasExportDemand(replenishmentPlanFor(sku), warehouses);
+    });
+    if (!skus.length) {
+      setReplenishmentMsg('当前没有需要补货的商品', true);
+      return;
+    }
+    var wb = XLSX.utils.book_new();
+    var ws = XLSX.utils.aoa_to_sheet(replenishmentExportAoa(skus, maps.profileMap, warehouses));
+    ws['!cols'] = [{ wch: 16 }, { wch: 24 }, { wch: 16 }].concat(warehouses.map(function() { return { wch: 12 }; }));
+    XLSX.utils.book_append_sheet(wb, ws, '补货需求');
+    XLSX.writeFile(wb, '补货需求_' + today() + '.xlsx');
+    setReplenishmentMsg('已导出 ' + skus.length + ' 个商品的补货需求');
+  }
+
+  async function refillAutomaticReplenishment(resetManual) {
+    if (!replenishmentState.autoFillMode) return false;
     var maps = await replenishmentDataMaps();
     var warehouses = replenishmentWarehouses().filter(function(warehouse) { return warehouse !== '全国'; });
     replenishmentState.skus.forEach(function(sku) {
       var plan = replenishmentPlanFor(sku);
+      if (resetManual) plan.manualExpected = {};
       var target = plan.targetTurnover !== '' && plan.targetTurnover != null ? replenishmentNumber(plan.targetTurnover) : replenishmentState.defaultTurnover;
       var casePack = replenishmentCasePack(maps.profileMap[sku] || {});
       warehouses.forEach(function(warehouse) {
+        if (plan.manualExpected[warehouse]) return;
         var recommended = replenishmentRecommendedQuantity(replenishmentInventoryMetrics(maps.inventoryMap[sku] || {}, warehouse), target);
-        if (recommended !== '') plan.expectedReplenishment[warehouse] = boxized ? replenishmentBoxized(recommended, casePack.value) : recommended;
+        if (recommended !== '') plan.expectedReplenishment[warehouse] = replenishmentState.autoFillMode === 'boxized' ? replenishmentBoxized(recommended, casePack.value) : recommended;
       });
     });
     await saveReplenishmentState();
-    setReplenishmentMsg(boxized ? '已填入箱规化推荐补货数' : '已填入推荐补货数');
+    return true;
+  }
+
+  async function fillRecommendedReplenishment(mode) {
+    await loadReplenishmentState();
+    replenishmentState.autoFillMode = mode === 'boxized' ? 'boxized' : 'raw';
+    await refillAutomaticReplenishment(true);
+    setReplenishmentMsg(replenishmentState.autoFillMode === 'boxized' ? '建议补货数已按箱规计算' : '建议补货数已按实际件数计算');
     await renderReplenishmentCalculator();
   }
 
-  function inventoryTransferWarehouses() {
-    return inventoryWarehouses.filter(function(warehouse) { return warehouse && warehouse !== 'B仓'; });
+  function inventoryTransferHasBWarehouse(inventoryRow) {
+    var metrics = replenishmentInventoryMetrics(inventoryRow, 'B仓');
+    return ['orderableStock', 'outbound1', 'outbound7', 'outbound14', 'outbound28'].some(function(field) {
+      var value = replenishmentNumber(metrics[field]);
+      return value !== '' && value !== 0;
+    });
+  }
+
+  function inventoryTransferWarehouses(inventoryRow) {
+    var warehouses = inventoryWarehouses.filter(function(warehouse) { return warehouse && warehouse !== 'B仓'; });
+    if (replenishmentState.transferIncludeLowWarehouse && inventoryTransferHasBWarehouse(inventoryRow)) warehouses.unshift('B仓');
+    return warehouses;
   }
 
   function inventoryTransferQuantityText(value) {
     return value === '' ? '-' : (value > 0 ? '+' : '') + inventoryMetricText(value, 0);
   }
 
-  function renderInventoryTransferSkuBlock(sku, profile, inventoryRow, warehouses) {
-    var values = warehouses.map(function(warehouse) {
-      var metrics = replenishmentInventoryMetrics(inventoryRow, warehouse);
-      return {
-        warehouse: warehouse,
-        orderable: replenishmentNumber(metrics.orderableStock),
-        dailySales: replenishmentForecastDailySales(metrics, replenishmentState.transferFormula)
-      };
-    });
+  function inventoryTransferBalance(values) {
     var totals = values.reduce(function(result, item) {
       if (item.orderable === '' || item.dailySales <= 0) return result;
       result.orderable += item.orderable;
@@ -12179,6 +13044,19 @@
     values.forEach(function(item) {
       item.afterTurnover = item.transferQuantity === '' ? '' : (item.orderable + item.transferQuantity) / item.dailySales;
     });
+    return balanceTurnover;
+  }
+
+  function renderInventoryTransferSkuBlock(sku, profile, inventoryRow, warehouses) {
+    var values = warehouses.map(function(warehouse) {
+      var metrics = replenishmentInventoryMetrics(inventoryRow, warehouse);
+      return {
+        warehouse: warehouse,
+        orderable: replenishmentNumber(metrics.orderableStock),
+        dailySales: replenishmentForecastDailySales(metrics, replenishmentState.transferFormula)
+      };
+    });
+    var balanceTurnover = inventoryTransferBalance(values);
     var rows = [
       { label: '可订购库存', render: function(item) { return replenishmentResultText(item.orderable, 0); } },
       { label: '预计日销量', render: function(item) { return replenishmentResultText(item.dailySales, 2); } },
@@ -12208,22 +13086,27 @@
   async function renderInventoryTransferCalculator() {
     await loadReplenishmentState();
     var skuInput = $('inventoryTransferSkuInput');
-    var preview = $('inventoryTransferFormulaPreview');
+    var includeLowWarehouse = $('inventoryTransferIncludeLowWarehouse');
     var output = $('inventoryTransferOutput');
     if (skuInput && document.activeElement !== skuInput) skuInput.value = replenishmentState.transferSkus.join('\n');
-    if (preview) preview.textContent = '预计日销量 = ' + replenishmentFormulaDisplay(replenishmentState.transferFormula) + '；平衡周转 = 已配置仓总可订购量 ÷ 已配置仓总预计日销量';
+    if ($('inventoryTransferScopeCount')) $('inventoryTransferScopeCount').textContent = replenishmentState.transferSkus.length + ' 个 SKU';
+    if (includeLowWarehouse) includeLowWarehouse.checked = replenishmentState.transferIncludeLowWarehouse;
+    renderReplenishmentFormulaPreset();
     if (!output) return;
+    var maps = await replenishmentDataMaps();
+    replenishmentProfileMap = maps.profileMap;
+    renderInventoryTransferSkuNameLayer();
     if (!replenishmentState.transferSkus.length) {
       output.innerHTML = '<div class="replenishment-empty">请先保存需要计算的内配 SKU</div>';
       return;
     }
-    var warehouses = inventoryTransferWarehouses();
-    if (!warehouses.length) {
+    var baseWarehouses = inventoryWarehouses.filter(function(warehouse) { return warehouse && warehouse !== 'B仓'; });
+    if (!baseWarehouses.length) {
       output.innerHTML = '<div class="replenishment-empty">请先配置仓库</div>';
       return;
     }
-    var maps = await replenishmentDataMaps();
     output.innerHTML = replenishmentState.transferSkus.map(function(sku) {
+      var warehouses = inventoryTransferWarehouses(maps.inventoryMap[sku] || {});
       return renderInventoryTransferSkuBlock(sku, maps.profileMap[sku] || {}, maps.inventoryMap[sku] || {}, warehouses);
     }).join('');
   }
@@ -12255,6 +13138,7 @@
     replenishmentState.skus = skus;
     replenishmentState.plans = plans;
     await saveReplenishmentState();
+    await refillAutomaticReplenishment(false);
     setReplenishmentMsg('已保存 ' + skus.length + ' 个补货 SKU');
     await renderReplenishmentCalculator();
   }
@@ -12281,6 +13165,7 @@
     await saveReplenishmentState();
     var custom = replenishmentCustomTargets();
     if (!custom.length) {
+      await refillAutomaticReplenishment(false);
       setReplenishmentMsg('默认周转已更新');
       await renderReplenishmentCalculator();
       return;
@@ -12311,6 +13196,7 @@
 
   async function keepReplenishmentDefaultTargets() {
     closeReplenishmentDefaultModal();
+    await refillAutomaticReplenishment(false);
     setReplenishmentMsg('默认周转已更新，自定义项保持原手动设定');
     await renderReplenishmentCalculator();
   }
@@ -12338,6 +13224,7 @@
     });
     await saveReplenishmentState();
     closeReplenishmentDefaultModal();
+    await refillAutomaticReplenishment(false);
     setReplenishmentMsg('默认周转已更新，已应用 ' + updates.length + ' 个商品的当前设置');
     await renderReplenishmentCalculator();
   }
@@ -12358,14 +13245,37 @@
     var plan = replenishmentPlanFor(sku);
     if (field === 'targetTurnover') {
       plan.targetTurnover = value;
-    } else if (value === '') {
-      delete plan.expectedReplenishment[warehouse];
     } else {
-      plan.expectedReplenishment[warehouse] = value;
+      if (value === '') delete plan.expectedReplenishment[warehouse];
+      else plan.expectedReplenishment[warehouse] = value;
+      plan.manualExpected[warehouse] = true;
     }
     await saveReplenishmentState();
+    if (field === 'targetTurnover') await refillAutomaticReplenishment(false);
     setReplenishmentMsg('已保存 ' + sku + (warehouse ? ' / ' + warehouse : ''));
     await renderReplenishmentCalculator();
+  }
+
+  async function updateReplenishmentSkuMetrics(input) {
+    await loadReplenishmentState();
+    var sku = normalizeSkuValue(input.getAttribute('data-replenishment-sku'));
+    var key = input.getAttribute('data-replenishment-sku-metric');
+    if (!sku || !key) return;
+    var plan = replenishmentPlanFor(sku);
+    var globalChecked = replenishmentState.visibleMetrics.indexOf(key) !== -1;
+    if (input.checked === globalChecked) delete plan.metricOverrides[key];
+    else plan.metricOverrides[key] = input.checked;
+    await saveReplenishmentState();
+    await renderReplenishmentCalculator(sku);
+  }
+
+  async function resetReplenishmentSkuMetrics(sku) {
+    await loadReplenishmentState();
+    sku = normalizeSkuValue(sku);
+    if (!sku) return;
+    replenishmentPlanFor(sku).metricOverrides = {};
+    await saveReplenishmentState();
+    await renderReplenishmentCalculator(sku);
   }
 
   async function clearInventoryTurnoverData() {
@@ -14600,15 +15510,41 @@
     return (group.boxes || []).map(function(box) { return box.value || ''; }).filter(Boolean).join('\n');
   }
 
+  function skuLookupCardWidth(value, profileMap) {
+    var longest = String(value || '').split(/\r?\n/).reduce(function(result, sku) {
+      sku = normalizeSkuValue(sku);
+      var shortName = String((profileMap[sku] || {}).shortName || '').trim();
+      var text = sku + (shortName ? '（' + shortName + '）' : '');
+      return text.length > result.length ? text : result;
+    }, '');
+    return Math.max(240, Math.ceil(textPixelEstimate(longest) + 54));
+  }
+
+  function renderSkuLookupNameLayer(input) {
+    var card = input && input.closest('[data-sku-lookup-id]');
+    var layer = card && card.querySelector('[data-sku-lookup-name-layer]');
+    if (!card || !layer) return;
+    var activeLine = document.activeElement === input ? input.value.slice(0, input.selectionStart).split('\n').length - 1 : -1;
+    layer.innerHTML = replenishmentSkuNameRowsHtml(input.value.split(/\r?\n/), inventorySkuProfileMap, activeLine);
+    layer.style.transform = 'translate(' + (-input.scrollLeft) + 'px,' + (-input.scrollTop) + 'px)';
+    card.style.setProperty('--sku-lookup-card-width', skuLookupCardWidth(input.value, inventorySkuProfileMap) + 'px');
+  }
+
   function renderSkuLookupBox(group) {
     return '<div class="sku-lookup-box" data-sku-lookup-box>' +
-      '<textarea class="input sku-lookup-input" data-sku-lookup-value placeholder="此处放 SKU，一行一个或用逗号分隔">' + esc(skuLookupValue(group)) + '</textarea>' +
+      '<div class="sku-lookup-editor">' +
+        '<textarea class="input sku-lookup-input" data-sku-lookup-value placeholder="此处放 SKU，一行一个" wrap="off">' + esc(skuLookupValue(group)) + '</textarea>' +
+        '<div class="replenishment-sku-name-viewport" aria-hidden="true"><div class="replenishment-sku-name-layer" data-sku-lookup-name-layer></div></div>' +
+      '</div>' +
     '</div>';
   }
 
   async function renderSkuLookupGroups() {
     if (!$('skuLookupGroups')) return;
     await ensureSkuLookupStore();
+    if (!Object.keys(inventorySkuProfileMap).length) {
+      (await getAll('sku_profiles')).forEach(function(profile) { inventorySkuProfileMap[normalizeSkuValue(profile.sku)] = profile; });
+    }
     var groups = await getAll('sku_lookup_groups');
     groups.sort(function(a, b) {
       return String(a.createdAt || '').localeCompare(String(b.createdAt || '')) || Number(a.id || 0) - Number(b.id || 0);
@@ -14628,6 +15564,7 @@
         renderSkuLookupBox(group) +
       '</div>';
     }).join('');
+    $('skuLookupGroups').querySelectorAll('[data-sku-lookup-value]').forEach(renderSkuLookupNameLayer);
   }
 
   async function addSkuLookupGroup() {
@@ -15168,6 +16105,7 @@
 
   function normalizePageHash(page) {
     if (page === 'dashboard') return 'import';
+    if (page === 'shop-competitor') return 'import';
     if (page === 'import-setting') return 'import-settings';
     if (page === 'finance-import') return 'finance-data';
     if (page === 'search-data') return 'search-import';
@@ -15194,49 +16132,66 @@
     if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function handlePageNavigation(page) {
+  async function handlePageNavigation(page) {
     page = normalizePageHash(page);
     switchPage(page);
     forceScrollTop();
+    if (!db) return;
     if (page === 'import') {
-      renderManualRankingEntry();
+      await renderManualRankingEntry();
       renderAllImportMappings();
     }
     if (page === 'finance-data') {
+      if (grossMarginDashboardTemplateWorkbook) await saveGrossMarginDashboardTemplateWorkbook();
+      await loadGrossMarginDashboardTemplateWorkbookFromDb();
       renderAllImportMappings();
       renderFinanceGiftRules(false);
-      renderGrossMarginData();
+      await renderGrossMarginData();
     }
     if (page === 'search-import') {
       renderSearchAnalysisSettings();
-      renderSearchData();
+      await renderSearchData();
     }
     if (page === 'inventory-turnover') {
       renderInventoryWarehouses();
       renderInventorySkuConfig();
-      renderInventoryTurnoverData();
+      await renderInventoryTurnoverData();
     }
     if (page === 'import-settings') {
       renderAllImportMappings();
       requestAnimationFrame(scrollToImportRules);
     }
     if (page === 'report') {
+      await loadMonitorTracksFromDb();
+      await loadReportTemplateCopyRowsFromDb();
+      if (reportTemplateWorkbook) await saveReportTemplateWorkbook();
+      await loadReportTemplateWorkbookFromDb();
       renderReportConfig();
-      renderReportOutput();
+      await renderReportOutput();
     }
-    if (page === 'db-browser') renderDbBrowser();
+    if (page === 'db-browser') await renderDbBrowser();
     if (page === 'db-sku' || page === 'sku') {
+      await normalizeCompetitorSkuDefaults();
+      await mergeDuplicateSeriesColumns();
+      await mergeDuplicateBuiltinSkuColumns();
+      await normalizeSkuCustomColumnKeys();
       var nextSkuView = sessionStorage.getItem('jdSkuArchiveView');
       sessionStorage.removeItem('jdSkuArchiveView');
       setSkuArchiveView(nextSkuView || skuArchiveView);
-      renderSkus().then(function() { window.scrollTo({ top: 0, behavior: 'auto' }); });
+      await renderSkus();
+      window.scrollTo({ top: 0, behavior: 'auto' });
     }
-    if (page === 'raw-snapshots') renderSnapshots();
-    if (page === 'db-analyzed') renderAnalyzedDb();
-    if (page === 'ranking-raw') renderRankingRaw();
-    if (page === 'db-estimates') renderEstimatesDb();
-    if (page === 'finance-data') renderGrossMarginData();
-    if (page === 'cleanup') renderCleanupSnapshots();
+    if (page === 'raw-snapshots') {
+      await stripRawSnapshotRows();
+      await renderSnapshots();
+    }
+    if (page === 'db-analyzed') await renderAnalyzedDb();
+    if (page === 'ranking-raw') await renderRankingRaw();
+    if (page === 'db-estimates') await renderEstimatesDb();
+    if (page === 'cleanup') {
+      await stripRawSnapshotRows();
+      await renderCleanupSnapshots();
+    }
   }
 
   document.querySelectorAll('.tab-btn').forEach(function(btn) {
@@ -16497,14 +17452,44 @@
       if (tr && e.target.matches('[data-sku-field]')) saveSkuRow(tr);
     });
     table.addEventListener('change', function(e) {
+      var all = e.target.closest('[data-sku-filter-all]');
+      if (all) {
+        e.target.closest('[data-sku-filter-popover]').querySelectorAll('[data-sku-filter-value]').forEach(function(input) { input.checked = all.checked; });
+        return;
+      }
       var tr = e.target.closest('tr[data-item-type]');
       if (tr && e.target.matches('[data-sku-check]')) saveSkuRow(tr);
+    });
+    table.addEventListener('input', function(e) {
+      if (!e.target.matches('.sku-filter-search')) return;
+      var keyword = e.target.value.trim().toLowerCase();
+      e.target.closest('[data-sku-filter-popover]').querySelectorAll('[data-sku-filter-option]').forEach(function(option) {
+        option.hidden = keyword && option.textContent.toLowerCase().indexOf(keyword) === -1;
+      });
     });
     table.addEventListener('click', async function(e) {
       var addCol = e.target.closest('[data-add-col]');
       var rowDelete = e.target.closest('[data-row-delete]');
       var sortCol = e.target.closest('[data-sort-col]');
       var sortDir = e.target.closest('[data-sort-dir]');
+      var filterApply = e.target.closest('[data-sku-filter-apply]');
+      var filterClear = e.target.closest('[data-sku-filter-clear]');
+      if (filterApply || filterClear) {
+        e.stopPropagation();
+        var filter = e.target.closest('[data-sku-filter]');
+        var filterType = tableId === 'competitorSkuTable' ? 'competitor' : 'own';
+        var filterKey = filter.getAttribute('data-sku-filter');
+        if (filterClear) delete skuFilterState[filterType][filterKey];
+        else {
+          var inputs = Array.from(filter.querySelectorAll('[data-sku-filter-value]'));
+          var selected = inputs.filter(function(input) { return input.checked; }).map(function(input) { return input.value; });
+          if (selected.length === inputs.length) delete skuFilterState[filterType][filterKey];
+          else skuFilterState[filterType][filterKey] = selected;
+        }
+        saveSkuFilterState();
+        await renderSkus();
+        return;
+      }
       if (addCol) {
         e.stopPropagation();
         await addSkuColumn(addCol.getAttribute('data-add-col'), '__custom__');
@@ -16542,7 +17527,7 @@
     });
     table.addEventListener('dragstart', function(e) {
       var th = e.target.closest('[data-drag-col]');
-      if (!th || resizingColumn || e.target.closest('.col-resizer') || e.target.closest('[contenteditable="true"]')) {
+      if (!th || resizingColumn || e.target.closest('.col-resizer') || e.target.closest('.sku-filter') || e.target.closest('[contenteditable="true"]')) {
         e.preventDefault();
         return;
       }
@@ -16619,7 +17604,13 @@
     });
   }
   if ($('inventorySkuInput')) {
-    $('inventorySkuInput').addEventListener('blur', syncInventorySkusFromInput);
+    ['focus', 'input', 'click', 'keyup', 'scroll'].forEach(function(eventName) {
+      $('inventorySkuInput').addEventListener(eventName, renderInventorySkuNameLayer);
+    });
+    $('inventorySkuInput').addEventListener('blur', function() {
+      syncInventorySkusFromInput();
+      renderInventorySkuConfig();
+    });
     $('inventorySkuInput').addEventListener('change', syncInventorySkusFromInput);
   }
   if ($('inventoryWarehouseTags')) {
@@ -16651,8 +17642,24 @@
   });
   if ($('refreshInventoryTurnoverBtn')) $('refreshInventoryTurnoverBtn').addEventListener('click', renderInventoryTurnoverData);
   if ($('clearInventoryTurnoverBtn')) $('clearInventoryTurnoverBtn').addEventListener('click', clearInventoryTurnoverData);
-  if ($('replenishmentSkuInput')) $('replenishmentSkuInput').addEventListener('blur', saveReplenishmentSkus);
-  if ($('inventoryTransferSkuInput')) $('inventoryTransferSkuInput').addEventListener('blur', saveInventoryTransferSkus);
+  if ($('replenishmentSkuInput')) {
+    ['focus', 'input', 'click', 'keyup', 'scroll'].forEach(function(eventName) {
+      $('replenishmentSkuInput').addEventListener(eventName, renderReplenishmentSkuNameLayer);
+    });
+    $('replenishmentSkuInput').addEventListener('blur', saveReplenishmentSkus);
+  }
+  if ($('inventoryTransferSkuInput')) {
+    ['focus', 'input', 'click', 'keyup', 'scroll'].forEach(function(eventName) {
+      $('inventoryTransferSkuInput').addEventListener(eventName, renderInventoryTransferSkuNameLayer);
+    });
+    $('inventoryTransferSkuInput').addEventListener('blur', saveInventoryTransferSkus);
+  }
+  if ($('inventoryTransferIncludeLowWarehouse')) $('inventoryTransferIncludeLowWarehouse').addEventListener('change', async function() {
+    await loadReplenishmentState();
+    replenishmentState.transferIncludeLowWarehouse = this.checked;
+    await saveReplenishmentState();
+    await renderInventoryTransferCalculator();
+  });
   if ($('replenishmentDefaultTurnoverInput')) $('replenishmentDefaultTurnoverInput').addEventListener('blur', saveReplenishmentDefault);
   if ($('keepReplenishmentDefaultBtn')) $('keepReplenishmentDefaultBtn').addEventListener('click', keepReplenishmentDefaultTargets);
   if ($('applyReplenishmentDefaultBtn')) $('applyReplenishmentDefaultBtn').addEventListener('click', applyReplenishmentDefaultTargets);
@@ -16667,8 +17674,13 @@
   if ($('replenishmentDefaultModal')) $('replenishmentDefaultModal').addEventListener('click', function(e) {
     if (e.target === this) keepReplenishmentDefaultTargets();
   });
-  if ($('editReplenishmentFormulaBtn')) $('editReplenishmentFormulaBtn').addEventListener('click', function() { openReplenishmentFormulaModal('recommendFormula'); });
-  if ($('editInventoryTransferFormulaBtn')) $('editInventoryTransferFormulaBtn').addEventListener('click', function() { openReplenishmentFormulaModal('transferFormula'); });
+  ['replenishmentFormulaOptions', 'inventoryTransferFormulaOptions'].forEach(function(id) {
+    if (!$(id)) return;
+    $(id).addEventListener('click', function(e) {
+      var option = e.target.closest('[data-replenishment-formula-choice]');
+      if (option) applyReplenishmentFormulaPreset(option.getAttribute('data-replenishment-formula-choice'), option.getAttribute('data-replenishment-formula-target'));
+    });
+  });
   if ($('replenishmentFormulaCancelBtn')) $('replenishmentFormulaCancelBtn').addEventListener('click', closeReplenishmentFormulaModal);
   if ($('replenishmentFormulaOkBtn')) $('replenishmentFormulaOkBtn').addEventListener('click', saveReplenishmentFormula);
   if ($('replenishmentFormulaModal')) $('replenishmentFormulaModal').addEventListener('click', function(e) {
@@ -16689,7 +17701,24 @@
     await loadReplenishmentState();
     replenishmentState.enableSingleBWarehouse = this.checked;
     await saveReplenishmentState();
+    await refillAutomaticReplenishment(false);
     await renderReplenishmentCalculator();
+  });
+  if ($('addReplenishmentTabBtn')) $('addReplenishmentTabBtn').addEventListener('click', function() { openReplenishmentTabModal(''); });
+  if ($('replenishmentCustomTabs')) $('replenishmentCustomTabs').addEventListener('click', function(e) {
+    var edit = e.target.closest('[data-edit-replenishment-tab]');
+    if (edit) openReplenishmentTabModal(edit.getAttribute('data-edit-replenishment-tab'));
+  });
+  if ($('replenishmentTabModal')) $('replenishmentTabModal').addEventListener('click', function(e) { if (e.target === this) closeReplenishmentTabModal(); });
+  if ($('cancelReplenishmentTabBtn')) $('cancelReplenishmentTabBtn').addEventListener('click', closeReplenishmentTabModal);
+  if ($('saveReplenishmentTabBtn')) $('saveReplenishmentTabBtn').addEventListener('click', saveReplenishmentTab);
+  if ($('deleteReplenishmentTabBtn')) $('deleteReplenishmentTabBtn').addEventListener('click', deleteReplenishmentTab);
+  var replenishmentTabs = document.querySelector('.replenishment-result-tabs');
+  if (replenishmentTabs) replenishmentTabs.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-replenishment-result-view]');
+    if (!btn) return;
+    replenishmentResultView = btn.getAttribute('data-replenishment-result-view') || 'needed';
+    renderReplenishmentCalculator();
   });
   if ($('replenishmentMetricOptions')) $('replenishmentMetricOptions').addEventListener('change', async function(e) {
     if (!e.target.matches('[data-replenishment-metric]')) return;
@@ -16701,22 +17730,53 @@
     await renderReplenishmentCalculator();
   });
   document.querySelectorAll('[data-fill-replenishment]').forEach(function(btn) {
-    btn.addEventListener('click', function() { fillRecommendedReplenishment(btn.getAttribute('data-fill-replenishment') === 'boxized'); });
+    btn.addEventListener('click', function() { fillRecommendedReplenishment(btn.getAttribute('data-fill-replenishment')); });
   });
-  document.querySelectorAll('[data-spot-turnover-dimension]').forEach(function(btn) {
-    btn.addEventListener('click', async function() {
+  if ($('replenishmentMetricOptions')) $('replenishmentMetricOptions').addEventListener('click', async function(event) {
+    var btn = event.target.closest('[data-current-turnover-dimension]');
+    if (btn) {
       await loadReplenishmentState();
-      replenishmentState.spotTurnoverDimension = btn.getAttribute('data-spot-turnover-dimension');
+      var stateKey = btn.getAttribute('data-current-turnover-metric') === 'currentOrderable' ? 'orderableTurnoverDimension' : 'spotTurnoverDimension';
+      replenishmentState[stateKey] = btn.getAttribute('data-current-turnover-dimension');
       await saveReplenishmentState();
       await renderReplenishmentCalculator();
-    });
+    }
   });
-  if ($('refreshReplenishmentBtn')) $('refreshReplenishmentBtn').addEventListener('click', renderReplenishmentCalculator);
+  if ($('refreshReplenishmentBtn')) $('refreshReplenishmentBtn').addEventListener('click', async function() {
+    await loadReplenishmentState();
+    await refillAutomaticReplenishment(false);
+    await renderReplenishmentCalculator();
+  });
+  if ($('exportReplenishmentBtn')) $('exportReplenishmentBtn').addEventListener('click', exportReplenishmentDemand);
   if ($('refreshInventoryTransferBtn')) $('refreshInventoryTransferBtn').addEventListener('click', renderInventoryTransferCalculator);
   if ($('replenishmentSkuOutput')) {
+    $('replenishmentSkuOutput').addEventListener('pointerover', function(e) {
+      var menu = e.target.closest('[data-replenishment-sku-metric-menu]');
+      if (menu) populateReplenishmentSkuMetricMenu(menu);
+    });
+    $('replenishmentSkuOutput').addEventListener('focusin', function(e) {
+      var menu = e.target.closest('[data-replenishment-sku-metric-menu]');
+      if (menu) populateReplenishmentSkuMetricMenu(menu);
+    });
     $('replenishmentSkuOutput').addEventListener('change', function(e) {
+      var metric = e.target.closest('[data-replenishment-sku-metric]');
+      if (metric) {
+        updateReplenishmentSkuMetrics(metric);
+        return;
+      }
       var input = e.target.closest('[data-replenishment-field]');
       if (input) updateReplenishmentInput(input);
+    });
+    $('replenishmentSkuOutput').addEventListener('click', function(e) {
+      var trigger = e.target.closest('.replenishment-sku-metric-trigger');
+      if (trigger) {
+        var menu = trigger.closest('[data-replenishment-sku-metric-menu]');
+        populateReplenishmentSkuMetricMenu(menu);
+        menu.classList.toggle('is-open');
+        return;
+      }
+      var reset = e.target.closest('[data-reset-replenishment-sku-metrics]');
+      if (reset) resetReplenishmentSkuMetrics(reset.getAttribute('data-reset-replenishment-sku-metrics'));
     });
   }
   if ($('viewImportRecordsBtn')) {
@@ -16800,9 +17860,15 @@
   });
   if ($('addSkuLookupGroupBtn')) $('addSkuLookupGroupBtn').addEventListener('click', addSkuLookupGroup);
   if ($('skuLookupGroups')) {
+    ['focusin', 'input', 'click', 'keyup', 'scroll'].forEach(function(eventName) {
+      $('skuLookupGroups').addEventListener(eventName, function(e) {
+        if (e.target.matches('[data-sku-lookup-value]')) renderSkuLookupNameLayer(e.target);
+      });
+    });
     $('skuLookupGroups').addEventListener('focusout', function(e) {
       if (!e.target.matches('[data-sku-lookup-title], [data-sku-lookup-value]')) return;
       var card = e.target.closest('[data-sku-lookup-id]');
+      if (e.target.matches('[data-sku-lookup-value]')) setTimeout(function() { renderSkuLookupNameLayer(e.target); }, 0);
       if (card) saveSkuLookupCard(card);
     });
     $('skuLookupGroups').addEventListener('click', async function(e) {
@@ -16985,63 +18051,10 @@
 
   openDb().then(async function() {
     if ($('dbStatus')) $('dbStatus').textContent = '本地库准备中';
-    await loadMonitorTracksFromDb();
-    await loadReportTemplateCopyRowsFromDb();
-    if (reportTemplateWorkbook) await saveReportTemplateWorkbook();
-    await loadReportTemplateWorkbookFromDb();
-    if (grossMarginDashboardTemplateWorkbook) await saveGrossMarginDashboardTemplateWorkbook();
-    await loadGrossMarginDashboardTemplateWorkbookFromDb();
-    await stripRawSnapshotRows();
-    await normalizeCompetitorSkuDefaults();
-    await mergeDuplicateSeriesColumns();
-    await mergeDuplicateBuiltinSkuColumns();
-    await normalizeSkuCustomColumnKeys();
     renderAnalyzedDimensionControls();
     updateAnalyzedDimensionHint();
-    await renderSkus();
-    await renderDashboard();
-    await refreshCounts();
-    await renderAnalyzedDb();
     var currentPage = normalizePageHash(readPageHash() || initialPage || 'import');
-    if (currentPage === 'import') {
-      await renderManualRankingEntry();
-      renderAllImportMappings();
-    }
-    if (currentPage === 'finance-data') {
-      renderAllImportMappings();
-      renderFinanceGiftRules();
-      await renderGrossMarginData();
-    }
-    if (currentPage === 'search-import') {
-      renderSearchAnalysisSettings();
-      await renderSearchData();
-    }
-    if (currentPage === 'inventory-turnover') {
-      renderInventoryWarehouses();
-      renderInventorySkuConfig();
-      await renderInventoryTurnoverData();
-    }
-    if (currentPage === 'import-settings') {
-      renderAllImportMappings();
-      requestAnimationFrame(scrollToImportRules);
-    }
-    if (currentPage === 'report') {
-      await renderReportConfig();
-      await renderReportOutput();
-    }
-    if (currentPage === 'db-browser') await renderDbBrowser();
-    if (currentPage === 'db-sku' || currentPage === 'sku') {
-      var initialSkuView = sessionStorage.getItem('jdSkuArchiveView');
-      sessionStorage.removeItem('jdSkuArchiveView');
-      setSkuArchiveView(initialSkuView || skuArchiveView);
-      await renderSkus();
-      forceScrollTop();
-    }
-    if (currentPage === 'raw-snapshots') await renderSnapshots();
-    if (currentPage === 'ranking-raw') await renderRankingRaw();
-    if (currentPage === 'db-estimates') await renderEstimatesDb();
-    if (currentPage === 'finance-data') await renderGrossMarginData();
-    if (currentPage === 'cleanup') await renderCleanupSnapshots();
+    await handlePageNavigation(currentPage);
     forceScrollTop();
     requestAnimationFrame(forceScrollTop);
     setTimeout(forceScrollTop, 60);
