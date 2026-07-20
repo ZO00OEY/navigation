@@ -15,7 +15,7 @@
 .drop-zone {
   display: grid;
   place-items: center;
-  min-height: 144px;
+  min-height: 118px;
   margin-bottom: 12px;
   border: 1.5px dashed var(--card-hover-border);
   border-radius: 8px;
@@ -38,13 +38,6 @@
   box-shadow: 0 8px 18px var(--card-shadow);
   overflow: hidden;
 }
-.controls {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 12px;
-  align-items: center;
-  padding: 10px 12px;
-}
 .primary-actions,
 .settings,
 .item-actions {
@@ -60,12 +53,13 @@
   border: 1px solid var(--card-border);
   border-radius: 8px;
   background: var(--card-bg);
-  padding: 3px;
+  padding: 2px;
 }
 .mode-control input { position: absolute; opacity: 0; pointer-events: none; }
 .mode-control span {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 28px;
   border-radius: 6px;
   color: var(--text-secondary);
@@ -80,12 +74,31 @@
   font-weight: 700;
 }
 .mode-control input:focus-visible + span { outline: 2px solid var(--link-color); outline-offset: 2px; }
+.mode-control-small {
+  box-sizing: border-box;
+  height: 30px;
+  align-items: stretch;
+  vertical-align: middle;
+}
+.mode-control-small label {
+  display: flex;
+  height: 100%;
+  margin: 0;
+}
 .mode-control-small span {
-  min-height: 24px;
-  padding: 3px 8px;
-  font-size: 0.76rem;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  min-width: 40px;
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 0.74rem;
+  line-height: 1;
 }
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--btn-link-border);
   background: var(--btn-link-bg);
   color: var(--text);
@@ -102,6 +115,23 @@
 .btn[disabled] { opacity: 0.42; pointer-events: none; }
 .btn-primary { border-color: var(--link-color); color: var(--link-color); font-weight: 700; }
 .btn-quiet { background: transparent; }
+.workspace-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-start;
+  width: fit-content;
+}
+.workspace-actions .btn {
+  min-height: 28px;
+  min-width: 48px;
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 0.74rem;
+  line-height: 1;
+  text-align: center;
+}
 .check-label,
 .item-setting {
   display: inline-flex;
@@ -160,14 +190,19 @@
 }
 .thumb-section {
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-columns: auto auto auto minmax(0, 1fr);
   gap: 10px;
   align-items: center;
-  border-top: 1px solid var(--card-border);
-  padding: 8px 12px;
+  padding: 10px 12px 12px;
 }
 .thumb-section[hidden] { display: none; }
 .thumb-heading { color: var(--text-secondary); font-size: 0.76rem; white-space: nowrap; }
+.thumb-heading,
+.preview-col-head {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+}
 .thumb-heading strong { color: var(--text); font-weight: 600; }
 .preview-browser {
   display: grid;
@@ -220,16 +255,22 @@
   min-width: 0;
 }
 .preview-pane-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
   align-items: center;
 }
-.preview-pane-title {
+.preview-col-head {
   color: var(--text-secondary);
   font-size: 0.76rem;
   line-height: 1.35;
+  justify-content: center;
+}
+.preview-result-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 .preview-canvas-grid {
   display: grid;
@@ -263,7 +304,6 @@
 canvas { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; }
 .footer { display: none; }
 @media (max-width: 820px) {
-  .controls { grid-template-columns: 1fr; }
   .settings { justify-content: flex-start; }
   .status { text-align: left; }
   .btn { text-align: center; }
@@ -271,6 +311,9 @@ canvas { display: block; max-width: 100%; max-height: 100%; width: auto; height:
   .item-setting { width: 100%; }
   .thumb-section { grid-template-columns: 1fr; }
   .preview-browser { grid-template-columns: 1fr; }
+  .left-preview-pane { padding-top: 0; }
+  .preview-pane-head { grid-template-columns: 1fr; }
+  .preview-result-head { justify-content: flex-start; }
   .preview-canvas-grid { grid-template-columns: 1fr; }
 }
 </style>
@@ -293,32 +336,31 @@ canvas { display: block; max-width: 100%; max-height: 100%; width: auto; height:
     </label>
 
     <section class="workspace" aria-label="批量处理设置">
-      <div class="controls">
-        <div class="primary-actions">
-          <button class="btn btn-primary" id="downloadAllBtn" type="button" disabled>下载全部</button>
-          <button class="btn btn-quiet" id="clearAllBtn" type="button" disabled>清除全部</button>
-        </div>
-        <div class="settings">
-          <div class="mode-control" aria-label="裁剪模式">
-            <label><input name="cropMode" type="radio" value="safe" checked><span>谨慎裁剪</span></label>
-            <label><input name="cropMode" type="radio" value="bold"><span>大胆裁剪</span></label>
-          </div>
-        </div>
-        <span class="status" id="status" aria-live="polite">等待图片</span>
-      </div>
-      <div class="thumb-section" id="thumbSection" hidden>
+      <div class="thumb-section" id="thumbSection">
         <div class="thumb-heading"><strong>结果预览</strong></div>
         <span class="status" id="itemCount">共 0 张</span>
+        <span class="status" id="status" aria-live="polite">等待图片</span>
         <div class="preview-browser" id="previewBrowser">
           <div class="left-preview-pane">
+            <div class="workspace-actions">
+              <button class="btn btn-primary" id="downloadAllBtn" type="button" disabled>下载</button>
+              <button class="btn btn-quiet" id="clearAllBtn" type="button" disabled>清除</button>
+              <div class="mode-control mode-control-small" aria-label="裁剪模式">
+                <label><input name="cropMode" type="radio" value="safe" checked><span>谨慎</span></label>
+                <label><input name="cropMode" type="radio" value="bold"><span>大胆</span></label>
+              </div>
+            </div>
             <div class="thumb-list" id="thumbList" aria-label="结果组快速预览"></div>
           </div>
           <div class="preview-pane">
             <div class="preview-pane-head">
-              <div class="preview-pane-title">右侧预览</div>
-              <div class="mode-control mode-control-small" aria-label="当前图片裁剪模式">
-                <label><input name="selectedCropMode" type="radio" value="safe"><span>谨慎</span></label>
-                <label><input name="selectedCropMode" type="radio" value="bold"><span>大胆</span></label>
+              <div class="preview-col-head">原图</div>
+              <div class="preview-col-head preview-result-head">
+                <span>裁剪后</span>
+                <div class="mode-control mode-control-small" aria-label="当前图片裁剪模式">
+                  <label><input name="selectedCropMode" type="radio" value="safe"><span>谨慎</span></label>
+                  <label><input name="selectedCropMode" type="radio" value="bold"><span>大胆</span></label>
+                </div>
               </div>
             </div>
             <div class="preview-canvas-grid" id="selectedPreviewGrid">
@@ -344,7 +386,6 @@ canvas { display: block; max-width: 100%; max-height: 100%; width: auto; height:
   var statusText = document.getElementById('status');
   var downloadAllBtn = document.getElementById('downloadAllBtn');
   var clearAllBtn = document.getElementById('clearAllBtn');
-  var thumbSection = document.getElementById('thumbSection');
   var itemCount = document.getElementById('itemCount');
   var thumbList = document.getElementById('thumbList');
   var selectedPreviewGrid = document.getElementById('selectedPreviewGrid');
@@ -359,7 +400,6 @@ canvas { display: block; max-width: 100%; max-height: 100%; width: auto; height:
   function setHasItems(hasItems) {
     downloadAllBtn.disabled = !hasItems;
     clearAllBtn.disabled = !hasItems;
-    thumbSection.hidden = !hasItems;
     itemCount.textContent = '共 ' + items.length + ' 张';
   }
 
