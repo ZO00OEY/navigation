@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF 发票双拼 - 芝士的摸鱼站</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="../../guides/shared.css">
+<style>
+.app { width: 70vw; max-width: none; }
+.tool-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 28px 32px;
+  box-shadow: 0 4px 24px var(--card-shadow);
+}
+.tool-card h1 { font-size: 1.35rem; margin-bottom: 6px; }
+.subtitle { color: var(--text-secondary); font-size: 0.84rem; line-height: 1.7; margin-bottom: 22px; }
+.drop-zone {
+  display: grid; place-items: center; min-height: 170px;
+  border: 1.5px dashed var(--card-hover-border); border-radius: 12px;
+  background: var(--code-bg); color: var(--text-secondary);
+  padding: 24px; text-align: center; transition: border-color .16s, background .16s;
+}
+.drop-zone:hover, .drop-zone.dragging { border-color: var(--link-color); background: var(--btn-link-bg); }
+.drop-zone strong { display: block; color: var(--text); font-size: 1rem; margin-bottom: 6px; }
+.file-input { display: none; }
+.result { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-top: 16px; }
+.status { color: var(--text-secondary); font-size: .82rem; line-height: 1.6; }
+.status.error { color: #e06c75; }
+.download {
+  flex: 0 0 auto; border: 1px solid var(--link-color); border-radius: 8px;
+  background: var(--btn-link-bg); color: var(--link-color); padding: 9px 14px;
+  font: inherit; font-size: .82rem; font-weight: 700;
+}
+.download:hover { background: var(--btn-link-hover-bg); }
+.download:disabled { opacity: .4; pointer-events: none; }
+.privacy { color: var(--text-tertiary); font-size: .75rem; margin-top: 14px; }
+.preview { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--card-border); }
+.preview[hidden] { display: none; }
+.preview h2 { font-size: .95rem; margin-bottom: 10px; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--card-border); border-radius: 10px; }
+.preview table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+.preview th, .preview td { padding: 10px 12px; border-bottom: 1px solid var(--card-border); text-align: left; vertical-align: top; }
+.preview th { background: var(--code-bg); color: var(--text-secondary); font-weight: 600; }
+.preview tr:last-child td { border-bottom: 0; }
+.preview-total th { text-align: right; color: var(--text); }
+.preview-total td { color: var(--link-color); font-weight: 700; }
+.preview td:first-child { word-break: break-all; }
+.preview td:nth-child(2) { white-space: pre-line; }
+.preview td:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) {
+  .app { width: 92vw; }
+  .tool-card { padding: 22px 18px; }
+  .result { align-items: stretch; flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="bg-decor"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+
+<div class="app">
+  <a class="back-link" href="../../detail.html?page=tools">← 返回工具目录</a>
+
+  <main class="tool-card">
+    <h1>PDF 发票双拼</h1>
+    <p class="subtitle">把普通发票每两张合并到一页 A4（上下排版）；纵向长页自动单独保留一页，避免文字过小。</p>
+
+    <label class="drop-zone" id="dropZone">
+      <input class="file-input" id="fileInput" type="file" accept="application/pdf,.pdf" multiple>
+      <span><strong>点击或拖入 PDF 发票</strong>支持一次选择多个 PDF；每个 PDF 有多页时也会逐页合并。</span>
+    </label>
+
+    <div class="result">
+      <p class="status" id="status" aria-live="polite">等待 PDF</p>
+      <button class="download" id="downloadBtn" type="button" disabled>下载打印版 PDF</button>
+    </div>
+    <p class="privacy">文件只在当前浏览器中处理，不会上传到服务器。</p>
+
+    <section class="preview" id="previewSection" hidden>
+      <h2>发票内容预览</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>文件名</th><th>销售方信息</th><th>项目名称</th><th>最终金额</th></tr></thead>
+          <tbody id="previewBody"></tbody>
+          <tfoot><tr class="preview-total"><th colspan="3">金额合计</th><td id="previewTotal">0.00</td></tr></tfoot>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="../../guides/shared.js"></script>
+<script>
+(function() {
+  var PAGE_WIDTH = 595.28;
+  var PAGE_HEIGHT = 841.89;
+  var MARGIN = 18;
+  var GAP = 8;
+  var SLOT_HEIGHT = (PAGE_HEIGHT - MARGIN * 2 - GAP) / 2;
+  var fileInput = document.getElementById('fileInput');
+  var dropZone = document.getElementById('dropZone');
+  var statusText = document.getElementById('status');
+  var downloadBtn = document.getElementById('downloadBtn');
+  var previewSection = document.getElementById('previewSection');
+  var previewBody = document.getElementById('previewBody');
+  var previewTotal = document.getElementById('previewTotal');
+  var resultUrl = '';
+
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+  }
+
+  function placement(width, height, index, fullPage) {
+    var boxHeight = fullPage ? PAGE_HEIGHT - MARGIN * 2 : SLOT_HEIGHT;
+    var scale = Math.min((PAGE_WIDTH - MARGIN * 2) / width, boxHeight / height);
+    var drawnWidth = width * scale;
+    var drawnHeight = height * scale;
+    var slotBottom = fullPage ? MARGIN : (index % 2 ? MARGIN : PAGE_HEIGHT - MARGIN - SLOT_HEIGHT);
+    return {
+      x: (PAGE_WIDTH - drawnWidth) / 2,
+      y: slotBottom + (boxHeight - drawnHeight) / 2,
+      width: drawnWidth,
+      height: drawnHeight
+    };
+  }
+
+  function usesFullPage(width, height) {
+    return height > width * 1.15;
+  }
+
+  function repairUlcPdf(bytes) {
+    var prefix = new TextDecoder('latin1').decode(bytes.subarray(0, Math.min(bytes.length, 256)));
+    var match = /%%ULC:[^\r\n]*? (\d+\s+\d+\s+obj)(?=\r?\n)/.exec(prefix);
+    if (!match) return bytes;
+    var offset = match.index + match[0].lastIndexOf(' ' + match[1]);
+    if (offset < 0) return bytes;
+    var repaired = bytes.slice();
+    repaired[offset] = 10;
+    return repaired;
+  }
+
+  console.assert(placement(1000, 500, 0).y > PAGE_HEIGHT / 2);
+  console.assert(placement(500, 1000, 1).y >= MARGIN);
+  console.assert(usesFullPage(595, 842) && !usesFullPage(609, 394));
+  console.assert(new TextDecoder('latin1').decode(repairUlcPdf(
+    new TextEncoder().encode('%%ULC:1.01.01 5 0 obj\n')
+  )).includes('%%ULC:1.01.01\n5 0 obj'));
+
+  function setStatus(text, isError) {
+    statusText.textContent = text;
+    statusText.classList.toggle('error', !!isError);
+  }
+
+  function textItems(items) {
+    var seen = {};
+    return items.map(function(item) {
+      return { text: item.str.trim(), x: item.transform[4], y: item.transform[5] };
+    }).filter(function(item) {
+      if (!item.text) return false;
+      var key = item.text + '|' + item.x.toFixed(1) + '|' + item.y.toFixed(1);
+      if (seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+
+  function normalized(text) {
+    return text.replace(/\s+/g, '').replace(/[：:]/g, '');
+  }
+
+  function parseInvoicePage(items, width, fileName, pageNumber) {
+    var texts = textItems(items);
+    var projectHeader = texts.find(function(item) { return normalized(item.text) === '项目名称'; });
+    var sellerLabel = projectHeader && texts.filter(function(item) {
+      return item.x > width / 2 && item.y > projectHeader.y && /^(名称|名|称)$/.test(normalized(item.text));
+    }).sort(function(a, b) { return b.y - a.y; })[0];
+
+    var sellerLabelRight = sellerLabel ? Math.max.apply(null, texts.filter(function(item) {
+      return item.x > width / 2 && Math.abs(item.y - sellerLabel.y) < 4 &&
+        /^(名称|名|称)?$/.test(normalized(item.text));
+    }).map(function(item) { return item.x; })) : 0;
+
+    var sellerName = sellerLabel ? texts.filter(function(item) {
+      return item.x > sellerLabelRight + 2 && Math.abs(item.y - sellerLabel.y) < 4;
+    }).sort(function(a, b) { return a.x - b.x; }).map(function(item) { return item.text; }).join('') : '';
+
+    var sellerTax = sellerLabel && projectHeader ? texts.filter(function(item) {
+      return item.x > width / 2 && item.y < sellerLabel.y - 5 && item.y > projectHeader.y &&
+        /^[0-9A-Z]{15,20}$/.test(normalized(item.text));
+    }).sort(function(a, b) { return b.y - a.y; }).map(function(item) { return normalized(item.text); })[0] : '';
+
+    var totalLine = projectHeader && texts.filter(function(item) {
+      return item.x < width * .3 && item.y < projectHeader.y && /^(合|计|合计)$/.test(normalized(item.text));
+    }).sort(function(a, b) { return b.y - a.y; })[0];
+
+    var projectRight = projectHeader ? Math.min.apply(null, texts.filter(function(item) {
+      return item.x > projectHeader.x + 10 && Math.abs(item.y - projectHeader.y) < 3;
+    }).map(function(item) { return item.x; })) : width * .3;
+    if (!isFinite(projectRight)) projectRight = width * .3;
+
+    var projectItems = projectHeader && totalLine ? texts.filter(function(item) {
+      return item.x < projectRight && item.y < projectHeader.y - 2 && item.y > totalLine.y + 2;
+    }).sort(function(a, b) { return b.y - a.y || a.x - b.x; }) : [];
+    var projects = [];
+    projectItems.forEach(function(item) {
+      var previous = projects[projects.length - 1];
+      if (previous && Math.abs(item.x - previous.x) < 5 && previous.y - item.y < 18 && item.text.length <= 4) {
+        previous.text += item.text;
+      } else if (!projects.some(function(project) { return project.text === item.text; })) {
+        projects.push({ text: item.text, x: item.x, y: item.y });
+      }
+    });
+
+    var smallLabel = texts.find(function(item) { return normalized(item.text).includes('小写'); });
+    var amounts = texts.filter(function(item) { return /^[¥￥]\s*-?[\d,]+(?:\.\d+)?$/.test(item.text); });
+    texts.filter(function(item) { return /^[¥￥]$/.test(item.text); }).forEach(function(currency) {
+      var number = texts.filter(function(item) {
+        return /^-?[\d,]+(?:\.\d+)?$/.test(item.text) && Math.abs(item.y - currency.y) < 3 &&
+          item.x > currency.x && item.x - currency.x < 40;
+      }).sort(function(a, b) { return a.x - b.x; })[0];
+      if (number) amounts.push({ text: currency.text + number.text, x: currency.x, y: currency.y });
+    });
+    if (smallLabel) {
+      var sameLineAmounts = amounts.filter(function(item) { return Math.abs(item.y - smallLabel.y) < 5; });
+      if (sameLineAmounts.length) amounts = sameLineAmounts;
+      amounts.sort(function(a, b) { return Math.abs(a.x - smallLabel.x) - Math.abs(b.x - smallLabel.x); });
+    }
+    else amounts.sort(function(a, b) { return a.y - b.y; });
+
+    return {
+      fileName: fileName + (pageNumber > 1 ? '（第' + pageNumber + '页）' : ''),
+      seller: sellerName ? sellerName + (sellerTax ? '\n' + sellerTax : '') : '未识别',
+      project: projects.length ? projects.map(function(project) { return project.text; }).join('；') : '未识别',
+      amount: amounts.length ? amounts[0].text.replace(/[¥￥,\s]/g, '') : '未识别'
+    };
+  }
+
+  var parserCheck = parseInvoicePage([
+    { str: '名称：', transform: [1, 0, 0, 1, 310, 290] },
+    { str: '测试销售有限公司', transform: [1, 0, 0, 1, 350, 290] },
+    { str: '91300000000000000X', transform: [1, 0, 0, 1, 430, 260] },
+    { str: '项目名称', transform: [1, 0, 0, 1, 40, 240] },
+    { str: '*服务*测试项目', transform: [1, 0, 0, 1, 20, 225] },
+    { str: '合', transform: [1, 0, 0, 1, 60, 130] },
+    { str: '(小写)', transform: [1, 0, 0, 1, 430, 110] },
+    { str: '¥', transform: [1, 0, 0, 1, 455, 110] },
+    { str: '123.45', transform: [1, 0, 0, 1, 462, 110] }
+  ], 600, 'test.pdf', 1);
+  console.assert(parserCheck.seller.includes('测试销售有限公司') &&
+    parserCheck.project === '*服务*测试项目' && parserCheck.amount === '123.45');
+
+  async function extractInvoiceRows(bytes, fileName, pageNumbers) {
+    if (!window.pdfjsLib) throw new Error('发票识别组件加载失败');
+    var documentTask = pdfjsLib.getDocument({ data: bytes.slice() });
+    var documentProxy = await documentTask.promise;
+    var rows = [];
+    for (var i = 0; i < pageNumbers.length; i++) {
+      var page = await documentProxy.getPage(pageNumbers[i]);
+      var content = await page.getTextContent();
+      rows.push(parseInvoicePage(content.items, page.view[2] - page.view[0], fileName, pageNumbers[i]));
+    }
+    await documentProxy.destroy();
+    return rows;
+  }
+
+  function renderPreview(rows) {
+    previewBody.innerHTML = '';
+    rows.forEach(function(row) {
+      var tr = document.createElement('tr');
+      [row.fileName, row.seller, row.project, row.amount].forEach(function(value) {
+        var td = document.createElement('td');
+        td.textContent = value;
+        tr.appendChild(td);
+      });
+      previewBody.appendChild(tr);
+    });
+    previewTotal.textContent = rows.reduce(function(total, row) {
+      var amount = Number(row.amount);
+      return total + (Number.isFinite(amount) ? amount : 0);
+    }, 0).toFixed(2);
+    previewSection.hidden = !rows.length;
+  }
+
+  function clearResult() {
+    if (resultUrl) URL.revokeObjectURL(resultUrl);
+    resultUrl = '';
+    downloadBtn.disabled = true;
+    previewBody.innerHTML = '';
+    previewTotal.textContent = '0.00';
+    previewSection.hidden = true;
+  }
+
+  async function merge(files) {
+    if (!window.PDFLib) throw new Error('PDF 组件加载失败，请联网刷新后重试。');
+    var output = await PDFLib.PDFDocument.create();
+    var pageCount = 0;
+    var skippedCount = 0;
+    var halfFilled = false;
+    var previewRows = [];
+
+    for (var i = 0; i < files.length; i++) {
+      setStatus('正在处理 ' + (i + 1) + ' / ' + files.length + '：' + files[i].name);
+      var bytes = new Uint8Array(await files[i].arrayBuffer());
+      var repairedBytes = repairUlcPdf(bytes);
+      var source = await PDFLib.PDFDocument.load(repairedBytes);
+      var sourcePages = source.getPages();
+      var includedPages = sourcePages.map(function(page, index) {
+        return page.node.Contents() ? index + 1 : 0;
+      }).filter(Boolean);
+      try {
+        previewRows = previewRows.concat(await extractInvoiceRows(repairedBytes, files[i].name, includedPages));
+      } catch (error) {
+        previewRows = previewRows.concat(includedPages.map(function(pageNumber) {
+          return { fileName: files[i].name + (pageNumber > 1 ? '（第' + pageNumber + '页）' : ''), seller: '未识别', project: '未识别', amount: '未识别' };
+        }));
+      }
+      for (var j = 0; j < sourcePages.length; j++) {
+        if (!sourcePages[j].node.Contents()) {
+          skippedCount++;
+          continue;
+        }
+        var embeddedPage = await output.embedPage(sourcePages[j]);
+        var fullPage = usesFullPage(embeddedPage.width, embeddedPage.height);
+        if (fullPage || !halfFilled) output.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+        var page = output.getPages()[output.getPageCount() - 1];
+        var box = placement(embeddedPage.width, embeddedPage.height, halfFilled ? 1 : 0, fullPage);
+        page.drawPage(embeddedPage, box);
+        halfFilled = fullPage ? false : !halfFilled;
+        pageCount++;
+      }
+    }
+
+    if (!pageCount) throw new Error('PDF 中没有可合并的发票页面。');
+    var bytes = await output.save();
+    resultUrl = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+    downloadBtn.disabled = false;
+    renderPreview(previewRows);
+    setStatus('已合并 ' + pageCount + ' 张发票，共 ' + output.getPageCount() + ' 页 A4' +
+      (skippedCount ? '（已跳过 ' + skippedCount + ' 个空白页）' : ''));
+  }
+
+  async function loadFiles(fileList) {
+    var files = Array.prototype.filter.call(fileList, function(file) {
+      return file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+    });
+    clearResult();
+    if (!files.length) {
+      setStatus('请选择 PDF 文件。', true);
+      return;
+    }
+    downloadBtn.disabled = true;
+    try {
+      await merge(files);
+    } catch (error) {
+      clearResult();
+      setStatus('处理失败：' + (error && error.message ? error.message : '无法读取 PDF'), true);
+    }
+  }
+
+  dropZone.addEventListener('dragover', function(event) {
+    event.preventDefault();
+    dropZone.classList.add('dragging');
+  });
+  dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragging'); });
+  dropZone.addEventListener('drop', function(event) {
+    event.preventDefault();
+    dropZone.classList.remove('dragging');
+    loadFiles(event.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', function() { loadFiles(fileInput.files); });
+  downloadBtn.addEventListener('click', function() {
+    if (!resultUrl) return;
+    var link = document.createElement('a');
+    link.href = resultUrl;
+    link.download = 'PDF发票双拼打印版.pdf';
+    link.click();
+  });
+  window.addEventListener('beforeunload', clearResult);
+})();
+</script>
+</body>
+</html>

@@ -1314,6 +1314,7 @@
 .replenishment-strategy-row > .replenishment-setting-control { flex: 1; }
 .replenishment-inline-note { color: var(--text-tertiary); font-size: 12px; }
 .replenishment-text-options { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; }
+.replenishment-current-formula { margin-left: 12px; color: var(--text-secondary); font-size: 13px; }
 .replenishment-text-option { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 2px 0; border: 0; background: none; color: var(--text-secondary); font: inherit; font-size: 13px; cursor: pointer; }
 .replenishment-text-option::before { content: ""; flex: 0 0 auto; width: 12px; height: 12px; border: 1px solid var(--line-medium, var(--card-border)); border-radius: 50%; background: #fff; }
 .replenishment-text-option.active { color: var(--link-color); }
@@ -1547,7 +1548,7 @@
 .replenishment-table .replenishment-number-input { text-align: center; }
 .replenishment-table .replenishment-number-input { display: block; width: 56px; min-width: 0; margin: 0 auto; }
 .replenishment-table .replenishment-metric { font-weight: 600; white-space: nowrap; background: rgba(var(--tool-accent-rgb), 0.045); }
-.replenishment-turnover-value { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 13px; font-weight: 400; }
+.replenishment-turnover-value { display: inline-block; padding: 2px 7px; border-radius: 3px; background: rgba(var(--tool-accent-rgb), 0.07); font-size: 13px; font-weight: 400; }
 .replenishment-table .is-turnover-low { color: #15803d; background: rgba(21, 128, 61, 0.1); }
 .replenishment-table .is-turnover-fit { color: #2563eb; background: rgba(37, 99, 235, 0.1); }
 .replenishment-table .is-turnover-high { color: #dc2626; background: rgba(220, 38, 38, 0.1); }
@@ -4018,13 +4019,13 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
                 <span>内配计算设置</span>
               </div>
               <div class="replenishment-settings-center">
-                <aside class="replenishment-scope-panel">
-                  <div class="replenishment-scope-heading"><strong>待计算 SKU</strong><small id="inventoryTransferScopeCount">0 个</small></div>
+                <details class="replenishment-scope-panel" id="inventoryTransferSkuPanel">
+                  <summary class="replenishment-scope-heading"><strong>待计算 SKU</strong><small id="inventoryTransferScopeCount">0 个</small></summary>
                   <div class="replenishment-sku-editor">
                     <textarea class="input inventory-sku-textarea" id="inventoryTransferSkuInput" placeholder="每行一个 SKU" wrap="off"></textarea>
                     <div class="replenishment-sku-name-viewport" aria-hidden="true"><div class="replenishment-sku-name-layer" id="inventoryTransferSkuNameLayer"></div></div>
                   </div>
-                </aside>
+                </details>
                 <div class="replenishment-settings-main">
                   <section class="replenishment-setting-row">
                     <div class="replenishment-setting-copy"><strong>基础设置</strong></div>
@@ -4048,6 +4049,10 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
                         <div class="replenishment-setting-control replenishment-text-options" id="inventoryTransferFormulaOptions" role="radiogroup" aria-label="选择内配预测销量模式"></div>
                       </div>
                     </div>
+                  </section>
+                  <section class="replenishment-setting-row">
+                    <div class="replenishment-setting-copy"><strong>显示规则</strong></div>
+                    <div class="replenishment-setting-control replenishment-metric-options" id="inventoryTransferMetricOptions"></div>
                   </section>
                   <span class="msg" id="inventoryTransferMsg"></span>
                 </div>
@@ -12425,15 +12430,24 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       { key: 'long28', label: '长期' }
     ];
     var activeKey = preset && options.some(function(item) { return item.key === preset.key; }) ? preset.key : 'custom';
-    return options.concat({ key: 'custom', label: '自定义（' + replenishmentFormulaDisplay(formula) + '）' }).map(function(item) {
+    return options.concat({ key: 'custom', label: '自定义' }).map(function(item) {
       var active = item.key === activeKey;
       return '<button class="replenishment-text-option' + (active ? ' active' : '') + '" type="button" role="radio" aria-checked="' + active + '" data-replenishment-formula-choice="' + esc(item.key) + '" data-replenishment-formula-target="' + esc(target) + '">' + esc(item.label) + '</button>';
-    }).join('');
+    }).join('') + '<span class="replenishment-current-formula">当前公式：' + esc(replenishmentFormulaDisplay(formula)) + '</span>';
   }
 
   function renderReplenishmentFormulaPreset() {
     if ($('replenishmentFormulaOptions')) $('replenishmentFormulaOptions').innerHTML = replenishmentFormulaOptionsHtml('recommendFormula');
     if ($('inventoryTransferFormulaOptions')) $('inventoryTransferFormulaOptions').innerHTML = replenishmentFormulaOptionsHtml('transferFormula');
+  }
+
+  function syncReplenishmentCurrentTurnoverButtons() {
+    document.querySelectorAll('[data-current-turnover-dimension]').forEach(function(btn) {
+      var stateKey = btn.getAttribute('data-current-turnover-metric') === 'currentOrderable' ? 'orderableTurnoverDimension' : 'spotTurnoverDimension';
+      var active = btn.getAttribute('data-current-turnover-dimension') === replenishmentState[stateKey];
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
   }
 
   async function applyReplenishmentFormulaPreset(key, target) {
@@ -12476,7 +12490,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       var target = sourceTarget && typeof sourceTarget === 'object'
         ? Object.keys(sourceTarget).map(function(warehouse) { return replenishmentNumber(sourceTarget[warehouse]); }).find(function(number) { return number !== ''; })
         : replenishmentNumber(sourceTarget);
-      var plan = { targetTurnover: target === undefined ? '' : target, expectedReplenishment: {}, manualExpected: {}, metricOverrides: {} };
+      var plan = { targetTurnover: target === undefined ? '' : target, expectedReplenishment: {}, manualExpected: {}, transferExpectedReplenishment: {}, transferManualExpected: {}, metricOverrides: {} };
       Object.keys(source.expectedReplenishment || {}).forEach(function(warehouse) {
         if (warehouse === '全国') return;
         var number = replenishmentSignedNumber(source.expectedReplenishment[warehouse]);
@@ -12484,6 +12498,14 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       });
       Object.keys(source.manualExpected || {}).forEach(function(warehouse) {
         if (source.manualExpected[warehouse] === true) plan.manualExpected[warehouse] = true;
+      });
+      Object.keys(source.transferExpectedReplenishment || {}).forEach(function(warehouse) {
+        if (warehouse === '全国') return;
+        var number = replenishmentSignedNumber(source.transferExpectedReplenishment[warehouse]);
+        if (number !== '') plan.transferExpectedReplenishment[warehouse] = number;
+      });
+      Object.keys(source.transferManualExpected || {}).forEach(function(warehouse) {
+        if (source.transferManualExpected[warehouse] === true) plan.transferManualExpected[warehouse] = true;
       });
       Object.keys(source.metricOverrides || {}).forEach(function(key) {
         if (REPLENISHMENT_METRIC_OPTIONS.some(function(item) { return item.key === key; }) && typeof source.metricOverrides[key] === 'boolean') plan.metricOverrides[key] = source.metricOverrides[key];
@@ -12587,8 +12609,12 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
 
   function replenishmentPlanFor(sku) {
     if (!replenishmentState.plans[sku]) {
-      replenishmentState.plans[sku] = { targetTurnover: '', expectedReplenishment: {}, manualExpected: {}, metricOverrides: {} };
+      replenishmentState.plans[sku] = { targetTurnover: '', expectedReplenishment: {}, manualExpected: {}, transferExpectedReplenishment: {}, transferManualExpected: {}, metricOverrides: {} };
     }
+    if (!replenishmentState.plans[sku].expectedReplenishment) replenishmentState.plans[sku].expectedReplenishment = {};
+    if (!replenishmentState.plans[sku].manualExpected) replenishmentState.plans[sku].manualExpected = {};
+    if (!replenishmentState.plans[sku].transferExpectedReplenishment) replenishmentState.plans[sku].transferExpectedReplenishment = {};
+    if (!replenishmentState.plans[sku].transferManualExpected) replenishmentState.plans[sku].transferManualExpected = {};
     if (!replenishmentState.plans[sku].metricOverrides) replenishmentState.plans[sku].metricOverrides = {};
     return replenishmentState.plans[sku];
   }
@@ -12742,12 +12768,13 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     return casePack > 0 ? Math.sign(value) * Math.round(Math.abs(value) / casePack) * casePack : value;
   }
 
-  function replenishmentInputHtml(sku, warehouse, field, value, placeholder, custom) {
+  function replenishmentInputHtml(sku, warehouse, field, value, placeholder, custom, context) {
     var text = value === '' || value == null || (field === 'expectedReplenishment' && Number(value) === 0) ? '' : value;
     return '<input class="replenishment-number-input' + (custom ? ' is-custom' : '') + '" type="text" inputmode="decimal" autocomplete="off"' +
       ' value="' + esc(text) + '" placeholder="' + esc(placeholder || '') + '"' +
-      ' data-replenishment-field="' + esc(field) + '" data-replenishment-sku="' + esc(sku) + '" data-replenishment-warehouse="' + esc(warehouse) + '">' +
-      (field === 'expectedReplenishment' ? '<span class="replenishment-copy-value" aria-hidden="true">' + esc(text) + '</span>' : '');
+      ' data-replenishment-field="' + esc(field) + '" data-replenishment-sku="' + esc(sku) + '" data-replenishment-warehouse="' + esc(warehouse) + '"' +
+      (context ? ' data-replenishment-context="' + esc(context) + '"' : '') + '>' +
+      (field === 'expectedReplenishment' || field === 'transferExpectedReplenishment' ? '<span class="replenishment-copy-value" aria-hidden="true">' + esc(text) + '</span>' : '');
   }
 
   function replenishmentVisibleMetrics(plan) {
@@ -12769,9 +12796,11 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     return '<span class="replenishment-current-dimension" role="group" aria-label="选择' + esc(metric === 'currentOrderable' ? '当前可订购周转' : '当前现货周转') + '展现维度">（<button type="button" data-current-turnover-metric="' + esc(metric) + '" data-current-turnover-dimension="1">1天</button>/<button type="button" data-current-turnover-metric="' + esc(metric) + '" data-current-turnover-dimension="7">7天</button>/<button type="button" data-current-turnover-metric="' + esc(metric) + '" data-current-turnover-dimension="14">14天</button>/<button type="button" data-current-turnover-metric="' + esc(metric) + '" data-current-turnover-dimension="28">28天</button>/<button type="button" data-current-turnover-metric="' + esc(metric) + '" data-current-turnover-dimension="formula">预测</button>）</span>';
   }
 
-  function replenishmentMetricOptionsHtml(visible, sku, overrides) {
+  function replenishmentMetricOptionsHtml(visible, sku, overrides, excludedKeys, groupLabels) {
+    excludedKeys = excludedKeys || [];
+    groupLabels = groupLabels || {};
     return REPLENISHMENT_METRIC_GROUPS.map(function(group) {
-      var items = group.keys.map(function(key) {
+      var items = group.keys.filter(function(key) { return excludedKeys.indexOf(key) === -1; }).map(function(key) {
         return REPLENISHMENT_METRIC_OPTIONS.find(function(item) { return item.key === key; });
       }).filter(Boolean).map(function(item) {
         var attributes = sku
@@ -12782,7 +12811,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
         var dimension = !sku && (item.key === 'currentOrderable' || item.key === 'currentSpot') ? replenishmentDimensionOptionsHtml(item.key) : '';
         return dimension ? '<span class="replenishment-current-turnover-control">' + option + dimension + '</span>' : option;
       }).join('');
-      return '<div class="replenishment-metric-group"><span class="replenishment-metric-group-title">' + esc(group.label) + '</span><div class="replenishment-metric-group-items">' + items + '</div></div>';
+      return items ? '<div class="replenishment-metric-group"><span class="replenishment-metric-group-title">' + esc(groupLabels[group.label] || group.label) + '</span><div class="replenishment-metric-group-items">' + items + '</div></div>' : '';
     }).join('');
   }
 
@@ -12943,6 +12972,10 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     var input = $('inventoryTransferSkuInput');
     var layer = $('inventoryTransferSkuNameLayer');
     if (!input || !layer) return;
+    if ($('inventoryTransferSkuPanel') && !$('inventoryTransferSkuPanel').open) {
+      layer.innerHTML = '';
+      return;
+    }
     var activeLine = document.activeElement === input ? input.value.slice(0, input.selectionStart).split('\n').length - 1 : -1;
     layer.innerHTML = replenishmentSkuNameRowsHtml(input.value.split(/\r?\n/), replenishmentProfileMap, activeLine);
     syncSkuNameLayerScroll(input, layer);
@@ -12993,12 +13026,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     if (bWarehouseInput) bWarehouseInput.checked = replenishmentState.enableSingleBWarehouse;
     if ($('replenishmentMetricOptions')) $('replenishmentMetricOptions').innerHTML = replenishmentMetricOptionsHtml(replenishmentState.visibleMetrics, '');
     renderReplenishmentFormulaPreset();
-    document.querySelectorAll('[data-current-turnover-dimension]').forEach(function(btn) {
-      var stateKey = btn.getAttribute('data-current-turnover-metric') === 'currentOrderable' ? 'orderableTurnoverDimension' : 'spotTurnoverDimension';
-      var active = btn.getAttribute('data-current-turnover-dimension') === replenishmentState[stateKey];
-      btn.classList.toggle('active', active);
-      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
+    syncReplenishmentCurrentTurnoverButtons();
     document.querySelectorAll('[data-fill-replenishment]').forEach(function(btn) {
       var active = btn.getAttribute('data-fill-replenishment') === replenishmentState.autoFillMode;
       btn.classList.toggle('active', active);
@@ -13144,22 +13172,73 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   }
 
   function renderInventoryTransferSkuBlock(sku, profile, inventoryRow, warehouses) {
+    var plan = replenishmentPlanFor(sku);
+    var visibleMetrics = replenishmentVisibleMetrics(plan).filter(function(key) { return key !== 'purchaseAmount'; });
     var values = warehouses.map(function(warehouse) {
       var metrics = replenishmentInventoryMetrics(inventoryRow, warehouse);
       return {
         warehouse: warehouse,
+        metrics: metrics,
         orderable: replenishmentNumber(metrics.orderableStock),
         dailySales: replenishmentForecastDailySales(metrics, replenishmentState.transferFormula)
       };
     });
     var balanceTurnover = inventoryTransferBalance(values);
+    values = values.map(function(item) {
+      var metrics = item.metrics;
+      var manual = Object.prototype.hasOwnProperty.call(plan.transferExpectedReplenishment, item.warehouse);
+      var expected = manual ? replenishmentSignedNumber(plan.transferExpectedReplenishment[item.warehouse]) : item.transferQuantity;
+      var availableAfterPlan = item.orderable === '' ? '' : item.orderable + (expected === '' ? 0 : expected);
+      var outbound1 = replenishmentDailyAverage(metrics.outbound1, 1);
+      var outbound7 = replenishmentDailyAverage(metrics.outbound7, 7);
+      var outbound14 = replenishmentDailyAverage(metrics.outbound14, 14);
+      var outbound28 = replenishmentDailyAverage(metrics.outbound28, 28);
+      var availableFormula = availableAfterPlan === '' || item.dailySales <= 0 ? '' : availableAfterPlan / item.dailySales;
+      return Object.assign(item, {
+        expectedInput: replenishmentInputHtml(sku, item.warehouse, 'transferExpectedReplenishment', expected, inventoryTransferQuantityText(item.transferQuantity), manual || !!plan.transferManualExpected[item.warehouse], 'transfer'),
+        spotStock: replenishmentResultText(metrics.spotStock, 0),
+        purchasePending: replenishmentResultText(metrics.purchasePending, 0),
+        orderableStock: replenishmentResultText(metrics.orderableStock, 0),
+        outboundFormula: replenishmentResultText(item.dailySales),
+        outbound1: replenishmentResultText(outbound1),
+        outbound7: replenishmentResultText(outbound7),
+        outbound14: replenishmentResultText(outbound14),
+        outbound28: replenishmentResultText(outbound28),
+        outboundTotal1: replenishmentResultText(metrics.outbound1, 0),
+        outboundTotal7: replenishmentResultText(metrics.outbound7, 0),
+        outboundTotal14: replenishmentResultText(metrics.outbound14, 0),
+        outboundTotal28: replenishmentResultText(metrics.outbound28, 0),
+        currentOrderable: replenishmentResultText(replenishmentCurrentTurnover(metrics, 'orderableStock', replenishmentState.orderableTurnoverDimension)), currentOrderableValue: replenishmentCurrentTurnover(metrics, 'orderableStock', replenishmentState.orderableTurnoverDimension),
+        currentSpot: replenishmentResultText(replenishmentCurrentTurnover(metrics, 'spotStock', replenishmentState.spotTurnoverDimension)), currentSpotValue: replenishmentCurrentTurnover(metrics, 'spotStock', replenishmentState.spotTurnoverDimension),
+        availableFormula: replenishmentResultText(availableFormula), availableFormulaValue: availableFormula,
+        available1: replenishmentResultText(replenishmentTurnover(availableAfterPlan, metrics.outbound1, 1)), available1Value: replenishmentTurnover(availableAfterPlan, metrics.outbound1, 1),
+        available7: replenishmentResultText(replenishmentTurnover(availableAfterPlan, metrics.outbound7, 7)), available7Value: replenishmentTurnover(availableAfterPlan, metrics.outbound7, 7),
+        available14: replenishmentResultText(replenishmentTurnover(availableAfterPlan, metrics.outbound14, 14)), available14Value: replenishmentTurnover(availableAfterPlan, metrics.outbound14, 14),
+        available28: replenishmentResultText(replenishmentTurnover(availableAfterPlan, metrics.outbound28, 28)), available28Value: replenishmentTurnover(availableAfterPlan, metrics.outbound28, 28)
+      });
+    });
     var rows = [
-      { label: '可订购库存', render: function(item) { return replenishmentResultText(item.orderable, 0); } },
-      { label: '预计日销量', render: function(item) { return replenishmentResultText(item.dailySales, 2); } },
-      { label: '当前可订购周转', render: function(item) { return replenishmentResultText(item.currentTurnover); } },
-      { label: '推荐内配数（+入/-出）', render: function(item) { return inventoryTransferQuantityText(item.transferQuantity); } },
-      { label: '内配后周转', render: function(item) { return replenishmentResultText(item.afterTurnover); } }
-    ];
+      { label: '建议内配数', key: 'expectedInput' },
+      { label: '现货库存', key: 'spotStock' },
+      { label: '采购未到货', key: 'purchasePending' },
+      { label: '日均出库（预测）', key: 'outboundFormula' },
+      { label: '内配后周转（预测）', key: 'availableFormula', valueKey: 'availableFormulaValue' },
+      { label: '日均出库（1天）', key: 'outbound1' },
+      { label: '日均出库（7天）', key: 'outbound7' },
+      { label: '日均出库（14天）', key: 'outbound14' },
+      { label: '日均出库（28天）', key: 'outbound28' },
+      { label: '出库合计（1天）', key: 'outboundTotal1' },
+      { label: '出库合计（7天）', key: 'outboundTotal7' },
+      { label: '出库合计（14天）', key: 'outboundTotal14' },
+      { label: '出库合计（28天）', key: 'outboundTotal28' },
+      { label: '可订购库存', key: 'orderableStock' },
+      { label: '内配后周转（7天）', key: 'available7', valueKey: 'available7Value' },
+      { label: '内配后周转（14天）', key: 'available14', valueKey: 'available14Value' },
+      { label: '内配后周转（28天）', key: 'available28', valueKey: 'available28Value' },
+      { label: '内配后周转（1天）', key: 'available1', valueKey: 'available1Value' },
+      { label: replenishmentCurrentTurnoverLabel('当前可订购周转', replenishmentState.orderableTurnoverDimension), key: 'currentOrderable', valueKey: 'currentOrderableValue' },
+      { label: replenishmentCurrentTurnoverLabel('当前现货周转', replenishmentState.spotTurnoverDimension), key: 'currentSpot', valueKey: 'currentSpotValue' }
+    ].filter(function(row) { return row.key === 'expectedInput' || visibleMetrics.indexOf(row.key) !== -1; });
     var metricWidth = Math.max(110, Math.min(220, Math.ceil(rows.reduce(function(max, row) {
       return Math.max(max, textPixelEstimate(row.label));
     }, textPixelEstimate('指标')) + 30)));
@@ -13167,7 +13246,11 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     var cols = '<col style="width:' + metricWidth + 'px">' + warehouses.map(function() { return '<col>'; }).join('');
     var head = '<tr><th>指标</th>' + warehouses.map(function(warehouse) { return '<th>' + esc(warehouse) + '</th>'; }).join('') + '</tr>';
     var body = rows.map(function(row) {
-      return '<tr><td class="replenishment-metric">' + esc(row.label) + '</td>' + values.map(function(item) { return '<td>' + row.render(item) + '</td>'; }).join('') + '</tr>';
+      return '<tr><td class="replenishment-metric">' + esc(row.label) + '</td>' + values.map(function(item) {
+        var value = item[row.key];
+        if (row.valueKey) value = '<span class="replenishment-turnover-value' + replenishmentTurnoverClass(item[row.valueKey], balanceTurnover) + '">' + value + '</span>';
+        return '<td>' + value + '</td>';
+      }).join('') + '</tr>';
     }).join('');
     var casePack = replenishmentCasePack(profile);
     return '<section class="replenishment-sku-block"><div class="replenishment-sku-summary">' +
@@ -13187,7 +13270,9 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     if (skuInput && document.activeElement !== skuInput) skuInput.value = replenishmentState.transferSkus.join('\n');
     if ($('inventoryTransferScopeCount')) $('inventoryTransferScopeCount').textContent = replenishmentState.transferSkus.length + ' 个 SKU';
     if (includeLowWarehouse) includeLowWarehouse.checked = replenishmentState.transferIncludeLowWarehouse;
+    if ($('inventoryTransferMetricOptions')) $('inventoryTransferMetricOptions').innerHTML = replenishmentMetricOptionsHtml(replenishmentState.visibleMetrics, '', null, ['purchaseAmount'], { '补货后周转': '内配后周转' });
     renderReplenishmentFormulaPreset();
+    syncReplenishmentCurrentTurnoverButtons();
     if (!output) return;
     var maps = await replenishmentDataMaps();
     replenishmentProfileMap = maps.profileMap;
@@ -13221,6 +13306,13 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
 
   function setReplenishmentMsg(text, ok) {
     var msg = $('replenishmentConfigMsg');
+    if (!msg) return;
+    msg.textContent = text || '';
+    msg.className = 'msg' + (text ? (ok === false ? ' err' : ' ok') : '');
+  }
+
+  function setInventoryTransferMsg(text, ok) {
+    var msg = $('inventoryTransferMsg');
     if (!msg) return;
     msg.textContent = text || '';
     msg.className = 'msg' + (text ? (ok === false ? ' err' : ' ok') : '');
@@ -13330,17 +13422,27 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     var sku = normalizeSkuValue(input.getAttribute('data-replenishment-sku'));
     var warehouse = input.getAttribute('data-replenishment-warehouse') || '';
     var field = input.getAttribute('data-replenishment-field') || '';
-    if (!sku || ['targetTurnover', 'expectedReplenishment'].indexOf(field) === -1 || (field === 'expectedReplenishment' && !warehouse)) return;
+    var isTransfer = input.getAttribute('data-replenishment-context') === 'transfer';
+    if (!sku || ['targetTurnover', 'expectedReplenishment', 'transferExpectedReplenishment'].indexOf(field) === -1 || (field !== 'targetTurnover' && !warehouse)) return;
     var raw = String(input.value || '').trim();
-    var value = raw === '' ? '' : (field === 'expectedReplenishment' ? replenishmentSignedNumber(raw) : replenishmentNumber(raw));
+    var value = raw === '' ? '' : (field === 'targetTurnover' ? replenishmentNumber(raw) : replenishmentSignedNumber(raw));
     if (raw !== '' && value === '') {
-      setReplenishmentMsg(field === 'expectedReplenishment' ? '请输入数字' : '请输入大于等于 0 的数字', false);
-      await renderReplenishmentCalculator();
+      (isTransfer ? setInventoryTransferMsg : setReplenishmentMsg)(field === 'targetTurnover' ? '请输入大于等于 0 的数字' : '请输入数字', false);
+      if (isTransfer) await renderInventoryTransferCalculator();
+      else await renderReplenishmentCalculator();
       return;
     }
     var plan = replenishmentPlanFor(sku);
     if (field === 'targetTurnover') {
       plan.targetTurnover = value;
+    } else if (field === 'transferExpectedReplenishment') {
+      if (value === '') {
+        delete plan.transferExpectedReplenishment[warehouse];
+        delete plan.transferManualExpected[warehouse];
+      } else {
+        plan.transferExpectedReplenishment[warehouse] = value;
+        plan.transferManualExpected[warehouse] = true;
+      }
     } else {
       if (value === '') delete plan.expectedReplenishment[warehouse];
       else plan.expectedReplenishment[warehouse] = value;
@@ -13348,8 +13450,9 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     }
     await saveReplenishmentState();
     if (field === 'targetTurnover') await refillAutomaticReplenishment(false);
-    setReplenishmentMsg('已保存 ' + sku + (warehouse ? ' / ' + warehouse : ''));
-    await renderReplenishmentCalculator();
+    (isTransfer ? setInventoryTransferMsg : setReplenishmentMsg)('已保存 ' + sku + (warehouse ? ' / ' + warehouse : ''));
+    if (isTransfer) await renderInventoryTransferCalculator();
+    else await renderReplenishmentCalculator();
   }
 
   async function updateReplenishmentSkuMetrics(input) {
@@ -17770,6 +17873,9 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     });
     $('inventoryTransferSkuInput').addEventListener('blur', saveInventoryTransferSkus);
   }
+  if ($('inventoryTransferSkuPanel')) $('inventoryTransferSkuPanel').addEventListener('toggle', function() {
+    renderInventoryTransferSkuNameLayer();
+  });
   if ($('inventoryTransferIncludeLowWarehouse')) $('inventoryTransferIncludeLowWarehouse').addEventListener('change', async function() {
     await loadReplenishmentState();
     replenishmentState.transferIncludeLowWarehouse = this.checked;
@@ -17839,29 +17945,36 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     if (replenishmentRenderCache) renderReplenishmentResultView();
     else renderReplenishmentCalculator();
   });
-  if ($('replenishmentMetricOptions')) $('replenishmentMetricOptions').addEventListener('change', async function(e) {
-    if (!e.target.matches('[data-replenishment-metric]')) return;
-    await loadReplenishmentState();
-    replenishmentState.visibleMetrics = Array.from(this.querySelectorAll('[data-replenishment-metric]:checked')).map(function(input) {
-      return input.getAttribute('data-replenishment-metric');
+  function bindReplenishmentMetricOptions(id, render, hiddenKeys) {
+    hiddenKeys = hiddenKeys || [];
+    var box = $(id);
+    if (!box) return;
+    box.addEventListener('change', async function(e) {
+      if (!e.target.matches('[data-replenishment-metric]')) return;
+      await loadReplenishmentState();
+      replenishmentState.visibleMetrics = Array.from(this.querySelectorAll('[data-replenishment-metric]:checked')).map(function(input) {
+        return input.getAttribute('data-replenishment-metric');
+      }).concat(hiddenKeys.filter(function(key) { return replenishmentState.visibleMetrics.indexOf(key) !== -1; }));
+      await saveReplenishmentState();
+      await render();
     });
-    await saveReplenishmentState();
-    if (replenishmentRenderCache) renderReplenishmentResultView();
-    else await renderReplenishmentCalculator();
-  });
-  document.querySelectorAll('[data-fill-replenishment]').forEach(function(btn) {
-    btn.addEventListener('click', function() { fillRecommendedReplenishment(btn.getAttribute('data-fill-replenishment')); });
-  });
-  if ($('replenishmentMetricOptions')) $('replenishmentMetricOptions').addEventListener('click', async function(event) {
-    var btn = event.target.closest('[data-current-turnover-dimension]');
-    if (btn) {
+    box.addEventListener('click', async function(event) {
+      var btn = event.target.closest('[data-current-turnover-dimension]');
+      if (!btn) return;
       await loadReplenishmentState();
       var stateKey = btn.getAttribute('data-current-turnover-metric') === 'currentOrderable' ? 'orderableTurnoverDimension' : 'spotTurnoverDimension';
       replenishmentState[stateKey] = btn.getAttribute('data-current-turnover-dimension');
       await saveReplenishmentState();
-      if (replenishmentRenderCache) renderReplenishmentResultView();
-      else await renderReplenishmentCalculator();
-    }
+      await render();
+    });
+  }
+  bindReplenishmentMetricOptions('replenishmentMetricOptions', async function() {
+    if (replenishmentRenderCache) renderReplenishmentResultView();
+    else await renderReplenishmentCalculator();
+  });
+  bindReplenishmentMetricOptions('inventoryTransferMetricOptions', renderInventoryTransferCalculator, ['purchaseAmount']);
+  document.querySelectorAll('[data-fill-replenishment]').forEach(function(btn) {
+    btn.addEventListener('click', function() { fillRecommendedReplenishment(btn.getAttribute('data-fill-replenishment')); });
   });
   if ($('refreshReplenishmentBtn')) $('refreshReplenishmentBtn').addEventListener('click', async function() {
     await loadReplenishmentState();
@@ -17870,6 +17983,17 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   });
   if ($('exportReplenishmentBtn')) $('exportReplenishmentBtn').addEventListener('click', exportReplenishmentDemand);
   if ($('refreshInventoryTransferBtn')) $('refreshInventoryTransferBtn').addEventListener('click', renderInventoryTransferCalculator);
+  if ($('inventoryTransferOutput')) {
+    $('inventoryTransferOutput').addEventListener('change', function(e) {
+      var input = e.target.closest('[data-replenishment-field]');
+      if (!input) return;
+      replenishmentInputSavePromise = updateReplenishmentInput(input);
+      replenishmentInputSavePromise.catch(function(err) {
+        console.warn(err);
+        setInventoryTransferMsg('保存失败：' + (err && err.message ? err.message : String(err)), false);
+      });
+    });
+  }
   if ($('replenishmentSkuOutput')) {
     $('replenishmentSkuOutput').addEventListener('pointerover', function(e) {
       var menu = e.target.closest('[data-replenishment-sku-metric-menu]');
@@ -17987,11 +18111,14 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   });
   if ($('addSkuLookupGroupBtn')) $('addSkuLookupGroupBtn').addEventListener('click', addSkuLookupGroup);
   if ($('skuLookupGroups')) {
-    ['focusin', 'input', 'click', 'keyup', 'scroll'].forEach(function(eventName) {
+    ['focusin', 'input', 'click', 'keyup'].forEach(function(eventName) {
       $('skuLookupGroups').addEventListener(eventName, function(e) {
         if (e.target.matches('[data-sku-lookup-value]')) renderSkuLookupNameLayer(e.target);
       });
     });
+    $('skuLookupGroups').addEventListener('scroll', function(e) {
+      if (e.target.matches('[data-sku-lookup-value]')) renderSkuLookupNameLayer(e.target);
+    }, true);
     $('skuLookupGroups').addEventListener('focusout', function(e) {
       if (!e.target.matches('[data-sku-lookup-title], [data-sku-lookup-value]')) return;
       var card = e.target.closest('[data-sku-lookup-id]');

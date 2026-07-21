@@ -36,7 +36,6 @@ const SITE_DATA = {
         {
           name: "京东自营店铺小工具",
           links: [
-            { title: "供应链小工具", url: "tools/JD/supply-chain/supply.html", desc: "SKU查询·库存·采购·物流追踪" },
             { title: "商品主图更换", url: "tools/JD/main-image.html", desc: "批量更换主图·图片重命名" },
             { title: "数据分析小工具", url: "tools/JD/data-analysis.html", desc: "销售额·流量·转化数据分析" }
           ]
@@ -45,7 +44,8 @@ const SITE_DATA = {
           name: "通用摸鱼小工具",
           links: [
             { title: "鼠标识别检测", url: "tools/dev/mouse-debug.html", desc: "光标热点校准 · 偏移量可视化" },
-            { title: "截图照片裁边", url: "tools/dev/photo-crop.html", desc: "自动裁掉截图上下黑白边" }
+            { title: "截图照片裁边", url: "tools/dev/photo-crop.html", desc: "自动裁掉截图上下黑白边" },
+            { title: "PDF 发票双拼", url: "tools/dev/pdf-invoice-two-up.html", desc: "两张发票合并到一页 A4，方便打印" }
           ]
         }
       ]
