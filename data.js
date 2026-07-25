@@ -45,7 +45,8 @@ const SITE_DATA = {
           links: [
             { title: "鼠标识别检测", url: "tools/dev/mouse-debug.html", desc: "光标热点校准 · 偏移量可视化" },
             { title: "截图照片裁边", url: "tools/dev/photo-crop.html", desc: "自动裁掉截图上下黑白边" },
-            { title: "PDF 发票双拼", url: "tools/dev/pdf-invoice-two-up.html", desc: "两张发票合并到一页 A4，方便打印" }
+            { title: "PDF 发票双拼", url: "tools/dev/pdf-invoice-two-up.html", desc: "两张发票合并到一页 A4，方便打印" },
+            { title: "Codex 桌宠预览器", url: "tools/dev/codex-pet-preview.html", desc: "点击切换工作状态，预览 v2 桌宠动画" }
           ]
         }
       ]

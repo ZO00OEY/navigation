@@ -70,6 +70,7 @@ function copyCode(btn) {
   var HUES_PINK = [340,350,355,0,10,20,330,345,5,15,335,25];
   var HUES_COOL = [220,235,250,260,270,280,240,255,265,275,245,260];
   document.addEventListener('click', function(e) {
+    if (html.getAttribute('data-fireworks') === 'off') return;
     for (var i = 0; i < 24; i++) {
       var p = document.createElement('div');
       var angle = (Math.PI*2*i)/24 + (Math.random()-0.5)*0.5;

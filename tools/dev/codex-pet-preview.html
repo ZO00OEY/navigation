@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex 桌宠预览器 - 芝士的摸鱼站</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="../../guides/shared.css">
+<style>
+.app { max-width: 1180px; }
+.back-link { display:inline-flex; margin-bottom:16px; color:var(--text-tertiary); text-decoration:none; font-size:.82rem; }
+.tool { display:grid; grid-template-columns:260px minmax(360px,1fr) 260px; gap:10px; }
+.panel, .stage { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius); box-shadow:0 4px 24px var(--card-shadow); }
+.panel { padding:14px; }
+.stage { padding:14px; min-width:0; }
+h1 { margin:0 0 6px; color:var(--text); font-size:1.25rem; }
+.sub { margin:0 0 14px; color:var(--text-secondary); font-size:.78rem; line-height:1.5; }
+.state { display:block; width:100%; margin:0 0 7px; padding:9px 10px; border:1px solid var(--card-border); border-radius:6px; background:transparent; color:var(--text); text-align:left; cursor:pointer; }
+.state:hover, .state.active { border-color:var(--link-color); background:var(--link-item-hover); }
+.state small { display:block; margin-top:2px; color:var(--text-secondary); }
+.canvas-wrap { display:grid; grid-template-columns:1fr 1fr; gap:10px; min-height:520px; height:520px; }
+.viewport { display:grid; grid-template-rows:auto 1fr; min-width:0; border:1px solid var(--card-border); border-radius:6px; overflow:hidden; }
+.frame-view { grid-template-rows:auto 1fr; }
+.viewport-title { padding:7px 9px; color:var(--text-secondary); font-size:.76rem; border-bottom:1px solid var(--card-border); background:var(--card-bg); }
+.frame-buttons { position:absolute; z-index:1; top:8px; left:10px; display:flex; gap:6px; }
+.frame-buttons button { min-width:28px; height:24px; border:1px solid var(--card-border); border-radius:5px; background:transparent; color:var(--text-secondary); cursor:pointer; }
+.frame-buttons button.active { border-color:var(--link-color); color:var(--text); background:var(--link-item-hover); }
+.canvas-box { display:grid; place-items:center; min-height:0; overflow:hidden; }
+.actual-sizes { position:relative; display:grid; place-items:center; min-height:0; overflow:auto; padding:12px; }
+.size-card { display:grid; gap:6px; justify-items:center; color:var(--text-secondary); font-size:.72rem; }
+.size-card canvas { width:auto; height:auto; border:1px solid var(--card-border); border-radius:4px; }
+canvas { width:auto; height:auto; max-width:100%; image-rendering:auto; }
+.row { display:grid; grid-template-columns:74px 1fr; gap:8px; align-items:center; margin:0 0 10px; color:var(--text-secondary); font-size:.78rem; }
+input, select, button { font:inherit; }
+input[type="text"], select { width:100%; min-height:34px; border:1px solid var(--card-border); border-radius:6px; background:var(--input-bg, transparent); color:var(--text); padding:0 8px; }
+input[type="file"] { width:100%; color:var(--text-secondary); font-size:.75rem; }
+.btns { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:10px; }
+.btns button, .load-btn { min-height:34px; border:1px solid var(--card-border); border-radius:6px; background:transparent; color:var(--text); cursor:pointer; }
+.btns button:hover, .load-btn:hover { border-color:var(--link-color); }
+.meta { color:var(--text-secondary); font-size:.76rem; line-height:1.6; word-break:break-all; }
+.warn { color:#d45b86; }
+@media (max-width: 900px) { .tool { grid-template-columns:1fr; } .canvas-wrap { grid-template-columns:1fr; min-height:720px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="back-link" href="../../detail.html?page=tools">← 返回小工具</a>
+  <h1>Codex 桌宠预览器</h1>
+  <p class="sub">预览 v2 桌宠 spritesheet 或单张候选图。可以直接粘贴图片；右侧按真实桌宠尺寸看细节读不读得清。</p>
+
+  <div class="tool">
+    <aside class="panel" id="states"></aside>
+
+    <main class="stage">
+      <div class="canvas-wrap" id="canvasWrap">
+        <section class="viewport" id="animView">
+          <div class="viewport-title">动画预览</div>
+          <div class="canvas-box" id="petBox"><canvas id="pet" width="384" height="416"></canvas></div>
+        </section>
+        <section class="viewport frame-view">
+          <div class="viewport-title">定帧检查</div>
+          <div class="actual-sizes" id="actualSizes"><div class="frame-buttons" id="frameButtons"></div><canvas id="frameCanvas"></canvas></div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="panel">
+      <div class="btns">
+        <button id="play">暂停</button>
+        <button id="prev">上一帧</button>
+        <button id="next">下一帧</button>
+      </div>
+      <div class="row"><label for="fps">速度</label><input id="fps" type="range" min="1" max="18" value="6"></div>
+      <div class="row"><label for="framePick">帧号</label><input id="framePick" type="range" min="1" max="1" value="1"></div>
+      <div class="row"><label for="stageSize">窗口</label><input id="stageSize" type="range" min="260" max="760" value="520"></div>
+      <div class="row"><label for="petSize">桌宠宽</label><input id="petSize" type="range" min="80" max="220" value="161"></div>
+      <div class="row"><label for="smooth">采样</label><select id="smooth"><option value="pixel">像素</option><option value="smooth">平滑</option></select></div>
+      <div class="row"><label for="bg">背景</label><select id="bg"><option value="desktop">桌面</option><option value="#ff00ff">品红</option><option value="#111318">深色</option><option value="#f4f1eb">浅色</option></select></div>
+      <div class="row"><label>上传</label><input id="file" type="file" accept="image/png,image/webp,image/jpeg"></div>
+      <div class="row"><label for="src">路径</label><input id="src" type="text"></div>
+      <button class="load-btn" id="load" type="button">加载路径</button>
+      <p class="meta" id="meta"></p>
+    </aside>
+  </div>
+</div>
+
+<script src="../../guides/shared.js"></script>
+<script>
+const DEFAULT_SRC = 'file:///C:/Users/Administrator/.codex/pets/luoxia-v2-preview/spritesheet.webp';
+const rows = [
+  ['idle', 0, 6, '空闲，等你发话'],
+  ['running-right', 1, 8, '被拖拽或向右移动'],
+  ['running-left', 2, 8, '被拖拽或向左移动'],
+  ['waving', 3, 4, '打招呼、被唤起'],
+  ['jumping', 4, 5, '短暂响应、切换状态'],
+  ['failed', 5, 8, '失败、中断、阻塞'],
+  ['waiting', 6, 6, '等待授权或补充信息'],
+  ['running', 7, 6, '正在执行、思考、处理'],
+  ['review', 8, 6, '完成后展示或检查'],
+  ['look 000-157.5', 9, 8, '视线方向上半圈'],
+  ['look 180-337.5', 10, 8, '视线方向下半圈']
+];
+
+const img = new Image();
+const canvas = document.getElementById('pet');
+const ctx = canvas.getContext('2d');
+const frameCanvas = document.getElementById('frameCanvas');
+const frameCtx = frameCanvas.getContext('2d');
+const actualSizes = document.getElementById('actualSizes');
+const frameButtons = document.getElementById('frameButtons');
+const stateBox = document.getElementById('states');
+const meta = document.getElementById('meta');
+let active = rows[0], frame = 0, playing = true, last = 0;
+let selectedFrame = 0, trim = null;
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function isAtlas(){ return img.naturalWidth === 1536 && img.naturalHeight === 2288; }
+function renderStates(){
+  stateBox.innerHTML = rows.map((r, i) => `<button class="state${i===0?' active':''}" data-i="${i}">${esc(r[0])}<small>${esc(r[3])}</small></button>`).join('');
+  stateBox.querySelectorAll('button').forEach(b => b.onclick = () => {
+    active = rows[Number(b.dataset.i)];
+    frame = 0;
+    selectedFrame = 0;
+    stateBox.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+    draw();
+  });
+}
+function setBg(){
+  const wrap = document.getElementById('canvasWrap');
+  const boxes = [document.getElementById('petBox'), actualSizes];
+  const bg = document.getElementById('bg').value;
+  const value = bg === 'desktop'
+    ? 'linear-gradient(180deg, #f7eee7 0 62%, #d9b895 62% 63%, #b9835a 63% 100%)'
+    : bg;
+  boxes.forEach(box => { box.style.background = value; });
+  wrap.style.height = document.getElementById('stageSize').value + 'px';
+}
+function drawFrame(targetCtx, targetCanvas, frameIndex, smoothing){
+  const w = Number(document.getElementById('petSize').value);
+  const h = Math.round(w * 208 / 192);
+  const dpr = window.devicePixelRatio || 1;
+  targetCanvas.width = Math.round(w * dpr);
+  targetCanvas.height = Math.round(h * dpr);
+  targetCanvas.style.width = w + 'px';
+  targetCanvas.style.height = h + 'px';
+  targetCanvas.style.imageRendering = smoothing ? 'auto' : 'pixelated';
+  targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+  targetCtx.imageSmoothingEnabled = smoothing;
+  drawPet(targetCtx, 0, 0, w * dpr, h * dpr, frameIndex);
+}
+function drawPet(targetCtx, x, y, w, h, frameIndex){
+  if (isAtlas()) {
+    targetCtx.drawImage(img, frameIndex * 192, active[1] * 208, 192, 208, x, y, w, h);
+    return;
+  }
+  const r = trim || {x:0, y:0, w:img.naturalWidth, h:img.naturalHeight};
+  const src = r.canvas || img;
+  const scale = Math.min(w / r.w, h / r.h);
+  const dw = r.w * scale;
+  const dh = r.h * scale;
+  targetCtx.drawImage(src, r.x, r.y, r.w, r.h, x + (w - dw) / 2, y + h - dh, dw, dh);
+}
+function calcTrim(){
+  if (isAtlas()) return null;
+  const c = document.createElement('canvas');
+  c.width = img.naturalWidth;
+  c.height = img.naturalHeight;
+  const cctx = c.getContext('2d', {willReadFrequently:true});
+  cctx.drawImage(img, 0, 0);
+  const data = cctx.getImageData(0, 0, c.width, c.height).data;
+  const bg = [data[0], data[1], data[2]];
+  const transparentBg = data[3] < 20;
+  let minX = c.width, minY = c.height, maxX = 0, maxY = 0;
+  for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) {
+    const i = (y * c.width + x) * 4;
+    const diff = Math.abs(data[i]-bg[0]) + Math.abs(data[i+1]-bg[1]) + Math.abs(data[i+2]-bg[2]);
+    if (data[i+3] > 20 && (transparentBg || diff > 45)) {
+      minX = Math.min(minX, x); minY = Math.min(minY, y); maxX = Math.max(maxX, x); maxY = Math.max(maxY, y);
+    }
+  }
+  if (minX > maxX) return null;
+  const imageData = cctx.getImageData(0, 0, c.width, c.height);
+  const pixels = imageData.data;
+  for (let i = 0; i < pixels.length; i += 4) {
+    const diff = Math.abs(pixels[i]-bg[0]) + Math.abs(pixels[i+1]-bg[1]) + Math.abs(pixels[i+2]-bg[2]);
+    if (!transparentBg && diff <= 45) pixels[i+3] = 0;
+  }
+  cctx.putImageData(imageData, 0, 0);
+  const pad = 8;
+  minX = Math.max(0, minX - pad); minY = Math.max(0, minY - pad);
+  maxX = Math.min(c.width - 1, maxX + pad); maxY = Math.min(c.height - 1, maxY + pad);
+  return {x:minX, y:minY, w:maxX-minX+1, h:maxY-minY+1, canvas:c};
+}
+function draw(){
+  setBg();
+  if (!img.naturalWidth) {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    frameCtx.clearRect(0,0,frameCanvas.width,frameCanvas.height);
+    ctx.fillStyle = '#888';
+    ctx.textAlign = 'center';
+    ctx.fillText('未加载 spritesheet', canvas.width / 2, canvas.height / 2);
+    return;
+  }
+  const smoothing = document.getElementById('smooth').value === 'smooth';
+  const maxFrame = isAtlas() ? active[2] : 1;
+  const picker = document.getElementById('framePick');
+  picker.max = maxFrame;
+  selectedFrame = Math.min(selectedFrame, maxFrame - 1);
+  picker.value = selectedFrame + 1;
+  frameButtons.innerHTML = Array.from({length:maxFrame}, (_, i) => `<button class="${i===selectedFrame?'active':''}" data-frame="${i}">${i+1}</button>`).join('');
+  frameButtons.querySelectorAll('button').forEach(b => b.onclick = () => { selectedFrame = Number(b.dataset.frame); draw(); });
+  if (!isAtlas()) frame = 0;
+  drawFrame(ctx, canvas, frame, smoothing);
+  drawFrame(frameCtx, frameCanvas, selectedFrame, smoothing);
+  const mode = isAtlas() ? `当前：${esc(active[0])}<br>播放帧：${frame + 1} / ${active[2]}<br>检查帧：${selectedFrame + 1} / ${active[2]}` : '模式：单张候选图<br>帧：1 / 1';
+  meta.innerHTML = `${mode}<br>图片：${img.naturalWidth}×${img.naturalHeight}` +
+    `<br>真实预览：${document.getElementById('petSize').value}×${Math.round(Number(document.getElementById('petSize').value) * 208 / 192)} px` +
+    (!isAtlas() && trim ? `<br>已自动抠背景并裁切主体：${trim.w}×${trim.h}` : '') +
+    (img.naturalWidth !== 1536 || img.naturalHeight !== 2288 ? '<br><span class="warn">非标准 v2：按单张图或候选图处理</span>' : '');
+}
+function load(src){
+  img.onload = () => { trim = calcTrim(); draw(); };
+  img.onerror = () => { meta.innerHTML = '<span class="warn">加载失败，建议用上传文件。</span>'; };
+  img.src = encodeURI(src);
+}
+function tick(t){
+  if (playing && isAtlas() && t - last > 1000 / Number(document.getElementById('fps').value)) {
+    frame = (frame + 1) % active[2];
+    last = t;
+    draw();
+  }
+  requestAnimationFrame(tick);
+}
+
+document.getElementById('src').value = DEFAULT_SRC;
+document.getElementById('load').onclick = () => load(document.getElementById('src').value.trim());
+document.getElementById('file').onchange = e => {
+  const f = e.target.files[0];
+  if (f) load(URL.createObjectURL(f));
+};
+document.addEventListener('paste', e => {
+  const item = [...(e.clipboardData?.items || [])].find(x => x.type.startsWith('image/'));
+  if (!item) return;
+  e.preventDefault();
+  load(URL.createObjectURL(item.getAsFile()));
+});
+document.getElementById('play').onclick = e => { playing = !playing; e.target.textContent = playing ? '暂停' : '播放'; };
+document.getElementById('prev').onclick = () => { selectedFrame = (selectedFrame - 1 + (isAtlas() ? active[2] : 1)) % (isAtlas() ? active[2] : 1); draw(); };
+document.getElementById('next').onclick = () => { selectedFrame = (selectedFrame + 1) % (isAtlas() ? active[2] : 1); draw(); };
+document.getElementById('bg').onchange = draw;
+document.getElementById('stageSize').oninput = draw;
+document.getElementById('framePick').oninput = e => { selectedFrame = Number(e.target.value) - 1; draw(); };
+document.getElementById('petSize').oninput = draw;
+document.getElementById('smooth').onchange = draw;
+renderStates();
+load(DEFAULT_SRC);
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
