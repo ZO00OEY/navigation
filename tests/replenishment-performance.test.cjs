@@ -45,6 +45,8 @@ assert.match(html, /function updateReplenishmentSkuDisplays\(sku\)/, 'manual rep
 assert.match(html, /data-replenishment-purchase-amount/, 'SKU purchase amount should have a targeted update hook');
 assert.match(html, /block\.outerHTML = renderReplenishmentSkuBlock/, 'saving custom replenishment quantities should refresh SKU amount and turnover displays');
 assert.match(html, /if \(!isTransfer\) updateReplenishmentSkuDisplays\(sku\);/, 'saving custom replenishment quantities should refresh visible SKU values immediately');
+assert.match(html, /\['商品编码', 'SKU', '商品简称', '周转', '箱规', '主赠品属性'\]\.concat\(warehouses\)/, 'replenishment export should place material code before SKU');
+assert.match(html, /replenishmentExportAoa\(skus, maps\.profileMap, maps\.inventoryMap, warehouses\)/, 'replenishment export should use inventory rows when calculating turnover');
 assert.match(html, /jdDisableFireworks/, 'JD tool should persist the mouse effect toggle');
 assert.match(html, /disableFireworksToggle/, 'JD tool sidebar should expose a mouse effect toggle');
 assert.match(html, /localStorage\.getItem\('jdDisableFireworks'\)!=='false'/, 'JD tool should disable mouse effects by default');
@@ -63,5 +65,25 @@ assert.deepEqual(inventoryStockAmounts([
   { nationalPurchasePrice: 4, metrics: { spotStock: 5, orderableStock: 6 } },
   { nationalPurchasePrice: '', metrics: { spotStock: 99, orderableStock: 99 } }
 ]), { spot: 40, orderable: 54 }, 'inventory amounts should use national purchase price and skip missing prices');
+
+const turnoverStart = html.indexOf('function replenishmentExportTurnover');
+const turnoverEnd = html.indexOf('function replenishmentHasExportDemand', turnoverStart);
+const replenishmentExportTurnover = new Function(
+  'replenishmentInventoryMetrics',
+  'replenishmentNumber',
+  'replenishmentForecastDailySales',
+  'replenishmentExpected',
+  'inventoryMetricText',
+  'replenishmentState',
+  html.slice(turnoverStart, turnoverEnd) + '\nreturn replenishmentExportTurnover;'
+)(
+  row => row.metrics,
+  value => value === '' || value == null ? '' : Number(value),
+  () => 10,
+  () => 50,
+  (value, decimals) => Number(value).toFixed(decimals),
+  { recommendFormula: 'daily7' }
+);
+assert.equal(replenishmentExportTurnover({}, { metrics: { orderableStock: 100 } }, ['全国']), '15.0', 'export turnover should use replenishment-after orderable stock');
 
 console.log('replenishment performance checks passed');

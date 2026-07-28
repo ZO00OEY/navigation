@@ -1216,6 +1216,17 @@
 .search-data-table .search-group-end {
   border-right: 2px solid var(--line-medium, var(--card-border));
 }
+.search-data-table .metric-compare {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.62rem;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.search-data-table .metric-compare.up { color: #d64545; }
+.search-data-table .metric-compare.down { color: #2f9b62; }
+.search-data-table .metric-compare.flat { color: var(--text-tertiary); }
 .inventory-warehouse-box {
   display: flex;
   flex-wrap: wrap;
@@ -2791,7 +2802,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
 .ranking-growth {
   margin-top: 3px; font-size: 0.66rem; line-height: 1.25; font-weight: 700;
 }
-.ranking-growth.positive { color: var(--tool-accent-strong); }
+.ranking-growth.positive { color: #d64545; }
 .ranking-growth.negative { color: #2f9b62; }
 .ranking-growth.neutral { color: var(--text-tertiary); }
 .tag.good { background: rgba(86, 180, 125, 0.13); color: #56b47d; }
@@ -3221,6 +3232,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
         <button class="tab-btn" data-page="finance-data">毛保数据导入与分析<span class="tab-kicker">03</span></button>
         <button class="tab-btn" data-page="search-import">关键词搜索导入与分析<span class="tab-kicker">04</span></button>
         <button class="tab-btn" data-page="inventory-turnover">库存周转导入与分析<span class="tab-kicker">05</span></button>
+        <button class="tab-btn" data-page="purchase-confirm">采购单快速回告<span class="tab-kicker">06</span></button>
       </div>
       <div class="sidebar-archive">
         <div class="palette-card" aria-label="工具配色">
@@ -3837,6 +3849,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
             </div>
             <div class="filter-right">
               <div class="filter-actions">
+                <label class="check-pill"><input type="checkbox" id="searchDataCompareToggle" checked>显示环比</label>
                 <button class="btn" id="refreshSearchDataBtn" type="button">刷新</button>
                 <button class="btn danger" id="clearSearchDataBtn" type="button">清空当前</button>
               </div>
@@ -3846,7 +3859,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
           <div class="table-wrap">
             <table class="data-table search-data-table">
               <thead id="searchDataHead"></thead>
-              <tbody id="searchDataBody"><tr><td class="empty-row" colspan="15">暂无搜索数据</td></tr></tbody>
+              <tbody id="searchDataBody"><tr><td class="empty-row" colspan="16">暂无搜索数据</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -4074,6 +4087,78 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
               </div>
               <div class="replenishment-sku-output" id="inventoryTransferOutput">
                 <div class="replenishment-empty">请先保存需要计算的 SKU</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-page" id="purchase-confirm">
+        <div class="page-head">
+          <div class="page-title">
+            <h1>采购单快速回告</h1>
+            <p>自动识别采购订单回告明细和补货需求，回填确认数量，并把缺失的 SKU / 仓库组合写入新建单。</p>
+          </div>
+        </div>
+
+        <div class="finance-data-tabs">
+          <button class="finance-data-tab active" type="button" data-quick-confirm-panel="import">数据导入</button>
+          <button class="finance-data-tab" type="button" data-quick-confirm-panel="result">处理结果</button>
+        </div>
+        <div class="panel finance-data-panel is-import-mode" id="quickConfirmPanel">
+          <div class="finance-data-pane" id="quickConfirmImportPane">
+            <div class="finance-import-section">
+              <div class="panel-title"><span>仓库配置</span></div>
+              <div class="inventory-warehouse-box">
+                <div class="inventory-warehouse-box" id="quickConfirmWarehouseTags"></div>
+                <span class="inventory-add-warehouse">
+                  <input class="input" id="quickConfirmWarehouseInput" placeholder="新增仓库">
+                  <button class="mapping-rule-action add" id="addQuickConfirmWarehouseBtn" type="button" title="新增仓库">+</button>
+                </span>
+              </div>
+              <div class="msg" id="quickConfirmWarehouseMsg"></div>
+            </div>
+
+            <div class="finance-import-section">
+              <div class="panel-title">
+                <span>导出模板（补货需求）</span>
+                <button class="btn" id="exportQuickConfirmTemplateBtn" type="button">导出模板</button>
+              </div>
+              <p class="panel-sub">仅导出表头：SKU、商品简称，以及当前启用的仓库列。</p>
+            </div>
+
+            <div class="finance-import-section">
+              <div class="panel-title"><span>批量自动导入</span></div>
+              <div class="upload-zone" id="quickConfirmDropZone">
+                <strong>拖入两个 Excel 文件，或点击选择</strong>
+                <span>自动识别“采购订单回告明细”和“补货需求”，支持分次导入。</span>
+              </div>
+              <input class="ghost-file" id="quickConfirmFileInput" type="file" accept=".xlsx,.xls" multiple>
+              <div class="inventory-warehouse-box" id="quickConfirmFileTags" style="margin-top:12px;"></div>
+              <div class="import-summary" id="quickConfirmSummary">
+                <span id="quickConfirmSummaryText">等待导入两个文件</span>
+              </div>
+              <div class="btn-row" style="margin-top:12px;">
+                <button class="btn primary" id="exportQuickConfirmResultBtn" type="button" disabled>导出处理结果</button>
+                <button class="btn" id="clearQuickConfirmBtn" type="button">清空当前文件</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="finance-data-pane" id="quickConfirmResultPane" hidden>
+            <div class="metric-row">
+              <div class="metric"><span>回填原单</span><strong id="quickConfirmMatchedCount">0</strong></div>
+              <div class="metric"><span>新增建单</span><strong id="quickConfirmCreatedCount">0</strong></div>
+              <div class="metric"><span>原单置零并填其他</span><strong id="quickConfirmZeroedCount">0</strong></div>
+              <div class="metric"><span>确认数量合计</span><strong id="quickConfirmQuantityCount">0</strong></div>
+            </div>
+            <div class="finance-import-section">
+              <div class="panel-title"><span>匹配明细</span><span id="quickConfirmPreviewHint"></span></div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead><tr><th>处理方式</th><th>配送中心</th><th>SKU</th><th>商品简称</th><th>数量</th></tr></thead>
+                  <tbody id="quickConfirmPreviewBody"><tr><td class="empty-row" colspan="5">导入两个文件后自动处理</td></tr></tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -4473,6 +4558,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
 
 <script src="../../guides/shared.js"></script>
 <script src="shared/jd-tool-palette.js"></script>
+<script src="quick-purchase-confirm.js"></script>
 <script>
 (function() {
   if (window.history && 'scrollRestoration' in window.history) {
@@ -4495,12 +4581,15 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   var inventoryWarehouses = sanitizeInventoryWarehouses(JSON.parse(localStorage.getItem('jdInventoryWarehouses') || 'null') || DEFAULT_INVENTORY_WAREHOUSES);
   var inventorySkuList = sanitizeInventorySkus(JSON.parse(localStorage.getItem('jdInventorySkuList') || '[]'));
   var inventorySkuProfileMap = {};
+  var quickConfirmFiles = { purchase: null, demand: null };
+  var quickConfirmResultWorkbook = null;
+  var quickConfirmPlan = null;
   var DEFAULT_REPLENISHMENT_FORMULA = 'daily7*0.7+daily14*0.3';
   var REPLENISHMENT_FORMULA_PRESETS = [
-    { key: 'balanced', name: '均衡趋势（7日 70% + 14日 30%）', formula: DEFAULT_REPLENISHMENT_FORMULA, description: '预计日销量取近7天均值的 70% 与近14天均值的 30%。建议补货数按目标周转补足可订购库存。' },
-    { key: 'recent7', name: '近期趋势（近7日）', formula: 'daily7', description: '预计日销量使用近7天销量均值。建议补货数按目标周转补足可订购库存。' },
-    { key: 'stable14', name: '稳定趋势（近14日）', formula: 'daily14', description: '预计日销量使用近14天销量均值。建议补货数按目标周转补足可订购库存。' },
-    { key: 'long28', name: '长期趋势（近28日）', formula: 'daily28', description: '预计日销量使用近28天销量均值。建议补货数按目标周转补足可订购库存。' }
+    { key: 'balanced', name: '均衡趋势（7日 70% + 14日 30%）', formula: DEFAULT_REPLENISHMENT_FORMULA, description: '预计日销量取近7天均值的 70% 与近14天均值的 30%。补货数按目标周转补足可订购库存。' },
+    { key: 'recent7', name: '近期趋势（近7日）', formula: 'daily7', description: '预计日销量使用近7天销量均值。补货数按目标周转补足可订购库存。' },
+    { key: 'stable14', name: '稳定趋势（近14日）', formula: 'daily14', description: '预计日销量使用近14天销量均值。补货数按目标周转补足可订购库存。' },
+    { key: 'long28', name: '长期趋势（近28日）', formula: 'daily28', description: '预计日销量使用近28天销量均值。补货数按目标周转补足可订购库存。' }
   ];
   var REPLENISHMENT_METRIC_OPTIONS = [
     { key: 'purchaseAmount', label: '采购金额' },
@@ -4734,6 +4823,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   var searchCustomTerms = padSearchCustomTerms(sanitizeSearchCustomTerms(JSON.parse(localStorage.getItem('jdSearchCustomTerms') || '[]')));
   var searchAnalysisLastDimension = localStorage.getItem('jdSearchAnalysisDimension') || 'mainSeries';
   var searchAnalysisLastValue = localStorage.getItem('jdSearchAnalysisValue') || '';
+  var searchDataCompareVisible = localStorage.getItem('jdSearchDataCompareVisible') !== 'false';
   if (!grossMarginAvailableDimensionsRaw && !grossMarginSelectedDimensionsRaw && grossMarginProfileColumns.length) {
     grossMarginAvailableDimensions = ['sku'].concat(grossMarginProfileColumns);
     grossMarginActiveDimensions = grossMarginAvailableDimensions.slice();
@@ -9111,7 +9201,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
         term.salesAmount += amount;
         term.orderQty += orders;
       });
-      if (!matchedProductTerm) {
+      if (!isBrand && !matchedProductTerm) {
         total.industryKeywords++;
         total.industryVisitorCount += visitors;
         total.industrySalesAmount += amount;
@@ -9176,6 +9266,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
 
   async function renderSearchData() {
     if (!$('searchDataBody')) return;
+    if ($('searchDataCompareToggle')) $('searchDataCompareToggle').checked = searchDataCompareVisible;
     var searchTable = $('searchDataBody').closest('table');
     if (searchTable) {
       searchTable.classList.remove('resizable-table');
@@ -9184,11 +9275,16 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       searchTable.style.width = '';
     }
     var range = datePickers.searchData ? datePickers.searchData.getRange() : { start: today(), end: today() };
-    var rows = filterMetricRowsByDateRange((await getAll('search_analysis_metrics')).filter(function(row) {
+    var allSearchRows = (await getAll('search_analysis_metrics')).filter(function(row) {
       return row.sourceType === 'search_analysis';
-    }), normalizedQueryRange(range));
+    });
+    var rows = filterMetricRowsByDateRange(allSearchRows, normalizedQueryRange(range));
+    var ownMetricRows = (await getAll('analyzed_metrics')).filter(function(row) {
+      return !row.sourceType || ['sales_detail', 'onsite_cost', 'offsite_cps_cost'].indexOf(row.sourceType) !== -1;
+    });
+    var skuMap = searchSkuProfileMap(await getAll('sku_profiles'));
     var customTerms = enabledSearchCustomTerms();
-    var colspan = 15 + customTerms.length * 4;
+    var colspan = 16 + customTerms.length * 4;
     var industryGroupClass = searchGroupClass(1 + customTerms.length);
     var brandGroupClass = searchGroupClass(2 + customTerms.length);
     if ($('searchDataHead')) renderSearchDataHead(customTerms);
@@ -9205,22 +9301,26 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       return String(b.startDate || '').localeCompare(String(a.startDate || '')) || String(a.dimensionValue || '').localeCompare(String(b.dimensionValue || ''), 'zh-Hans-CN');
     });
     $('searchDataBody').innerHTML = rows.map(function(row) {
+      var previous = searchPreviousPeriodRow(row, allSearchRows);
+      var adCost = searchAdCostFor(row, ownMetricRows, skuMap);
+      var previousAdCost = previous ? searchAdCostFor(previous, ownMetricRows, skuMap) : '';
       var industry = searchMetricValues(row, 'industry');
       var customCells = customTerms.map(function(term, index) {
-        return searchMetricCells(searchCustomMetricValues(row, term), searchGroupClass(1 + index));
+        return searchMetricCells(searchCustomMetricValues(row, term), searchGroupClass(1 + index), searchCustomMetricValues(previous, term), row, previous);
       }).join('');
       return '<tr><td>' + esc(rangeText(row)) + '</td>' +
         '<td>' + esc(row.dimensionLabel || row.dimensionKey || '-') + '</td>' +
         '<td>' + esc(row.dimensionValue || '-') + '</td>' +
-        '<td class="' + searchGroupClass(0) + '">' + esc(formatMetric(row.visitorCount, 0)) + '</td>' +
-        '<td class="' + searchGroupClass(0) + '">' + esc(formatMetric(row.orderQty, 0)) + '</td>' +
-        '<td class="' + searchGroupClass(0) + ' search-group-end">' + esc(formatMetric(row.salesAmount, 2)) + '</td>' +
+        searchMetricCell(adCost, searchGroupClass(0), 2, false, previousAdCost, row, previous) +
+        searchMetricCell(row.visitorCount, searchGroupClass(0), 0, false, previous && previous.visitorCount, row, previous) +
+        searchMetricCell(row.orderQty, searchGroupClass(0), 0, false, previous && previous.orderQty, row, previous) +
+        searchMetricCell(row.salesAmount, searchGroupClass(0) + ' search-group-end', 2, false, previous && previous.salesAmount, row, previous) +
         customCells +
-        searchMetricCells(industry, industryGroupClass) +
-        '<td class="' + brandGroupClass + '">' + esc(formatMetric(row.brandVisitorCount || 0, 0)) + '</td>' +
-        '<td class="' + brandGroupClass + '">' + esc(formatPercent(row.brandConversionRate || 0)) + '</td>' +
-        '<td class="' + brandGroupClass + '">' + esc(formatMetric(row.brandOrderQty || 0, 0)) + '</td>' +
-        '<td class="' + brandGroupClass + ' search-group-end">' + esc(formatMetric(row.brandSalesAmount || 0, 2)) + '</td>' +
+        searchMetricCells(industry, industryGroupClass, searchMetricValues(previous, 'industry'), row, previous) +
+        searchMetricCell(row.brandVisitorCount || 0, brandGroupClass, 0, false, previous && previous.brandVisitorCount, row, previous) +
+        searchMetricCell(row.brandConversionRate || 0, brandGroupClass, 0, true, previous && previous.brandConversionRate, row, previous) +
+        searchMetricCell(row.brandOrderQty || 0, brandGroupClass, 0, false, previous && previous.brandOrderQty, row, previous) +
+        searchMetricCell(row.brandSalesAmount || 0, brandGroupClass + ' search-group-end', 2, false, previous && previous.brandSalesAmount, row, previous) +
         '<td><button class="icon-btn row-delete-btn" data-search-row-delete="' + esc(row.id) + '" type="button" title="删除这一行" aria-label="删除这一行">' + iconTrash() + '</button></td></tr>';
     }).join('');
     enhanceAllResizableTables();
@@ -9238,14 +9338,14 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     $('searchDataHead').innerHTML =
       '<tr>' +
         '<th rowspan="2">日期</th><th rowspan="2">维度</th><th rowspan="2">具体值</th>' +
-        '<th class="' + searchGroupClass(0) + ' search-group-end" colspan="3">总体</th>' +
+        '<th class="' + searchGroupClass(0) + ' search-group-end" colspan="4">总体</th>' +
         customTop +
-        '<th class="' + industryClass + '" colspan="4">行业</th>' +
+        '<th class="' + industryClass + '" colspan="4">行业（品类词）</th>' +
         '<th class="' + brandClass + '" colspan="4">品牌</th>' +
         '<th rowspan="2">操作</th>' +
       '</tr>' +
       '<tr>' +
-        '<th class="' + searchGroupClass(0) + '">访客</th><th class="' + searchGroupClass(0) + '">单量</th><th class="' + searchGroupClass(0) + ' search-group-end">成交金额</th>' +
+        '<th class="' + searchGroupClass(0) + '">花费</th><th class="' + searchGroupClass(0) + '">访客</th><th class="' + searchGroupClass(0) + '">单量</th><th class="' + searchGroupClass(0) + ' search-group-end">成交金额</th>' +
         customBottom +
         searchMetricHeadCells(industryClass) +
         searchMetricHeadCells(brandClass) +
@@ -9264,6 +9364,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   }
 
   function searchMetricValues(row, prefix) {
+    row = row || {};
     if (prefix === 'industry') {
       return {
         visitorCount: row.industryVisitorCount,
@@ -9276,18 +9377,91 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   }
 
   function searchCustomMetricValues(row, term) {
+    row = row || {};
     var found = (row.searchCustomTerms || []).find(function(item) {
       return item.id === term.id || item.title === term.title;
     }) || {};
     return searchMetricValues(found);
   }
 
-  function searchMetricCells(metric, className) {
+  function searchSkuProfileMap(skuRows) {
+    var map = {};
+    (skuRows || []).forEach(function(row) {
+      var sku = normalizeSkuValue(row.sku);
+      if (sku) map[sku] = row;
+    });
+    return map;
+  }
+
+  function searchAdCostFor(searchRow, ownMetricRows, skuMap) {
+    if (!searchRow) return '';
+    var range = normalizedQueryRange({ start: searchRow.startDate, end: searchRow.endDate || searchRow.startDate });
+    var dim = searchRow.dimensionKey || '';
+    var value = String(searchRow.dimensionValue || '');
+    var rows = preferExactPeriodRowsForRange(filterMetricRowsByDateRange(ownMetricRows, range), range);
+    return rows.reduce(function(total, row) {
+      var sku = normalizeSkuValue(row.sku);
+      var profile = skuMap[sku] || {};
+      if (profile.itemType === 'competitor') return total;
+      var dimValue = dim === 'sku' ? sku : String(profile[dim] || '未归类');
+      if (dimValue !== value) return total;
+      return total + Number(row.onsiteCost || 0) + Number(row.offsiteCost || 0);
+    }, 0);
+  }
+
+  function searchMetricCells(metric, className, previousMetric, row, previousRow) {
     className = className || '';
-    return '<td class="' + className + '">' + esc(formatMetric(metric.visitorCount || 0, 0)) + '</td>' +
-      '<td class="' + className + '">' + esc(formatPercent(metric.conversionRate || 0)) + '</td>' +
-      '<td class="' + className + '">' + esc(formatMetric(metric.orderQty || 0, 0)) + '</td>' +
-      '<td class="' + className + ' search-group-end">' + esc(formatMetric(metric.salesAmount || 0, 2)) + '</td>';
+    previousMetric = previousMetric || {};
+    return searchMetricCell(metric.visitorCount || 0, className, 0, false, previousMetric.visitorCount, row, previousRow) +
+      searchMetricCell(metric.conversionRate || 0, className, 0, true, previousMetric.conversionRate, row, previousRow) +
+      searchMetricCell(metric.orderQty || 0, className, 0, false, previousMetric.orderQty, row, previousRow) +
+      searchMetricCell(metric.salesAmount || 0, className + ' search-group-end', 2, false, previousMetric.salesAmount, row, previousRow);
+  }
+
+  function searchMetricCell(value, className, decimals, isPercent, previousValue, row, previousRow) {
+    var text = isPercent ? formatPercent(value || 0) : formatMetric(value || 0, decimals);
+    return '<td class="' + (className || '') + '">' + esc(text) + searchCompareHtml(value, previousValue, row, previousRow, isPercent) + '</td>';
+  }
+
+  function searchCompareHtml(value, previousValue, row, previousRow, isPercent) {
+    if (!searchDataCompareVisible || !previousRow || previousValue == null || previousValue === '') return '';
+    var current = Number(value) || 0;
+    var previous = Number(previousValue) || 0;
+    if (!previous) return '';
+    if (!isPercent) {
+      current = current / Math.max(1, daysBetween(row.startDate, row.endDate || row.startDate));
+      previous = previous / Math.max(1, daysBetween(previousRow.startDate, previousRow.endDate || previousRow.startDate));
+    }
+    var rate = (current - previous) / Math.abs(previous);
+    if (!isFinite(rate)) return '';
+    var cls = rate > 0 ? 'up' : (rate < 0 ? 'down' : 'flat');
+    var sign = rate > 0 ? '+' : '';
+    return '<br><span class="metric-compare ' + cls + '">' + esc(sign + formatPercent(rate)) + '</span>';
+  }
+
+  function searchPreviousPeriodRow(row, rows) {
+    var start = dateFromYmd(row.startDate);
+    var end = dateFromYmd(row.endDate || row.startDate);
+    if (!start || !end) return null;
+    var previousStart = ymd(addDays(start, -7));
+    var previousEnd = ymd(addDays(end, -7));
+    var sameDimension = (rows || []).filter(function(item) {
+      return item !== row &&
+        item.sourceType === row.sourceType &&
+        String(item.dimensionKey || '') === String(row.dimensionKey || '') &&
+        String(item.dimensionValue || '') === String(row.dimensionValue || '');
+    });
+    var exact = sameDimension.find(function(item) {
+      var bounds = rowDateBounds(item);
+      return bounds.start === previousStart && bounds.end === previousEnd;
+    });
+    if (exact) return exact;
+    return sameDimension.filter(function(item) {
+      var bounds = rowDateBounds(item);
+      return bounds.end && bounds.end < rowDateBounds(row).start;
+    }).sort(function(a, b) {
+      return String(rowDateBounds(b).end || '').localeCompare(String(rowDateBounds(a).end || ''));
+    })[0] || null;
   }
 
   async function deleteSearchDataRow(id) {
@@ -12173,12 +12347,235 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   }
 
   function renderInventoryWarehouses() {
-    var box = $('inventoryWarehouseTags');
-    if (!box) return;
-    box.innerHTML = inventoryWarehouses.map(function(name) {
+    var html = inventoryWarehouses.map(function(name) {
       return '<span class="inventory-warehouse-tag">' + esc(name) +
         '<button type="button" data-remove-inventory-warehouse="' + esc(name) + '" title="移除仓库">×</button></span>';
     }).join('');
+    [$('inventoryWarehouseTags'), $('quickConfirmWarehouseTags')].forEach(function(box) {
+      if (box) box.innerHTML = html;
+    });
+  }
+
+  function repairQuickConfirmSheetRef(sheet) {
+    var end = { r: 0, c: 0 };
+    Object.keys(sheet || {}).forEach(function(address) {
+      if (!/^[A-Z]+\d+$/.test(address)) return;
+      var cell = XLSX.utils.decode_cell(address);
+      end.r = Math.max(end.r, cell.r);
+      end.c = Math.max(end.c, cell.c);
+    });
+    sheet['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: end });
+  }
+
+  function quickConfirmWorkbookSheets(workbook) {
+    return workbook.SheetNames.map(function(name) {
+      var sheet = workbook.Sheets[name];
+      repairQuickConfirmSheetRef(sheet);
+      return {
+        name: name,
+        sheet: sheet,
+        rows: XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: true })
+      };
+    });
+  }
+
+  function detectQuickConfirmWorkbook(workbook) {
+    var sheets = quickConfirmWorkbookSheets(workbook);
+    var purchase = sheets.find(function(item) { return QuickPurchaseConfirm.findPurchaseHeader(item.rows); });
+    if (purchase) return { type: 'purchase', sheetName: purchase.name };
+    var demand = sheets.find(function(item) { return QuickPurchaseConfirm.findDemandHeader(item.rows, inventoryWarehouses); });
+    return demand ? { type: 'demand', sheetName: demand.name } : null;
+  }
+
+  function parseQuickConfirmWorkbook(buffer) {
+    return XLSX.read(new Uint8Array(buffer.slice(0)), {
+      type: 'array',
+      cellDates: true,
+      cellFormula: true,
+      cellStyles: true,
+      cellNF: true
+    });
+  }
+
+  async function readQuickConfirmFile(file) {
+    var buffer = await file.arrayBuffer();
+    var detected = detectQuickConfirmWorkbook(parseQuickConfirmWorkbook(buffer));
+    if (!detected) throw new Error(file.name + '：未识别到采购订单回告明细或补货需求结构');
+    quickConfirmFiles[detected.type] = { name: file.name, buffer: buffer, sheetName: detected.sheetName };
+  }
+
+  function quickConfirmSheet(workbook, type) {
+    return quickConfirmWorkbookSheets(workbook).find(function(item) {
+      return type === 'purchase'
+        ? QuickPurchaseConfirm.findPurchaseHeader(item.rows)
+        : QuickPurchaseConfirm.findDemandHeader(item.rows, inventoryWarehouses);
+    });
+  }
+
+  function setQuickConfirmCell(sheet, row, col, value) {
+    var address = XLSX.utils.encode_cell({ r: row, c: col });
+    var cell = sheet[address] || {};
+    delete cell.f;
+    cell.v = value;
+    cell.t = typeof value === 'number' ? 'n' : 's';
+    sheet[address] = cell;
+  }
+
+  function extendQuickConfirmSheetRef(sheet, row, col) {
+    var range = XLSX.utils.decode_range(sheet['!ref'] || 'A1:A1');
+    range.e.r = Math.max(range.e.r, row);
+    range.e.c = Math.max(range.e.c, col);
+    sheet['!ref'] = XLSX.utils.encode_range(range);
+  }
+
+  function applyQuickConfirmNewRows(workbook, rows) {
+    var sheetName = workbook.SheetNames.find(function(name) { return String(name).indexOf('新建单') !== -1; });
+    if (!sheetName) {
+      sheetName = '新建单';
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet([[
+        '采购员ERP', '*配送中心', '*商品编号', '商品名称', '采购渠道', '币种', '*数量',
+        '建议数量', '备注', '商品属性', '采购场景', '预计消化时间', '采购原因', '说明'
+      ]]), sheetName);
+    }
+    var sheet = workbook.Sheets[sheetName];
+    repairQuickConfirmSheetRef(sheet);
+    var startRow = XLSX.utils.decode_range(sheet['!ref'] || 'A1:N1').e.r + 1;
+    sheet['!cols'] = sheet['!cols'] || [];
+    sheet['!cols'][1] = { wch: 18 };
+    sheet['!cols'][2] = { wch: 18 };
+    sheet['!cols'][6] = { wch: 12 };
+    rows.forEach(function(item, index) {
+      var row = startRow + index;
+      setQuickConfirmCell(sheet, row, 1, item.warehouse);
+      setQuickConfirmCell(sheet, row, 2, item.sku);
+      sheet[XLSX.utils.encode_cell({ r: row, c: 2 })].z = '@';
+      setQuickConfirmCell(sheet, row, 6, item.quantity);
+      extendQuickConfirmSheetRef(sheet, row, 13);
+    });
+  }
+
+  function setQuickConfirmSummary(text, type) {
+    if (!$('quickConfirmSummary') || !$('quickConfirmSummaryText')) return;
+    $('quickConfirmSummary').className = 'import-summary show' + (type ? ' ' + type : '');
+    $('quickConfirmSummaryText').textContent = text || '';
+  }
+
+  function renderQuickConfirmFiles() {
+    if (!$('quickConfirmFileTags')) return;
+    var labels = [];
+    if (quickConfirmFiles.purchase) labels.push('采购订单回告明细：' + quickConfirmFiles.purchase.name);
+    if (quickConfirmFiles.demand) labels.push('补货需求：' + quickConfirmFiles.demand.name);
+    $('quickConfirmFileTags').innerHTML = labels.map(function(label) {
+      return '<span class="inventory-warehouse-tag">' + esc(label) + '</span>';
+    }).join('');
+  }
+
+  function renderQuickConfirmResult() {
+    var stats = quickConfirmPlan
+      ? quickConfirmPlan.stats
+      : { matched: 0, created: 0, zeroed: 0, confirmedQuantity: 0 };
+    if ($('quickConfirmMatchedCount')) $('quickConfirmMatchedCount').textContent = stats.matched;
+    if ($('quickConfirmCreatedCount')) $('quickConfirmCreatedCount').textContent = stats.created;
+    if ($('quickConfirmZeroedCount')) $('quickConfirmZeroedCount').textContent = stats.zeroed;
+    if ($('quickConfirmQuantityCount')) $('quickConfirmQuantityCount').textContent = formatMetric(stats.confirmedQuantity, 0);
+    if (!$('quickConfirmPreviewBody')) return;
+    if (!quickConfirmPlan) {
+      $('quickConfirmPreviewBody').innerHTML = '<tr><td class="empty-row" colspan="5">导入两个文件后自动处理</td></tr>';
+      if ($('quickConfirmPreviewHint')) $('quickConfirmPreviewHint').textContent = '';
+      return;
+    }
+    if ($('quickConfirmPreviewHint')) {
+      $('quickConfirmPreviewHint').textContent = quickConfirmPlan.preview.length > 200 ? '仅显示前 200 行' : '共 ' + quickConfirmPlan.preview.length + ' 行';
+    }
+    $('quickConfirmPreviewBody').innerHTML = quickConfirmPlan.preview.slice(0, 200).map(function(item) {
+      return '<tr><td>' + esc(item.status) + '</td><td>' + esc(item.warehouse) + '</td><td>' +
+        esc(item.sku) + '</td><td>' + esc(item.shortName) + '</td><td>' + esc(item.quantity) + '</td></tr>';
+    }).join('') || '<tr><td class="empty-row" colspan="5">没有正数补货需求</td></tr>';
+  }
+
+  function clearQuickConfirmFiles(message) {
+    quickConfirmFiles = { purchase: null, demand: null };
+    quickConfirmResultWorkbook = null;
+    quickConfirmPlan = null;
+    renderQuickConfirmFiles();
+    renderQuickConfirmResult();
+    if ($('exportQuickConfirmResultBtn')) $('exportQuickConfirmResultBtn').disabled = true;
+    setQuickConfirmSummary(message || '已清空当前文件');
+  }
+
+  function processQuickConfirmFiles() {
+    if (!quickConfirmFiles.purchase || !quickConfirmFiles.demand) {
+      quickConfirmResultWorkbook = null;
+      quickConfirmPlan = null;
+      renderQuickConfirmResult();
+      if ($('exportQuickConfirmResultBtn')) $('exportQuickConfirmResultBtn').disabled = true;
+      setQuickConfirmSummary('已识别 1 个文件，还需导入另一个文件');
+      return;
+    }
+    var purchaseWorkbook = parseQuickConfirmWorkbook(quickConfirmFiles.purchase.buffer);
+    var demandWorkbook = parseQuickConfirmWorkbook(quickConfirmFiles.demand.buffer);
+    var purchaseSheet = quickConfirmSheet(purchaseWorkbook, 'purchase');
+    var demandSheet = quickConfirmSheet(demandWorkbook, 'demand');
+    var plan = QuickPurchaseConfirm.buildPlan(purchaseSheet.rows, demandSheet.rows, inventoryWarehouses);
+
+    plan.purchaseItems.forEach(function(item) {
+      setQuickConfirmCell(purchaseSheet.sheet, item.row, plan.purchase.confirmCol, 0);
+      setQuickConfirmCell(purchaseSheet.sheet, item.row, plan.purchase.reasonCol, '其他');
+    });
+    plan.matches.forEach(function(item) {
+      setQuickConfirmCell(purchaseSheet.sheet, item.row, plan.purchase.confirmCol, item.quantity);
+      setQuickConfirmCell(purchaseSheet.sheet, item.row, plan.purchase.reasonCol, '');
+    });
+    applyQuickConfirmNewRows(purchaseWorkbook, plan.newRows);
+    quickConfirmResultWorkbook = purchaseWorkbook;
+    quickConfirmPlan = plan;
+    renderQuickConfirmResult();
+    if ($('exportQuickConfirmResultBtn')) $('exportQuickConfirmResultBtn').disabled = false;
+    setQuickConfirmSummary('处理完成：回填 ' + plan.stats.matched + ' 行，新增建单 ' + plan.stats.created + ' 行。', 'ok');
+  }
+
+  async function importQuickConfirmFiles(fileList) {
+    var files = Array.prototype.slice.call(fileList || []);
+    if (!files.length) return;
+    setQuickConfirmSummary('正在识别 ' + files.length + ' 个文件…');
+    try {
+      await Promise.all(files.map(readQuickConfirmFile));
+      renderQuickConfirmFiles();
+      processQuickConfirmFiles();
+    } catch (err) {
+      setQuickConfirmSummary(err && err.message ? err.message : String(err), 'err');
+    }
+  }
+
+  function addQuickConfirmWarehouse() {
+    var input = $('quickConfirmWarehouseInput');
+    var msg = $('quickConfirmWarehouseMsg');
+    var name = input ? input.value.trim() : '';
+    if (!name) return;
+    if (inventoryWarehouses.indexOf(name) !== -1) {
+      if (msg) {
+        msg.textContent = '仓库已存在：' + name;
+        msg.className = 'msg err';
+      }
+      return;
+    }
+    inventoryWarehouses.push(name);
+    saveInventoryWarehouses();
+    renderInventoryWarehouses();
+    clearQuickConfirmFiles('仓库配置已变化，请重新导入两个文件');
+    if (input) input.value = '';
+    if (msg) {
+      msg.textContent = '已新增仓库：' + name;
+      msg.className = 'msg ok';
+    }
+  }
+
+  function exportQuickConfirmTemplate() {
+    var workbook = XLSX.utils.book_new();
+    var sheet = XLSX.utils.aoa_to_sheet([['SKU', '商品简称'].concat(inventoryWarehouses)]);
+    sheet['!cols'] = [{ wch: 18 }, { wch: 24 }].concat(inventoryWarehouses.map(function() { return { wch: 12 }; }));
+    XLSX.utils.book_append_sheet(workbook, sheet, '补货需求');
+    XLSX.writeFile(workbook, '补货需求_' + today() + '.xlsx');
   }
 
   function inventoryStockAmounts(rows) {
@@ -12792,15 +13189,23 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     });
   }
 
-  function replenishmentExportAoa(skus, profileMap, warehouses) {
-    return [['SKU', '商品简称', '商品编码'].concat(warehouses)].concat(skus.map(function(sku) {
+  function replenishmentExportAoa(skus, profileMap, inventoryMap, warehouses) {
+    return [['商品编码', 'SKU', '商品简称', '周转', '箱规', '主赠品属性'].concat(warehouses)].concat(skus.map(function(sku) {
       var profile = profileMap[sku] || {};
       var plan = replenishmentPlanFor(sku);
-      return [sku, profile.shortName || '', profile.materialCode || ''].concat(warehouses.map(function(warehouse) {
+      return [profile.materialCode || '', sku, profile.shortName || '', replenishmentExportTurnover(plan, inventoryMap[sku] || {}, warehouses), replenishmentCasePack(profile).text, profile.mainorsub || ''].concat(warehouses.map(function(warehouse) {
         var value = replenishmentExpected(plan, warehouse, warehouses);
         return value === '' || value === 0 ? '' : value;
       }));
     }));
+  }
+
+  function replenishmentExportTurnover(plan, inventoryRow, warehouses) {
+    var metrics = replenishmentInventoryMetrics(inventoryRow, '全国');
+    var orderable = replenishmentNumber(metrics.orderableStock);
+    var dailySales = replenishmentForecastDailySales(metrics, replenishmentState.recommendFormula);
+    var expected = replenishmentExpected(plan, '全国', warehouses);
+    return orderable === '' || dailySales <= 0 ? '-' : inventoryMetricText((orderable + (expected === '' ? 0 : expected)) / dailySales, 1);
   }
 
   function replenishmentHasExportDemand(plan, warehouses) {
@@ -12933,7 +13338,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       };
     });
     var rows = [
-      { label: '建议补货数', key: 'expectedInput' },
+      { label: '补货数', key: 'expectedInput' },
       { label: '现货库存', key: 'spotStock' },
       { label: '采购未到货', key: 'purchasePending' },
       { label: '可订购库存', key: 'orderableStock' },
@@ -13185,8 +13590,8 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
         return;
       }
       var wb = XLSX.utils.book_new();
-      var ws = XLSX.utils.aoa_to_sheet(replenishmentExportAoa(skus, maps.profileMap, warehouses));
-      ws['!cols'] = [{ wch: 16 }, { wch: 24 }, { wch: 16 }].concat(warehouses.map(function() { return { wch: 12 }; }));
+      var ws = XLSX.utils.aoa_to_sheet(replenishmentExportAoa(skus, maps.profileMap, maps.inventoryMap, warehouses));
+      ws['!cols'] = [{ wch: 16 }, { wch: 16 }, { wch: 24 }, { wch: 10 }, { wch: 10 }, { wch: 14 }].concat(warehouses.map(function() { return { wch: 12 }; }));
       XLSX.utils.book_append_sheet(wb, ws, '补货需求');
       XLSX.writeFile(wb, '补货需求_' + today() + '.xlsx');
       setReplenishmentMsg('已导出 ' + skus.length + ' 个商品的补货需求');
@@ -13239,7 +13644,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     await loadReplenishmentState();
     replenishmentState.autoFillMode = mode === 'boxized' ? 'boxized' : 'raw';
     await refillAutomaticReplenishment(true);
-    setReplenishmentMsg(replenishmentState.autoFillMode === 'boxized' ? '建议补货数已按箱规计算' : '建议补货数已按实际件数计算');
+    setReplenishmentMsg(replenishmentState.autoFillMode === 'boxized' ? '补货数已按箱规计算' : '补货数已按实际件数计算');
     await renderReplenishmentCalculator();
   }
 
@@ -16488,6 +16893,16 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       var inventoryPanel = document.querySelector('.finance-data-tab[data-inventory-panel].active');
       if (inventoryPanel && inventoryPanel.getAttribute('data-inventory-panel') === 'detail') await renderInventoryTurnoverData();
     }
+    if (page === 'purchase-confirm') {
+      renderInventoryWarehouses();
+      if (quickConfirmFiles.purchase && quickConfirmFiles.demand) {
+        try {
+          processQuickConfirmFiles();
+        } catch (err) {
+          setQuickConfirmSummary(err && err.message ? err.message : String(err), 'err');
+        }
+      }
+    }
     if (page === 'import-settings') {
       renderAllImportMappings();
       requestAnimationFrame(scrollToImportRules);
@@ -17926,6 +18341,8 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   bindImportUpload('inventoryDropZone', 'inventoryFileInput', 'inventory');
   renderInventoryWarehouses();
   renderInventorySkuConfig();
+  renderQuickConfirmFiles();
+  renderQuickConfirmResult();
   if ($('addInventoryWarehouseBtn')) $('addInventoryWarehouseBtn').addEventListener('click', addInventoryWarehouse);
   if ($('inventoryWarehouseInput')) {
     $('inventoryWarehouseInput').addEventListener('keydown', function(e) {
@@ -17956,6 +18373,67 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       saveInventoryWarehouses();
       renderInventoryWarehouses();
       renderInventoryTurnoverData();
+    });
+  }
+  if ($('addQuickConfirmWarehouseBtn')) $('addQuickConfirmWarehouseBtn').addEventListener('click', addQuickConfirmWarehouse);
+  if ($('quickConfirmWarehouseInput')) {
+    $('quickConfirmWarehouseInput').addEventListener('keydown', function(e) {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      addQuickConfirmWarehouse();
+    });
+  }
+  if ($('quickConfirmWarehouseTags')) {
+    $('quickConfirmWarehouseTags').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-remove-inventory-warehouse]');
+      if (!btn) return;
+      var name = btn.getAttribute('data-remove-inventory-warehouse');
+      inventoryWarehouses = inventoryWarehouses.filter(function(item) { return item !== name; });
+      saveInventoryWarehouses();
+      renderInventoryWarehouses();
+      clearQuickConfirmFiles('仓库配置已变化，请重新导入两个文件');
+    });
+  }
+  document.querySelectorAll('[data-quick-confirm-panel]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var panel = btn.getAttribute('data-quick-confirm-panel') || 'import';
+      document.querySelectorAll('[data-quick-confirm-panel]').forEach(function(item) {
+        item.classList.toggle('active', item.getAttribute('data-quick-confirm-panel') === panel);
+      });
+      if ($('quickConfirmImportPane')) $('quickConfirmImportPane').hidden = panel !== 'import';
+      if ($('quickConfirmResultPane')) $('quickConfirmResultPane').hidden = panel !== 'result';
+      if ($('quickConfirmPanel')) $('quickConfirmPanel').classList.toggle('is-import-mode', panel === 'import');
+    });
+  });
+  if ($('exportQuickConfirmTemplateBtn')) $('exportQuickConfirmTemplateBtn').addEventListener('click', exportQuickConfirmTemplate);
+  if ($('exportQuickConfirmResultBtn')) {
+    $('exportQuickConfirmResultBtn').addEventListener('click', function() {
+      if (quickConfirmResultWorkbook) {
+        XLSX.writeFile(quickConfirmResultWorkbook, '采购订单快速回告_' + today() + '.xlsx', { cellStyles: true });
+      }
+    });
+  }
+  if ($('clearQuickConfirmBtn')) $('clearQuickConfirmBtn').addEventListener('click', function() { clearQuickConfirmFiles(); });
+  if ($('quickConfirmDropZone') && $('quickConfirmFileInput')) {
+    $('quickConfirmDropZone').addEventListener('click', function() { $('quickConfirmFileInput').click(); });
+    $('quickConfirmFileInput').addEventListener('change', function() {
+      importQuickConfirmFiles(this.files);
+      this.value = '';
+    });
+    ['dragenter', 'dragover'].forEach(function(type) {
+      $('quickConfirmDropZone').addEventListener(type, function(e) {
+        e.preventDefault();
+        $('quickConfirmDropZone').classList.add('dragover');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function(type) {
+      $('quickConfirmDropZone').addEventListener(type, function(e) {
+        e.preventDefault();
+        $('quickConfirmDropZone').classList.remove('dragover');
+      });
+    });
+    $('quickConfirmDropZone').addEventListener('drop', function(e) {
+      importQuickConfirmFiles(e.dataTransfer && e.dataTransfer.files);
     });
   }
   document.querySelectorAll('[data-inventory-panel]').forEach(function(btn) {
@@ -18228,6 +18706,13 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   }
   if ($('refreshSearchDataBtn')) $('refreshSearchDataBtn').addEventListener('click', renderSearchData);
   if ($('clearSearchDataBtn')) $('clearSearchDataBtn').addEventListener('click', clearCurrentSearchData);
+  if ($('searchDataCompareToggle')) {
+    $('searchDataCompareToggle').addEventListener('change', function(e) {
+      searchDataCompareVisible = e.target.checked;
+      localStorage.setItem('jdSearchDataCompareVisible', searchDataCompareVisible ? 'true' : 'false');
+      renderSearchData();
+    });
+  }
   if ($('searchDataBody')) {
     $('searchDataBody').addEventListener('click', function(e) {
       var btn = e.target.closest('[data-search-row-delete]');
