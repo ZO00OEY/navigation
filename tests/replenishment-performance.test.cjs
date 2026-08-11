@@ -40,12 +40,16 @@ assert.match(html, /Math\.ceil\(\(viewportBottom - outputTop\) \/ step\) \+ 1/, 
 assert.match(html, /if \(start === replenishmentVirtualState\.start && end === replenishmentVirtualState\.end && !replenishmentVirtualState\.openMetricSku\) return;/, 'replenishment scrolling should not rebuild DOM when the visible window is unchanged');
 assert.match(html, /refreshReplenishmentBtn[\s\S]*refillAutomaticReplenishment\(true\)/, 'replenishment refresh should force recalculation and ignore manual quantities');
 assert.match(html, /refreshInventoryTransferBtn[\s\S]*clearReplenishmentManualQuantities\('transfer'\)[\s\S]*renderInventoryTransferCalculator/, 'transfer refresh should clear manual transfer quantities before recalculation');
+assert.match(html, /id="clearInventoryTransferBtn"[^>]*>清空内配数<\/button>/, 'transfer page should expose a clear button');
+assert.match(html, /function clearInventoryTransferQuantities\(\)[\s\S]*clearReplenishmentManualQuantities\('transfer'\)[\s\S]*transferExpectedReplenishment\[warehouse\] = 0[\s\S]*renderInventoryTransferCalculator/, 'clearing transfer quantities should persist blank manual values before rendering');
+assert.match(html, /clearInventoryTransferBtn'\)\.addEventListener\('click', clearInventoryTransferQuantities\)/, 'transfer clear button should invoke the clear action');
+assert.match(html, /\['expectedReplenishment', 'transferExpectedReplenishment'\]\.indexOf\(field\) !== -1 && Number\(value\) === 0/, 'cleared transfer quantities should render as blank inputs');
 assert.match(html, /clearInventoryTurnoverData[\s\S]*clearReplenishmentManualQuantities\(\)[\s\S]*saveReplenishmentState/, 'clearing inventory should also clear manual replenishment and transfer quantities');
 assert.match(html, /function updateReplenishmentSkuDisplays\(sku\)/, 'manual replenishment changes should update SKU displays');
 assert.match(html, /data-replenishment-purchase-amount/, 'SKU purchase amount should have a targeted update hook');
 assert.match(html, /block\.outerHTML = renderReplenishmentSkuBlock/, 'saving custom replenishment quantities should refresh SKU amount and turnover displays');
 assert.match(html, /if \(!isTransfer\) updateReplenishmentSkuDisplays\(sku\);/, 'saving custom replenishment quantities should refresh visible SKU values immediately');
-assert.match(html, /\['商品编码', 'SKU', '商品简称', '周转', '箱规', '主赠品属性'\]\.concat\(warehouses\)/, 'replenishment export should place material code before SKU');
+assert.match(html, /\['物料编码', 'SKU', '商品简称', '周转', '箱规', '主赠品属性'\]\.concat\(warehouses\)/, 'replenishment export should label material code correctly');
 assert.match(html, /replenishmentExportAoa\(skus, maps\.profileMap, maps\.inventoryMap, warehouses\)/, 'replenishment export should use inventory rows when calculating turnover');
 assert.match(html, /jdDisableFireworks/, 'JD tool should persist the mouse effect toggle');
 assert.match(html, /disableFireworksToggle/, 'JD tool sidebar should expose a mouse effect toggle');
