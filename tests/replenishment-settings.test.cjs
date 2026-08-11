@@ -44,7 +44,7 @@ const context = {
   sanitizeInventorySkus: value => value,
   normalizeSkuValue: value => value,
   safeReplenishmentFormula: value => value || 'daily7',
-  replenishmentCasePack: profile => ({ value: profile.casePack }),
+  replenishmentCasePack: profile => ({ value: profile.casePack, text: String(profile.casePack || '-') }),
   replenishmentInventoryMetrics: (row, warehouse) => row[warehouse] || {},
   replenishmentRecommendedQuantity: metrics => metrics.recommended,
   replenishmentBoxized: (value, size) => Math.round(value / size) * size,
@@ -69,6 +69,8 @@ vm.runInContext([
   'replenishmentPurchaseAmount',
   'replenishmentPurchaseAmountText',
   'replenishmentTotalPurchaseAmount',
+  'replenishmentForecastDailySales',
+  'replenishmentExportTurnover',
   'replenishmentExportAoa',
   'replenishmentHasExportDemand',
   'replenishmentDimensionOptionsHtml',
@@ -115,7 +117,7 @@ assert.equal(context.sanitizeReplenishmentState({ spotTurnoverDimension: '7' }).
 assert.equal(context.sanitizeReplenishmentState({ orderableTurnoverDimension: '14', spotTurnoverDimension: '28' }).spotTurnoverDimension, '28');
 assert.equal(context.replenishmentFormulaPreset('daily7 * 0.7 + daily14 * 0.3').key, 'balanced');
 assert.match(context.replenishmentFormulaOptionsHtml('recommendFormula'), /active[^>]*data-replenishment-formula-choice="balanced"/);
-assert.match(context.replenishmentFormulaOptionsHtml('transferFormula'), /active[^>]*data-replenishment-formula-choice="custom"[^>]*>自定义（daily1\*0\.5\+daily7\*0\.5）/);
+assert.match(context.replenishmentFormulaOptionsHtml('transferFormula'), /active[^>]*data-replenishment-formula-choice="custom"[^>]*>自定义<\/button>[\s\S]*当前公式：daily1\*0\.5\+daily7\*0\.5/);
 assert.match(context.replenishmentInputHtml('sku', 'A', 'expectedReplenishment', 12, '0', false), /type="text" inputmode="decimal"/);
 assert.match(context.replenishmentInputHtml('sku', 'A', 'expectedReplenishment', 12, '0', false), /replenishment-copy-value" aria-hidden="true">12<\/span>/);
 assert.match(context.replenishmentInputHtml('sku', 'A', 'expectedReplenishment', 0, '', false), /value=""/);
@@ -203,10 +205,10 @@ assert.match(html, /id="exportReplenishmentBtn"[\s\S]*id="replenishmentExportTot
 assert.match(html, /id="replenishmentTabModal"[\s\S]*id="replenishmentTabMainSeries"[\s\S]*id="replenishmentTabSubSeries"[\s\S]*id="replenishmentTabSkuInput"[\s\S]*id="replenishmentTabExclusiveInput"/);
 assert.equal((html.match(/replenishment-setting-list replenishment-setting-list--compact/g) || []).length, 4);
 assert.match(html, /推荐补货数规则[\s\S]*data-fill-replenishment="raw"[\s\S]*data-fill-replenishment="boxized"/);
-assert.match(html, /function replenishmentFormulaOptionsHtml[\s\S]*均衡趋势[\s\S]*近期稳定[\s\S]*长期[\s\S]*自定义（/);
+assert.match(html, /function replenishmentFormulaOptionsHtml[\s\S]*均衡趋势[\s\S]*近期稳定[\s\S]*长期[\s\S]*自定义[\s\S]*当前公式：/);
 assert.deepEqual(
-  Array.from(context.replenishmentExportAoa(['sku'], { sku: { shortName: '商品', materialCode: 'M001' } }, ['全国', 'A', 'B']), row => Array.from(row)),
-  [['SKU', '商品简称', '商品编码', '全国', 'A', 'B'], ['sku', '商品', 'M001', 99, 99, '']]
+  Array.from(context.replenishmentExportAoa(['sku'], { sku: { shortName: '商品', materialCode: 'M001', casePack: 6 } }, { sku: { 全国: { orderableStock: 100 } } }, ['全国', 'A', 'B']), row => Array.from(row)),
+  [['物料编码', 'SKU', '商品简称', '周转', '箱规', '主赠品属性', '全国', 'A', 'B'], ['M001', 'sku', '商品', '-', '6', '', 99, 99, '']]
 );
 
 (async () => {
