@@ -128,7 +128,7 @@
     }
     function add(skuValue, warehouseValue, quantityValue) {
       var warehouse = String(warehouseValue == null ? '' : warehouseValue).trim();
-      var quantity = number(quantityValue);
+      var quantity = String(quantityValue == null ? '' : quantityValue).trim() === '' ? 0 : number(quantityValue);
       if (!skuValue || !warehouse || quantity === '' || quantity < 0) return;
       found[skuValue + '\u0000' + warehouse] = { sku: skuValue, warehouse: warehouse, quantity: Math.round(quantity) };
     }

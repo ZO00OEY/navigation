@@ -39,11 +39,11 @@ assert.deepEqual(SupplyChain.parseDistributionAllocations([{ matrix: [
 ]);
 assert.deepEqual(SupplyChain.parseDistributionAllocations([{ matrix: [
   ['SKU', '北京', '上海'],
-  ['100001', 10, 30],
+  ['100001', 0, ''],
   ['100002', 20, 40]
 ]}]), [
-  { sku: '100001', warehouse: '北京', quantity: 10 },
-  { sku: '100001', warehouse: '上海', quantity: 30 },
+  { sku: '100001', warehouse: '北京', quantity: 0 },
+  { sku: '100001', warehouse: '上海', quantity: 0 },
   { sku: '100002', warehouse: '北京', quantity: 20 },
   { sku: '100002', warehouse: '上海', quantity: 40 }
 ]);
@@ -227,6 +227,8 @@ assert.match(html, /function clearCurrentSupplyChainAllocation\(\)[\s\S]*delete 
 assert.match(html, /bindImportUpload\('supplyChainProvinceDropZone', 'supplyChainProvinceFileInput', 'supply-chain-province'\)/);
 assert.match(html, /id="supplyChainDistributionImportDropZone"[\s\S]*首行 SKU、首列仓库[\s\S]*首列 SKU、首行仓库/);
 assert.match(html, /function handleSupplyChainDistributionImportFiles\(files\)[\s\S]*parseDistributionAllocations[\s\S]*supplyChainImportedAllocations/);
+assert.match(html, /按 SKU＋仓库覆盖：数量为 0 或空白均按 0 覆盖；未导入的 SKU 和仓库保留原数据/);
+assert.match(html, /function handleSupplyChainDistributionImportFiles\(files\)[\s\S]*nextAllocations = Object\.assign\(\{\}, supplyChainImportedAllocations\)[\s\S]*nextAllocations\[key\] = item\.quantity;[\s\S]*delete nextRedistribution\[key\][\s\S]*supplyChainRedistributionQuantities = nextRedistribution/);
 assert.match(html, /function parseWorkbookSheets\(file\)[\s\S]*return \{ name: name, rows: matrixToObjects\(matrix\), matrix: matrix \}/);
 assert.match(html, /bindImportUpload\('supplyChainDistributionImportDropZone', 'supplyChainDistributionImportFileInput', 'supply-chain-distribution'\)/);
 assert.doesNotMatch(html, /id="supplyChainProvinceResult"|id="supplyChainProvinceBody"|<th>城市\/省份<\/th>/);

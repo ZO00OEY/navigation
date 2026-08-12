@@ -3824,8 +3824,9 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
         </div>
         <div class="finance-data-tabs">
           <button class="finance-data-tab active" type="button" data-gross-margin-panel="import">数据导入</button>
-          <button class="finance-data-tab" type="button" data-gross-margin-panel="filter">数据筛选</button>
+          <button class="finance-data-tab" type="button" data-gross-margin-panel="gift">赠品规则</button>
           <button class="finance-data-tab" type="button" data-gross-margin-panel="dashboard">数据看板</button>
+          <button class="finance-data-tab" type="button" data-gross-margin-panel="filter">数据筛选</button>
         </div>
         <div class="panel finance-data-panel is-import-mode" id="grossMarginPanel">
           <div class="finance-data-pane" id="grossMarginImportPane">
@@ -3853,6 +3854,8 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
               <div class="msg" id="financeMappingMsg"></div>
             </div>
 
+          </div>
+          <div class="finance-data-pane" id="grossMarginGiftPane" hidden>
             <div class="finance-import-section" id="financeGiftRulesSection">
               <div class="panel-title">
                 <span>赠品配件规则录入</span>
@@ -3860,6 +3863,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
               <p class="panel-sub">套装内配件或 0 元赠品会按京东价拆分，干扰主品真实收入和毛保判断。这里按单 SKU 配置附带配件与赠品，用于后续还原真实 SKU 毛保。</p>
               <div class="gross-margin-toolbar finance-gift-toolbar">
                 <div class="manual-control date-picker-field" id="financeManualDatePickerField"></div>
+                <label class="check-pill"><input type="checkbox" id="financeGiftHideZeroSales">隐藏销量为 0</label>
                 <span class="report-dim-picker">
                   <button class="btn" id="financeGiftDimBtn" type="button">维度设置</button>
                   <span class="report-dim-popover" id="financeGiftDimPopover"></span>
@@ -3909,6 +3913,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
           </div>
           <div class="finance-data-pane" id="grossMarginDashboardPane" hidden>
             <div class="report-template-actions">
+              <div class="field date-picker-field" id="grossMarginDashboardDatePickerField"></div>
               <label class="check-pill"><input type="checkbox" id="grossMarginDashboardHideZeroSales">隐藏销售件数为 0</label>
               <button class="btn" id="exportGrossMarginDashboardBtn" type="button">导出模板</button>
               <button class="btn" id="importGrossMarginDashboardBtn" type="button">导入模板</button>
@@ -4353,6 +4358,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
               <div class="upload-zone" id="supplyChainDistributionImportDropZone">
                 <strong>拖入分货 Excel / CSV，或点击选择</strong>
                 <span>自动识别“首行 SKU、首列仓库”和“首列 SKU、首行仓库”两种格式。</span>
+                <span>按 SKU＋仓库覆盖：数量为 0 或空白均按 0 覆盖；未导入的 SKU 和仓库保留原数据。</span>
               </div>
               <input type="file" id="supplyChainDistributionImportFileInput" accept=".xlsx,.xls,.csv" style="display:none">
               <div class="msg" id="supplyChainDistributionImportMsg"></div>
@@ -5203,6 +5209,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   var financeGiftAvailableDimensions = JSON.parse(localStorage.getItem('jdFinanceGiftAvailableDimensions') || '["mainSeries","subSeries"]');
   var financeGiftActiveDimensions = JSON.parse(localStorage.getItem('jdFinanceGiftActiveDimensions') || '[]');
   var financeGiftFilters = JSON.parse(localStorage.getItem('jdFinanceGiftFilters') || '{}');
+  var financeGiftHideZeroSales = localStorage.getItem('jdFinanceGiftHideZeroSales') !== 'false';
   var financeGiftDraftRows = [];
   var financeGiftSkuNameMap = {};
   var searchAnalysisFilterWords = JSON.parse(localStorage.getItem('jdSearchAnalysisFilterWords') || '[]');
@@ -8357,7 +8364,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       if (title) title.textContent = match.canImport ? '已匹配到预设' : '新建自定义预设';
       if (desc) {
         if (match.canImport) {
-          desc.innerHTML = '已匹配预设“' + esc(financeGrossMarginPreset(currentFinancePreset()).label) + '”。<br>匹配标签页：' + esc(match.matched.join('、')) + '。';
+          desc.innerHTML = '已匹配预设“' + esc(financeGrossMarginPreset(currentFinancePreset()).label) + '”。<br>匹配标签页：' + esc(match.matched.join('、')) + '。<br>赠品与配件规则可在导入完成后的“赠品规则”标签页详细设置。';
         } else {
           var problems = [];
           if (match.missing.length) problems.push('缺少标签页：' + match.missing.join('、'));
@@ -10382,7 +10389,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     syncFinanceGiftDimControl();
     if (reload !== false) await loadFinanceGiftRows();
     var rowsForFilters = financeGiftDraftRows.filter(function(row) {
-      return Number(row.financeSalesQty) > 0 || (row.accessories || []).length || (row.gifts || []).length;
+      return !financeGiftHideZeroSales || Number(row.financeSalesQty) > 0 || (row.accessories || []).length || (row.gifts || []).length;
     });
     sanitizeFinanceGiftFilters(rowsForFilters);
     var dimensions = financeGiftActiveDimensions.slice();
@@ -10596,7 +10603,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   }
 
   async function loadGrossMarginDashboardRows(dimensions, filterZeroSales) {
-    var range = datePickers.grossMargin ? datePickers.grossMargin.getRange() : normalizedRange($('grossMarginStartDate').value, $('grossMarginEndDate').value || $('grossMarginStartDate').value);
+    var range = datePickers.grossMarginDashboard ? datePickers.grossMarginDashboard.getRange() : normalizedRange($('grossMarginDashboardStartDate').value, $('grossMarginDashboardEndDate').value || $('grossMarginDashboardStartDate').value);
     var query = normalizedQueryRange(range);
     var rows = filterMetricRowsByDateRange(await getAll('finance_metrics'), query).filter(function(row) {
       return row.sourceType === 'finance_gross_margin';
@@ -10701,7 +10708,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     await loadGrossMarginDashboardCustomFields();
     var wb = await buildGrossMarginDashboardWorkbook();
     if (!wb) return;
-    var range = datePickers.grossMargin ? datePickers.grossMargin.getRange() : normalizedQueryRange({});
+    var range = datePickers.grossMarginDashboard ? datePickers.grossMarginDashboard.getRange() : normalizedQueryRange({});
     XLSX.writeFile(wb, '毛保看板模板_' + (range.start || today()) + '_' + (range.end || range.start || today()) + '.xlsx', { cellStyles: true });
     if ($('grossMarginDashboardMsg')) $('grossMarginDashboardMsg').textContent = '已导出模板。';
   }
@@ -14924,7 +14931,8 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       var matched = 0;
       var unmatchedSkus = {};
       var unmatchedWarehouses = {};
-      var touchedSkus = {};
+      var nextAllocations = Object.assign({}, supplyChainImportedAllocations);
+      var nextRedistribution = Object.assign({}, supplyChainRedistributionQuantities);
       allocations.forEach(function(item) {
         var sku = normalizeSkuValue(item.sku);
         if (supplyChainAllSkuList.indexOf(sku) === -1) { unmatchedSkus[sku] = true; return; }
@@ -14934,19 +14942,14 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
           return a === b || (a && b && (a.indexOf(b) !== -1 || b.indexOf(a) !== -1));
         });
         if (!warehouse) { unmatchedWarehouses[item.warehouse] = true; return; }
-        if (!touchedSkus[sku]) {
-          Object.keys(supplyChainImportedAllocations).forEach(function(key) {
-            if (key.indexOf(sku + '\u0000') === 0) delete supplyChainImportedAllocations[key];
-          });
-          Object.keys(supplyChainRedistributionQuantities).forEach(function(key) {
-            if (key.indexOf(sku + '\u0000') === 0) delete supplyChainRedistributionQuantities[key];
-          });
-          touchedSkus[sku] = true;
-        }
-        supplyChainImportedAllocations[sku + '\u0000' + warehouse.region + '\u0000' + warehouse.warehouse] = item.quantity;
+        var key = sku + '\u0000' + warehouse.region + '\u0000' + warehouse.warehouse;
+        nextAllocations[key] = item.quantity;
+        delete nextRedistribution[key];
         matched += 1;
       });
       if (!matched) throw new Error('没有匹配到大促塔明细中的 SKU 和配送中心');
+      supplyChainImportedAllocations = nextAllocations;
+      supplyChainRedistributionQuantities = nextRedistribution;
       var updatedAt = new Date().toISOString();
       await Promise.all([
         put('app_settings', { key: 'supplyChainImportedAllocations', value: supplyChainImportedAllocations, updatedAt: updatedAt }),
@@ -19353,6 +19356,22 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       onChange: function() { renderGrossMarginData(); }
     },
     {
+      key: 'grossMarginDashboard',
+      label: '看板月份',
+      rootId: 'grossMarginDashboardDatePickerField',
+      inputId: 'grossMarginDashboardDateInput',
+      startId: 'grossMarginDashboardStartDate',
+      endId: 'grossMarginDashboardEndDate',
+      prevId: 'grossMarginDashboardDatePrev',
+      nextId: 'grossMarginDashboardDateNext',
+      triggerId: 'grossMarginDashboardDateTrigger',
+      popoverId: 'grossMarginDashboardDatePopover',
+      onChange: async function() {
+        await refreshGrossMarginDashboardPreviewWorkbook();
+        renderGrossMarginDashboardPreview(grossMarginDashboardActiveSheet);
+      }
+    },
+    {
       key: 'searchImport',
       label: '导入日期范围',
       rootId: 'searchImportDatePickerField',
@@ -20929,15 +20948,25 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
         item.classList.toggle('active', item.getAttribute('data-gross-margin-panel') === panel);
       });
       if ($('grossMarginImportPane')) $('grossMarginImportPane').hidden = panel !== 'import';
+      if ($('grossMarginGiftPane')) $('grossMarginGiftPane').hidden = panel !== 'gift';
       if ($('grossMarginFilterPane')) $('grossMarginFilterPane').hidden = panel !== 'filter';
       if ($('grossMarginDashboardPane')) $('grossMarginDashboardPane').hidden = panel !== 'dashboard';
       if ($('grossMarginPanel')) $('grossMarginPanel').classList.toggle('is-import-mode', panel === 'import');
+      if (panel === 'gift') await renderFinanceGiftRules();
       if (panel === 'dashboard' && grossMarginDashboardTemplateWorkbook) {
         await refreshGrossMarginDashboardPreviewWorkbook();
         renderGrossMarginDashboardPreview(grossMarginDashboardActiveSheet);
       }
     });
   });
+  if ($('financeGiftHideZeroSales')) {
+    $('financeGiftHideZeroSales').checked = financeGiftHideZeroSales;
+    $('financeGiftHideZeroSales').addEventListener('change', function() {
+      financeGiftHideZeroSales = $('financeGiftHideZeroSales').checked;
+      localStorage.setItem('jdFinanceGiftHideZeroSales', financeGiftHideZeroSales ? 'true' : 'false');
+      renderFinanceGiftRules(false);
+    });
+  }
   if ($('exportGrossMarginDashboardBtn')) $('exportGrossMarginDashboardBtn').addEventListener('click', openGrossMarginDashboardFieldModal);
   if ($('grossMarginDashboardHideZeroSales')) {
     $('grossMarginDashboardHideZeroSales').addEventListener('change', async function() {
@@ -20995,6 +21024,9 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   $('grossMarginStartDate').value = defaultGrossMarginRange.start;
   $('grossMarginEndDate').value = defaultGrossMarginRange.end;
   $('grossMarginDateInput').value = defaultGrossMarginRange.start + ' 至 ' + defaultGrossMarginRange.end;
+  $('grossMarginDashboardStartDate').value = defaultGrossMarginRange.start;
+  $('grossMarginDashboardEndDate').value = defaultGrossMarginRange.end;
+  $('grossMarginDashboardDateInput').value = defaultGrossMarginRange.start + ' 至 ' + defaultGrossMarginRange.end;
   if ($('searchDataStartDate')) {
     $('searchDataStartDate').value = defaultSearchDataRange.start;
     $('searchDataEndDate').value = defaultSearchDataRange.end;
@@ -21033,6 +21065,11 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     datePickers.grossMargin.setCalendarMonth(dateFromYmd(defaultGrossMarginRange.start) || new Date());
     datePickers.grossMargin.sync();
     datePickers.grossMargin.render();
+  }
+  if (datePickers.grossMarginDashboard) {
+    datePickers.grossMarginDashboard.setCalendarMonth(dateFromYmd(defaultGrossMarginRange.start) || new Date());
+    datePickers.grossMarginDashboard.sync();
+    datePickers.grossMarginDashboard.render();
   }
   if (datePickers.searchData) {
     datePickers.searchData.setCalendarMonth(dateFromYmd(defaultSearchDataRange.start) || new Date());
