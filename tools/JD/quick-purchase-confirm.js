@@ -177,9 +177,10 @@
         if (qty) newRows.push({ sku: productSku, shortName: text(row[demand.shortNameCol]), packageSpec: demand.packageSpecCol >= 0 ? text(row[demand.packageSpecCol]) : '', warehouse: item.warehouse, quantity: qty });
       });
     });
+    var createdRows = new Set(newRows.map(function(item) { return item.sku + '\n' + item.shortName; })).size;
     return {
       matches: [], newRows: newRows, rejectedOrders: [],
-      stats: { demand: newRows.length, matched: 0, created: newRows.length, zeroed: 0, confirmedQuantity: 0 },
+      stats: { demand: newRows.length, matched: 0, created: createdRows, zeroed: 0, confirmedQuantity: 0 },
       preview: newRows.map(function(item) { return Object.assign({ status: '新建单' }, item); })
     };
   }

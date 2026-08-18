@@ -26,6 +26,9 @@ const demandOnlyPlan = buildDemandPlan(demandRows, ['北京', '上海']);
 assert.equal(demandOnlyPlan.stats.created, 2);
 assert.deepEqual(demandOnlyPlan.newRows.map(row => [row.sku, row.warehouse, row.quantity]), [['1001', '北京', 5], ['1003', '北京', 2]]);
 assert.deepEqual(demandOnlyPlan.newRows.map(row => row.packageSpec), ['30', '20']);
+const multiWarehouseDemandPlan = buildDemandPlan(demandRows, ['北京', '上海', '杭州']);
+assert.equal(multiWarehouseDemandPlan.newRows.length, 3);
+assert.equal(multiWarehouseDemandPlan.stats.created, 2);
 
 const html = fs.readFileSync('tools/JD/data-analysis.html', 'utf8');
 assert.match(html, /data-page="purchase-confirm"[\s\S]*采购单快速回告/);
