@@ -70,7 +70,7 @@ vm.runInContext([
   'replenishmentPurchaseAmountText',
   'replenishmentTotalPurchaseAmount',
   'replenishmentForecastDailySales',
-  'replenishmentExportTurnover',
+  'replenishmentExportStockMetrics',
   'replenishmentExportAoa',
   'replenishmentHasExportDemand',
   'replenishmentDimensionOptionsHtml',
@@ -208,7 +208,7 @@ assert.match(html, /推荐补货数规则[\s\S]*data-fill-replenishment="raw"[\s
 assert.match(html, /function replenishmentFormulaOptionsHtml[\s\S]*均衡趋势[\s\S]*近期稳定[\s\S]*长期[\s\S]*自定义[\s\S]*当前公式：/);
 assert.deepEqual(
   Array.from(context.replenishmentExportAoa(['sku'], { sku: { shortName: '商品', materialCode: 'M001', casePack: 6 } }, { sku: { 全国: { orderableStock: 100 } } }, ['全国', 'A', 'B']), row => Array.from(row)),
-  [['物料编码', 'SKU', '商品简称', '周转', '箱规', '主赠品属性', '全国', 'A', 'B'], ['M001', 'sku', '商品', '-', '6', '', 99, 99, '']]
+  [['物料编码', 'SKU', '商品简称', '补货前可订购数量', '补货前周转', '补货后可订购数量', '补货后可订购周转', '箱规', '主赠品属性', '全国', 'A', 'B'], ['M001', 'sku', '商品', 100, '-', 298, '-', '6', '', 99, 99, '']]
 );
 
 (async () => {

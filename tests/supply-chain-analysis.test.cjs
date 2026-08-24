@@ -5,7 +5,7 @@ const html = fs.readFileSync('tools/JD/data-analysis.html', 'utf8');
 
 const rows = SupplyChain.parseRows([{ rows: [
   { SKU编码: '汇总', 区域: '', 配送中心: '', 可用库存: 300, 周转天数: 10 },
-  { SKU编码: '1001', 区域: '华东', 配送中心: '上海', 可用库存: 100, 周转天数: 10 },
+  { SKU编码: '1001', 区域: '华东', 配送中心: '上海', 可用库存: 100, 采购在途: 8, 周转天数: 10 },
   { SKU编码: '1001', 区域: '华东', 配送中心: '杭州', 可用库存: 40, 周转天数: 20 },
   { SKU编码: '1001', 区域: '华南', 配送中心: '广州', 可用库存: 60, 周转天数: 5 },
   { SKU编码: '1001', 区域: '华南', 配送中心: '深圳', 可用库存: 0, 周转天数: 0 }
@@ -13,6 +13,8 @@ const rows = SupplyChain.parseRows([{ rows: [
 
 assert.equal(rows.length, 4);
 assert.equal(rows[0].dailyOutbound, 10);
+assert.equal(rows[0].purchaseTransit, 8);
+assert.equal(rows[1].purchaseTransit, 0);
 const provinceSales = SupplyChain.parseProvinceSales([{ rows: [
   { 城市: '广州市', 成交商品件数: 44 },
   { 城市: '深圳市', 成交商品件数: 32 },
@@ -176,10 +178,11 @@ assert.doesNotMatch(html, /单品分析地域销量导入[\s\S]{0,800}<label for
 assert.match(html, /data-supply-chain-panel="distribution">各地区销售/);
 assert.match(html, /data-supply-chain-panel="reservation">预订与分货/);
 assert.match(html, /id="supplyChainReservationPane"[\s\S]*待发货总量[\s\S]*原分货总量[\s\S]*调整后总量[\s\S]*剩余可分配/);
-assert.match(html, /function supplyChainReservationRows\(sku\)[\s\S]*Math\.max\(0, -Number\(row\.availableStock/);
+assert.match(html, /库存口径[\s\S]*id="supplyChainReservationStockSourceOptions"/);
+assert.match(html, /function supplyChainReservationRows\(sku\)[\s\S]*supplyChainReservationStockSource === 'withTransit'[\s\S]*Number\(row\.purchaseTransit/);
 assert.match(html, /SUPPLY_CHAIN_DEFAULT_REGION_WAREHOUSES = \{ 华北: '北京', 东北: '沈阳', 华东: '上海', 华中: '武汉', 华南: '广州', 西南: '成都', 西北: '西安' \}[\s\S]*function supplyChainReservationRows\(sku\)[\s\S]*shippingWarehouses\.has\(row\.warehouse\)/);
 assert.match(html, /<th>余量<\/th><th>周转（天）<\/th>/);
-assert.match(html, /function supplyChainReservationRows\(sku\)[\s\S]*supplyChainDistributionRows\(latestSales\)[\s\S]*remaining = redistributed \+ Number\(row\.availableStock[\s\S]*turnover: outbound > 0 \? remaining \/ outbound : ''/);
+assert.match(html, /function supplyChainReservationRows\(sku\)[\s\S]*supplyChainDistributionRows\(latestSales\)[\s\S]*remaining = redistributed \+ stock[\s\S]*turnover: outbound > 0 \? remaining \/ outbound : ''/);
 assert.match(html, /function saveSupplyChainRedistribution\(input\)[\s\S]*supplyChainRedistributionQuantities/);
 assert.match(html, /id="supplyChainReservationRestoreBtn"[^>]*>恢复分货<\/button>[\s\S]*id="supplyChainReservationAutoBtn"[^>]*>自动分货<\/button>/);
 assert.match(html, /<strong>分货设置<\/strong>[\s\S]*supply-chain-reservation-actions[\s\S]*supplyChainReservationRestoreBtn[\s\S]*supplyChainReservationShippingOnlyToggle[\s\S]*supply-chain-distribution-heading[\s\S]*supplyChainReservationExportBtn[\s\S]*supplyChainReservationClearAllBtn/);
@@ -191,6 +194,7 @@ assert.doesNotMatch(html, /data-supply-chain-sales-source-link/);
 assert.match(html, /supplyChainReservationSalesSource === 'inventory'[\s\S]*replenishmentInventoryMetrics\(inventoryRow, row\.warehouse\)[\s\S]*replenishmentForecastDailySales[\s\S]*outbound' \+ supplyChainReservationSalesPeriod/);
 assert.match(html, /jdSupplyChainReservationSalesSource[\s\S]*data-supply-chain-reservation-sales-source/);
 assert.match(html, /jdSupplyChainReservationSalesPeriod[\s\S]*data-supply-chain-reservation-sales-period/);
+assert.match(html, /jdSupplyChainReservationStockSource[\s\S]*data-supply-chain-reservation-stock-source/);
 assert.match(html, /class="supply-chain-overall-summary"><td>全国合计<\/td><td>' \+ rows\.length \+ ' 个配送中心[\s\S]*stockRemainingTotal[\s\S]*turnoverTotal/);
 assert.match(html, /function restoreSupplyChainRedistribution\(\)[\s\S]*delete supplyChainRedistributionQuantities\[key\]/);
 assert.match(html, /function autoSupplyChainRedistribution\(\)[\s\S]*allocateStockByTurnover\(rows, total\)/);

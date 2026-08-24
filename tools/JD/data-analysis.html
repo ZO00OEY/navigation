@@ -4630,6 +4630,14 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
                 </div>
               </div>
               <div class="replenishment-setting-row">
+                <div class="replenishment-setting-copy"><strong>库存口径</strong></div>
+                <div class="replenishment-setting-list replenishment-setting-list--compact">
+                  <div class="replenishment-strategy-row">
+                    <div class="replenishment-setting-control replenishment-text-options" id="supplyChainReservationStockSourceOptions"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="replenishment-setting-row">
                 <div class="replenishment-setting-copy"><strong>分货设置</strong></div>
                 <div class="replenishment-setting-list replenishment-setting-list--compact">
                   <div class="replenishment-strategy-row">
@@ -5231,6 +5239,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   var supplyChainReservationShippingOnly = localStorage.getItem('jdSupplyChainReservationShippingOnly') !== 'false';
   var supplyChainReservationSalesSource = localStorage.getItem('jdSupplyChainReservationSalesSource') === 'inventory' ? 'inventory' : 'province';
   var supplyChainReservationSalesPeriod = ['1', '7', '14', '28', 'formula'].indexOf(localStorage.getItem('jdSupplyChainReservationSalesPeriod')) === -1 ? '7' : localStorage.getItem('jdSupplyChainReservationSalesPeriod');
+  var supplyChainReservationStockSource = localStorage.getItem('jdSupplyChainReservationStockSource') === 'withTransit' ? 'withTransit' : 'available';
   var supplyChainInventoryTurnoverRows = [];
   var pendingSupplyChainReservationPush = [];
   var supplyChainDistributionUnits = {};
@@ -15069,22 +15078,24 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
   }
 
   function replenishmentExportAoa(skus, profileMap, inventoryMap, warehouses) {
-    return [['物料编码', 'SKU', '商品简称', '周转', '箱规', '主赠品属性'].concat(warehouses)].concat(skus.map(function(sku) {
+    return [['物料编码', 'SKU', '商品简称', '补货前可订购数量', '补货前周转', '补货后可订购数量', '补货后可订购周转', '箱规', '主赠品属性'].concat(warehouses)].concat(skus.map(function(sku) {
       var profile = profileMap[sku] || {};
       var plan = replenishmentPlanFor(sku);
-      return [profile.materialCode || '', sku, profile.shortName || '', replenishmentExportTurnover(plan, inventoryMap[sku] || {}, warehouses), replenishmentCasePack(profile).text, profile.mainorsub || ''].concat(warehouses.map(function(warehouse) {
+      return [profile.materialCode || '', sku, profile.shortName || ''].concat(replenishmentExportStockMetrics(plan, inventoryMap[sku] || {}, warehouses), [replenishmentCasePack(profile).text, profile.mainorsub || '']).concat(warehouses.map(function(warehouse) {
         var value = replenishmentExpected(plan, warehouse, warehouses);
         return value === '' || value === 0 ? '' : value;
       }));
     }));
   }
 
-  function replenishmentExportTurnover(plan, inventoryRow, warehouses) {
+  function replenishmentExportStockMetrics(plan, inventoryRow, warehouses) {
     var metrics = replenishmentInventoryMetrics(inventoryRow, '全国');
     var orderable = replenishmentNumber(metrics.orderableStock);
     var dailySales = replenishmentForecastDailySales(metrics, replenishmentState.recommendFormula);
     var expected = replenishmentExpected(plan, '全国', warehouses);
-    return orderable === '' || dailySales <= 0 ? '-' : inventoryMetricText((orderable + (expected === '' ? 0 : expected)) / dailySales, 1);
+    if (orderable === '') return ['', '-', '', '-'];
+    var afterOrderable = orderable + (expected === '' ? 0 : expected);
+    return [orderable, dailySales <= 0 ? '-' : inventoryMetricText(orderable / dailySales, 1), afterOrderable, dailySales <= 0 ? '-' : inventoryMetricText(afterOrderable / dailySales, 1)];
   }
 
   function replenishmentHasExportDemand(plan, warehouses) {
@@ -15459,7 +15470,7 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       var wb = XLSX.utils.book_new();
       var exportRows = replenishmentExportAoa(skus, maps.profileMap, maps.inventoryMap, warehouses);
       var ws = XLSX.utils.aoa_to_sheet(exportRows);
-      ws['!cols'] = [{ wch: 16 }, { wch: 16 }, { wch: 24 }, { wch: 10 }, { wch: 10 }, { wch: 14 }].concat(warehouses.map(function() { return { wch: 7 }; }));
+      ws['!cols'] = [{ wch: 16 }, { wch: 16 }, { wch: 24 }, { wch: 16 }, { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 10 }, { wch: 14 }].concat(warehouses.map(function() { return { wch: 7 }; }));
       ws['!rows'] = exportRows.map(function() { return { hpt: 15 }; });
       for (var rowIndex = 0; rowIndex < exportRows.length; rowIndex++) {
         for (var columnIndex = 0; columnIndex < exportRows[rowIndex].length; columnIndex++) {
@@ -16575,10 +16586,11 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
       var key = sku + '\u0000' + row.region + '\u0000' + row.warehouse;
       var shipped = Number(supplyChainImportedAllocations[key]) || 0;
       var redistributed = Object.prototype.hasOwnProperty.call(supplyChainRedistributionQuantities, key) ? Number(supplyChainRedistributionQuantities[key]) || 0 : shipped;
-      var pending = Math.max(0, -Number(row.availableStock || 0));
-      var remaining = redistributed + Number(row.availableStock || 0);
+      var stock = Number(row.availableStock || 0) + (supplyChainReservationStockSource === 'withTransit' ? Number(row.purchaseTransit || 0) : 0);
+      var pending = Math.max(0, -stock);
+      var remaining = redistributed + stock;
       var outbound = dailyOutbound[row.region + '\u0000' + row.warehouse] || 0;
-      return { key: key, region: row.region, warehouse: row.warehouse, availableStock: Number(row.availableStock || 0), pending: pending, shipped: shipped, redistributed: redistributed, shortage: Math.max(0, pending - redistributed), remaining: remaining, dailyOutbound: outbound, turnover: outbound > 0 ? remaining / outbound : '' };
+      return { key: key, region: row.region, warehouse: row.warehouse, availableStock: stock, pending: pending, shipped: shipped, redistributed: redistributed, shortage: Math.max(0, pending - redistributed), remaining: remaining, dailyOutbound: outbound, turnover: outbound > 0 ? remaining / outbound : '' };
     });
   }
 
@@ -16595,6 +16607,9 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     }).join('/');
     $('supplyChainReservationSalesSourceOptions').innerHTML = provinceOption + '<span>' + inventoryOption + '<span class="replenishment-current-dimension">（' + periodOptions + '）</span></span>' +
       (supplyChainReservationSalesSource === 'inventory' && supplyChainReservationSalesPeriod === 'formula' ? '<span class="replenishment-current-formula">当前公式：' + esc(replenishmentFormulaDisplay(replenishmentState.recommendFormula)) + '</span>' : '');
+    $('supplyChainReservationStockSourceOptions').innerHTML =
+      '<button class="replenishment-text-option' + (supplyChainReservationStockSource === 'available' ? ' active' : '') + '" type="button" data-supply-chain-reservation-stock-source="available">源表可用库存</button>' +
+      '<button class="replenishment-text-option' + (supplyChainReservationStockSource === 'withTransit' ? ' active' : '') + '" type="button" data-supply-chain-reservation-stock-source="withTransit">源表可用库存 + 采购在途</button>';
     var list = supplyChainAllSkuList;
     var search = $('supplyChainReservationSkuSearch');
     $('supplyChainReservationSkuOptions').innerHTML = list.map(function(sku) { return '<option value="' + esc(supplyChainSkuDisplay(sku)) + '"></option>'; }).join('');
@@ -22724,6 +22739,13 @@ input[type="number"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance:
     supplyChainReservationSalesSource = button.getAttribute('data-supply-chain-reservation-sales-source');
     localStorage.setItem('jdSupplyChainReservationSalesSource', supplyChainReservationSalesSource);
     if (supplyChainReservationSalesSource === 'inventory') supplyChainInventoryTurnoverRows = await latestInventoryTurnoverRows();
+    renderSupplyChainReservation();
+  });
+  if ($('supplyChainReservationStockSourceOptions')) $('supplyChainReservationStockSourceOptions').addEventListener('click', function(event) {
+    var button = event.target.closest('[data-supply-chain-reservation-stock-source]');
+    if (!button) return;
+    supplyChainReservationStockSource = button.getAttribute('data-supply-chain-reservation-stock-source') === 'withTransit' ? 'withTransit' : 'available';
+    localStorage.setItem('jdSupplyChainReservationStockSource', supplyChainReservationStockSource);
     renderSupplyChainReservation();
   });
   if ($('supplyChainReservationPrevBtn')) $('supplyChainReservationPrevBtn').addEventListener('click', function() { supplyChainReservationSkuIndex = Math.max(0, supplyChainReservationSkuIndex - 1); renderSupplyChainReservation(); });
