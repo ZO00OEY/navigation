@@ -49,7 +49,7 @@ assert.match(html, /function updateReplenishmentSkuDisplays\(sku\)/, 'manual rep
 assert.match(html, /data-replenishment-purchase-amount/, 'SKU purchase amount should have a targeted update hook');
 assert.match(html, /block\.outerHTML = renderReplenishmentSkuBlock/, 'saving custom replenishment quantities should refresh SKU amount and turnover displays');
 assert.match(html, /if \(!isTransfer\) updateReplenishmentSkuDisplays\(sku\);/, 'saving custom replenishment quantities should refresh visible SKU values immediately');
-assert.match(html, /\['物料编码', 'SKU', '商品简称', '周转', '箱规', '主赠品属性'\]\.concat\(warehouses\)/, 'replenishment export should label material code correctly');
+assert.match(html, /\['物料编码', 'SKU', '商品简称', '补货前可订购数量', '补货前周转', '补货后可订购数量', '补货后可订购周转', '箱规', '主赠品属性'\]\.concat\(warehouses\)/, 'replenishment export should include before and after stock metrics');
 assert.match(html, /replenishmentExportAoa\(skus, maps\.profileMap, maps\.inventoryMap, warehouses\)/, 'replenishment export should use inventory rows when calculating turnover');
 assert.match(html, /jdDisableFireworks/, 'JD tool should persist the mouse effect toggle');
 assert.match(html, /disableFireworksToggle/, 'JD tool sidebar should expose a mouse effect toggle');
@@ -70,16 +70,16 @@ assert.deepEqual(inventoryStockAmounts([
   { nationalPurchasePrice: '', metrics: { spotStock: 99, orderableStock: 99 } }
 ]), { spot: 40, orderable: 54 }, 'inventory amounts should use national purchase price and skip missing prices');
 
-const turnoverStart = html.indexOf('function replenishmentExportTurnover');
+const turnoverStart = html.indexOf('function replenishmentExportStockMetrics');
 const turnoverEnd = html.indexOf('function replenishmentHasExportDemand', turnoverStart);
-const replenishmentExportTurnover = new Function(
+const replenishmentExportStockMetrics = new Function(
   'replenishmentInventoryMetrics',
   'replenishmentNumber',
   'replenishmentForecastDailySales',
   'replenishmentExpected',
   'inventoryMetricText',
   'replenishmentState',
-  html.slice(turnoverStart, turnoverEnd) + '\nreturn replenishmentExportTurnover;'
+  html.slice(turnoverStart, turnoverEnd) + '\nreturn replenishmentExportStockMetrics;'
 )(
   row => row.metrics,
   value => value === '' || value == null ? '' : Number(value),
@@ -88,6 +88,6 @@ const replenishmentExportTurnover = new Function(
   (value, decimals) => Number(value).toFixed(decimals),
   { recommendFormula: 'daily7' }
 );
-assert.equal(replenishmentExportTurnover({}, { metrics: { orderableStock: 100 } }, ['全国']), '15.0', 'export turnover should use replenishment-after orderable stock');
+assert.deepEqual(replenishmentExportStockMetrics({}, { metrics: { orderableStock: 100 } }, ['全国']), [100, '10.0', 150, '15.0'], 'export should include before and after orderable stock metrics');
 
 console.log('replenishment performance checks passed');

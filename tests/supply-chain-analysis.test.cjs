@@ -5,7 +5,7 @@ const html = fs.readFileSync('tools/JD/data-analysis.html', 'utf8');
 
 const rows = SupplyChain.parseRows([{ rows: [
   { SKU编码: '汇总', 区域: '', 配送中心: '', 可用库存: 300, 周转天数: 10 },
-  { SKU编码: '1001', 区域: '华东', 配送中心: '上海', 可用库存: 100, 周转天数: 10 },
+  { SKU编码: '1001', 区域: '华东', 配送中心: '上海', 可用库存: 100, 采购在途: 8, 周转天数: 10 },
   { SKU编码: '1001', 区域: '华东', 配送中心: '杭州', 可用库存: 40, 周转天数: 20 },
   { SKU编码: '1001', 区域: '华南', 配送中心: '广州', 可用库存: 60, 周转天数: 5 },
   { SKU编码: '1001', 区域: '华南', 配送中心: '深圳', 可用库存: 0, 周转天数: 0 }
@@ -13,6 +13,8 @@ const rows = SupplyChain.parseRows([{ rows: [
 
 assert.equal(rows.length, 4);
 assert.equal(rows[0].dailyOutbound, 10);
+assert.equal(rows[0].purchaseTransit, 8);
+assert.equal(rows[1].purchaseTransit, 0);
 const provinceSales = SupplyChain.parseProvinceSales([{ rows: [
   { 城市: '广州市', 成交商品件数: 44 },
   { 城市: '深圳市', 成交商品件数: 32 },
@@ -175,9 +177,10 @@ assert.doesNotMatch(html, /单品分析地域销量导入[\s\S]{0,800}<label for
 assert.match(html, /data-supply-chain-panel="distribution">各地区销售/);
 assert.match(html, /data-supply-chain-panel="reservation">预订与分货/);
 assert.match(html, /id="supplyChainReservationPane"[\s\S]*待发货总量[\s\S]*原分货总量[\s\S]*调整后总量[\s\S]*剩余可分配/);
-assert.match(html, /function supplyChainReservationRows\(sku\)[\s\S]*Math\.max\(0, -Number\(row\.availableStock/);
+assert.match(html, /库存口径[\s\S]*id="supplyChainReservationStockSourceOptions"/);
+assert.match(html, /function supplyChainReservationRows\(sku\)[\s\S]*supplyChainReservationStockSource === 'withTransit'[\s\S]*Number\(row\.purchaseTransit/);
 assert.match(html, /<th>余量<\/th><th>周转（天）<\/th>/);
-assert.match(html, /function supplyChainReservationRows\(sku\)[\s\S]*supplyChainDistributionRows\(latestSales\)[\s\S]*remaining = redistributed \+ Number\(row\.availableStock[\s\S]*turnover: outbound > 0 \? remaining \/ outbound : ''/);
+assert.match(html, /function supplyChainReservationRows\(sku\)[\s\S]*supplyChainDistributionRows\(latestSales\)[\s\S]*remaining = redistributed \+ stock[\s\S]*turnover: outbound > 0 \? remaining \/ outbound : ''/);
 assert.match(html, /function saveSupplyChainRedistribution\(input\)[\s\S]*supplyChainRedistributionQuantities/);
 assert.match(html, /id="supplyChainReservationRestoreBtn"[^>]*>恢复分货<\/button>[\s\S]*id="supplyChainReservationAutoBtn"[^>]*>自动分货<\/button>/);
 assert.match(html, /supply-chain-distribution-heading"><span class="supply-chain-reservation-actions">[\s\S]*supplyChainReservationRestoreBtn[\s\S]*supplyChainReservationAutoBtn/);
@@ -209,8 +212,9 @@ assert.match(html, /saveSupplyChainDistributionSettings\(\)[\s\S]*delete supplyC
 assert.match(html, /row\.isFinalCustom[\s\S]*row\.isFinalCustom \? ' is-custom' : ''/);
 assert.match(html, /function supplyChainDistributionRegion\(row\)[\s\S]*matched \? matched\.region : row\.region/);
 assert.match(html, /warehouse === '未设置' \? region \+ '\\u0000' \+ warehouse : warehouse/);
-assert.match(html, /id="supplyChainDistributionExportBtn"[\s\S]*id="supplyChainDistributionExportModal"[\s\S]*value="1001"[\s\S]*按产品分组[\s\S]*按配送中心分组/);
-assert.match(html, /function exportSupplyChainDistribution\(\)[\s\S]*'\*商品编号'[\s\S]*'采购渠道ID'[\s\S]*'有限预订'[\s\S]*'新增'[\s\S]*item\.warehouse[\s\S]*item\.finalQuantity[\s\S]*shortName/);
+assert.match(html, /id="supplyChainDistributionExportBtn"[\s\S]*id="supplyChainDistributionExportModal"[\s\S]*value="1001"[\s\S]*id="supplyChainDistributionArrivalDate" type="date"[\s\S]*按产品分组[\s\S]*按配送中心分组/);
+assert.match(html, /function exportSupplyChainDistribution\(\)[\s\S]*quantity: row\.finalQuantity[\s\S]*shortName:[\s\S]*exportReservationWorkbook\(data, reservationExportOptions\(\)\)/);
+assert.match(html, /function exportReservationWorkbook\(data, options\)[\s\S]*'\*商品编号'[\s\S]*'采购渠道ID'[\s\S]*'有限预订'[\s\S]*'新增'[\s\S]*item\.warehouse[\s\S]*item\.quantity[\s\S]*options\.arrivalDate/);
 assert.match(html, /group !== nextGroup[\s\S]*new Array\(headers\.length\)\.fill\(''\)/);
 assert.doesNotMatch(html, /data-supply-chain-distribution-group/);
 assert.match(html, /not\(\.supply-chain-distribution-table\)/);

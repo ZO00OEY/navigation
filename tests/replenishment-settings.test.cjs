@@ -32,6 +32,7 @@ const context = {
     transferIncludeLowWarehouse: true,
     plans: { sku: { targetTurnover: '', expectedReplenishment: { A: 99 }, manualExpected: { A: true } } }
   },
+  replenishmentCustomTabs: [],
   skuColumnLabels: { layer: '夹层' },
   inventoryWarehouses: ['A', 'B'],
   inventorySkuProfileMap: { sku: { shortName: '商品简称' } },
@@ -70,7 +71,7 @@ vm.runInContext([
   'replenishmentPurchaseAmountText',
   'replenishmentTotalPurchaseAmount',
   'replenishmentForecastDailySales',
-  'replenishmentExportTurnover',
+  'replenishmentExportStockMetrics',
   'replenishmentExportAoa',
   'replenishmentHasExportDemand',
   'replenishmentDimensionOptionsHtml',
@@ -82,6 +83,7 @@ vm.runInContext([
   'sanitizeReplenishmentCustomTabs',
   'replenishmentCustomTabMatches',
   'replenishmentCustomTabSkus',
+  'replenishmentTurnoverOnlySkus',
   'replenishmentNeedsReplenishment',
   'inventoryTransferHasBWarehouse',
   'inventoryTransferWarehouses',
@@ -129,6 +131,7 @@ assert.match(context.replenishmentMetricOptionsHtml(['currentSpot'], 'sku'), /�
 assert.match(context.replenishmentMetricOptionsHtml(['currentSpot'], 'sku', { currentSpot: true }), /class="is-custom"[^>]*>[\s\S]*data-replenishment-sku-metric="currentSpot"/);
 const lazyMetricMenu = context.replenishmentSkuMetricOptions('sku', { metricOverrides: {} });
 assert.match(lazyMetricMenu, /data-replenishment-sku-metric-menu="sku"/);
+assert.match(lazyMetricMenu, /data-clear-replenishment-sku="sku">清除补货<\/button>/);
 assert.doesNotMatch(lazyMetricMenu, /data-replenishment-sku-metric="/);
 assert.match(lazyMetricMenu, /aria-label="设置显示指标"[\s\S]*<svg/);
 assert.doesNotMatch(lazyMetricMenu, /显示指标 ·|跟随默认|自定义/);
@@ -142,7 +145,9 @@ assert.equal(context.skuLookupCardWidth('sku', context.inventorySkuProfileMap), 
 assert.equal(context.skuLookupCardWidth('1234567890123', { 1234567890123: { shortName: '这是一个足够长的商品简称用于自动放宽' } }), 384);
 const customTab = context.sanitizeReplenishmentCustomTabs([{ id: 'x', name: ' 鲲鹏 ', mainSeries: ['北通'], subSeries: ['鲲鹏20'], skus: ['extra'] }])[0];
 assert.equal(customTab.exclusive, true);
+assert.equal(customTab.turnoverOnly, false);
 assert.equal(context.sanitizeReplenishmentCustomTabs([{ name: '保留基础页', exclusive: false }])[0].exclusive, false);
+assert.equal(context.sanitizeReplenishmentCustomTabs([{ name: '仅看周转', turnoverOnly: true }])[0].turnoverOnly, true);
 assert.equal(context.replenishmentCustomTabMatches(customTab, 'seriesSku', { mainSeries: '北通', subSeries: '鲲鹏20' }), true);
 assert.equal(context.replenishmentCustomTabMatches(customTab, 'wrongSku', { mainSeries: '北通', subSeries: '鲲鹏40' }), false);
 assert.equal(context.replenishmentCustomTabMatches(customTab, 'extra', { mainSeries: '其它', subSeries: '其它' }), true);
@@ -203,20 +208,32 @@ assert.match(html, /\.sku-lookup-editor \.replenishment-sku-name-row\s*\{[^}]*to
 assert.match(html, /内配计算设置[\s\S]*id="inventoryTransferScopeCount"[\s\S]*id="inventoryTransferSkuNameLayer"[\s\S]*B 仓是否参与内配[\s\S]*id="inventoryTransferIncludeLowWarehouse"[\s\S]*预测规则/);
 assert.match(html, /id="exportReplenishmentBtn"[\s\S]*id="replenishmentExportTotal"/);
 assert.match(html, /id="replenishmentTabModal"[\s\S]*id="replenishmentTabMainSeries"[\s\S]*id="replenishmentTabSubSeries"[\s\S]*id="replenishmentTabSkuInput"[\s\S]*id="replenishmentTabExclusiveInput"/);
+assert.match(html, /data-replenishment-result-view="monitor"[\s\S]*data-replenishment-result-view="outOfStock"[\s\S]*无需补货（无货）/);
+assert.match(html, /id="replenishmentOutOfStockTab"[\s\S]*data-edit-replenishment-tab="outOfStock"/);
+assert.match(html, /id="replenishmentTabTurnoverOnlyInput"[^>]*>仅查看以上产品周转，不自动计算补货需求/);
+assert.match(html, /id="refreshReplenishmentBtn"[^>]*>预估<\/button>/);
+assert.match(html, /function clearReplenishmentSkuQuantities\(sku\)[\s\S]*expectedReplenishment\[warehouse\] = 0[\s\S]*manualExpected\[warehouse\] = true[\s\S]*updateReplenishmentSkuDisplays\(sku\)/);
+assert.match(html, /data-clear-replenishment-sku[\s\S]*clearReplenishmentSkuQuantities/);
+assert.match(html, /fixedOutOfStock \? '编辑无需补货（无货）SKU'/);
+assert.match(html, /replenishmentResultView = fixedOutOfStock \? 'outOfStock' : 'custom:' \+ tab\.id/);
 assert.equal((html.match(/replenishment-setting-list replenishment-setting-list--compact/g) || []).length, 4);
 assert.match(html, /推荐补货数规则[\s\S]*data-fill-replenishment="raw"[\s\S]*data-fill-replenishment="boxized"/);
 assert.match(html, /function replenishmentFormulaOptionsHtml[\s\S]*均衡趋势[\s\S]*近期稳定[\s\S]*长期[\s\S]*自定义[\s\S]*当前公式：/);
 assert.deepEqual(
   Array.from(context.replenishmentExportAoa(['sku'], { sku: { shortName: '商品', materialCode: 'M001', casePack: 6 } }, { sku: { 全国: { orderableStock: 100 } } }, ['全国', 'A', 'B']), row => Array.from(row)),
-  [['物料编码', 'SKU', '商品简称', '周转', '箱规', '主赠品属性', '全国', 'A', 'B'], ['M001', 'sku', '商品', '-', '6', '', 99, 99, '']]
+  [['物料编码', 'SKU', '商品简称', '补货前可订购数量', '补货前周转', '补货后可订购数量', '补货后可订购周转', '箱规', '主赠品属性', '全国', 'A', 'B'], ['M001', 'sku', '商品', 100, '-', 199, '-', '6', '', 99, 99, '']]
 );
 
 (async () => {
   await context.refillAutomaticReplenishment(false);
   assert.deepEqual(context.replenishmentState.plans.sku.expectedReplenishment, { A: 99, B: 20 });
+  context.replenishmentCustomTabs = [{ id: 'turnover', name: '仅看周转', mainSeries: [], subSeries: [], skus: ['sku'], exclusive: true, turnoverOnly: true }];
+  await context.refillAutomaticReplenishment(false);
+  assert.equal(Object.keys(context.replenishmentState.plans.sku.expectedReplenishment).length, 0);
+  context.replenishmentCustomTabs = [];
   context.replenishmentState.autoFillMode = 'boxized';
   await context.refillAutomaticReplenishment(true);
-  assert.deepEqual(context.replenishmentState.plans.sku.expectedReplenishment, { A: 12, B: 18 });
+  assert.equal(JSON.stringify(context.replenishmentState.plans.sku.expectedReplenishment), JSON.stringify({ A: 12, B: 18 }));
   assert.equal(Object.keys(context.replenishmentState.plans.sku.manualExpected).length, 0);
   console.log('replenishment settings: ok');
 })().catch(error => {

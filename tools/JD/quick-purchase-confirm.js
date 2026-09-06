@@ -59,7 +59,7 @@
     for (var r = 0; r < Math.min(rows.length, 50); r++) {
       var headers = rows[r] || [];
       var skuCol = findColumn(headers, ['SKU', '商品编号', '商品编码']);
-      var shortNameCol = findColumn(headers, ['商品简称']);
+      var shortNameCol = findColumn(headers, ['商品简称', '商品名称']);
       var packageSpecCol = findColumn(headers, ['箱规', '装箱数', '装箱规格', '箱装']);
       var warehouseCols = warehouses.map(function(warehouse) {
         return { warehouse: warehouse, col: findColumn(headers, [warehouse]) };
@@ -67,8 +67,34 @@
       if (skuCol >= 0 && shortNameCol >= 0 && warehouseCols.length) {
         return { row: r, skuCol: skuCol, shortNameCol: shortNameCol, packageSpecCol: packageSpecCol, warehouseCols: warehouseCols };
       }
+      var reservationWarehouseCol = findColumn(headers, ['配送中心名称'], true);
+      var reservationQuantityCol = findColumn(headers, ['有限预订数量'], true);
+      var reservationShortNameCol = findColumn(headers, ['审批原因/报备信息']);
+      if (skuCol >= 0 && reservationWarehouseCol >= 0 && reservationQuantityCol >= 0) {
+        return { row: r, skuCol: skuCol, shortNameCol: reservationShortNameCol, packageSpecCol: -1, warehouseCols: [], reservationWarehouseCol: reservationWarehouseCol, reservationQuantityCol: reservationQuantityCol };
+      }
     }
     return null;
+  }
+
+  function buildDemandEntries(rows, header) {
+    var entries = [];
+    rows.slice(header.row + 1).forEach(function(row) {
+      var productSku = sku(row[header.skuCol]);
+      if (!productSku) return;
+      var shortName = header.shortNameCol >= 0 ? text(row[header.shortNameCol]) : '';
+      if (header.reservationWarehouseCol >= 0) {
+        var reservationQuantity = quantity(row[header.reservationQuantityCol]);
+        var reservationWarehouse = text(row[header.reservationWarehouseCol]);
+        if (reservationWarehouse && reservationQuantity) entries.push({ sku: productSku, shortName: shortName, packageSpec: '', warehouse: reservationWarehouse, quantity: reservationQuantity });
+        return;
+      }
+      header.warehouseCols.forEach(function(item) {
+        var qty = quantity(row[item.col]);
+        if (qty) entries.push({ sku: productSku, shortName: shortName, packageSpec: header.packageSpecCol >= 0 ? text(row[header.packageSpecCol]) : '', warehouse: item.warehouse, quantity: qty });
+      });
+    });
+    return entries;
   }
 
   function buildPlan(purchaseRows, demandRows, warehouses) {
@@ -78,22 +104,15 @@
     if (!demand) throw new Error('补货需求缺少 SKU、商品简称或已启用仓库列');
 
     var demandMap = new Map();
-    demandRows.slice(demand.row + 1).forEach(function(row) {
-      var productSku = sku(row[demand.skuCol]);
-      if (!productSku) return;
-      var shortName = text(row[demand.shortNameCol]);
-      demand.warehouseCols.forEach(function(item) {
-        var qty = quantity(row[item.col]);
-        if (!qty) return;
-        var key = productSku + '\n' + item.warehouse;
-        var existing = demandMap.get(key);
-        demandMap.set(key, {
-          sku: productSku,
-          shortName: shortName || (existing && existing.shortName) || '',
-          packageSpec: demand.packageSpecCol >= 0 ? text(row[demand.packageSpecCol]) : '',
-          warehouse: item.warehouse,
-          quantity: qty + (existing ? existing.quantity : 0)
-        });
+    buildDemandEntries(demandRows, demand).forEach(function(entry) {
+      var key = entry.sku + '\n' + entry.warehouse;
+      var existing = demandMap.get(key);
+      demandMap.set(key, {
+        sku: entry.sku,
+        shortName: entry.shortName || (existing && existing.shortName) || '',
+        packageSpec: entry.packageSpec,
+        warehouse: entry.warehouse,
+        quantity: entry.quantity + (existing ? existing.quantity : 0)
       });
     });
 
@@ -169,14 +188,7 @@
     var demand = findDemandHeader(demandRows, warehouses);
     if (!demand) throw new Error('补货需求缺少 SKU、商品简称或已启用仓库列');
     var newRows = [];
-    demandRows.slice(demand.row + 1).forEach(function(row) {
-      var productSku = sku(row[demand.skuCol]);
-      if (!productSku) return;
-      demand.warehouseCols.forEach(function(item) {
-        var qty = quantity(row[item.col]);
-        if (qty) newRows.push({ sku: productSku, shortName: text(row[demand.shortNameCol]), packageSpec: demand.packageSpecCol >= 0 ? text(row[demand.packageSpecCol]) : '', warehouse: item.warehouse, quantity: qty });
-      });
-    });
+    newRows = buildDemandEntries(demandRows, demand);
     return {
       matches: [], newRows: newRows, rejectedOrders: [],
       stats: { demand: newRows.length, matched: 0, created: newRows.length, zeroed: 0, confirmedQuantity: 0 },
@@ -184,9 +196,27 @@
     };
   }
 
+  function buildReservationItems(plan) {
+    var items = {};
+    (plan && (plan.matches || []).concat(plan.newRows || [])).forEach(function(item) {
+      var productSku = sku(item.sku);
+      var warehouse = text(item.warehouse);
+      var qty = quantity(item.quantity);
+      if (!productSku || !warehouse || !qty) return;
+      var key = productSku + '\n' + warehouse;
+      if (!items[key]) items[key] = { sku: productSku, shortName: text(item.shortName), warehouse: warehouse, quantity: 0 };
+      items[key].shortName = items[key].shortName || text(item.shortName);
+      items[key].quantity += qty;
+    });
+    return Object.keys(items).map(function(key) { return items[key]; }).sort(function(a, b) {
+      return a.sku.localeCompare(b.sku, 'zh-CN', { numeric: true }) || a.warehouse.localeCompare(b.warehouse, 'zh-CN');
+    });
+  }
+
   return {
     buildPlan: buildPlan,
     buildDemandPlan: buildDemandPlan,
+    buildReservationItems: buildReservationItems,
     findDemandHeader: findDemandHeader,
     findPurchaseHeader: findPurchaseHeader,
     uniqueWarehouses: uniqueWarehouses

@@ -27,6 +27,7 @@
         var region = String(value(row, ['区域', '大区']) || '').trim();
         var warehouse = String(value(row, ['配送中心', '仓库', '仓库名称']) || '').trim();
         var availableStock = number(value(row, ['可用库存', '可订购库存']));
+        var purchaseTransit = number(value(row, ['采购在途', '采购未到货', '采购未到货库存']));
         var turnoverDays = number(value(row, ['周转天数', '周转']));
         if (!sku || sku === '汇总' || sku === '合计' || !region || !warehouse || availableStock === '' || turnoverDays === '') return;
         found[sku + '\u0000' + region + '\u0000' + warehouse] = {
@@ -34,6 +35,7 @@
           region: region,
           warehouse: warehouse,
           availableStock: availableStock,
+          purchaseTransit: purchaseTransit === '' ? 0 : purchaseTransit,
           turnoverDays: turnoverDays,
           dailyOutbound: turnoverDays > 0 ? availableStock / turnoverDays : ''
         };
