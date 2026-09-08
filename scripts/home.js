@@ -74,13 +74,57 @@
       var href = block.page ? 'detail.html?page=' + encodeURIComponent(block.page) : (links[0] && links[0].url || '#');
       var desc = links.slice(0, 3).map(function (link) { return link.title; }).join(' · ');
       var portalKind = portalKinds[index] || 'message-bottle';
-      return '<a class="portal-card" href="' + escapeHtml(href) + '" data-portal-kind="' + portalKind + '" style="' + portalTextStyle + '">' +
-        '<span class="portal-index">0' + (index + 1) + ' / 0' + blocks.length + '</span>' +
-        '<span class="portal-deco" aria-hidden="true"></span>' +
-        '<h3>' + escapeHtml(block.name) + '</h3>' +
-        '<p>' + escapeHtml(desc || '内容正在慢慢浮出水面。') + '</p>' +
-      '</a>';
+      var panelId = 'portal-panel-' + index;
+
+      var groupsHtml = (block.subcategories || []).map(function (sub) {
+        if (!(sub.links || []).length) return '';
+        return '<div class="portal-panel-group">' +
+          '<div class="portal-panel-group-title">' + escapeHtml(sub.name) + '</div>' +
+          (sub.links || []).map(portalPanelLink).join('') +
+        '</div>';
+      }).join('');
+      var looseLinks = (block.links || []).map(portalPanelLink).join('');
+      if (looseLinks) {
+        groupsHtml += '<div class="portal-panel-group">' + looseLinks + '</div>';
+      }
+
+      return '<div class="portal-unit">' +
+        '<article class="portal-card" data-portal-kind="' + portalKind + '" style="' + portalTextStyle + '">' +
+          '<a class="portal-card-link" href="' + escapeHtml(href) + '" aria-label="查看' + escapeHtml(block.name) + '完整列表">' +
+            '<span class="portal-index">0' + (index + 1) + ' / 0' + blocks.length + '</span>' +
+            '<h3>' + escapeHtml(block.name) + '</h3>' +
+            '<p>' + escapeHtml(desc || '内容正在慢慢浮出水面。') + '</p>' +
+          '</a>' +
+          '<span class="portal-deco" aria-hidden="true"></span>' +
+          '<button class="portal-toggle" type="button" aria-expanded="false" aria-controls="' + panelId + '" aria-label="展开' + escapeHtml(block.name) + '的链接">' +
+            '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+          '</button>' +
+        '</article>' +
+        '<div class="portal-panel" id="' + panelId + '" hidden>' +
+          groupsHtml +
+          '<a class="portal-panel-more" href="' + escapeHtml(href) + '">查看完整列表<span aria-hidden="true">›</span></a>' +
+        '</div>' +
+      '</div>';
     }).join('');
+
+    grid.querySelectorAll('.portal-toggle').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var panel = document.getElementById(button.getAttribute('aria-controls'));
+        if (!panel) return;
+        var expanded = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        panel.hidden = expanded;
+      });
+    });
+  }
+
+  function portalPanelLink(link) {
+    return '<a class="portal-panel-link" href="' + escapeHtml(link.url) + '"' +
+      (link.target ? ' target="' + escapeHtml(link.target) + '" rel="noopener"' : '') + '>' +
+      '<span class="portal-panel-link-title">' + escapeHtml(link.title) + '</span>' +
+      (link.desc ? '<span class="portal-panel-link-desc">' + escapeHtml(link.desc) + '</span>' : '') +
+      '<span class="portal-panel-link-arrow" aria-hidden="true">›</span>' +
+    '</a>';
   }
 
   function getProfile() {
@@ -93,20 +137,25 @@
     var blocks = ((typeof SITE_DATA !== 'undefined' && SITE_DATA.blocks) || []).filter(function (block) {
       return block.type !== 'profile';
     });
+    function sidebarLinkHtml(link, block) {
+      return '<a class="sidebar-link" href="' + escapeHtml(link.url) + '" data-sidebar-search="' +
+        escapeHtml((link.title || '') + ' ' + (link.desc || '') + ' ' + block.name) + '"' +
+        (link.target ? ' target="' + escapeHtml(link.target) + '" rel="noopener"' : '') + '>' +
+        '<span>' + escapeHtml(link.title) + '</span><span class="sidebar-link-arrow">›</span></a>';
+    }
     sidebarNav.innerHTML = blocks.map(function (block) {
-      var links = [];
-      (block.subcategories || []).forEach(function (sub) {
-        links = links.concat(sub.links || []);
-      });
-      links = links.concat(block.links || []);
+      var groupsHtml = (block.subcategories || []).map(function (sub) {
+        if (!(sub.links || []).length) return '';
+        return '<div class="sidebar-subgroup">' +
+          '<div class="sidebar-subgroup-title">' + escapeHtml(sub.name) + '</div>' +
+          (sub.links || []).map(function (link) { return sidebarLinkHtml(link, block); }).join('') +
+        '</div>';
+      }).join('');
+      var looseLinks = (block.links || []).map(function (link) { return sidebarLinkHtml(link, block); }).join('');
       return '<section class="sidebar-group">' +
         '<div class="sidebar-group-title">' + escapeHtml(block.name) + '</div>' +
-        links.map(function (link) {
-          return '<a class="sidebar-link" href="' + escapeHtml(link.url) + '" data-sidebar-search="' +
-            escapeHtml((link.title || '') + ' ' + (link.desc || '') + ' ' + block.name) + '"' +
-            (link.target ? ' target="' + escapeHtml(link.target) + '" rel="noopener"' : '') + '>' +
-            '<span>' + escapeHtml(link.title) + '</span><span class="sidebar-link-arrow">›</span></a>';
-        }).join('') +
+        groupsHtml +
+        (looseLinks ? '<div class="sidebar-subgroup">' + looseLinks + '</div>' : '') +
       '</section>';
     }).join('');
 
@@ -175,7 +224,7 @@
 
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    try { localStorage.setItem('theme', theme); } catch (error) {}
     syncThemeStatus();
   }
 
@@ -545,11 +594,10 @@
     door.style.setProperty('--door-pad-x', doorBox.padX + 'px');
     door.style.setProperty('--door-pad-y', doorBox.padY + 'px');
     doorLayerImages.forEach(function (image) {
-      var isCore = image.closest('.door-core');
-      image.style.width = (SOURCE.width * scale) + 'px';
-      image.style.height = (SOURCE.height * scale) + 'px';
-      image.style.left = (-(isCore ? DOOR.x : doorBox.regionX) * scale) + 'px';
-      image.style.top = (-(isCore ? DOOR.y : doorBox.regionY) * scale) + 'px';
+      image.style.width = doorBox.width + 'px';
+      image.style.height = doorBox.height + 'px';
+      image.style.left = (-doorBox.padX) + 'px';
+      image.style.top = (-doorBox.padY) + 'px';
     });
     doorReflection.style.left = doorBox.left + 'px';
     doorReflection.style.top = (geometry.offsetY + SOURCE.waterY * scale - doorBox.padY * 0.4) + 'px';
@@ -648,6 +696,7 @@
   }
 
   function drawWaterDistortion(ripple, progress, dark) {
+    if (!(art.complete && art.naturalWidth)) return;
     var ease = 1 - Math.pow(1 - progress, 3);
     var fade = Math.sin(Math.PI * progress) * ripple.strength;
     var radiusX = Math.round(38 + ease * 92);
@@ -900,8 +949,7 @@
   document.getElementById('sidebarOpen').addEventListener('click', dissolveLogoAndOpen);
   document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
   door.addEventListener('click', function () {
-    if (discoverButton.classList.contains('is-ready')) enterDoorWithFeather();
-    else shakeDoor();
+    enterDoorWithFeather();
   });
   heroCopy.addEventListener('click', function () {
     if (reducedMotion) return;
@@ -931,9 +979,9 @@
   }
   function enterDoorWithFeather() {
     if (discoverButton.classList.contains('is-entering')) return;
-    if (!discoverButton.classList.contains('is-ready')) return;
     stopDoorHint();
     window.clearTimeout(featherReadyTimer);
+    driftFeatherToDoor();
     discoverButton.classList.add('is-ready', 'is-entering');
     shakeDoor();
     window.setTimeout(function () {
@@ -968,12 +1016,16 @@
   });
 
   discoverButton.addEventListener('click', function () {
-    if (discoverButton.classList.contains('is-entering')) return;
-    if (!discoverButton.classList.contains('is-ready')) return;
     enterDoorWithFeather();
   });
 
   document.addEventListener('keydown', function (event) {
+    if ((event.ctrlKey || event.metaKey) && (event.key === 'k' || event.key === 'K')) {
+      event.preventDefault();
+      if (searchOverlay.classList.contains('open')) closeSearch();
+      else openSearch();
+      return;
+    }
     if (event.key !== 'Escape') return;
     if (searchOverlay.classList.contains('open')) closeSearch();
     else closeSidebar();
@@ -985,6 +1037,7 @@
   });
 
   document.getElementById('sidebarSearchFocus').addEventListener('click', openSearch);
+  document.getElementById('railSearch').addEventListener('click', openSearch);
   document.getElementById('searchClose').addEventListener('click', closeSearch);
   siteSearch.addEventListener('input', renderSearchResults);
   searchOverlay.addEventListener('click', function (event) {

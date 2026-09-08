@@ -16,19 +16,19 @@
     pearlSize: [50, 74]
   };
   var fishSources = [
-    { src: 'concepts/fish/fish-1.png', head: 'right' },
-    { src: 'concepts/fish/fish-2.png', head: 'right' },
-    { src: 'concepts/fish/fish-3.png', head: 'right' },
-    { src: 'concepts/fish/fish-4.png', head: 'right' },
-    { src: 'concepts/fish/fish-5.png', head: 'right' },
-    { src: 'concepts/fish/fish-6.png', head: 'right' }
+    { src: 'concepts/fish/fish-1.webp', head: 'right' },
+    { src: 'concepts/fish/fish-2.webp', head: 'right' },
+    { src: 'concepts/fish/fish-3.webp', head: 'right' },
+    { src: 'concepts/fish/fish-4.webp', head: 'right' },
+    { src: 'concepts/fish/fish-5.webp', head: 'right' },
+    { src: 'concepts/fish/fish-6.webp', head: 'right' }
   ];
   var shellFrames = [
-    'concepts/shell/web-frames/shell-web-frame-0.png?v=20260620-shell-trim',
-    'concepts/shell/web-frames/shell-web-frame-1.png?v=20260620-shell-trim',
-    'concepts/shell/web-frames/shell-web-frame-2.png?v=20260620-shell-trim',
-    'concepts/shell/web-frames/shell-web-frame-3.png?v=20260620-shell-trim',
-    'concepts/shell/web-frames/shell-web-frame-4.png?v=20260620-shell-trim'
+    'concepts/shell/web-frames/shell-web-frame-0.webp',
+    'concepts/shell/web-frames/shell-web-frame-1.webp',
+    'concepts/shell/web-frames/shell-web-frame-2.webp',
+    'concepts/shell/web-frames/shell-web-frame-3.webp',
+    'concepts/shell/web-frames/shell-web-frame-4.webp'
   ];
   var oracleResponses = [
     '摸鱼之神翻了个身：今日宜慢一点。',
@@ -45,6 +45,7 @@
   var shellIdleTimer = 0;
   var animationFrame = 0;
   var lastTime = 0;
+  var sceneVisible = true;
   var bounds = { width: 0, height: 0, upper: 0, lower: 0 };
   var pointer = { x: -9999, y: -9999, active: false };
   var seabedSource = { width: 1672, height: 941 };
@@ -453,11 +454,11 @@
     fish.forEach(function (item) {
       moveFish(item, delta, now);
     });
-    if (fish.length) animationFrame = window.requestAnimationFrame(animate);
+    if (fish.length && sceneVisible) animationFrame = window.requestAnimationFrame(animate);
   }
 
   function ensureAnimation() {
-    if (animationFrame || reducedMotion) return;
+    if (animationFrame || reducedMotion || !sceneVisible) return;
     lastTime = performance.now();
     animationFrame = window.requestAnimationFrame(animate);
   }
@@ -598,6 +599,12 @@
       updateBounds();
       syncShellHome();
     }).observe(scene);
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      sceneVisible = entries[entries.length - 1].isIntersecting;
+      if (sceneVisible) ensureAnimation();
+    }, { rootMargin: '120px' }).observe(scene);
   }
 
   seedFish();

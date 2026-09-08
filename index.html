@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f8eeef">
+<meta name="description" content="摸鱼神国：教程、工具与好用站点收藏。在忙碌之外，留一扇门。">
+<meta property="og:title" content="摸鱼神国">
+<meta property="og:description" content="教程、工具与好用站点收藏。在忙碌之外，留一扇门。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%90%9F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap">
 <title>摸鱼神国</title>
 <script>
 (function () {
@@ -21,6 +29,12 @@
       <ellipse cx="11" cy="19" rx="9" ry="7"/>
       <path d="M20 12l7-6v18l-7-4"/>
       <circle cx="7" cy="18" r="1.5" fill="currentColor"/>
+    </svg>
+  </button>
+  <button class="rail-button" id="railSearch" type="button" aria-label="搜索（Ctrl+K）" data-tooltip="搜索 (Ctrl+K)">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="11" cy="11" r="7"/>
+      <path d="M20 20l-4-4"/>
     </svg>
   </button>
 </nav>
@@ -81,7 +95,7 @@
 <div class="page-shell" id="pageShell">
 <section class="hero" id="hero" aria-label="摸鱼神国首页">
   <div class="hero-backdrop" aria-hidden="true"></div>
-  <img class="hero-art" id="heroArt" src="concepts/watercolor-door-hero-bg-clean-v1.png" alt="">
+  <img class="hero-art" id="heroArt" src="concepts/watercolor-door-hero-bg-clean-v1.webp" alt="" width="1672" height="941" decoding="async" fetchpriority="high">
   <canvas id="rippleCanvas" aria-hidden="true"></canvas>
 
   <div class="hero-copy">
@@ -93,9 +107,9 @@
     <p>这里收着一些教程、工具和偶然发现的好东西。门没有催促你，只在水面尽头安静地等。</p>
   </div>
 
-  <button class="hero-action" id="discoverButton" type="button">
+  <button class="hero-action" id="discoverButton" type="button" aria-label="开门进入站点内容">
     <span class="action-feather" aria-hidden="true">
-      <img src="concepts/falling-feather-v1.png" alt="">
+      <img src="concepts/falling-feather-v1.webp" alt="" width="344" height="360" decoding="async">
     </span>
     <span class="action-particles" aria-hidden="true">
       <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
@@ -103,16 +117,16 @@
   </button>
 
   <div class="door-reflection" id="doorReflection" aria-hidden="true">
-    <img src="concepts/watercolor-door-reflection-v2.png" alt="">
+    <img src="concepts/watercolor-door-reflection-v2.webp" alt="" width="204" height="389" decoding="async">
   </div>
   <div class="door-face" id="doorFace" aria-hidden="true">
     <span class="door-visual" aria-hidden="true">
       <span class="door-visual-layer door-core">
-        <img class="door-layer-image" src="concepts/watercolor-door-hero-v1.png" alt="">
+        <img class="door-layer-image" src="concepts/watercolor-door-crop-v1.webp" alt="" width="198" height="383" decoding="async">
       </span>
     </span>
   </div>
-  <button class="door-hotspot" id="doorHotspot" type="button" aria-label="轻点门">
+  <button class="door-hotspot" id="doorHotspot" type="button" aria-label="开门进入站点内容">
   </button>
 </section>
 
@@ -131,7 +145,7 @@
 </main>
 
 <section class="seabed-scene" id="seabedScene" aria-label="海底祈愿区">
-  <img class="seabed-art" src="concepts/watercolor-seabed-footer-shell-pocket.png?v=20260620-shell-pocket-v3" alt="">
+  <img class="seabed-art" src="concepts/watercolor-seabed-footer-shell-pocket.webp" alt="" width="1672" height="941" loading="lazy" decoding="async">
   <div class="seabed-fish-layer" id="seabedFishLayer" aria-hidden="true"></div>
 
   <div class="seabed-prayer">
@@ -145,7 +159,7 @@
 
   <div class="shell-button" id="shellButton" data-shell-state="closed" role="button" tabindex="0" aria-label="打开祈愿贝壳" aria-expanded="false">
     <span class="shell-halo" aria-hidden="true"></span>
-    <img class="shell-frame" id="shellFrame" src="concepts/shell/web-frames/shell-web-frame-0.png?v=20260620-shell-trim" alt="">
+    <img class="shell-frame" id="shellFrame" src="concepts/shell/web-frames/shell-web-frame-0.webp" alt="" width="560" height="500" loading="lazy" decoding="async">
     <button class="pearl-button" id="pearlButton" type="button" aria-label="点击珍珠，召唤摸鱼">
       <span class="pearl-hit-glow" aria-hidden="true"></span>
     </button>
