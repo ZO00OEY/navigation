@@ -8,12 +8,6 @@
   var heroCopy = document.querySelector('.hero-copy');
   var heroEyebrow = document.querySelector('.hero-eyebrow');
   var titleLines = document.querySelectorAll('.hero-copy .title-line');
-  var heroCopyDust = null;
-  var copyDustSignature = '';
-  var copyDustStarted = false;
-  var copyDustTimer = 0;
-  var copyLandings = [];
-  var copySplashTimers = [];
   var featherBirthTimer = 0;
   var doorLayerImages = document.querySelectorAll('.door-layer-image');
   var doorReflection = document.getElementById('doorReflection');
@@ -384,150 +378,7 @@
     hero.style.setProperty('--feather-swim-y-f', (-wanderY * 0.1).toFixed(2) + 'px');
   }
 
-  function syncHeroCopyDust(heroRect, waterTop) {
-    if (reducedMotion) return;
-    if (!heroCopyDust) {
-      heroCopyDust = document.createElement('div');
-      heroCopyDust.className = 'hero-copy-dust';
-      heroCopyDust.setAttribute('aria-hidden', 'true');
-      hero.appendChild(heroCopyDust);
-    }
-
-    var copyRect = heroCopy.getBoundingClientRect();
-    var sinkDepth = Math.max(120, Math.min(260, heroRect.height - waterTop - 70));
-    var signature = [
-      Math.round(copyRect.left), Math.round(copyRect.top),
-      Math.round(copyRect.width), Math.round(copyRect.height),
-      Math.round(waterTop), Math.round(sinkDepth)
-    ].join(':');
-    if (signature === copyDustSignature) return;
-    copyDustSignature = signature;
-
-    heroCopyDust.innerHTML = '';
-    copyLandings = [];
-    var walker = document.createTreeWalker(heroCopy, NodeFilter.SHOW_TEXT, {
-      acceptNode: function (node) {
-        return node.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-      }
-    });
-    var range = document.createRange();
-    var index = 0;
-    var textNode;
-    while ((textNode = walker.nextNode())) {
-      var parent = textNode.parentElement;
-      var parentStyle = getComputedStyle(parent);
-      var isPink = parent.classList.contains('title-line-accent') ||
-        parentStyle.color.indexOf('181') !== -1 ||
-        parentStyle.color.indexOf('196') !== -1;
-      for (var charIndex = 0; charIndex < textNode.nodeValue.length; charIndex += 1) {
-        var char = textNode.nodeValue[charIndex];
-        if (!char.trim()) continue;
-        range.setStart(textNode, charIndex);
-        range.setEnd(textNode, charIndex + 1);
-        var rects = range.getClientRects();
-        if (!rects.length) continue;
-        var rect = rects[0];
-        var screenY = rect.top - heroRect.top;
-        var fall = Math.max(80, waterTop - screenY + sinkDepth + (index % 7) * 8);
-        var drift = (((index * 41) % 92) - 46);
-        var delay = 0.05 + (index % 19) * 0.018;
-        var isDoorChar = isPink && char === '门';
-        var shard = document.createElement('span');
-        shard.className = 'copy-glyph-shard ' + (isPink ? 'is-pink' : 'is-ink') +
-          (isDoorChar ? ' is-door-char' : '');
-        shard.textContent = char;
-        shard.setAttribute('data-chip', char);
-        shard.style.left = (rect.left - heroRect.left).toFixed(2) + 'px';
-        shard.style.top = screenY.toFixed(2) + 'px';
-        shard.style.width = rect.width.toFixed(2) + 'px';
-        shard.style.height = rect.height.toFixed(2) + 'px';
-        shard.style.setProperty('--line-height', rect.height.toFixed(2) + 'px');
-        shard.style.font = [
-          parentStyle.fontStyle,
-          parentStyle.fontWeight,
-          parentStyle.fontSize,
-          parentStyle.fontFamily
-        ].join(' ');
-        shard.style.color = parentStyle.color;
-        shard.style.setProperty('--drift', drift + 'px');
-        shard.style.setProperty('--delay', delay.toFixed(3) + 's');
-        shard.style.setProperty('--fall', fall.toFixed(2) + 'px');
-        heroCopyDust.appendChild(shard);
-        copyLandings.push({
-          x: rect.left - heroRect.left + rect.width / 2 + drift * (isDoorChar ? 0.55 : 1),
-          y: Math.max(waterTop + 8, Math.min(heroRect.height - 24, screenY + fall)),
-          delay: delay + (isDoorChar ? 1.12 : 0),
-          duration: isDoorChar ? 3.05 : 2.35,
-          strength: isDoorChar ? 1.12 : 0.78
-        });
-
-        for (var piece = 0; piece < 3; piece += 1) {
-          var bitDrift = ((((index + piece) * 37) % 84) - 42);
-          var bitDelay = 0.16 + (index % 17) * 0.014 + piece * 0.05;
-          var bitFall = fall + 14 + piece * 9;
-          var bit = document.createElement('i');
-          bit.className = isPink ? 'is-pink' : 'is-ink';
-          bit.style.left = (rect.left - heroRect.left + rect.width * (0.25 + piece * 0.25)).toFixed(2) + 'px';
-          bit.style.top = (screenY + rect.height * (0.2 + piece * 0.22)).toFixed(2) + 'px';
-          bit.style.setProperty('--size', '2px');
-          bit.style.setProperty('--trail', (10 + piece * 7) + 'px');
-          bit.style.setProperty('--drift', bitDrift + 'px');
-          bit.style.setProperty('--delay', bitDelay.toFixed(3) + 's');
-          bit.style.setProperty('--fall', bitFall.toFixed(2) + 'px');
-          heroCopyDust.appendChild(bit);
-          copyLandings.push({
-            x: rect.left - heroRect.left + rect.width * (0.25 + piece * 0.25) + bitDrift,
-            y: Math.max(waterTop + 8, Math.min(heroRect.height - 24, screenY + bitFall)),
-            delay: bitDelay,
-            duration: 2.35,
-            strength: 0.48
-          });
-        }
-        index += 1;
-      }
-    }
-    range.detach();
-    if (!copyDustStarted) {
-      window.clearTimeout(copyDustTimer);
-      copyDustTimer = window.setTimeout(function () {
-        startCopyDust();
-      }, 1000);
-    }
-  }
-
-  function clearCopyWaterEffects() {
-    copySplashTimers.forEach(function (timer) { window.clearTimeout(timer); });
-    copySplashTimers = [];
-    window.clearTimeout(featherBirthTimer);
-  }
-
-  function scheduleCopyWaterEffects() {
-    clearCopyWaterEffects();
-    var lastImpact = 0;
-    copyLandings.forEach(function (landing, index) {
-      var impact = Math.round((landing.delay + landing.duration * 0.9) * 1000);
-      lastImpact = Math.max(lastImpact, impact);
-      if (index % 3) return;
-      copySplashTimers.push(window.setTimeout(function () {
-        addRipple(landing.x, landing.y, landing.strength, {
-          x: ((index % 5) - 2) * 2,
-          y: 5
-        });
-      }, impact));
-    });
-    featherBirthTimer = window.setTimeout(function () {
-      discoverButton.classList.add('is-born');
-    }, lastImpact + 520);
-  }
-
-  function startCopyDust() {
-    if (!heroCopyDust) return;
-    copyDustStarted = true;
-    stopDoorHint();
-    discoverButton.classList.remove('is-born', 'is-drifting', 'is-ready', 'is-entering');
-    heroCopyDust.classList.add('is-powdering');
-    scheduleCopyWaterEffects();
-  }
+  // 标题字尘沉水动画已移除，标题保持固定；羽毛浮现改为独立触发（见页面初始化处）
 
   function getObjectPosition() {
     var objectPosition = getComputedStyle(art).objectPosition.split(/\s+/);
@@ -611,7 +462,6 @@
     fitHeroTypography(rect, doorBox.left, doorBox.top, scene);
     var waterTop = geometry.offsetY + SOURCE.waterY * scale;
     positionHeroPrompts(rect, geometry.sceneBottom, scene, waterTop, doorBox);
-    syncHeroCopyDust(rect, waterTop);
   }
 
   function updateSceneLayout() {
@@ -951,15 +801,6 @@
   door.addEventListener('click', function () {
     enterDoorWithFeather();
   });
-  heroCopy.addEventListener('click', function () {
-    if (reducedMotion) return;
-    if (heroCopyDust) heroCopyDust.classList.remove('is-powdering');
-    void heroCopy.offsetWidth;
-    window.clearTimeout(copyDustTimer);
-    window.requestAnimationFrame(function () {
-      startCopyDust();
-    });
-  });
   var discoverButton = document.getElementById('discoverButton');
   var featherReadyTimer = null;
   var doorHintTimer = null;
@@ -1076,4 +917,17 @@
   renderSearchResults();
   syncThemeStatus();
   scheduleLayout();
+
+  // 羽毛作为安静的引导，独立浮现（不再依赖已移除的标题字尘动画）
+  featherBirthTimer = window.setTimeout(function () {
+    discoverButton.classList.add('is-born');
+  }, reducedMotion ? 0 : 900);
+
+  // “下沉”文字入口：与点门、点羽毛是同一个下潜动作
+  var diveCue = document.getElementById('diveCue');
+  if (diveCue) {
+    diveCue.addEventListener('click', function () {
+      enterDoorWithFeather();
+    });
+  }
 })();
